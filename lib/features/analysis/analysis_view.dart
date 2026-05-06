@@ -5,16 +5,21 @@ import 'package:excel/excel.dart' hide Border;
 import 'package:file_picker/file_picker.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
+import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
+import 'package:travel_check/core/theme/app_theme.dart';
 
 final _defaultDate = DateTime(DateTime.now().year, DateTime.now().month - 1, 1);
-final selectedMonthProvider = StateProvider<String?>(
-  (ref) => _defaultDate.month.toString().padLeft(2, '0'),
+final selectedMonthProvider = StateProvider<String?>((ref) => null);
+final selectedYearProvider = StateProvider<String?>(
+  (ref) => _defaultDate.year.toString(),
 );
-final selectedYearProvider = StateProvider<String?>((ref) => _defaultDate.year.toString());
 final selectedTrasfertaProvider = StateProvider<String?>((ref) => null);
 final selectedCidProvider = StateProvider<String?>((ref) => null);
 final selectedSocietaProvider = StateProvider<String?>((ref) => null);
+final selectedTipoProvider = StateProvider<String?>((ref) => null);
 final sortAscendingProvider = StateProvider<bool>((ref) => false);
+final selectedBollaProvider = StateProvider<String?>((ref) => null);
+final analysisPageProvider = StateProvider<int>((ref) => 0);
 
 class AnalysisView extends ConsumerStatefulWidget {
   const AnalysisView({super.key});
@@ -26,11 +31,15 @@ class AnalysisView extends ConsumerStatefulWidget {
 class _AnalysisViewState extends ConsumerState<AnalysisView> {
   final _trasfertaController = TextEditingController();
   final _cidController = TextEditingController();
+  final _bollaController = TextEditingController();
+  final _scrollController = ScrollController();
 
   @override
   void dispose() {
     _trasfertaController.dispose();
     _cidController.dispose();
+    _bollaController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -40,9 +49,13 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final selectedMonth = ref.watch(selectedMonthProvider);
     final selectedYear = ref.watch(selectedYearProvider);
     final selectedTrasferta = ref.watch(selectedTrasfertaProvider);
-    final selectedSocieta = ref.watch(selectedSocietaProvider);
     final selectedCid = ref.watch(selectedCidProvider);
+    final selectedBolla = ref.watch(selectedBollaProvider);
+    final selectedSocieta = ref.watch(selectedSocietaProvider);
+    final selectedTipo = ref.watch(selectedTipoProvider);
     final sortAscending = ref.watch(sortAscendingProvider);
+    final currentPage = ref.watch(analysisPageProvider);
+    const pageSize = 100;
 
     if (allRecords.isEmpty) {
       return Center(
@@ -92,6 +105,14 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
             .toList()
           ..sort();
 
+    final availableTipi =
+        allRecords
+            .map((r) => r.tipoDipendente)
+            .where((t) => t.isNotEmpty)
+            .toSet()
+            .toList()
+          ..sort();
+
     const monthNames = {
       '01': 'Gennaio',
       '02': 'Febbraio',
@@ -107,56 +128,77 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
       '12': 'Dicembre',
     };
 
+    final dictionaries = ref.watch(dictionaryProvider);
+    final dictionaryMap = {
+      for (final entry in dictionaries) entry.code: entry.value,
+    };
+
     // Filtra i record
-    final records = allRecords.where((r) {
-      final parts = r.dataSpesa.split('/');
-      if (parts.length != 3) return false;
-      final month = parts[1];
-      final year = parts[2];
+    final filteredRecords =
+        allRecords.where((r) {
+          final parts = r.dataSpesa.split('/');
+          if (parts.length != 3) return false;
+          final month = parts[1];
+          final year = parts[2];
 
-      if (selectedMonth != null && month != selectedMonth) return false;
-      if (selectedYear != null && year != selectedYear) return false;
-      if (selectedTrasferta != null &&
-          !r.numeroTrasferta.contains(selectedTrasferta)) {
-        return false;
-      }
-      if (selectedCid != null && !r.cid.contains(selectedCid)) {
-        return false;
-      }
-      if (selectedSocieta != null && r.societa != selectedSocieta) return false;
+          if (selectedMonth != null && month != selectedMonth) return false;
+          if (selectedYear != null && year != selectedYear) return false;
+          if (selectedTrasferta != null &&
+              !r.numeroTrasferta.contains(selectedTrasferta)) {
+            return false;
+          }
+          if (selectedCid != null && !r.cid.contains(selectedCid)) {
+            return false;
+          }
+          if (selectedSocieta != null && r.societa != selectedSocieta) {
+            return false;
+          }
+          if (selectedTipo != null && r.tipoDipendente != selectedTipo) {
+            return false;
+          }
+          if (selectedBolla != null && !r.numeroBolla.contains(selectedBolla)) {
+            return false;
+          }
 
-      return true;
-    }).toList()
-      ..sort((a, b) {
-        try {
-          final partsA = a.dataSpesa.split('/');
-          final dateA = DateTime(
-            int.parse(partsA[2]),
-            int.parse(partsA[1]),
-            int.parse(partsA[0]),
-          );
-          final partsB = b.dataSpesa.split('/');
-          final dateB = DateTime(
-            int.parse(partsB[2]),
-            int.parse(partsB[1]),
-            int.parse(partsB[0]),
-          );
-          return sortAscending ? dateA.compareTo(dateB) : dateB.compareTo(dateA);
-        } catch (e) {
-          return 0;
-        }
-      });
+          return true;
+        }).toList()..sort((a, b) {
+          try {
+            final partsA = a.dataSpesa.split('/');
+            final dateA = DateTime(
+              int.parse(partsA[2]),
+              int.parse(partsA[1]),
+              int.parse(partsA[0]),
+            );
+            final partsB = b.dataSpesa.split('/');
+            final dateB = DateTime(
+              int.parse(partsB[2]),
+              int.parse(partsB[1]),
+              int.parse(partsB[0]),
+            );
+            return sortAscending
+                ? dateA.compareTo(dateB)
+                : dateB.compareTo(dateA);
+          } catch (e) {
+            return 0;
+          }
+        });
+
+    final totalPages = (filteredRecords.length / pageSize).ceil();
+    final startIndex = currentPage * pageSize;
+    final endIndex = (startIndex + pageSize) > filteredRecords.length
+        ? filteredRecords.length
+        : (startIndex + pageSize);
+    final paginatedRecords = filteredRecords.sublist(startIndex, endIndex);
 
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Column(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isWide = constraints.maxWidth > 800;
+              final headerContent = Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -172,8 +214,10 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                     style: TextStyle(color: Colors.grey.shade600),
                   ),
                 ],
-              ),
-              Row(
+              );
+
+              final actionsContent = Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   ElevatedButton.icon(
                     onPressed: () => _showClearDialog(context, ref),
@@ -186,26 +230,47 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withAlpha(20),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      '${records.length} Record trovati',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.bold,
+                  if (filteredRecords.isNotEmpty)
+                    ElevatedButton.icon(
+                      onPressed: () => _exportToExcel(filteredRecords),
+                      icon: const Icon(Icons.download_rounded),
+                      label: const Text('Esporta Excel'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade700,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
                       ),
                     ),
-                  ),
                 ],
-              ),
-            ],
+              );
+
+              if (isWide) {
+                return Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Expanded(child: headerContent),
+                    actionsContent,
+                  ],
+                );
+              } else {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    headerContent,
+                    const SizedBox(height: 16),
+                    actionsContent,
+                  ],
+                );
+              }
+            },
           ),
           const SizedBox(height: 24),
           // Sezione Filtri
@@ -239,8 +304,10 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                         ),
                       ),
                     ],
-                    onChanged: (value) =>
-                        ref.read(selectedMonthProvider.notifier).state = value,
+                    onChanged: (value) {
+                      ref.read(selectedMonthProvider.notifier).state = value;
+                      ref.read(analysisPageProvider.notifier).state = 0;
+                    },
                   ),
                 ),
               ),
@@ -266,8 +333,10 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                         (y) => DropdownMenuItem(value: y, child: Text(y)),
                       ),
                     ],
-                    onChanged: (value) =>
-                        ref.read(selectedYearProvider.notifier).state = value,
+                    onChanged: (value) {
+                      ref.read(selectedYearProvider.notifier).state = value;
+                      ref.read(analysisPageProvider.notifier).state = 0;
+                    },
                   ),
                 ),
               ),
@@ -293,9 +362,10 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                         (s) => DropdownMenuItem(value: s, child: Text(s)),
                       ),
                     ],
-                    onChanged: (value) =>
-                        ref.read(selectedSocietaProvider.notifier).state =
-                            value,
+                    onChanged: (value) {
+                      ref.read(selectedSocietaProvider.notifier).state = value;
+                      ref.read(analysisPageProvider.notifier).state = 0;
+                    },
                   ),
                 ),
               ),
@@ -322,9 +392,47 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                       borderSide: BorderSide(color: Colors.grey.shade300),
                     ),
                   ),
-                  onChanged: (value) =>
-                      ref.read(selectedTrasfertaProvider.notifier).state =
-                          value.isEmpty ? null : value,
+                  onChanged: (value) {
+                    ref.read(selectedTrasfertaProvider.notifier).state =
+                        value.isEmpty ? null : value;
+                    ref.read(analysisPageProvider.notifier).state = 0;
+                  },
+                ),
+              ),
+              // Filtro Tipo Dipendente
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String?>(
+                    value: selectedTipo,
+                    hint: const Text('Tutti i Tipi'),
+                    icon: const Icon(Icons.person_outline, size: 20),
+                    items: [
+                      const DropdownMenuItem(
+                        value: null,
+                        child: Text('Tutti i Tipi'),
+                      ),
+                      ...availableTipi.map((t) {
+                        final decoded = dictionaryMap[t];
+                        final displayLabel = decoded != null
+                            ? '$t - $decoded'
+                            : t;
+                        return DropdownMenuItem(
+                          value: t,
+                          child: Text(displayLabel),
+                        );
+                      }),
+                    ],
+                    onChanged: (value) {
+                      ref.read(selectedTipoProvider.notifier).state = value;
+                      ref.read(analysisPageProvider.notifier).state = 0;
+                    },
+                  ),
                 ),
               ),
               // Filtro CID (Input testo)
@@ -350,9 +458,45 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                       borderSide: BorderSide(color: Colors.grey.shade300),
                     ),
                   ),
-                  onChanged: (value) =>
-                      ref.read(selectedCidProvider.notifier).state = 
-                          value.isEmpty ? null : value,
+                  onChanged: (value) {
+                    ref.read(selectedCidProvider.notifier).state = value.isEmpty
+                        ? null
+                        : value;
+                    ref.read(analysisPageProvider.notifier).state = 0;
+                  },
+                ),
+              ),
+              // Filtro Bolla (Input testo)
+              SizedBox(
+                width: 180,
+                child: TextField(
+                  controller: _bollaController,
+                  decoration: InputDecoration(
+                    hintText: 'Cerca Bolla...',
+                    prefixIcon: const Icon(
+                      Icons.receipt_long_outlined,
+                      size: 20,
+                    ),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide(color: Colors.grey.shade300),
+                    ),
+                  ),
+                  onChanged: (value) {
+                    ref.read(selectedBollaProvider.notifier).state =
+                        value.isEmpty ? null : value;
+                    ref.read(analysisPageProvider.notifier).state = 0;
+                  },
                 ),
               ),
               // Ordinamento
@@ -363,12 +507,16 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                   border: Border.all(color: Colors.grey.shade300),
                 ),
                 child: IconButton(
-                  tooltip: sortAscending ? 'Dal meno recente' : 'Dal più recente',
+                  tooltip: sortAscending
+                      ? 'Dal meno recente'
+                      : 'Dal più recente',
                   icon: Icon(
                     sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
                     color: Theme.of(context).colorScheme.primary,
                   ),
-                  onPressed: () => ref.read(sortAscendingProvider.notifier).state = !sortAscending,
+                  onPressed: () =>
+                      ref.read(sortAscendingProvider.notifier).state =
+                          !sortAscending,
                 ),
               ),
               // Pulsante Reset Filtri
@@ -376,16 +524,22 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                   selectedYear != null ||
                   selectedTrasferta != null ||
                   selectedSocieta != null ||
-                  selectedCid != null)
+                  selectedTipo != null ||
+                  selectedCid != null ||
+                  selectedBolla != null)
                 TextButton.icon(
                   onPressed: () {
                     ref.read(selectedMonthProvider.notifier).state = null;
                     ref.read(selectedYearProvider.notifier).state = null;
                     ref.read(selectedTrasfertaProvider.notifier).state = null;
                     ref.read(selectedSocietaProvider.notifier).state = null;
+                    ref.read(selectedTipoProvider.notifier).state = null;
                     ref.read(selectedCidProvider.notifier).state = null;
+                    ref.read(selectedBollaProvider.notifier).state = null;
+                    ref.read(analysisPageProvider.notifier).state = 0;
                     _trasfertaController.clear();
                     _cidController.clear();
+                    _bollaController.clear();
                   },
                   icon: const Icon(Icons.filter_alt_off),
                   label: const Text('Reset Filtri'),
@@ -393,20 +547,6 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                     foregroundColor: Colors.red.shade700,
                   ),
                 ),
-              if (records.isNotEmpty) ...[
-                const SizedBox(width: 8),
-                ElevatedButton.icon(
-                  onPressed: () => _exportToExcel(records),
-                  icon: const Icon(Icons.download, size: 18),
-                  label: const Text('Esporta Excel'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green.shade600,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                  ),
-                ),
-              ],
             ],
           ),
           const SizedBox(height: 24),
@@ -428,7 +568,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: SizedBox(
-                    width: 1320,
+                    width: 1570,
                     child: Column(
                       children: [
                         // Intestazione fissa
@@ -444,6 +584,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                             children: [
                               _buildCell('CID', 100, isHeader: true),
                               _buildCell('TRASFERTA', 120, isHeader: true),
+                              _buildCell('GIUSTIFICATIVO', 250, isHeader: true),
                               _buildCell('BOLLA', 150, isHeader: true),
                               _buildCell('SOCIETÀ', 100, isHeader: true),
                               _buildCell('DATA SPESA', 120, isHeader: true),
@@ -452,16 +593,22 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                               _buildCell('LOCALITÀ', 170, isHeader: true),
                               _buildCell('IMPORTO', 140, isHeader: true),
                               _buildCell('SEGNO', 80, isHeader: true),
-                              _buildCell('AZIONI', 100, isHeader: true, alignment: Alignment.center),
+                              _buildCell(
+                                'AZIONI',
+                                100,
+                                isHeader: true,
+                                alignment: Alignment.center,
+                              ),
                             ],
                           ),
                         ),
                         // Corpo scrollabile
                         Expanded(
                           child: ListView.builder(
-                            itemCount: records.length,
+                            controller: _scrollController,
+                            itemCount: paginatedRecords.length,
                             itemBuilder: (context, index) {
-                              final record = records[index];
+                              final record = paginatedRecords[index];
                               return Container(
                                 decoration: BoxDecoration(
                                   color: Colors.white,
@@ -479,8 +626,41 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                       fontWeight: FontWeight.w500,
                                     ),
                                     _buildCell(record.numeroTrasferta, 120),
+                                    _buildCell(
+                                      dictionaryMap[record
+                                                  .giustificativoSpesa] !=
+                                              null
+                                          ? '${record.giustificativoSpesa} - ${dictionaryMap[record.giustificativoSpesa]}'
+                                          : record.giustificativoSpesa,
+                                      250,
+                                      color:
+                                          dictionaryMap[record
+                                                  .giustificativoSpesa] !=
+                                              null
+                                          ? SkyTheme.timBlue
+                                          : null,
+                                      fontWeight:
+                                          dictionaryMap[record
+                                                  .giustificativoSpesa] !=
+                                              null
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                    ),
                                     _buildCell(record.numeroBolla, 150),
-                                    _buildCell(record.societa, 100),
+                                    _buildCell(
+                                      dictionaryMap[record.societa] != null
+                                          ? '${record.societa} - ${dictionaryMap[record.societa]}'
+                                          : record.societa,
+                                      100,
+                                      color:
+                                          dictionaryMap[record.societa] != null
+                                          ? SkyTheme.timBlue
+                                          : null,
+                                      fontWeight:
+                                          dictionaryMap[record.societa] != null
+                                          ? FontWeight.bold
+                                          : FontWeight.normal,
+                                    ),
                                     _buildCell(record.dataSpesa, 120),
                                     _buildCell(record.dataInizio, 120),
                                     _buildCell(record.dataFine, 120),
@@ -514,46 +694,86 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
                                           IconButton(
-                                            icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20),
-                                            onPressed: () => _showRecordDetails(context, record),
+                                            icon: const Icon(
+                                              Icons.visibility_outlined,
+                                              color: Colors.blue,
+                                              size: 20,
+                                            ),
+                                            onPressed: () => _showRecordDetails(
+                                              context,
+                                              record,
+                                            ),
                                             tooltip: 'Visualizza dettagli',
                                             padding: EdgeInsets.zero,
                                             constraints: const BoxConstraints(),
                                           ),
                                           const SizedBox(width: 12),
                                           IconButton(
-                                            icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20),
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                              title: const Text('Elimina Record'),
-                                              content: const Text('Sei sicuro di voler eliminare questo record?'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () => Navigator.of(context).pop(),
-                                                  child: const Text('Annulla'),
-                                                ),
-                                                ElevatedButton(
-                                                  onPressed: () {
-                                                    ref.read(tracciatoContabilesProvider.notifier).deleteRecord(record.id);
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700),
-                                                  child: const Text('Elimina', style: TextStyle(color: Colors.white)),
-                                                ),
-                                              ],
+                                            icon: const Icon(
+                                              Icons.delete_outline,
+                                              color: Colors.red,
+                                              size: 20,
                                             ),
-                                          );
-                                        },
-                                        tooltip: 'Elimina record',
-                                        padding: EdgeInsets.zero,
-                                        constraints: const BoxConstraints(),
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder: (context) => AlertDialog(
+                                                  title: const Text(
+                                                    'Elimina Record',
+                                                  ),
+                                                  content: const Text(
+                                                    'Sei sicuro di voler eliminare questo record?',
+                                                  ),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.of(
+                                                            context,
+                                                          ).pop(),
+                                                      child: const Text(
+                                                        'Annulla',
+                                                      ),
+                                                    ),
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        ref
+                                                            .read(
+                                                              tracciatoContabilesProvider
+                                                                  .notifier,
+                                                            )
+                                                            .deleteRecord(
+                                                              record.id,
+                                                            );
+                                                        Navigator.of(
+                                                          context,
+                                                        ).pop();
+                                                      },
+                                                      style:
+                                                          ElevatedButton.styleFrom(
+                                                            backgroundColor:
+                                                                Colors
+                                                                    .red
+                                                                    .shade700,
+                                                          ),
+                                                      child: const Text(
+                                                        'Elimina',
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                            tooltip: 'Elimina record',
+                                            padding: EdgeInsets.zero,
+                                            constraints: const BoxConstraints(),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ],
+                                    ),
+                                  ],
                                 ),
                               );
                             },
@@ -566,6 +786,77 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
               ),
             ),
           ),
+          // Pagination Controls
+          if (totalPages > 1)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 8,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      blurRadius: 10,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.chevron_left),
+                      onPressed: currentPage > 0
+                          ? () {
+                              ref.read(analysisPageProvider.notifier).state--;
+                              _scrollController.animateTo(
+                                0,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeOut,
+                              );
+                            }
+                          : null,
+                    ),
+                    const SizedBox(width: 16),
+                    Text(
+                      'Pagina ${currentPage + 1} di $totalPages',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    IconButton(
+                      icon: const Icon(Icons.chevron_right),
+                      onPressed: currentPage < totalPages - 1
+                          ? () {
+                              ref.read(analysisPageProvider.notifier).state++;
+                              _scrollController.animateTo(
+                                0,
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeOut,
+                              );
+                            }
+                          : null,
+                    ),
+                    const VerticalDivider(width: 32, indent: 8, endIndent: 8),
+                    Text(
+                      'Totale record: ${filteredRecords.length}',
+                      style: const TextStyle(
+                        color: SkyTheme.timBlue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -592,7 +883,9 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                 const SnackBar(content: Text('Dati eliminati con successo')),
               );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red.shade700),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red.shade700,
+            ),
             child: const Text('Elimina', style: TextStyle(color: Colors.white)),
           ),
         ],
@@ -605,7 +898,10 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Dettaglio Record - ${record.numeroBolla}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          title: Text(
+            'Dettaglio Record - ${record.numeroBolla}',
+            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+          ),
           content: SingleChildScrollView(
             child: SizedBox(
               width: 400,
@@ -616,16 +912,55 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                   _buildDetailRow('CID', record.cid),
                   _buildDetailRow('Trasferta', record.numeroTrasferta),
                   _buildDetailRow('Progressivo', record.progressivo),
-                  _buildDetailRow('Società', record.societa),
-                  _buildDetailRow('Tipo Dipendente', record.tipoDipendente),
-                  _buildDetailRow('Giustificativo', record.giustificativoSpesa),
+                  _buildDetailRow(
+                    'Società',
+                    ref
+                            .read(dictionaryProvider)
+                            .any(
+                              (e) =>
+                                  e.code == record.societa &&
+                                  e.category == 'societa',
+                            )
+                        ? '${record.societa} - ${ref.read(dictionaryProvider).firstWhere((e) => e.code == record.societa && e.category == 'societa').value}'
+                        : record.societa,
+                  ),
+                  _buildDetailRow(
+                    'Tipo Dipendente',
+                    ref
+                            .read(dictionaryProvider)
+                            .any(
+                              (e) =>
+                                  e.code == record.tipoDipendente &&
+                                  e.category == 'tipo_dipendente',
+                            )
+                        ? '${record.tipoDipendente} - ${ref.read(dictionaryProvider).firstWhere((e) => e.code == record.tipoDipendente && e.category == 'tipo_dipendente').value}'
+                        : record.tipoDipendente,
+                  ),
+                  _buildDetailRow(
+                    'Giustificativo',
+                    ref
+                            .read(dictionaryProvider)
+                            .any((e) => e.code == record.giustificativoSpesa)
+                        ? '${record.giustificativoSpesa} - ${ref.read(dictionaryProvider).firstWhere((e) => e.code == record.giustificativoSpesa).value}'
+                        : record.giustificativoSpesa,
+                  ),
                   _buildDetailRow('Numero Bolla', record.numeroBolla),
                   _buildDetailRow('Data Spesa', record.dataSpesa),
                   _buildDetailRow('Località', record.localita),
-                  _buildDetailRow('Inizio', '${record.dataInizio} ${record.oraInizio}'),
-                  _buildDetailRow('Fine', '${record.dataFine} ${record.oraFine}'),
+                  _buildDetailRow(
+                    'Inizio',
+                    '${record.dataInizio} ${record.oraInizio}',
+                  ),
+                  _buildDetailRow(
+                    'Fine',
+                    '${record.dataFine} ${record.oraFine}',
+                  ),
                   _buildDetailRow('Tipo Attività', record.tipoAttivita),
-                  _buildDetailRow('Importo', '${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}', isHighlight: true),
+                  _buildDetailRow(
+                    'Importo',
+                    '${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}',
+                    isHighlight: true,
+                  ),
                 ],
               ),
             ),
@@ -646,7 +981,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
       final excel = Excel.createExcel();
       final sheet = excel['Tracciato'];
       excel.setDefaultSheet('Tracciato');
-      
+
       // Header
       sheet.appendRow([
         TextCellValue('CID'),
@@ -697,7 +1032,8 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
 
       final outputFile = await FilePicker.saveFile(
         dialogTitle: 'Salva Export Excel',
-        fileName: 'export_tracciato_${DateTime.now().millisecondsSinceEpoch}.xlsx',
+        fileName:
+            'export_tracciato_${DateTime.now().millisecondsSinceEpoch}.xlsx',
         type: FileType.custom,
         allowedExtensions: ['xlsx'],
       );
@@ -707,20 +1043,30 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
         await file.writeAsBytes(fileBytes);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Esportazione completata con successo!'), backgroundColor: Colors.green),
+            const SnackBar(
+              content: Text('Esportazione completata con successo!'),
+              backgroundColor: Colors.green,
+            ),
           );
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Errore durante l\'esportazione: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Errore durante l\'esportazione: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     }
   }
 
-  Widget _buildDetailRow(String label, String value, {bool isHighlight = false}) {
+  Widget _buildDetailRow(
+    String label,
+    String value, {
+    bool isHighlight = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6.0),
       child: Row(
@@ -730,7 +1076,11 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
             width: 130,
             child: Text(
               label,
-              style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey.shade600, fontSize: 13),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade600,
+                fontSize: 13,
+              ),
             ),
           ),
           Expanded(

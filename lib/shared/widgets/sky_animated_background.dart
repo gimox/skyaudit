@@ -61,13 +61,14 @@ class TravelPatternPainter extends CustomPainter {
     for (int i = 0; i < 15; i++) {
       final double xBase = random.nextDouble() * size.width;
       final double yBase = random.nextDouble() * size.height;
-      
+
       // Calcolo del movimento lento in base al progress
-      final double x = (xBase + (progress * 50 * (i % 2 == 0 ? 1 : -1))) % size.width;
+      final double x =
+          (xBase + (progress * 50 * (i % 2 == 0 ? 1 : -1))) % size.width;
       final double y = (yBase + (progress * 30)) % size.height;
-      
+
       final icon = icons[i % icons.length];
-      
+
       TextPainter textPainter = TextPainter(textDirection: TextDirection.ltr);
       textPainter.text = TextSpan(
         text: String.fromCharCode(icon.codePoint),
@@ -79,11 +80,14 @@ class TravelPatternPainter extends CustomPainter {
         ),
       );
       textPainter.layout();
-      
+
       canvas.save();
       canvas.translate(x, y);
       canvas.rotate(progress * math.pi * 0.1 * (i % 2 == 0 ? 1 : -1));
-      textPainter.paint(canvas, Offset(-textPainter.width / 2, -textPainter.height / 2));
+      textPainter.paint(
+        canvas,
+        Offset(-textPainter.width / 2, -textPainter.height / 2),
+      );
       canvas.restore();
     }
   }

@@ -25,6 +25,7 @@ class TracciatoContabile {
   final double importo;
   final String valuta;
   final bool isNegative;
+  final String? logHistoryId;
 
   TracciatoContabile({
     required this.recordType,
@@ -45,6 +46,7 @@ class TracciatoContabile {
     required this.importo,
     required this.valuta,
     required this.isNegative,
+    this.logHistoryId,
   });
 
   static String _formatDate(String yyyymmdd) {
@@ -63,7 +65,7 @@ class TracciatoContabile {
     return '$hh:$mm:$ss';
   }
 
-  factory TracciatoContabile.fromString(String line) {
+  factory TracciatoContabile.fromString(String line, {String? logHistoryId}) {
     // Pad line to ensure we can reach position 166 without FormatException
     if (line.length < 166) {
       line = line.padRight(166, ' ');
@@ -71,7 +73,7 @@ class TracciatoContabile {
 
     final rawImporto = line.substring(140, 160).trim();
     final parsedImporto = double.tryParse(rawImporto) ?? 0.0;
-    
+
     return TracciatoContabile(
       recordType: line.substring(0, 1),
       cid: line.substring(1, 9).trim(),
@@ -91,6 +93,7 @@ class TracciatoContabile {
       importo: parsedImporto,
       valuta: line.substring(160, 163).trim(),
       isNegative: line.substring(165, 166) == 'R',
+      logHistoryId: logHistoryId,
     );
   }
 }

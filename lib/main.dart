@@ -11,6 +11,10 @@ import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:travel_check/core/db/isar_provider.dart';
 import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
+import 'package:travel_check/features/upload/models/log_history.dart';
+import 'package:travel_check/features/settings/models/dictionary.dart';
+import 'package:travel_check/features/settings/models/app_settings.dart';
+import 'package:travel_check/features/upload/models/estratto_conto.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -18,7 +22,13 @@ void main() async {
   // Inizializzazione Isar
   final dir = await getApplicationDocumentsDirectory();
   final isar = await Isar.open(
-    [TracciatoContabileSchema],
+    [
+      TracciatoContabileSchema,
+      LogHistorySchema,
+      DictionarySchema,
+      AppSettingsSchema,
+      EstrattoContoSchema,
+    ],
     directory: dir.path,
     inspector: true, // Assicurati che sia su true
   );
@@ -29,8 +39,9 @@ void main() async {
 
   if (!kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux)) {
     await windowManager.ensureInitialized();
-    WindowOptions windowOptions = WindowOptions(
-      size: Size(640, 480),
+    WindowOptions windowOptions = const WindowOptions(
+      size: Size(1280, 800),
+      minimumSize: Size(1000, 700),
       center: true,
       backgroundColor: Colors.transparent,
       skipTaskbar: false,
@@ -39,7 +50,7 @@ void main() async {
 
     await windowManager.waitUntilReadyToShow(windowOptions, () async {
       await windowManager.show();
-      // await windowManager.focus();
+      await windowManager.focus();
     });
   }
 

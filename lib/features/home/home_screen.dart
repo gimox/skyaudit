@@ -10,6 +10,8 @@ import 'package:travel_check/features/analysis/analysis_view.dart';
 import 'package:travel_check/features/controls/controls_view.dart';
 import 'package:travel_check/features/dashboard/dashboard_view.dart';
 import 'package:travel_check/features/settings/settings_view.dart';
+import 'package:travel_check/features/log_history/log_history_view.dart';
+import 'package:travel_check/features/analysis/estratti_conto_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,6 +22,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  bool _isSidebarCollapsed = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -42,16 +45,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isWideScreen = MediaQuery.of(context).size.width > 1000;
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final bool isMobile = screenWidth < 600;
+    final bool isMedium = screenWidth >= 600 && screenWidth < 1000;
+
+    // Se lo schermo è medio, forziamo il collapse se non è già stato fatto
+    final bool effectiveCollapsed = isMedium || _isSidebarCollapsed;
 
     return Scaffold(
       key: _scaffoldKey,
       appBar: SkyTopBar(
         title: _getTitleForIndex(_selectedIndex),
-        showMenuIcon: !isWideScreen,
-        onMenuPressed: () => _scaffoldKey.currentState?.openDrawer(),
+        showMenuIcon: true,
+        onMenuPressed: () {
+          if (!isMobile) {
+            setState(() => _isSidebarCollapsed = !_isSidebarCollapsed);
+          } else {
+            _scaffoldKey.currentState?.openDrawer();
+          }
+        },
       ),
-      drawer: !isWideScreen
+      drawer: isMobile
           ? SkySideBar(
               selectedIndex: _selectedIndex,
               onDestinationSelected: (index) {
@@ -62,9 +76,12 @@ class _HomeScreenState extends State<HomeScreen> {
           : null,
       body: Row(
         children: [
-          if (isWideScreen)
-            Container(
-              width: 260,
+          if (!isMobile)
+            AnimatedContainer(
+              duration: const Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+              width: effectiveCollapsed ? 80 : 260,
+              clipBehavior: Clip.hardEdge,
               decoration: BoxDecoration(
                 border: Border(
                   right: BorderSide(color: Colors.grey.withAlpha(25)),
@@ -75,6 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 onDestinationSelected: (index) =>
                     setState(() => _selectedIndex = index),
                 isPermanent: true,
+                isCollapsed: effectiveCollapsed,
               ),
             ),
           Expanded(
@@ -98,12 +116,15 @@ class _HomeScreenState extends State<HomeScreen> {
       return const AnalysisView();
     }
     if (_selectedIndex == 3) {
-      // return const EstrattiContoView();
+      return const EstrattiContoView();
     }
     if (_selectedIndex == 4) {
       return const ControlsView();
     }
     if (_selectedIndex == 5) {
+      return const LogHistoryView();
+    }
+    if (_selectedIndex == 6) {
       return const SettingsView();
     }
 
@@ -150,8 +171,10 @@ class _HomeScreenState extends State<HomeScreen> {
       case 4:
         return Icons.fact_check_outlined;
       case 5:
-        return Icons.settings_outlined;
+        return Icons.history_outlined;
       case 6:
+        return Icons.settings_outlined;
+      case 7:
         return Icons.help_outline;
       default:
         return Icons.home_outlined;
@@ -171,8 +194,10 @@ class _HomeScreenState extends State<HomeScreen> {
       case 4:
         return 'Controlli';
       case 5:
-        return 'Impostazioni';
+        return 'Log History';
       case 6:
+        return 'Impostazioni';
+      case 7:
         return 'Supporto';
       default:
         return 'Home';

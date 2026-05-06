@@ -57,291 +57,366 @@ class DashboardView extends ConsumerWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final bool isMobile = constraints.maxWidth < 900;
-        
+
         return SingleChildScrollView(
           padding: EdgeInsets.all(isMobile ? 16.0 : 32.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'DASHBOARD ANALITICA',
-                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w200,
-                      letterSpacing: 2.0,
+              isMobile
+                  ? Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'DASHBOARD ANALITICA',
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.w200,
+                                letterSpacing: 2.0,
+                              ),
+                        ),
+                        const SizedBox(height: 16),
+                        _buildYearSelector(context, ref, selectedYear),
+                      ],
+                    )
+                  : Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'DASHBOARD ANALITICA',
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                fontWeight: FontWeight.w200,
+                                letterSpacing: 2.0,
+                              ),
+                        ),
+                        _buildYearSelector(context, ref, selectedYear),
+                      ],
                     ),
-              ),
-              _buildYearSelector(context, ref, selectedYear),
-            ],
-          ),
-          const SizedBox(height: 32),
-          
-          // Indicatori
-          if (isMobile)
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _buildStatCard(context, 'TOTALE TRASFERTE', stats.totalTrasferte.toString(), Icons.travel_explore, SkyTheme.timBlue),
-                const SizedBox(height: 16),
-                _buildStatCard(context, 'SINGOLI TICKET', stats.totalTickets.toString(), Icons.confirmation_number_outlined, Colors.orange.shade700),
-                const SizedBox(height: 16),
-                _buildStatCard(context, 'TOTALE IMPORTI', '€ ${_formatAmount(stats.totalAmount)}', Icons.euro_symbol, Colors.green.shade700),
-              ],
-            )
-          else
-            Row(
-              children: [
-                Expanded(child: _buildStatCard(context, 'TOTALE TRASFERTE', stats.totalTrasferte.toString(), Icons.travel_explore, SkyTheme.timBlue)),
-                const SizedBox(width: 24),
-                Expanded(child: _buildStatCard(context, 'SINGOLI TICKET', stats.totalTickets.toString(), Icons.confirmation_number_outlined, Colors.orange.shade700)),
-                const SizedBox(width: 24),
-                Expanded(child: _buildStatCard(context, 'TOTALE IMPORTI', '€ ${_formatAmount(stats.totalAmount)}', Icons.euro_symbol, Colors.green.shade700)),
-              ],
-            ),
-          
-          const SizedBox(height: 48),
-          
-          // Grafico
-          Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withAlpha(5),
-                    blurRadius: 15,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text(
-                  'TRASFERTE PER MESE',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.1,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Andamento mensile delle trasferte uniche per l\'anno $selectedYear',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-                const SizedBox(height: 32),
-                  SizedBox(
-                    height: 300,
-                    child: _TrasferteLineChart(records: filteredRecords),
-                  ),
-                ],
-              ),
-            ),
-          
-          const SizedBox(height: 32),
-          
-          // Secondo Grafico: Importi
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(5),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'IMPORTI TRASFERTE (€)',
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.1,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Somma totale degli importi netti per l\'anno $selectedYear',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
-                ),
-                const SizedBox(height: 32),
-                SizedBox(
-                  height: 300,
-                  child: _ImportiLineChart(records: filteredRecords),
-                ),
-              ],
-            ),
-          ),
-          
-          const SizedBox(height: 32),
-          
-          // Terzi Grafici: Torte per Tipo Dipendente
-          if (isMobile)
-            Column(
-              children: [
-                _buildPieChartCard(
-                  title: 'N. TRASFERTE PER TIPO DIPENDENTE',
-                  subtitle: 'Suddivisione del numero di trasferte per tipologia nell\'anno $selectedYear',
-                  data: tripsByType,
-                  isCurrency: false,
-                ),
-                const SizedBox(height: 32),
-                _buildPieChartCard(
-                  title: 'IMPORTI PER TIPO DIPENDENTE (€)',
-                  subtitle: 'Suddivisione degli importi per tipologia nell\'anno $selectedYear',
-                  data: amountByType,
-                  isCurrency: true,
-                ),
-              ],
-            )
-          else
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: _buildPieChartCard(
-                    title: 'N. TRASFERTE PER TIPO DIPENDENTE',
-                    subtitle: 'Suddivisione del numero di trasferte per tipologia nell\'anno $selectedYear',
-                    data: tripsByType,
-                    isCurrency: false,
-                  ),
-                ),
-                const SizedBox(width: 24),
-                Expanded(
-                  child: _buildPieChartCard(
-                    title: 'IMPORTI PER TIPO DIPENDENTE (€)',
-                    subtitle: 'Suddivisione degli importi per tipologia nell\'anno $selectedYear',
-                    data: amountByType,
-                    isCurrency: true,
-                  ),
-                ),
-              ],
-            ),
-          
-          const SizedBox(height: 32),
-          
-          // Costo Medio per Tipo Dipendente
-          Container(
-            padding: const EdgeInsets.all(24),
-            height: 450,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(5),
-                  blurRadius: 15,
-                  offset: const Offset(0, 5),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
+              const SizedBox(height: 32),
+
+              // Indicatori
+              if (isMobile)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildStatCard(
+                      context,
+                      'TOTALE TRASFERTE',
+                      stats.totalTrasferte.toString(),
+                      Icons.travel_explore,
+                      SkyTheme.timBlue,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildStatCard(
+                      context,
+                      'SINGOLI TICKET',
+                      stats.totalTickets.toString(),
+                      Icons.confirmation_number_outlined,
+                      Colors.orange.shade700,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildStatCard(
+                      context,
+                      'TOTALE IMPORTI',
+                      '€ ${_formatAmount(stats.totalAmount)}',
+                      Icons.euro_symbol,
+                      Colors.green.shade700,
+                    ),
+                  ],
+                )
+              else
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: _buildStatCard(
+                        context,
+                        'TOTALE TRASFERTE',
+                        stats.totalTrasferte.toString(),
+                        Icons.travel_explore,
+                        SkyTheme.timBlue,
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      child: _buildStatCard(
+                        context,
+                        'SINGOLI TICKET',
+                        stats.totalTickets.toString(),
+                        Icons.confirmation_number_outlined,
+                        Colors.orange.shade700,
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      child: _buildStatCard(
+                        context,
+                        'TOTALE IMPORTI',
+                        '€ ${_formatAmount(stats.totalAmount)}',
+                        Icons.euro_symbol,
+                        Colors.green.shade700,
+                      ),
+                    ),
+                  ],
+                ),
+
+              const SizedBox(height: 48),
+
+              // Grafico
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(5),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'COSTO MEDIO PER TIPO DIPENDENTE (€/TRASFERTA)',
+                      'TRASFERTE PER MESE',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
                         letterSpacing: 1.1,
                       ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.green.shade50,
-                        borderRadius: BorderRadius.circular(8),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Andamento mensile delle trasferte uniche per l\'anno $selectedYear',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 32),
+                    SizedBox(
+                      height: 300,
+                      child: _TrasferteLineChart(records: filteredRecords),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Secondo Grafico: Importi
+              Container(
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(5),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'IMPORTI TRASFERTE (€)',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.1,
                       ),
-                      child: Text(
-                        'Media Globale: €${avgCostByTypeData.overallAvg.toStringAsFixed(2)}',
-                        style: TextStyle(
-                          color: Colors.green.shade700,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Somma totale degli importi netti per l\'anno $selectedYear',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 32),
+                    SizedBox(
+                      height: 300,
+                      child: _ImportiLineChart(records: filteredRecords),
+                    ),
+                  ],
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Terzi Grafici: Torte per Tipo Dipendente
+              if (isMobile)
+                Column(
+                  children: [
+                    _buildPieChartCard(
+                      title: 'N. TRASFERTE PER TIPO DIPENDENTE',
+                      subtitle:
+                          'Suddivisione del numero di trasferte per tipologia nell\'anno $selectedYear',
+                      data: tripsByType,
+                      isCurrency: false,
+                    ),
+                    const SizedBox(height: 32),
+                    _buildPieChartCard(
+                      title: 'IMPORTI PER TIPO DIPENDENTE (€)',
+                      subtitle:
+                          'Suddivisione degli importi per tipologia nell\'anno $selectedYear',
+                      data: amountByType,
+                      isCurrency: true,
+                    ),
+                  ],
+                )
+              else
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _buildPieChartCard(
+                        title: 'N. TRASFERTE PER TIPO DIPENDENTE',
+                        subtitle:
+                            'Suddivisione del numero di trasferte per tipologia nell\'anno $selectedYear',
+                        data: tripsByType,
+                        isCurrency: false,
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      child: _buildPieChartCard(
+                        title: 'IMPORTI PER TIPO DIPENDENTE (€)',
+                        subtitle:
+                            'Suddivisione degli importi per tipologia nell\'anno $selectedYear',
+                        data: amountByType,
+                        isCurrency: true,
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'Rapporto tra importo totale e numero di trasferte per ogni tipologia (Anno $selectedYear)',
-                  style: const TextStyle(fontSize: 12, color: Colors.grey),
+
+              const SizedBox(height: 32),
+
+              // Costo Medio per Tipo Dipendente
+              Container(
+                padding: const EdgeInsets.all(24),
+                height: 450,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(5),
+                      blurRadius: 15,
+                      offset: const Offset(0, 5),
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 32),
-                Expanded(
-                  child: _TopCidBarChart(
-                    data: avgCostByTypeData.avgByType,
-                    isCurrency: true,
-                    multiColor: true,
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: const Text(
+                            'COSTO MEDIO PER TIPO DIPENDENTE (€/TRASFERTA)',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 1.1,
+                            ),
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 6,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade50,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            'Media Globale: €${avgCostByTypeData.overallAvg.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              color: Colors.green.shade700,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Rapporto tra importo totale e numero di trasferte per ogni tipologia (Anno $selectedYear)',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 32),
+                    Expanded(
+                      child: _TopCidBarChart(
+                        data: avgCostByTypeData.avgByType,
+                        isCurrency: true,
+                        multiColor: true,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // Grafici Top 20
+              if (isMobile)
+                Column(
+                  children: [
+                    _buildTopCidCard(
+                      title: 'TOP 20 CID (N. VIAGGI)',
+                      subtitle:
+                          'I 20 CID con il maggior numero di trasferte uniche',
+                      data: topCidsByTrips
+                          .map((e) => MapEntry(e.key, e.value.toDouble()))
+                          .toList(),
+                      isCurrency: false,
+                    ),
+                    const SizedBox(height: 32),
+                    _buildTopCidCard(
+                      title: 'TOP 20 CID (IMPORTI €)',
+                      subtitle: 'I 20 CID con la spesa complessiva più elevata',
+                      data: topCidsByAmount,
+                      isCurrency: true,
+                      color: SkyTheme.timRed,
+                    ),
+                  ],
+                )
+              else
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: _buildTopCidCard(
+                        title: 'TOP 20 CID (N. VIAGGI)',
+                        subtitle:
+                            'I 20 CID con il maggior numero di trasferte uniche',
+                        data: topCidsByTrips
+                            .map((e) => MapEntry(e.key, e.value.toDouble()))
+                            .toList(),
+                        isCurrency: false,
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      child: _buildTopCidCard(
+                        title: 'TOP 20 CID (IMPORTI €)',
+                        subtitle:
+                            'I 20 CID con la spesa complessiva più elevata',
+                        data: topCidsByAmount,
+                        isCurrency: true,
+                        color: SkyTheme.timRed,
+                      ),
+                    ),
+                  ],
+                ),
+            ],
           ),
-          
-          const SizedBox(height: 32),
-          
-          // Grafici Top 20
-          if (isMobile)
-            Column(
-              children: [
-                _buildTopCidCard(
-                  title: 'TOP 20 CID (N. VIAGGI)',
-                  subtitle: 'I 20 CID con il maggior numero di trasferte uniche',
-                  data: topCidsByTrips.map((e) => MapEntry(e.key, e.value.toDouble())).toList(),
-                  isCurrency: false,
-                ),
-                const SizedBox(height: 32),
-                _buildTopCidCard(
-                  title: 'TOP 20 CID (IMPORTI €)',
-                  subtitle: 'I 20 CID con la spesa complessiva più elevata',
-                  data: topCidsByAmount,
-                  isCurrency: true,
-                  color: SkyTheme.timRed,
-                ),
-              ],
-            )
-          else
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: _buildTopCidCard(
-                    title: 'TOP 20 CID (N. VIAGGI)',
-                    subtitle: 'I 20 CID con il maggior numero di trasferte uniche',
-                    data: topCidsByTrips.map((e) => MapEntry(e.key, e.value.toDouble())).toList(),
-                    isCurrency: false,
-                  ),
-                ),
-                const SizedBox(width: 24),
-                Expanded(
-                  child: _buildTopCidCard(
-                    title: 'TOP 20 CID (IMPORTI €)',
-                    subtitle: 'I 20 CID con la spesa complessiva più elevata',
-                    data: topCidsByAmount,
-                    isCurrency: true,
-                    color: SkyTheme.timRed,
-                  ),
-                ),
-              ],
-            ),
-        ],
-      ),
-    );
+        );
       },
     );
   }
@@ -363,29 +438,30 @@ class DashboardView extends ConsumerWidget {
   ) {
     return Container(
       padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(5),
-              blurRadius: 15,
-              offset: const Offset(0, 5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(5),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: color.withAlpha(20),
+              borderRadius: BorderRadius.circular(12),
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: color.withAlpha(20),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: color, size: 32),
-            ),
-            const SizedBox(width: 20),
-            Column(
+            child: Icon(icon, color: color, size: 32),
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
@@ -396,6 +472,8 @@ class DashboardView extends ConsumerWidget {
                     color: Colors.grey,
                     letterSpacing: 1.1,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 4),
                 Text(
@@ -405,13 +483,17 @@ class DashboardView extends ConsumerWidget {
                     fontWeight: FontWeight.bold,
                     color: Colors.grey.shade900,
                   ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
-          ],
-        ),
-      );
+          ),
+        ],
+      ),
+    );
   }
+
   Widget _buildPieChartCard({
     required String title,
     required String subtitle,
@@ -481,12 +563,26 @@ class DashboardView extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1)),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.1,
+            ),
+          ),
           const SizedBox(height: 8),
-          Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+          Text(
+            subtitle,
+            style: const TextStyle(fontSize: 12, color: Colors.grey),
+          ),
           const SizedBox(height: 32),
           Expanded(
-            child: _TopCidBarChart(data: data, isCurrency: isCurrency, color: color),
+            child: _TopCidBarChart(
+              data: data,
+              isCurrency: isCurrency,
+              color: color,
+            ),
           ),
         ],
       ),
@@ -555,7 +651,7 @@ class _TrasferteLineChart extends StatelessWidget {
 
     final years = data.keys.toList()..sort();
     final List<LineChartBarData> lineBarsData = [];
-    
+
     // Colori per i diversi anni
     final List<Color> yearColors = [
       SkyTheme.timBlue,
@@ -597,14 +693,16 @@ class _TrasferteLineChart extends StatelessWidget {
         gridData: FlGridData(
           show: true,
           drawVerticalLine: false,
-          getDrawingHorizontalLine: (value) => FlLine(
-            color: Colors.grey.shade200,
-            strokeWidth: 1,
-          ),
+          getDrawingHorizontalLine: (value) =>
+              FlLine(color: Colors.grey.shade200, strokeWidth: 1),
         ),
         titlesData: FlTitlesData(
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
@@ -622,8 +720,18 @@ class _TrasferteLineChart extends StatelessWidget {
               showTitles: true,
               getTitlesWidget: (value, meta) {
                 const months = [
-                  'GEN', 'FEB', 'MAR', 'APR', 'MAG', 'GIU',
-                  'LUG', 'AGO', 'SET', 'OTT', 'NOV', 'DIC'
+                  'GEN',
+                  'FEB',
+                  'MAR',
+                  'APR',
+                  'MAG',
+                  'GIU',
+                  'LUG',
+                  'AGO',
+                  'SET',
+                  'OTT',
+                  'NOV',
+                  'DIC',
                 ];
                 if (value >= 1 && value <= 12) {
                   return Padding(
@@ -648,7 +756,10 @@ class _TrasferteLineChart extends StatelessWidget {
                 final year = years[spot.barIndex];
                 return LineTooltipItem(
                   'Anno $year: ${spot.y.toInt()} trasferte',
-                  const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 );
               }).toList();
             },
@@ -692,24 +803,37 @@ class _ImportiLineChart extends StatelessWidget {
         gridData: FlGridData(
           show: true,
           drawVerticalLine: false,
-          getDrawingHorizontalLine: (value) => FlLine(
-            color: Colors.grey.shade200,
-            strokeWidth: 1,
-          ),
+          getDrawingHorizontalLine: (value) =>
+              FlLine(color: Colors.grey.shade200, strokeWidth: 1),
         ),
         titlesData: FlTitlesData(
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
           leftTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
               reservedSize: 60,
               getTitlesWidget: (value, meta) {
-                if (value == 0) return const Text('0 €', style: TextStyle(fontSize: 10, color: Colors.grey));
-                if (value >= 1000) {
-                  return Text('${(value / 1000).toStringAsFixed(1)}k €', style: const TextStyle(fontSize: 10, color: Colors.grey));
+                if (value == 0) {
+                  return const Text(
+                    '0 €',
+                    style: TextStyle(fontSize: 10, color: Colors.grey),
+                  );
                 }
-                return Text('${value.toInt()} €', style: const TextStyle(fontSize: 10, color: Colors.grey));
+                if (value >= 1000) {
+                  return Text(
+                    '${(value / 1000).toStringAsFixed(1)}k €',
+                    style: const TextStyle(fontSize: 10, color: Colors.grey),
+                  );
+                }
+                return Text(
+                  '${value.toInt()} €',
+                  style: const TextStyle(fontSize: 10, color: Colors.grey),
+                );
               },
             ),
           ),
@@ -717,11 +841,27 @@ class _ImportiLineChart extends StatelessWidget {
             sideTitles: SideTitles(
               showTitles: true,
               getTitlesWidget: (value, meta) {
-                const months = ['GEN', 'FEB', 'MAR', 'APR', 'MAG', 'GIU', 'LUG', 'AGO', 'SET', 'OTT', 'NOV', 'DIC'];
+                const months = [
+                  'GEN',
+                  'FEB',
+                  'MAR',
+                  'APR',
+                  'MAG',
+                  'GIU',
+                  'LUG',
+                  'AGO',
+                  'SET',
+                  'OTT',
+                  'NOV',
+                  'DIC',
+                ];
                 if (value >= 1 && value <= 12) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 8.0),
-                    child: Text(months[value.toInt() - 1], style: const TextStyle(fontSize: 10, color: Colors.grey)),
+                    child: Text(
+                      months[value.toInt() - 1],
+                      style: const TextStyle(fontSize: 10, color: Colors.grey),
+                    ),
                   );
                 }
                 return const Text('');
@@ -750,7 +890,10 @@ class _ImportiLineChart extends StatelessWidget {
               return touchedSpots.map((spot) {
                 return LineTooltipItem(
                   '${spot.y.toStringAsFixed(2)} €',
-                  const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                  const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 );
               }).toList();
             },
@@ -777,7 +920,12 @@ class _TopCidBarChart extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (data.isEmpty) {
-      return const Center(child: Text('Nessun dato disponibile', style: TextStyle(color: Colors.grey)));
+      return const Center(
+        child: Text(
+          'Nessun dato disponibile',
+          style: TextStyle(color: Colors.grey),
+        ),
+      );
     }
 
     return BarChart(
@@ -800,7 +948,10 @@ class _TopCidBarChart extends StatelessWidget {
                       angle: -0.5,
                       child: Text(
                         data[value.toInt()].key,
-                        style: const TextStyle(fontSize: 8, fontWeight: FontWeight.bold),
+                        style: const TextStyle(
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   );
@@ -809,23 +960,29 @@ class _TopCidBarChart extends StatelessWidget {
               },
             ),
           ),
-          leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: const AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
         ),
         barGroups: List.generate(data.length, (index) {
-          final barColor = multiColor 
-            ? [
-                SkyTheme.timBlue,
-                SkyTheme.timRed,
-                Colors.green.shade600,
-                Colors.orange.shade600,
-                Colors.purple.shade600,
-                Colors.teal.shade600,
-                Colors.pink.shade600,
-              ][index % 7]
-            : (color ?? SkyTheme.timBlue);
-            
+          final barColor = multiColor
+              ? [
+                  SkyTheme.timBlue,
+                  SkyTheme.timRed,
+                  Colors.green.shade600,
+                  Colors.orange.shade600,
+                  Colors.purple.shade600,
+                  Colors.teal.shade600,
+                  Colors.pink.shade600,
+                ][index % 7]
+              : (color ?? SkyTheme.timBlue);
+
           return BarChartGroupData(
             x: index,
             barRods: [
@@ -833,7 +990,9 @@ class _TopCidBarChart extends StatelessWidget {
                 toY: data[index].value,
                 color: barColor,
                 width: 12,
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(4),
+                ),
                 backDrawRodData: BackgroundBarChartRodData(
                   show: true,
                   toY: data.first.value * 1.2,
@@ -850,13 +1009,19 @@ class _TopCidBarChart extends StatelessWidget {
               final val = data[groupIndex].value;
               return BarTooltipItem(
                 '$label\n',
-                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
                 children: [
                   TextSpan(
-                    text: isCurrency 
+                    text: isCurrency
                         ? '${val.toStringAsFixed(2)} €'
                         : '${val.toInt()} viaggi',
-                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.normal,
+                    ),
                   ),
                 ],
               );
@@ -900,16 +1065,16 @@ class _TipoDipendentePieChart extends StatelessWidget {
                 final index = entry.key;
                 final mapEntry = entry.value;
                 final total = data.fold<double>(0, (p, c) => p + c.value);
-                final percentage = total > 0 ? (mapEntry.value / total * 100) : 0.0;
-                
+                final percentage = total > 0
+                    ? (mapEntry.value / total * 100)
+                    : 0.0;
+
                 return PieChartSectionData(
                   color: colors[index % colors.length],
                   value: mapEntry.value,
                   title: '',
                   radius: 60,
-                  badgeWidget: _Badge(
-                    '${percentage.toStringAsFixed(1)}%',
-                  ),
+                  badgeWidget: _Badge('${percentage.toStringAsFixed(1)}%'),
                   badgePositionPercentageOffset: 1.2,
                 );
               }).toList(),
@@ -939,10 +1104,13 @@ class _TipoDipendentePieChart extends StatelessWidget {
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
-                        isCurrency 
-                          ? '${mapEntry.key}: €${mapEntry.value.toStringAsFixed(2)}'
-                          : '${mapEntry.key}: ${mapEntry.value.toInt()}',
-                        style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                        isCurrency
+                            ? '${mapEntry.key}: €${mapEntry.value.toStringAsFixed(2)}'
+                            : '${mapEntry.key}: ${mapEntry.value.toInt()}',
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],

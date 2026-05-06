@@ -22,10 +22,7 @@ class SkyTheme {
         elevation: 0,
       ),
       textTheme: const TextTheme(
-        headlineMedium: TextStyle(
-          color: timBlue,
-          fontWeight: FontWeight.bold,
-        ),
+        headlineMedium: TextStyle(color: timBlue, fontWeight: FontWeight.bold),
       ),
     );
   }

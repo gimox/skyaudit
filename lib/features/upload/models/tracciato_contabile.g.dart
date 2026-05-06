@@ -18,11 +18,7 @@ const TracciatoContabileSchema = CollectionSchema(
   name: r'TracciatoContabile',
   id: -6068699107506550185,
   properties: {
-    r'cid': PropertySchema(
-      id: 0,
-      name: r'cid',
-      type: IsarType.string,
-    ),
+    r'cid': PropertySchema(id: 0, name: r'cid', type: IsarType.string),
     r'dataFine': PropertySchema(
       id: 1,
       name: r'dataFine',
@@ -43,11 +39,7 @@ const TracciatoContabileSchema = CollectionSchema(
       name: r'giustificativoSpesa',
       type: IsarType.string,
     ),
-    r'importo': PropertySchema(
-      id: 5,
-      name: r'importo',
-      type: IsarType.double,
-    ),
+    r'importo': PropertySchema(id: 5, name: r'importo', type: IsarType.double),
     r'isNegative': PropertySchema(
       id: 6,
       name: r'isNegative',
@@ -58,56 +50,49 @@ const TracciatoContabileSchema = CollectionSchema(
       name: r'localita',
       type: IsarType.string,
     ),
-    r'numeroBolla': PropertySchema(
+    r'logHistoryId': PropertySchema(
       id: 8,
+      name: r'logHistoryId',
+      type: IsarType.string,
+    ),
+    r'numeroBolla': PropertySchema(
+      id: 9,
       name: r'numeroBolla',
       type: IsarType.string,
     ),
     r'numeroTrasferta': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'numeroTrasferta',
       type: IsarType.string,
     ),
-    r'oraFine': PropertySchema(
-      id: 10,
-      name: r'oraFine',
-      type: IsarType.string,
-    ),
+    r'oraFine': PropertySchema(id: 11, name: r'oraFine', type: IsarType.string),
     r'oraInizio': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'oraInizio',
       type: IsarType.string,
     ),
     r'progressivo': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'progressivo',
       type: IsarType.string,
     ),
     r'recordType': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'recordType',
       type: IsarType.string,
     ),
-    r'societa': PropertySchema(
-      id: 14,
-      name: r'societa',
-      type: IsarType.string,
-    ),
+    r'societa': PropertySchema(id: 15, name: r'societa', type: IsarType.string),
     r'tipoAttivita': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'tipoAttivita',
       type: IsarType.string,
     ),
     r'tipoDipendente': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'tipoDipendente',
       type: IsarType.string,
     ),
-    r'valuta': PropertySchema(
-      id: 17,
-      name: r'valuta',
-      type: IsarType.string,
-    )
+    r'valuta': PropertySchema(id: 18, name: r'valuta', type: IsarType.string),
   },
   estimateSize: _tracciatoContabileEstimateSize,
   serialize: _tracciatoContabileSerialize,
@@ -125,9 +110,9 @@ const TracciatoContabileSchema = CollectionSchema(
           name: r'numeroBolla',
           type: IndexType.hash,
           caseSensitive: true,
-        )
+        ),
       ],
-    )
+    ),
   },
   links: {},
   embeddedSchemas: {},
@@ -149,6 +134,12 @@ int _tracciatoContabileEstimateSize(
   bytesCount += 3 + object.dataSpesa.length * 3;
   bytesCount += 3 + object.giustificativoSpesa.length * 3;
   bytesCount += 3 + object.localita.length * 3;
+  {
+    final value = object.logHistoryId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.numeroBolla.length * 3;
   bytesCount += 3 + object.numeroTrasferta.length * 3;
   bytesCount += 3 + object.oraFine.length * 3;
@@ -176,16 +167,17 @@ void _tracciatoContabileSerialize(
   writer.writeDouble(offsets[5], object.importo);
   writer.writeBool(offsets[6], object.isNegative);
   writer.writeString(offsets[7], object.localita);
-  writer.writeString(offsets[8], object.numeroBolla);
-  writer.writeString(offsets[9], object.numeroTrasferta);
-  writer.writeString(offsets[10], object.oraFine);
-  writer.writeString(offsets[11], object.oraInizio);
-  writer.writeString(offsets[12], object.progressivo);
-  writer.writeString(offsets[13], object.recordType);
-  writer.writeString(offsets[14], object.societa);
-  writer.writeString(offsets[15], object.tipoAttivita);
-  writer.writeString(offsets[16], object.tipoDipendente);
-  writer.writeString(offsets[17], object.valuta);
+  writer.writeString(offsets[8], object.logHistoryId);
+  writer.writeString(offsets[9], object.numeroBolla);
+  writer.writeString(offsets[10], object.numeroTrasferta);
+  writer.writeString(offsets[11], object.oraFine);
+  writer.writeString(offsets[12], object.oraInizio);
+  writer.writeString(offsets[13], object.progressivo);
+  writer.writeString(offsets[14], object.recordType);
+  writer.writeString(offsets[15], object.societa);
+  writer.writeString(offsets[16], object.tipoAttivita);
+  writer.writeString(offsets[17], object.tipoDipendente);
+  writer.writeString(offsets[18], object.valuta);
 }
 
 TracciatoContabile _tracciatoContabileDeserialize(
@@ -203,16 +195,17 @@ TracciatoContabile _tracciatoContabileDeserialize(
     importo: reader.readDouble(offsets[5]),
     isNegative: reader.readBool(offsets[6]),
     localita: reader.readString(offsets[7]),
-    numeroBolla: reader.readString(offsets[8]),
-    numeroTrasferta: reader.readString(offsets[9]),
-    oraFine: reader.readString(offsets[10]),
-    oraInizio: reader.readString(offsets[11]),
-    progressivo: reader.readString(offsets[12]),
-    recordType: reader.readString(offsets[13]),
-    societa: reader.readString(offsets[14]),
-    tipoAttivita: reader.readString(offsets[15]),
-    tipoDipendente: reader.readString(offsets[16]),
-    valuta: reader.readString(offsets[17]),
+    logHistoryId: reader.readStringOrNull(offsets[8]),
+    numeroBolla: reader.readString(offsets[9]),
+    numeroTrasferta: reader.readString(offsets[10]),
+    oraFine: reader.readString(offsets[11]),
+    oraInizio: reader.readString(offsets[12]),
+    progressivo: reader.readString(offsets[13]),
+    recordType: reader.readString(offsets[14]),
+    societa: reader.readString(offsets[15]),
+    tipoAttivita: reader.readString(offsets[16]),
+    tipoDipendente: reader.readString(offsets[17]),
+    valuta: reader.readString(offsets[18]),
   );
   object.id = id;
   return object;
@@ -242,7 +235,7 @@ P _tracciatoContabileDeserializeProp<P>(
     case 7:
       return (reader.readString(offset)) as P;
     case 8:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 9:
       return (reader.readString(offset)) as P;
     case 10:
@@ -261,6 +254,8 @@ P _tracciatoContabileDeserializeProp<P>(
       return (reader.readString(offset)) as P;
     case 17:
       return (reader.readString(offset)) as P;
+    case 18:
+      return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -271,12 +266,16 @@ Id _tracciatoContabileGetId(TracciatoContabile object) {
 }
 
 List<IsarLinkBase<dynamic>> _tracciatoContabileGetLinks(
-    TracciatoContabile object) {
+  TracciatoContabile object,
+) {
   return [];
 }
 
 void _tracciatoContabileAttach(
-    IsarCollection<dynamic> col, Id id, TracciatoContabile object) {
+  IsarCollection<dynamic> col,
+  Id id,
+  TracciatoContabile object,
+) {
   object.id = id;
 }
 
@@ -298,13 +297,15 @@ extension TracciatoContabileByIndex on IsarCollection<TracciatoContabile> {
   }
 
   Future<List<TracciatoContabile?>> getAllByNumeroBolla(
-      List<String> numeroBollaValues) {
+    List<String> numeroBollaValues,
+  ) {
     final values = numeroBollaValues.map((e) => [e]).toList();
     return getAllByIndex(r'numeroBolla', values);
   }
 
   List<TracciatoContabile?> getAllByNumeroBollaSync(
-      List<String> numeroBollaValues) {
+    List<String> numeroBollaValues,
+  ) {
     final values = numeroBollaValues.map((e) => [e]).toList();
     return getAllByIndexSync(r'numeroBolla', values);
   }
@@ -331,8 +332,10 @@ extension TracciatoContabileByIndex on IsarCollection<TracciatoContabile> {
     return putAllByIndex(r'numeroBolla', objects);
   }
 
-  List<Id> putAllByNumeroBollaSync(List<TracciatoContabile> objects,
-      {bool saveLinks = true}) {
+  List<Id> putAllByNumeroBollaSync(
+    List<TracciatoContabile> objects, {
+    bool saveLinks = true,
+  }) {
     return putAllByIndexSync(r'numeroBolla', objects, saveLinks: saveLinks);
   }
 }
@@ -349,17 +352,14 @@ extension TracciatoContabileQueryWhereSort
 extension TracciatoContabileQueryWhere
     on QueryBuilder<TracciatoContabile, TracciatoContabile, QWhereClause> {
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhereClause>
-      idEqualTo(Id id) {
+  idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhereClause>
-      idNotEqualTo(Id id) {
+  idNotEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -382,7 +382,7 @@ extension TracciatoContabileQueryWhere
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhereClause>
-      idGreaterThan(Id id, {bool include = false}) {
+  idGreaterThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -391,7 +391,7 @@ extension TracciatoContabileQueryWhere
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhereClause>
-      idLessThan(Id id, {bool include = false}) {
+  idLessThan(Id id, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -400,63 +400,75 @@ extension TracciatoContabileQueryWhere
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhereClause>
-      idBetween(
+  idBetween(
     Id lowerId,
     Id upperId, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhereClause>
-      numeroBollaEqualTo(String numeroBolla) {
+  numeroBollaEqualTo(String numeroBolla) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'numeroBolla',
-        value: [numeroBolla],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'numeroBolla',
+          value: [numeroBolla],
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhereClause>
-      numeroBollaNotEqualTo(String numeroBolla) {
+  numeroBollaNotEqualTo(String numeroBolla) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroBolla',
-              lower: [],
-              upper: [numeroBolla],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroBolla',
-              lower: [numeroBolla],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroBolla',
+                lower: [],
+                upper: [numeroBolla],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroBolla',
+                lower: [numeroBolla],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroBolla',
-              lower: [numeroBolla],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroBolla',
-              lower: [],
-              upper: [numeroBolla],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroBolla',
+                lower: [numeroBolla],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroBolla',
+                lower: [],
+                upper: [numeroBolla],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
@@ -465,53 +477,52 @@ extension TracciatoContabileQueryWhere
 extension TracciatoContabileQueryFilter
     on QueryBuilder<TracciatoContabile, TracciatoContabile, QFilterCondition> {
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      cidEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  cidEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      cidGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      cidLessThan(
+  cidGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      cidBetween(
+  cidLessThan(String value, {bool include = false, bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  cidBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -519,135 +530,140 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'cid',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'cid',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      cidStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  cidStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      cidEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  cidEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      cidContains(String value, {bool caseSensitive = true}) {
+  cidContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      cidMatches(String pattern, {bool caseSensitive = true}) {
+  cidMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'cid',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'cid',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      cidIsEmpty() {
+  cidIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'cid', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      cidIsNotEmpty() {
+  cidIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'cid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'cid', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataFineEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataFineEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataFine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataFine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataFineGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataFine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataFineLessThan(
+  dataFineGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataFine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataFine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataFineBetween(
+  dataFineLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataFine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  dataFineBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -655,135 +671,140 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataFine',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataFine',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataFineStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataFineStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataFine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataFine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataFineEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataFineEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataFine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataFine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataFineContains(String value, {bool caseSensitive = true}) {
+  dataFineContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataFine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataFine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataFineMatches(String pattern, {bool caseSensitive = true}) {
+  dataFineMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataFine',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataFine',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataFineIsEmpty() {
+  dataFineIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataFine',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataFine', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataFineIsNotEmpty() {
+  dataFineIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataFine',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'dataFine', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataInizioEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataInizioEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataInizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataInizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataInizioGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataInizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataInizioLessThan(
+  dataInizioGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataInizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataInizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataInizioBetween(
+  dataInizioLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataInizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  dataInizioBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -791,135 +812,140 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataInizio',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataInizio',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataInizioStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataInizioStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataInizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataInizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataInizioEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataInizioEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataInizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataInizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataInizioContains(String value, {bool caseSensitive = true}) {
+  dataInizioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataInizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataInizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataInizioMatches(String pattern, {bool caseSensitive = true}) {
+  dataInizioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataInizio',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataInizio',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataInizioIsEmpty() {
+  dataInizioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataInizio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataInizio', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataInizioIsNotEmpty() {
+  dataInizioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataInizio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'dataInizio', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataSpesaEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataSpesaEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataSpesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataSpesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataSpesaGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataSpesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataSpesaLessThan(
+  dataSpesaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataSpesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataSpesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataSpesaBetween(
+  dataSpesaLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataSpesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  dataSpesaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -927,135 +953,140 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataSpesa',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataSpesa',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataSpesaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataSpesaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataSpesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataSpesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataSpesaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataSpesaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataSpesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataSpesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataSpesaContains(String value, {bool caseSensitive = true}) {
+  dataSpesaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataSpesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataSpesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataSpesaMatches(String pattern, {bool caseSensitive = true}) {
+  dataSpesaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataSpesa',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataSpesa',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataSpesaIsEmpty() {
+  dataSpesaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataSpesa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataSpesa', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      dataSpesaIsNotEmpty() {
+  dataSpesaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataSpesa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'dataSpesa', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      giustificativoSpesaEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  giustificativoSpesaEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'giustificativoSpesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'giustificativoSpesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      giustificativoSpesaGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'giustificativoSpesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      giustificativoSpesaLessThan(
+  giustificativoSpesaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'giustificativoSpesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'giustificativoSpesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      giustificativoSpesaBetween(
+  giustificativoSpesaLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'giustificativoSpesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  giustificativoSpesaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1063,191 +1094,198 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'giustificativoSpesa',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'giustificativoSpesa',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      giustificativoSpesaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  giustificativoSpesaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'giustificativoSpesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'giustificativoSpesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      giustificativoSpesaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  giustificativoSpesaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'giustificativoSpesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'giustificativoSpesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      giustificativoSpesaContains(String value, {bool caseSensitive = true}) {
+  giustificativoSpesaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'giustificativoSpesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'giustificativoSpesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      giustificativoSpesaMatches(String pattern, {bool caseSensitive = true}) {
+  giustificativoSpesaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'giustificativoSpesa',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'giustificativoSpesa',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      giustificativoSpesaIsEmpty() {
+  giustificativoSpesaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'giustificativoSpesa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'giustificativoSpesa', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      giustificativoSpesaIsNotEmpty() {
+  giustificativoSpesaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'giustificativoSpesa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'giustificativoSpesa',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      idEqualTo(Id value) {
+  idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      idGreaterThan(
-    Id value, {
-    bool include = false,
-  }) {
+  idGreaterThan(Id value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      idLessThan(
-    Id value, {
-    bool include = false,
-  }) {
+  idLessThan(Id value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      idBetween(
+  idBetween(
     Id lower,
     Id upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      importoEqualTo(
-    double value, {
-    double epsilon = Query.epsilon,
-  }) {
+  importoEqualTo(double value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'importo',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'importo',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      importoGreaterThan(
-    double value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'importo',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      importoLessThan(
+  importoGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'importo',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'importo',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      importoBetween(
+  importoLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'importo',
+          value: value,
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  importoBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -1255,75 +1293,79 @@ extension TracciatoContabileQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'importo',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'importo',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      isNegativeEqualTo(bool value) {
+  isNegativeEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isNegative',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isNegative', value: value),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      localitaEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  localitaEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'localita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'localita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      localitaGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'localita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      localitaLessThan(
+  localitaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'localita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'localita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      localitaBetween(
+  localitaLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'localita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  localitaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1331,135 +1373,299 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'localita',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'localita',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      localitaStartsWith(
-    String value, {
+  localitaStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'localita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  localitaEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'localita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  localitaContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'localita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  localitaMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'localita',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  localitaIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'localita', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  localitaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'localita', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  logHistoryIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'logHistoryId'),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  logHistoryIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'logHistoryId'),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  logHistoryIdEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  logHistoryIdGreaterThan(
+    String? value, {
+    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'localita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      localitaEndsWith(
-    String value, {
+  logHistoryIdLessThan(
+    String? value, {
+    bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'localita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      localitaContains(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'localita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      localitaMatches(String pattern, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'localita',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      localitaIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'localita',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      localitaIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'localita',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroBollaEqualTo(
-    String value, {
+  logHistoryIdBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroBolla',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'logHistoryId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroBollaGreaterThan(
+  logHistoryIdStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  logHistoryIdEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  logHistoryIdContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  logHistoryIdMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'logHistoryId',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  logHistoryIdIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'logHistoryId', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  logHistoryIdIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'logHistoryId', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  numeroBollaEqualTo(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'numeroBolla',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  numeroBollaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'numeroBolla',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'numeroBolla',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroBollaLessThan(
+  numeroBollaLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'numeroBolla',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'numeroBolla',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroBollaBetween(
+  numeroBollaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1467,135 +1673,140 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'numeroBolla',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'numeroBolla',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroBollaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroBollaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'numeroBolla',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'numeroBolla',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroBollaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroBollaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'numeroBolla',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'numeroBolla',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroBollaContains(String value, {bool caseSensitive = true}) {
+  numeroBollaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'numeroBolla',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'numeroBolla',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroBollaMatches(String pattern, {bool caseSensitive = true}) {
+  numeroBollaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'numeroBolla',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'numeroBolla',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroBollaIsEmpty() {
+  numeroBollaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroBolla',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'numeroBolla', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroBollaIsNotEmpty() {
+  numeroBollaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'numeroBolla',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'numeroBolla', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroTrasfertaEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroTrasfertaEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroTrasfertaGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroTrasfertaLessThan(
+  numeroTrasfertaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroTrasfertaBetween(
+  numeroTrasfertaLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  numeroTrasfertaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1603,135 +1814,140 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'numeroTrasferta',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'numeroTrasferta',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroTrasfertaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroTrasfertaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroTrasfertaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroTrasfertaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroTrasfertaContains(String value, {bool caseSensitive = true}) {
+  numeroTrasfertaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroTrasfertaMatches(String pattern, {bool caseSensitive = true}) {
+  numeroTrasfertaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'numeroTrasferta',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'numeroTrasferta',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroTrasfertaIsEmpty() {
+  numeroTrasfertaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroTrasferta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'numeroTrasferta', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      numeroTrasfertaIsNotEmpty() {
+  numeroTrasfertaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'numeroTrasferta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'numeroTrasferta', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraFineEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  oraFineEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'oraFine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'oraFine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraFineGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'oraFine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraFineLessThan(
+  oraFineGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'oraFine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'oraFine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraFineBetween(
+  oraFineLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'oraFine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  oraFineBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1739,135 +1955,140 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'oraFine',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'oraFine',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraFineStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  oraFineStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'oraFine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'oraFine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraFineEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  oraFineEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'oraFine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'oraFine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraFineContains(String value, {bool caseSensitive = true}) {
+  oraFineContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'oraFine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'oraFine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraFineMatches(String pattern, {bool caseSensitive = true}) {
+  oraFineMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'oraFine',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'oraFine',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraFineIsEmpty() {
+  oraFineIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'oraFine',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'oraFine', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraFineIsNotEmpty() {
+  oraFineIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'oraFine',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'oraFine', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraInizioEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  oraInizioEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'oraInizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'oraInizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraInizioGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'oraInizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraInizioLessThan(
+  oraInizioGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'oraInizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'oraInizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraInizioBetween(
+  oraInizioLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'oraInizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  oraInizioBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1875,135 +2096,140 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'oraInizio',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'oraInizio',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraInizioStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  oraInizioStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'oraInizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'oraInizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraInizioEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  oraInizioEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'oraInizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'oraInizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraInizioContains(String value, {bool caseSensitive = true}) {
+  oraInizioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'oraInizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'oraInizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraInizioMatches(String pattern, {bool caseSensitive = true}) {
+  oraInizioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'oraInizio',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'oraInizio',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraInizioIsEmpty() {
+  oraInizioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'oraInizio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'oraInizio', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      oraInizioIsNotEmpty() {
+  oraInizioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'oraInizio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'oraInizio', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      progressivoEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  progressivoEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'progressivo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'progressivo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      progressivoGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'progressivo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      progressivoLessThan(
+  progressivoGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'progressivo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'progressivo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      progressivoBetween(
+  progressivoLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'progressivo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  progressivoBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2011,135 +2237,140 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'progressivo',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'progressivo',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      progressivoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  progressivoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'progressivo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'progressivo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      progressivoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  progressivoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'progressivo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'progressivo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      progressivoContains(String value, {bool caseSensitive = true}) {
+  progressivoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'progressivo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'progressivo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      progressivoMatches(String pattern, {bool caseSensitive = true}) {
+  progressivoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'progressivo',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'progressivo',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      progressivoIsEmpty() {
+  progressivoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'progressivo',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'progressivo', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      progressivoIsNotEmpty() {
+  progressivoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'progressivo',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'progressivo', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      recordTypeEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  recordTypeEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'recordType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'recordType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      recordTypeGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'recordType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      recordTypeLessThan(
+  recordTypeGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'recordType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'recordType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      recordTypeBetween(
+  recordTypeLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'recordType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  recordTypeBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2147,135 +2378,140 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'recordType',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'recordType',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      recordTypeStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  recordTypeStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'recordType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'recordType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      recordTypeEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  recordTypeEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'recordType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'recordType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      recordTypeContains(String value, {bool caseSensitive = true}) {
+  recordTypeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'recordType',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'recordType',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      recordTypeMatches(String pattern, {bool caseSensitive = true}) {
+  recordTypeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'recordType',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'recordType',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      recordTypeIsEmpty() {
+  recordTypeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'recordType',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'recordType', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      recordTypeIsNotEmpty() {
+  recordTypeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'recordType',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'recordType', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      societaEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  societaEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'societa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'societa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      societaGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'societa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      societaLessThan(
+  societaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'societa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'societa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      societaBetween(
+  societaLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'societa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  societaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2283,135 +2519,140 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'societa',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'societa',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      societaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  societaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'societa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'societa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      societaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  societaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'societa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'societa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      societaContains(String value, {bool caseSensitive = true}) {
+  societaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'societa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'societa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      societaMatches(String pattern, {bool caseSensitive = true}) {
+  societaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'societa',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'societa',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      societaIsEmpty() {
+  societaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'societa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'societa', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      societaIsNotEmpty() {
+  societaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'societa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'societa', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoAttivitaEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoAttivitaEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoAttivita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'tipoAttivita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoAttivitaGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'tipoAttivita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoAttivitaLessThan(
+  tipoAttivitaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'tipoAttivita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tipoAttivita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoAttivitaBetween(
+  tipoAttivitaLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tipoAttivita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  tipoAttivitaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2419,135 +2660,140 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'tipoAttivita',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tipoAttivita',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoAttivitaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoAttivitaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'tipoAttivita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'tipoAttivita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoAttivitaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoAttivitaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'tipoAttivita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'tipoAttivita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoAttivitaContains(String value, {bool caseSensitive = true}) {
+  tipoAttivitaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'tipoAttivita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'tipoAttivita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoAttivitaMatches(String pattern, {bool caseSensitive = true}) {
+  tipoAttivitaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'tipoAttivita',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'tipoAttivita',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoAttivitaIsEmpty() {
+  tipoAttivitaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoAttivita',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'tipoAttivita', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoAttivitaIsNotEmpty() {
+  tipoAttivitaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'tipoAttivita',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'tipoAttivita', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoDipendenteEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoDipendenteEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'tipoDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoDipendenteGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'tipoDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoDipendenteLessThan(
+  tipoDipendenteGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'tipoDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tipoDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoDipendenteBetween(
+  tipoDipendenteLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tipoDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  tipoDipendenteBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2555,135 +2801,140 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'tipoDipendente',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tipoDipendente',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoDipendenteStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoDipendenteStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'tipoDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'tipoDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoDipendenteEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoDipendenteEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'tipoDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'tipoDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoDipendenteContains(String value, {bool caseSensitive = true}) {
+  tipoDipendenteContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'tipoDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'tipoDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoDipendenteMatches(String pattern, {bool caseSensitive = true}) {
+  tipoDipendenteMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'tipoDipendente',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'tipoDipendente',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoDipendenteIsEmpty() {
+  tipoDipendenteIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoDipendente',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'tipoDipendente', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      tipoDipendenteIsNotEmpty() {
+  tipoDipendenteIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'tipoDipendente',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'tipoDipendente', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      valutaEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  valutaEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      valutaGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      valutaLessThan(
+  valutaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      valutaBetween(
+  valutaLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+  valutaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2691,84 +2942,86 @@ extension TracciatoContabileQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'valuta',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'valuta',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      valutaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  valutaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      valutaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  valutaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      valutaContains(String value, {bool caseSensitive = true}) {
+  valutaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      valutaMatches(String pattern, {bool caseSensitive = true}) {
+  valutaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'valuta',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'valuta',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      valutaIsEmpty() {
+  valutaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'valuta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'valuta', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
-      valutaIsNotEmpty() {
+  valutaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'valuta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'valuta', value: ''),
+      );
     });
   }
 }
@@ -2782,252 +3035,266 @@ extension TracciatoContabileQueryLinks
 extension TracciatoContabileQuerySortBy
     on QueryBuilder<TracciatoContabile, TracciatoContabile, QSortBy> {
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByCid() {
+  sortByCid() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cid', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByCidDesc() {
+  sortByCidDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cid', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByDataFine() {
+  sortByDataFine() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataFine', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByDataFineDesc() {
+  sortByDataFineDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataFine', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByDataInizio() {
+  sortByDataInizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataInizio', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByDataInizioDesc() {
+  sortByDataInizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataInizio', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByDataSpesa() {
+  sortByDataSpesa() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataSpesa', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByDataSpesaDesc() {
+  sortByDataSpesaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataSpesa', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByGiustificativoSpesa() {
+  sortByGiustificativoSpesa() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'giustificativoSpesa', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByGiustificativoSpesaDesc() {
+  sortByGiustificativoSpesaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'giustificativoSpesa', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByImporto() {
+  sortByImporto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importo', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByImportoDesc() {
+  sortByImportoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importo', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByIsNegative() {
+  sortByIsNegative() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isNegative', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByIsNegativeDesc() {
+  sortByIsNegativeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isNegative', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByLocalita() {
+  sortByLocalita() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localita', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByLocalitaDesc() {
+  sortByLocalitaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localita', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByNumeroBolla() {
+  sortByLogHistoryId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'logHistoryId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
+  sortByLogHistoryIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'logHistoryId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
+  sortByNumeroBolla() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroBolla', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByNumeroBollaDesc() {
+  sortByNumeroBollaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroBolla', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByNumeroTrasferta() {
+  sortByNumeroTrasferta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByNumeroTrasfertaDesc() {
+  sortByNumeroTrasfertaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByOraFine() {
+  sortByOraFine() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'oraFine', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByOraFineDesc() {
+  sortByOraFineDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'oraFine', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByOraInizio() {
+  sortByOraInizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'oraInizio', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByOraInizioDesc() {
+  sortByOraInizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'oraInizio', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByProgressivo() {
+  sortByProgressivo() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'progressivo', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByProgressivoDesc() {
+  sortByProgressivoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'progressivo', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByRecordType() {
+  sortByRecordType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'recordType', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByRecordTypeDesc() {
+  sortByRecordTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'recordType', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortBySocieta() {
+  sortBySocieta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'societa', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortBySocietaDesc() {
+  sortBySocietaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'societa', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByTipoAttivita() {
+  sortByTipoAttivita() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoAttivita', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByTipoAttivitaDesc() {
+  sortByTipoAttivitaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoAttivita', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByTipoDipendente() {
+  sortByTipoDipendente() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoDipendente', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByTipoDipendenteDesc() {
+  sortByTipoDipendenteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoDipendente', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByValuta() {
+  sortByValuta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'valuta', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      sortByValutaDesc() {
+  sortByValutaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'valuta', Sort.desc);
     });
@@ -3037,266 +3304,280 @@ extension TracciatoContabileQuerySortBy
 extension TracciatoContabileQuerySortThenBy
     on QueryBuilder<TracciatoContabile, TracciatoContabile, QSortThenBy> {
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByCid() {
+  thenByCid() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cid', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByCidDesc() {
+  thenByCidDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cid', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByDataFine() {
+  thenByDataFine() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataFine', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByDataFineDesc() {
+  thenByDataFineDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataFine', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByDataInizio() {
+  thenByDataInizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataInizio', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByDataInizioDesc() {
+  thenByDataInizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataInizio', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByDataSpesa() {
+  thenByDataSpesa() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataSpesa', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByDataSpesaDesc() {
+  thenByDataSpesaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataSpesa', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByGiustificativoSpesa() {
+  thenByGiustificativoSpesa() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'giustificativoSpesa', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByGiustificativoSpesaDesc() {
+  thenByGiustificativoSpesaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'giustificativoSpesa', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenById() {
+  thenById() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByIdDesc() {
+  thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByImporto() {
+  thenByImporto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importo', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByImportoDesc() {
+  thenByImportoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importo', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByIsNegative() {
+  thenByIsNegative() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isNegative', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByIsNegativeDesc() {
+  thenByIsNegativeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'isNegative', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByLocalita() {
+  thenByLocalita() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localita', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByLocalitaDesc() {
+  thenByLocalitaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localita', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByNumeroBolla() {
+  thenByLogHistoryId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'logHistoryId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
+  thenByLogHistoryIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'logHistoryId', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
+  thenByNumeroBolla() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroBolla', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByNumeroBollaDesc() {
+  thenByNumeroBollaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroBolla', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByNumeroTrasferta() {
+  thenByNumeroTrasferta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByNumeroTrasfertaDesc() {
+  thenByNumeroTrasfertaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByOraFine() {
+  thenByOraFine() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'oraFine', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByOraFineDesc() {
+  thenByOraFineDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'oraFine', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByOraInizio() {
+  thenByOraInizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'oraInizio', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByOraInizioDesc() {
+  thenByOraInizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'oraInizio', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByProgressivo() {
+  thenByProgressivo() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'progressivo', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByProgressivoDesc() {
+  thenByProgressivoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'progressivo', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByRecordType() {
+  thenByRecordType() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'recordType', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByRecordTypeDesc() {
+  thenByRecordTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'recordType', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenBySocieta() {
+  thenBySocieta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'societa', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenBySocietaDesc() {
+  thenBySocietaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'societa', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByTipoAttivita() {
+  thenByTipoAttivita() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoAttivita', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByTipoAttivitaDesc() {
+  thenByTipoAttivitaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoAttivita', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByTipoDipendente() {
+  thenByTipoDipendente() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoDipendente', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByTipoDipendenteDesc() {
+  thenByTipoDipendenteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoDipendente', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByValuta() {
+  thenByValuta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'valuta', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
-      thenByValutaDesc() {
+  thenByValutaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'valuta', Sort.desc);
     });
@@ -3305,130 +3586,143 @@ extension TracciatoContabileQuerySortThenBy
 
 extension TracciatoContabileQueryWhereDistinct
     on QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct> {
-  QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct> distinctByCid(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
+  distinctByCid({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'cid', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByDataFine({bool caseSensitive = true}) {
+  distinctByDataFine({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dataFine', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByDataInizio({bool caseSensitive = true}) {
+  distinctByDataInizio({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dataInizio', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByDataSpesa({bool caseSensitive = true}) {
+  distinctByDataSpesa({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dataSpesa', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByGiustificativoSpesa({bool caseSensitive = true}) {
+  distinctByGiustificativoSpesa({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'giustificativoSpesa',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'giustificativoSpesa',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByImporto() {
+  distinctByImporto() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'importo');
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByIsNegative() {
+  distinctByIsNegative() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'isNegative');
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByLocalita({bool caseSensitive = true}) {
+  distinctByLocalita({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'localita', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByNumeroBolla({bool caseSensitive = true}) {
+  distinctByLogHistoryId({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'logHistoryId', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
+  distinctByNumeroBolla({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'numeroBolla', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByNumeroTrasferta({bool caseSensitive = true}) {
+  distinctByNumeroTrasferta({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'numeroTrasferta',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'numeroTrasferta',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByOraFine({bool caseSensitive = true}) {
+  distinctByOraFine({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'oraFine', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByOraInizio({bool caseSensitive = true}) {
+  distinctByOraInizio({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'oraInizio', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByProgressivo({bool caseSensitive = true}) {
+  distinctByProgressivo({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'progressivo', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByRecordType({bool caseSensitive = true}) {
+  distinctByRecordType({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'recordType', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctBySocieta({bool caseSensitive = true}) {
+  distinctBySocieta({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'societa', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByTipoAttivita({bool caseSensitive = true}) {
+  distinctByTipoAttivita({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'tipoAttivita', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByTipoDipendente({bool caseSensitive = true}) {
+  distinctByTipoDipendente({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'tipoDipendente',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'tipoDipendente',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
-      distinctByValuta({bool caseSensitive = true}) {
+  distinctByValuta({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'valuta', caseSensitive: caseSensitive);
     });
@@ -3450,28 +3744,28 @@ extension TracciatoContabileQueryProperty
   }
 
   QueryBuilder<TracciatoContabile, String, QQueryOperations>
-      dataFineProperty() {
+  dataFineProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dataFine');
     });
   }
 
   QueryBuilder<TracciatoContabile, String, QQueryOperations>
-      dataInizioProperty() {
+  dataInizioProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dataInizio');
     });
   }
 
   QueryBuilder<TracciatoContabile, String, QQueryOperations>
-      dataSpesaProperty() {
+  dataSpesaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dataSpesa');
     });
   }
 
   QueryBuilder<TracciatoContabile, String, QQueryOperations>
-      giustificativoSpesaProperty() {
+  giustificativoSpesaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'giustificativoSpesa');
     });
@@ -3484,28 +3778,35 @@ extension TracciatoContabileQueryProperty
   }
 
   QueryBuilder<TracciatoContabile, bool, QQueryOperations>
-      isNegativeProperty() {
+  isNegativeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'isNegative');
     });
   }
 
   QueryBuilder<TracciatoContabile, String, QQueryOperations>
-      localitaProperty() {
+  localitaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'localita');
     });
   }
 
+  QueryBuilder<TracciatoContabile, String?, QQueryOperations>
+  logHistoryIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'logHistoryId');
+    });
+  }
+
   QueryBuilder<TracciatoContabile, String, QQueryOperations>
-      numeroBollaProperty() {
+  numeroBollaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'numeroBolla');
     });
   }
 
   QueryBuilder<TracciatoContabile, String, QQueryOperations>
-      numeroTrasfertaProperty() {
+  numeroTrasfertaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'numeroTrasferta');
     });
@@ -3518,21 +3819,21 @@ extension TracciatoContabileQueryProperty
   }
 
   QueryBuilder<TracciatoContabile, String, QQueryOperations>
-      oraInizioProperty() {
+  oraInizioProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'oraInizio');
     });
   }
 
   QueryBuilder<TracciatoContabile, String, QQueryOperations>
-      progressivoProperty() {
+  progressivoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'progressivo');
     });
   }
 
   QueryBuilder<TracciatoContabile, String, QQueryOperations>
-      recordTypeProperty() {
+  recordTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'recordType');
     });
@@ -3545,14 +3846,14 @@ extension TracciatoContabileQueryProperty
   }
 
   QueryBuilder<TracciatoContabile, String, QQueryOperations>
-      tipoAttivitaProperty() {
+  tipoAttivitaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'tipoAttivita');
     });
   }
 
   QueryBuilder<TracciatoContabile, String, QQueryOperations>
-      tipoDipendenteProperty() {
+  tipoDipendenteProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'tipoDipendente');
     });

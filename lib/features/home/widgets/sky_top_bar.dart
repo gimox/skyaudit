@@ -16,10 +16,7 @@ class SkyTopBar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     return AppBar(
       leading: showMenuIcon
-          ? IconButton(
-              icon: const Icon(Icons.menu),
-              onPressed: onMenuPressed,
-            )
+          ? IconButton(icon: const Icon(Icons.menu), onPressed: onMenuPressed)
           : null,
       title: Row(
         mainAxisSize: MainAxisSize.min,
