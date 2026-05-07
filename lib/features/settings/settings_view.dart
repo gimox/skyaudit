@@ -8,7 +8,6 @@ import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
 import 'package:travel_check/features/upload/models/log_history.dart';
 import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
 import 'package:travel_check/features/settings/models/dictionary.dart';
-import 'package:travel_check/features/settings/providers/app_settings_provider.dart';
 import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
 import 'package:travel_check/features/upload/models/estratto_conto.dart';
 
@@ -263,61 +262,6 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
 
           const SizedBox(height: 48),
 
-          // Sezione Logica di Importazione
-          _buildSectionHeader(
-            context,
-            Icons.settings_suggest_outlined,
-            'Logica di Importazione',
-            'Configura il comportamento del sistema durante il caricamento dei file.',
-          ),
-          const SizedBox(height: 24),
-
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.shade200),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(5),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Consumer(
-              builder: (context, ref, child) {
-                final settings = ref.watch(appSettingsProvider);
-                return SwitchListTile(
-                  title: const Text(
-                    'Scarta con numero di bolla identico',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: const Text(
-                    'Se attivo, i record con numero bolla già presente nel database verranno ignorati. Se disattivo, verranno aggiornati con i nuovi dati.',
-                  ),
-                  value: settings.discardIdenticalBolla,
-                  onChanged: (value) {
-                    ref
-                        .read(appSettingsProvider.notifier)
-                        .updateDiscardIdenticalBolla(value);
-                  },
-                  secondary: const CircleAvatar(
-                    backgroundColor: Color(0xFFF0F4FF),
-                    child: Icon(
-                      Icons.copy_all_outlined,
-                      color: SkyTheme.timBlue,
-                    ),
-                  ),
-                  activeThumbColor: SkyTheme.timBlue,
-                  activeTrackColor: SkyTheme.timBlue.withValues(alpha: 0.3),
-                );
-              },
-            ),
-          ),
-
-          const SizedBox(height: 48),
 
           // Sezione Database
           _buildSectionHeader(

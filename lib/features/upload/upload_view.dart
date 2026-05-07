@@ -7,6 +7,8 @@ import 'package:travel_check/core/theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
+import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
+import 'package:travel_check/features/upload/models/estratto_conto.dart';
 
 class UploadView extends ConsumerStatefulWidget {
   const UploadView({super.key});
@@ -20,6 +22,11 @@ class _UploadViewState extends ConsumerState<UploadView> {
   XFile? _selectedEstrattoFile;
   bool _isDraggingContabile = false;
   bool _isDraggingEstratto = false;
+  bool _isProcessingContabile = false;
+  bool _isProcessingEstratto = false;
+
+  Map<String, dynamic>? _lastContabileResult;
+  Map<String, dynamic>? _lastEstrattoResult;
 
   Future<void> _pickFile(bool isContabile) async {
     FilePickerResult? result = await FilePicker.pickFiles(
@@ -31,8 +38,10 @@ class _UploadViewState extends ConsumerState<UploadView> {
       setState(() {
         if (isContabile) {
           _selectedContabileFile = XFile(result.files.single.path!);
+          _lastContabileResult = null;
         } else {
           _selectedEstrattoFile = XFile(result.files.single.path!);
+          _lastEstrattoResult = null;
         }
       });
     }
@@ -42,8 +51,10 @@ class _UploadViewState extends ConsumerState<UploadView> {
     setState(() {
       if (isContabile) {
         _selectedContabileFile = null;
+        _lastContabileResult = null;
       } else {
         _selectedEstrattoFile = null;
+        _lastEstrattoResult = null;
       }
     });
   }
@@ -51,15 +62,10 @@ class _UploadViewState extends ConsumerState<UploadView> {
   Future<void> _processContabileData() async {
     if (_selectedContabileFile == null) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'File in elaborazione: ${_selectedContabileFile!.name}...',
-        ),
-        backgroundColor: SkyTheme.timBlue,
-        duration: const Duration(seconds: 1),
-      ),
-    );
+    setState(() {
+      _isProcessingContabile = true;
+      _lastContabileResult = null;
+    });
 
     try {
       final result = await ref
@@ -67,6 +73,10 @@ class _UploadViewState extends ConsumerState<UploadView> {
           .loadFromFile(_selectedContabileFile!);
 
       if (mounted) {
+        setState(() {
+          _lastContabileResult = result;
+        });
+
         final inserted = result['inserted'] ?? 0;
         final updated = result['updated'] ?? 0;
         final duplicates = result['duplicates'] ?? 0;
@@ -84,7 +94,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
             duration: const Duration(seconds: 5),
           ),
         );
-        _removeFile(true);
+        _selectedContabileFile = null;
       }
     } catch (e) {
       if (mounted) {
@@ -95,21 +105,18 @@ class _UploadViewState extends ConsumerState<UploadView> {
           ),
         );
       }
+    } finally {
+      if (mounted) setState(() => _isProcessingContabile = false);
     }
   }
 
   Future<void> _processEstrattoData() async {
     if (_selectedEstrattoFile == null) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'File in elaborazione: ${_selectedEstrattoFile!.name}...',
-        ),
-        backgroundColor: SkyTheme.timBlue,
-        duration: const Duration(seconds: 1),
-      ),
-    );
+    setState(() {
+      _isProcessingEstratto = true;
+      _lastEstrattoResult = null;
+    });
 
     try {
       final result = await ref
@@ -117,18 +124,28 @@ class _UploadViewState extends ConsumerState<UploadView> {
           .loadFromFile(_selectedEstrattoFile!);
 
       if (mounted) {
+        setState(() {
+          _lastEstrattoResult = result;
+        });
+
         final inserted = result['inserted'] ?? 0;
+        final updated = result['updated'] ?? 0;
+        final duplicates = result['duplicates'] ?? 0;
+        final total = result['total'] ?? (inserted + updated + duplicates);
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              'Elaborazione completata: $inserted record inseriti nell\'Estratto Conto.',
+              'Elaborazione completata: $total record totali.\n'
+              '• $inserted nuovi record inseriti\n'
+              '• $updated record esistenti aggiornati'
+              '${duplicates > 0 ? "\n• $duplicates duplicati saltati" : ""}',
             ),
             backgroundColor: Colors.green.shade700,
             duration: const Duration(seconds: 5),
           ),
         );
-        _removeFile(false);
+        _selectedEstrattoFile = null;
       }
     } catch (e) {
       if (mounted) {
@@ -141,6 +158,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
           ),
         );
       }
+    } finally {
+      if (mounted) setState(() => _isProcessingEstratto = false);
     }
   }
 
@@ -186,12 +205,120 @@ class _UploadViewState extends ConsumerState<UploadView> {
                   }
                 },
               ),
+              if (_lastContabileResult != null || _lastEstrattoResult != null) ...[
+                const SizedBox(height: 48),
+                const Divider(),
+                const SizedBox(height: 24),
+                Text(
+                  'DETTAGLI ULTIMA ELABORAZIONE',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                    color: Colors.grey.shade700,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 24),
+                if (_lastContabileResult != null) 
+                  _buildDetailedResultCard(
+                    title: 'RISULTATI FLUSSO CONTABILE',
+                    result: _lastContabileResult!,
+                    isContabile: true,
+                  ),
+                if (_lastEstrattoResult != null) ...[
+                  const SizedBox(height: 24),
+                  _buildDetailedResultCard(
+                    title: 'RISULTATI ESTRATTO CONTO',
+                    result: _lastEstrattoResult!,
+                    isContabile: false,
+                  ),
+                ],
+              ],
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget _buildDetailedResultCard({
+    required String title,
+    required Map<String, dynamic> result,
+    required bool isContabile,
+  }) {
+    final inserted = result['inserted'] as int? ?? 0;
+    final total = result['total'] as int? ?? 0;
+
+    return Card(
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: Colors.grey.shade200),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(
+              title,
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: SkyTheme.timBlue,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                _buildStatItem('Record Inseriti', inserted, Colors.green),
+                _buildStatItem('Totale File', total, Colors.grey.shade700),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                'Nota: Tutti i record presenti nel file sono stati importati come nuove voci nel database.',
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildStatItem(String label, int value, Color color) {
+    return Expanded(
+      child: Column(
+        children: [
+          Text(
+            value.toString(),
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          Text(
+            label.toUpperCase(),
+            style: TextStyle(
+              fontSize: 10,
+              fontWeight: FontWeight.w500,
+              color: Colors.grey.shade600,
+              letterSpacing: 1.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
 
   Widget _buildContabileSection() {
     return Column(
@@ -210,10 +337,11 @@ class _UploadViewState extends ConsumerState<UploadView> {
         ),
         const SizedBox(height: 24),
         _buildActionButton(
-          onPressed: _selectedContabileFile != null
+          onPressed: (_selectedContabileFile != null && !_isProcessingContabile)
               ? _processContabileData
               : null,
           label: 'ELABORA FLUSSO CONTABILE',
+          isLoading: _isProcessingContabile,
         ),
       ],
     );
@@ -236,10 +364,11 @@ class _UploadViewState extends ConsumerState<UploadView> {
         ),
         const SizedBox(height: 24),
         _buildActionButton(
-          onPressed: _selectedEstrattoFile != null
+          onPressed: (_selectedEstrattoFile != null && !_isProcessingEstratto)
               ? _processEstrattoData
               : null,
           label: 'ELABORA ESTRATTI CONTO',
+          isLoading: _isProcessingEstratto,
         ),
       ],
     );
@@ -342,12 +471,14 @@ class _UploadViewState extends ConsumerState<UploadView> {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: () => _pickFile(isContabile),
+            onTap: (isContabile ? _isProcessingContabile : _isProcessingEstratto) 
+                ? null 
+                : () => _pickFile(isContabile),
             borderRadius: BorderRadius.circular(16),
             child: Center(
               child: selectedFile == null
                   ? _buildEmptyState()
-                  : _buildSelectedFileState(selectedFile, isContabile),
+                  : _buildSelectedFileState(selectedFile, isContabile, (isContabile ? _isProcessingContabile : _isProcessingEstratto)),
             ),
           ),
         ),
@@ -358,13 +489,23 @@ class _UploadViewState extends ConsumerState<UploadView> {
   Widget _buildActionButton({
     required VoidCallback? onPressed,
     required String label,
+    bool isLoading = false,
   }) {
     return ElevatedButton.icon(
       onPressed: onPressed,
-      icon: const Icon(Icons.upload_file),
+      icon: isLoading 
+          ? const SizedBox(
+              width: 20, 
+              height: 20, 
+              child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2)
+            ) 
+          : const Icon(Icons.upload_file),
       label: Padding(
         padding: const EdgeInsets.symmetric(vertical: 14.0),
-        child: Text(label, style: const TextStyle(letterSpacing: 1.1)),
+        child: Text(
+          isLoading ? 'ELABORAZIONE IN CORSO...' : label, 
+          style: const TextStyle(letterSpacing: 1.1)
+        ),
       ),
       style: ElevatedButton.styleFrom(
         backgroundColor: SkyTheme.timBlue,
@@ -399,17 +540,17 @@ class _UploadViewState extends ConsumerState<UploadView> {
     );
   }
 
-  Widget _buildSelectedFileState(XFile file, bool isContabile) {
+  Widget _buildSelectedFileState(XFile file, bool isContabile, bool isLoading) {
     return Stack(
       children: [
         Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(
-                Icons.insert_drive_file_outlined,
+              Icon(
+                isLoading ? Icons.hourglass_empty : Icons.insert_drive_file_outlined,
                 size: 48,
-                color: SkyTheme.timBlue,
+                color: isLoading ? Colors.orange : SkyTheme.timBlue,
               ),
               const SizedBox(height: 12),
               Text(
@@ -422,25 +563,26 @@ class _UploadViewState extends ConsumerState<UploadView> {
               ),
               const SizedBox(height: 4),
               Text(
-                'Pronto per l\'elaborazione',
+                isLoading ? 'Elaborazione in corso...' : 'Pronto per l\'elaborazione',
                 style: TextStyle(
                   fontSize: 12,
-                  color: Colors.green.shade600,
+                  color: isLoading ? Colors.orange : Colors.green.shade600,
                   fontWeight: FontWeight.w500,
                 ),
               ),
             ],
           ),
         ),
-        Positioned(
-          top: 8,
-          right: 8,
-          child: IconButton(
-            icon: const Icon(Icons.close, size: 20, color: Colors.grey),
-            onPressed: () => _removeFile(isContabile),
-            tooltip: 'Rimuovi file',
+        if (!isLoading)
+          Positioned(
+            top: 8,
+            right: 8,
+            child: IconButton(
+              icon: const Icon(Icons.close, size: 20, color: Colors.grey),
+              onPressed: () => _removeFile(isContabile),
+              tooltip: 'Rimuovi file',
+            ),
           ),
-        ),
       ],
     );
   }

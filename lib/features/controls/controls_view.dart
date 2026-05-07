@@ -1,5 +1,8 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:excel/excel.dart' as excel_pkg;
+import 'package:file_picker/file_picker.dart';
 import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/models/estratto_conto.dart';
@@ -8,7 +11,7 @@ import 'package:travel_check/features/settings/providers/dictionary_provider.dar
 import 'package:travel_check/core/theme/app_theme.dart';
 
 final controlsMonthProvider = StateProvider<Set<String>>((ref) => {});
-final controlsYearProvider = StateProvider<String?>((ref) => null);
+final controlsYearProvider = StateProvider<String?>((ref) => DateTime.now().year.toString());
 final controlsSearchProvider = StateProvider<String>((ref) => '');
 final controlsSocietaProvider = StateProvider<Set<String>>((ref) => {});
 final controlsTipoDipendenteProvider = StateProvider<Set<String>>((ref) => {});
@@ -18,6 +21,8 @@ final controlsPageProvider = StateProvider<int>((ref) => 0);
 final controlsExpandAllProvider = StateProvider<bool>((ref) => true);
 final controlsShowOnlyOrphansProvider = StateProvider<bool>((ref) => false);
 final controlsMatchStatusProvider = StateProvider<String?>((ref) => null); // null, 'match', 'diff'
+final controlsMinDiffProvider = StateProvider<double?>((ref) => null);
+final controlsMaxDiffProvider = StateProvider<double?>((ref) => null);
 
 class ControlsView extends ConsumerStatefulWidget {
   const ControlsView({super.key});
@@ -29,12 +34,16 @@ class ControlsView extends ConsumerStatefulWidget {
 class _ControlsViewState extends ConsumerState<ControlsView> {
   final _searchController = TextEditingController();
   final _cidController = TextEditingController();
+  final _minDiffController = TextEditingController();
+  final _maxDiffController = TextEditingController();
   final _scrollController = ScrollController();
 
   @override
   void dispose() {
     _searchController.dispose();
     _cidController.dispose();
+    _minDiffController.dispose();
+    _maxDiffController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -63,48 +72,6 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     final sortAscending = ref.watch(controlsSortAscendingProvider);
     final currentPage = ref.watch(controlsPageProvider);
     const pageSize = 100;
-
-    final availableYears =
-        allRecords
-            .map((r) {
-              final parts = r.dataFine.split('/');
-              return parts.length == 3 ? parts[2] : '';
-            })
-            .where((y) => y.isNotEmpty)
-            .toSet()
-            .toList()
-          ..sort();
-
-    final availableSocieta =
-        allRecords
-            .map((r) => r.societa)
-            .where((s) => s.isNotEmpty)
-            .toSet()
-            .toList()
-          ..sort();
-
-    final availableTipo =
-        allRecords
-            .map((r) => r.tipoDipendente)
-            .where((t) => t.isNotEmpty)
-            .toSet()
-            .toList()
-          ..sort();
-
-    const monthNames = {
-      '01': 'Gennaio',
-      '02': 'Febbraio',
-      '03': 'Marzo',
-      '04': 'Aprile',
-      '05': 'Maggio',
-      '06': 'Giugno',
-      '07': 'Luglio',
-      '08': 'Agosto',
-      '09': 'Settembre',
-      '10': 'Ottobre',
-      '11': 'Novembre',
-      '12': 'Dicembre',
-    };
 
     final Map<String, List<TracciatoContabile>> groupedRecords = {};
     for (final record in allRecords) {
@@ -177,7 +144,10 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     }
 
     final matchStatusFilter = ref.watch(controlsMatchStatusProvider);
-    if (matchStatusFilter != null) {
+    final minDiff = ref.watch(controlsMinDiffProvider);
+    final maxDiff = ref.watch(controlsMaxDiffProvider);
+
+    if (matchStatusFilter != null || minDiff != null || maxDiff != null) {
       trasferte = trasferte.where((t) {
         final recordsTrasferta = groupedRecords[t]!;
         double tTracciato = 0;
@@ -188,8 +158,18 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         final ecForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == t).toList();
         final tEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
 
-        final isMatching = (tTracciato - tEC).abs() < 0.01;
-        return matchStatusFilter == 'match' ? isMatching : !isMatching;
+        final diff = (tTracciato - tEC).abs();
+        final isMatching = diff < 0.01;
+
+        if (matchStatusFilter != null) {
+          if (matchStatusFilter == 'match' && !isMatching) return false;
+          if (matchStatusFilter == 'diff' && isMatching) return false;
+        }
+
+        if (minDiff != null && diff < minDiff) return false;
+        if (maxDiff != null && diff > maxDiff) return false;
+
+        return true;
       }).toList();
     }
 
@@ -221,435 +201,226 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       for (final entry in dictionaries) entry.code: entry.value,
     };
 
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isWide = constraints.maxWidth > 600;
-              final headerContent = Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'CONTROLLI TRASFERTE',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w200,
-                      letterSpacing: 2.0,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Dati visualizzati raggruppati per trasferta',
-                    style: TextStyle(color: Colors.grey.shade600),
-                  ),
-                ],
-              );
+    final activeFiltersCount = [
+      selectedMonth.isNotEmpty,
+      selectedYear != null,
+      selectedSocieta.isNotEmpty,
+      selectedTipo.isNotEmpty,
+      ref.watch(controlsCidProvider).isNotEmpty,
+      minDiff != null,
+      maxDiff != null,
+      matchStatusFilter != null,
+      ref.watch(controlsShowOnlyOrphansProvider),
+    ].where((e) => e).length;
 
-              if (isWide) {
-                return Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    headerContent,
-                    Row(
+    return Scaffold(
+      backgroundColor: Colors.grey.shade50,
+      endDrawer: _buildFilterDrawer(context, ref, dictionaryMap),
+      body: Column(
+        children: [
+          // HEADER SEMPLIFICATO E MODERNO
+          Container(
+            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withAlpha(12),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
+                ),
+              ],
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                LayoutBuilder(
+                  builder: (context, constraints) {
+                    final isWideHeader = constraints.maxWidth > 900;
+                    
+                    final headerContent = Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        _buildGlobalTotal('TOTALE TRACCIATO', globalTracciato, SkyTheme.timBlue),
-                        const SizedBox(width: 48),
-                        _buildGlobalTotal('TOTALE E.C.', globalEC, Colors.purple.shade700),
-                        const SizedBox(width: 48),
-                        _buildGlobalTotal('TOTALE DISCREPANZE', globalTracciato - globalEC, Colors.red.shade700),
+                        const Text(
+                          'CONTROLLI TRASFERTE',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.w200,
+                            letterSpacing: 2.0,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Audit e quadratura dati contabili',
+                          style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                        ),
                       ],
-                    ),
-                  ],
-                );
-              } else {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    headerContent,
-                    const SizedBox(height: 16),
-                    Row(
+                    );
+
+                    final totalsWrap = Wrap(
+                      spacing: 24,
+                      runSpacing: 8,
+                      alignment: WrapAlignment.end,
                       children: [
                         _buildGlobalTotal('TRACCIATO', globalTracciato, SkyTheme.timBlue),
-                        const SizedBox(width: 24),
                         _buildGlobalTotal('E.C.', globalEC, Colors.purple.shade700),
-                        const SizedBox(width: 24),
-                        _buildGlobalTotal('DIFF.', globalTracciato - globalEC, Colors.red.shade700),
+                        _buildGlobalTotal('DISCREPANZA', globalTracciato - globalEC, Colors.red.shade700),
                       ],
+                    );
+
+                    if (isWideHeader) {
+                      return Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(child: headerContent),
+                          totalsWrap,
+                        ],
+                      );
+                    } else {
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          headerContent,
+                          const SizedBox(height: 16),
+                          totalsWrap,
+                        ],
+                      );
+                    }
+                  },
+                ),
+                const SizedBox(height: 24),
+                // BARRA AZIONI E RICERCA
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 48,
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade200),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.search, color: Colors.grey, size: 20),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: TextField(
+                                controller: _searchController,
+                                decoration: const InputDecoration(
+                                  hintText: 'Cerca per trasferta, cid, località...',
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                ),
+                                style: const TextStyle(fontSize: 14),
+                                onChanged: (value) => ref.read(controlsSearchProvider.notifier).state = value,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // BOTTONE FILTRI AVANZATI
+                    Builder(
+                      builder: (context) => Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: () => Scaffold.of(context).openEndDrawer(),
+                            icon: const Icon(Icons.filter_list_rounded),
+                            label: const Text('Filtri'),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              side: BorderSide(color: activeFiltersCount > 0 ? SkyTheme.timBlue : Colors.grey.shade300),
+                              foregroundColor: activeFiltersCount > 0 ? SkyTheme.timBlue : Colors.grey.shade700,
+                            ),
+                          ),
+                          if (activeFiltersCount > 0)
+                            Positioned(
+                              top: -8,
+                              right: -8,
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: const BoxDecoration(
+                                  color: SkyTheme.timBlue,
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Text(
+                                  '$activeFiltersCount',
+                                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // ESPORTA EXCEL
+                    ElevatedButton.icon(
+                      onPressed: () => _exportToExcel(trasferte, groupedRecords, allEstrattiConto, dictionaryMap),
+                      icon: const Icon(Icons.download_rounded),
+                      label: const Text('Esporta'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade700,
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      ),
                     ),
                   ],
-                );
-              }
-            },
+                ),
+                // CHIPS FILTRI ATTIVI
+                if (activeFiltersCount > 0) ...[
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 40,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        if (selectedYear != null)
+                          _buildFilterChip('Anno: $selectedYear', () => ref.read(controlsYearProvider.notifier).state = null),
+                        if (selectedMonth.isNotEmpty)
+                          _buildFilterChip('${selectedMonth.length} Mesi', () => ref.read(controlsMonthProvider.notifier).state = {}),
+                        if (selectedSocieta.isNotEmpty)
+                          _buildFilterChip('${selectedSocieta.length} Società', () => ref.read(controlsSocietaProvider.notifier).state = {}),
+                        if (ref.watch(controlsCidProvider).isNotEmpty)
+                          _buildFilterChip('CID: ${ref.watch(controlsCidProvider)}', () {
+                            _cidController.clear();
+                            ref.read(controlsCidProvider.notifier).state = '';
+                          }),
+                        if (minDiff != null || maxDiff != null)
+                          _buildFilterChip('Range Diff.', () {
+                            _minDiffController.clear();
+                            _maxDiffController.clear();
+                            ref.read(controlsMinDiffProvider.notifier).state = null;
+                            ref.read(controlsMaxDiffProvider.notifier).state = null;
+                          }),
+                        if (selectedTipo.isNotEmpty)
+                          _buildFilterChip('${selectedTipo.length} Tipi', () => ref.read(controlsTipoDipendenteProvider.notifier).state = {}),
+                        if (matchStatusFilter != null)
+                          _buildFilterChip(
+                            matchStatusFilter == 'match' ? 'Stato: Quadrate' : 'Stato: Discrepanze', 
+                            () => ref.read(controlsMatchStatusProvider.notifier).state = null
+                          ),
+                        if (ref.watch(controlsShowOnlyOrphansProvider))
+                          _buildFilterChip('Solo Orfani', () => ref.read(controlsShowOnlyOrphansProvider.notifier).state = false),
+                        
+                        TextButton(
+                          onPressed: () => _resetAllFilters(ref),
+                          child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ],
+            ),
           ),
-          const SizedBox(height: 24),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              // Filtro Mese (Multi-select Dialog)
-              InkWell(
-                onTap: () => _showMultiSelectMesi(context, monthNames),
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.calendar_month, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        selectedMonth.isEmpty
-                            ? 'Tutti i Mesi'
-                            : '${selectedMonth.length} Mesi Selezionati',
-                        style: TextStyle(
-                          color: Colors.grey.shade800,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(Icons.arrow_drop_down, size: 20),
-                    ],
-                  ),
-                ),
-              ),
-              // Filtro Anno
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String?>(
-                    value: selectedYear,
-                    hint: const Text('Tutti gli Anni'),
-                    icon: const Icon(Icons.calendar_today, size: 20),
-                    items: [
-                      const DropdownMenuItem(
-                        value: null,
-                        child: Text('Tutti gli Anni'),
-                      ),
-                      ...availableYears.map(
-                        (y) => DropdownMenuItem(value: y, child: Text(y)),
-                      ),
-                    ],
-                    onChanged: (value) {
-                      ref.read(controlsYearProvider.notifier).state = value;
-                      ref.read(controlsPageProvider.notifier).state = 0;
-                    },
-                  ),
-                ),
-              ),
-              // Filtro Società (Multi-select Dialog)
-              InkWell(
-                onTap: () => _showMultiSelectSocieta(context, availableSocieta),
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.business, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        selectedSocieta.isEmpty
-                            ? 'Tutte le Società'
-                            : '${selectedSocieta.length} Società Selezionate',
-                        style: TextStyle(
-                          color: Colors.grey.shade800,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(Icons.arrow_drop_down, size: 20),
-                    ],
-                  ),
-                ),
-              ),
-              // Filtro Tipo Dipendente (Multi-select Dialog)
-              InkWell(
-                onTap: () =>
-                    _showMultiSelectTipo(context, availableTipo, dictionaryMap),
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.person_outline, size: 20),
-                      const SizedBox(width: 8),
-                      Text(
-                        selectedTipo.isEmpty
-                            ? 'Tutti i Tipi'
-                            : '${selectedTipo.length} Tipi Selezionati',
-                        style: TextStyle(
-                          color: Colors.grey.shade800,
-                          fontSize: 16,
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      const Icon(Icons.arrow_drop_down, size: 20),
-                    ],
-                  ),
-                ),
-              ),
-              // Ricerca Trasferta
-              SizedBox(
-                width: 250,
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Cerca Trasferta...',
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                  ),
-                  onChanged: (value) {
-                    ref.read(controlsSearchProvider.notifier).state = value;
-                    ref.read(controlsPageProvider.notifier).state = 0;
-                  },
-                ),
-              ),
-              // Ricerca CID
-              SizedBox(
-                width: 180,
-                child: TextField(
-                  controller: _cidController,
-                  decoration: InputDecoration(
-                    hintText: 'Cerca CID...',
-                    prefixIcon: const Icon(Icons.badge, size: 20),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                    enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide(color: Colors.grey.shade300),
-                    ),
-                  ),
-                  onChanged: (value) {
-                    ref.read(controlsCidProvider.notifier).state = value;
-                    ref.read(controlsPageProvider.notifier).state = 0;
-                  },
-                ),
-              ),
 
-              // Filtro EC Orfani
-              InkWell(
-                onTap: () {
-                  ref.read(controlsShowOnlyOrphansProvider.notifier).state = !ref.read(controlsShowOnlyOrphansProvider);
-                  ref.read(controlsPageProvider.notifier).state = 0;
-                },
-                borderRadius: BorderRadius.circular(12),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: ref.watch(controlsShowOnlyOrphansProvider) ? Colors.orange.shade50 : Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: ref.watch(controlsShowOnlyOrphansProvider) ? Colors.orange.shade300 : Colors.grey.shade300,
-                    ),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.account_balance_wallet_outlined, 
-                        size: 20, 
-                        color: ref.watch(controlsShowOnlyOrphansProvider) ? Colors.orange.shade800 : Colors.grey.shade700
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'EC Orfani',
-                        style: TextStyle(
-                          color: ref.watch(controlsShowOnlyOrphansProvider) ? Colors.orange.shade900 : Colors.grey.shade800,
-                          fontSize: 16,
-                          fontWeight: ref.watch(controlsShowOnlyOrphansProvider) ? FontWeight.bold : FontWeight.normal,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              // Filtro Stato Quadratura
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String?>(
-                    value: ref.watch(controlsMatchStatusProvider),
-                    hint: const Text('Stato Quadratura'),
-                    icon: const Icon(Icons.account_balance, size: 20),
-                    items: const [
-                      DropdownMenuItem(value: null, child: Text('Qualsiasi Stato')),
-                      DropdownMenuItem(
-                        value: 'match', 
-                        child: Row(
-                          children: [
-                            Icon(Icons.check_circle, color: Colors.green, size: 16),
-                            SizedBox(width: 8),
-                            Text('Solo Quadrati'),
-                          ],
-                        )
-                      ),
-                      DropdownMenuItem(
-                        value: 'diff', 
-                        child: Row(
-                          children: [
-                            Icon(Icons.warning, color: Colors.red, size: 16),
-                            SizedBox(width: 8),
-                            Text('Solo Discrepanze'),
-                          ],
-                        )
-                      ),
-                    ],
-                    onChanged: (value) {
-                      ref.read(controlsMatchStatusProvider.notifier).state = value;
-                      ref.read(controlsPageProvider.notifier).state = 0;
-                    },
-                  ),
-                ),
-              ),
-              // Ordinamento
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: IconButton(
-                  tooltip: sortAscending
-                      ? 'Dal numero più basso'
-                      : 'Dal numero più alto',
-                  icon: Icon(
-                    sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  onPressed: () =>
-                      ref.read(controlsSortAscendingProvider.notifier).state =
-                          !sortAscending,
-                ),
-              ),
-              // Espandi/Contrai Tutto
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: IconButton(
-                  tooltip: ref.watch(controlsExpandAllProvider)
-                      ? 'Contrai tutti'
-                      : 'Espandi tutti',
-                  icon: Icon(
-                    ref.watch(controlsExpandAllProvider)
-                        ? Icons.unfold_less
-                        : Icons.unfold_more,
-                    color: Theme.of(context).colorScheme.primary,
-                  ),
-                  onPressed: () =>
-                      ref.read(controlsExpandAllProvider.notifier).state = !ref
-                          .read(controlsExpandAllProvider),
-                ),
-              ),
-              // Reset Filtri
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.red.shade300),
-                ),
-                child: TextButton.icon(
-                  onPressed: () {
-                    ref.read(controlsMonthProvider.notifier).state = <String>{};
-                    ref.read(controlsYearProvider.notifier).state = null;
-                    ref.read(controlsSocietaProvider.notifier).state =
-                        <String>{};
-                    ref.read(controlsTipoDipendenteProvider.notifier).state =
-                        <String>{};
-                    ref.read(controlsSearchProvider.notifier).state = '';
-                    ref.read(controlsCidProvider.notifier).state = '';
-                    ref.read(controlsSortAscendingProvider.notifier).state =
-                        false;
-                    ref.read(controlsPageProvider.notifier).state = 0;
-                    _searchController.clear();
-                    _cidController.clear();
-                  },
-                  icon: Icon(
-                    Icons.filter_alt_off,
-                    size: 20,
-                    color: Colors.red.shade700,
-                  ),
-                  label: Text(
-                    'Reset Filtri',
-                    style: TextStyle(
-                      color: Colors.red.shade700,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
           const SizedBox(height: 24),
           Expanded(
             child: ListView.builder(
@@ -665,25 +436,73 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                   totaleTrasferta += r.isNegative ? -r.importo : r.importo;
                 }
 
+                final ecForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
+                final totaleEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
+                final isMatching = (totaleTrasferta - totaleEC).abs() < 0.01;
+                
+                final statusBgColor = isMatching ? Colors.green.shade50 : Colors.red.shade50;
+                final statusTextColor = isMatching ? Colors.green.shade900 : Colors.red.shade900;
+                final statusBorderColor = isMatching ? Colors.green.shade200 : Colors.red.shade200;
+
                 return Card(
                   margin: const EdgeInsets.only(bottom: 24, left: 8, right: 8),
                   elevation: 2,
+                  clipBehavior: Clip.antiAlias,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(color: statusBorderColor),
                   ),
                   child: ExpansionTile(
                     key: Key(
                       '${numeroTrasferta}_${ref.watch(controlsExpandAllProvider)}',
                     ),
                     initiallyExpanded: ref.watch(controlsExpandAllProvider),
+                    collapsedBackgroundColor: statusBgColor,
+                    backgroundColor: Colors.white,
                     shape: const Border(),
                     collapsedShape: const Border(),
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'Trasferta: $numeroTrasferta',
-                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        Wrap(
+                          spacing: 12,
+                          runSpacing: 4,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            Text(
+                              'Trasferta: $numeroTrasferta',
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                color: statusTextColor,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: isMatching ? Colors.green.shade100 : Colors.red.shade100,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    isMatching ? Icons.check_circle : Icons.warning,
+                                    size: 12,
+                                    color: statusTextColor,
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Text(
+                                    isMatching ? 'QUADRATA' : 'DISCREPANZA: ${(totaleTrasferta - totaleEC).toStringAsFixed(2)} €',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.bold,
+                                      color: statusTextColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                         Text(
                           'Cid: ${firstRecord.cid}',
@@ -696,9 +515,12 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                       ],
                     ),
                     subtitle: Text(
-                      '${recordsTrasferta.length} record • Dal ${firstRecord.dataInizio} al ${firstRecord.dataFine} • Totale: ${totaleTrasferta.toStringAsFixed(2)} EUR • Società: ${firstRecord.societa}${dictionaryMap[firstRecord.societa] != null ? " (${dictionaryMap[firstRecord.societa]})" : ""} • Tipo: ${firstRecord.tipoDipendente}${dictionaryMap[firstRecord.tipoDipendente] != null ? " (${dictionaryMap[firstRecord.tipoDipendente]})" : ""}',
+                      '${recordsTrasferta.length} record • Dal ${firstRecord.dataInizio} al ${firstRecord.dataFine} • Società: ${firstRecord.societa}${dictionaryMap[firstRecord.societa] != null ? " (${dictionaryMap[firstRecord.societa]})" : ""} • Tipo: ${firstRecord.tipoDipendente}${dictionaryMap[firstRecord.tipoDipendente] != null ? " (${dictionaryMap[firstRecord.tipoDipendente]})" : ""}',
                     ),
-                    leading: const Icon(Icons.flight_takeoff),
+                    leading: Icon(
+                      Icons.flight_takeoff,
+                      color: statusTextColor,
+                    ),
                     children: recordsTrasferta.expand<Widget>((record) {
                       final matchingEC = allEstrattiConto.where(
                         (ec) => ec.bolla == record.numeroBolla,
@@ -965,11 +787,15 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(color: Colors.grey.shade300),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          child: Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 24,
+                            runSpacing: 16,
                             children: [
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
                                     'RIEPILOGO TOTALI',
@@ -981,25 +807,26 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                     ),
                                   ),
                                   const SizedBox(height: 8),
-                                  Row(
-                                    children: [
-                                      _buildTotalIndicator('Tracciato', totaleTrasferta, SkyTheme.timBlue),
-                                      const SizedBox(width: 32),
-                                      Builder(
-                                        builder: (context) {
-                                          final ecForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
-                                          final totaleEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
-                                          final diff = (totaleTrasferta - totaleEC).abs();
-                                          final isMatching = diff < 0.01;
+                                  Builder(
+                                    builder: (context) {
+                                      final ecForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
+                                      final totaleEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
+                                      final diffVal = (totaleTrasferta - totaleEC).abs();
+                                      final isMatching = diffVal < 0.01;
 
-                                          return _buildTotalIndicator(
+                                      return Wrap(
+                                        spacing: 32,
+                                        runSpacing: 12,
+                                        children: [
+                                          _buildTotalIndicator('Tracciato', totaleTrasferta, SkyTheme.timBlue),
+                                          _buildTotalIndicator(
                                             'Estratto Conto', 
                                             totaleEC, 
                                             isMatching ? Colors.green.shade700 : Colors.red.shade700
-                                          );
-                                        },
-                                      ),
-                                    ],
+                                          ),
+                                        ],
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
@@ -1009,6 +836,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                   final totaleEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
                                   final diff = totaleTrasferta - totaleEC;
                                   final isMatching = diff.abs() < 0.01;
+
 
                                   if (isMatching) {
                                     return Container(
@@ -1079,9 +907,11 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                     ),
                   ],
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
                     IconButton(
                       icon: const Icon(Icons.chevron_left),
                       onPressed: currentPage > 0
@@ -1117,7 +947,12 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             }
                           : null,
                     ),
-                    const VerticalDivider(width: 32, indent: 8, endIndent: 8),
+                      Container(
+                        height: 24,
+                        width: 1,
+                        color: Colors.grey.shade300,
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                      ),
                     Text(
                       'Totale trasferte: ${trasferte.length}',
                       style: const TextStyle(
@@ -1130,131 +965,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 ),
               ),
             ),
+          ),
         ],
       ),
-    );
-  }
-
-  void _showMultiSelectMesi(
-    BuildContext context,
-    Map<String, String> monthNames,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Consumer(
-          builder: (context, ref, child) {
-            final selectedMonths = ref.watch(controlsMonthProvider);
-            return AlertDialog(
-              title: const Text('Seleziona Mesi'),
-              content: SizedBox(
-                width: 350,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: monthNames.entries.map((e) {
-                      final monthCode = e.key;
-                      return CheckboxListTile(
-                        title: Text(e.value),
-                        value: selectedMonths.contains(monthCode),
-                        onChanged: (value) {
-                          final newMonths = Set<String>.from(selectedMonths);
-                          if (value == true) {
-                            newMonths.add(monthCode);
-                          } else {
-                            newMonths.remove(monthCode);
-                          }
-                          ref.read(controlsMonthProvider.notifier).state =
-                              newMonths;
-                          ref.read(controlsPageProvider.notifier).state = 0;
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    ref.read(controlsMonthProvider.notifier).state = {};
-                    ref.read(controlsPageProvider.notifier).state = 0;
-                  },
-                  child: const Text('Reset'),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Chiudi'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
-
-  void _showMultiSelectTipo(
-    BuildContext context,
-    List<String> options,
-    Map<String, String> dictionaryMap,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Consumer(
-          builder: (context, ref, child) {
-            final selected = ref.watch(controlsTipoDipendenteProvider);
-            return AlertDialog(
-              title: const Text('Seleziona Tipo Dipendente'),
-              content: SizedBox(
-                width: 300,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: options.map((option) {
-                      final decoded = dictionaryMap[option];
-                      final displayLabel = decoded != null
-                          ? '$option - $decoded'
-                          : option;
-
-                      return CheckboxListTile(
-                        title: Text(displayLabel),
-                        value: selected.contains(option),
-                        onChanged: (value) {
-                          final newSelection = Set<String>.from(selected);
-                          if (value == true) {
-                            newSelection.add(option);
-                          } else {
-                            newSelection.remove(option);
-                          }
-                          ref
-                                  .read(controlsTipoDipendenteProvider.notifier)
-                                  .state =
-                              newSelection;
-                          ref.read(controlsPageProvider.notifier).state = 0;
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    ref.read(controlsTipoDipendenteProvider.notifier).state =
-                        {};
-                  },
-                  child: const Text('Reset'),
-                ),
-                TextButton(
-                  onPressed: () => Navigator.pop(context),
-                  child: const Text('Chiudi'),
-                ),
-              ],
-            );
-          },
-        );
-      },
     );
   }
 
@@ -1362,6 +1075,505 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           ],
         );
       },
+    );
+  }
+
+  Future<void> _exportToExcel(
+    List<String> trasferte,
+    Map<String, List<TracciatoContabile>> groupedRecords,
+    List<EstrattoConto> allEstrattiConto,
+    Map<String, String> dictionaryMap,
+  ) async {
+    try {
+      final excel = excel_pkg.Excel.createExcel();
+      final sheet = excel['ControlliTrasferte'];
+      excel.delete('Sheet1');
+
+      // Header principale
+      sheet.appendRow([
+        excel_pkg.TextCellValue('TIPO RIGA'),
+        excel_pkg.TextCellValue('TRASFERTA'),
+        excel_pkg.TextCellValue('CID / PASSEGGERO'),
+        excel_pkg.TextCellValue('BOLLA'),
+        excel_pkg.TextCellValue('LOCALITÀ / DESCRIZIONE'),
+        excel_pkg.TextCellValue('GIUSTIFICATIVO / SERVIZIO'),
+        excel_pkg.TextCellValue('SOCIETÀ'),
+        excel_pkg.TextCellValue('DATA'),
+        excel_pkg.TextCellValue('IMPORTO €'),
+        excel_pkg.TextCellValue('DISCREPANZA €'),
+      ]);
+
+      for (final t in trasferte) {
+        final records = groupedRecords[t]!;
+        final first = records.first;
+        final ecForT = allEstrattiConto.where((ec) => ec.numeroTrasferta == t).toList();
+        
+        double totTracciato = 0;
+        for (var r in records) {
+          totTracciato += r.isNegative ? -r.importo : r.importo;
+        }
+        
+        double totEC = ecForT.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
+        final diff = totTracciato - totEC;
+        final isMatching = diff.abs() < 0.01;
+
+        // RIGA TESTATA TRASFERTA (Grigio Chiaro)
+        sheet.appendRow([
+          excel_pkg.TextCellValue('TESTATA'),
+          excel_pkg.TextCellValue(t),
+          excel_pkg.TextCellValue('CID: ${first.cid}'),
+          excel_pkg.TextCellValue(''),
+          excel_pkg.TextCellValue('Dal ${first.dataInizio} al ${first.dataFine}'),
+          excel_pkg.TextCellValue(isMatching ? 'QUADRATA' : 'DISCREPANZA'),
+          excel_pkg.TextCellValue(first.societa),
+          excel_pkg.TextCellValue(''),
+          excel_pkg.DoubleCellValue(totTracciato),
+          excel_pkg.DoubleCellValue(diff),
+        ]);
+
+        // RIGHE TRACCIATO
+        for (final r in records) {
+          sheet.appendRow([
+            excel_pkg.TextCellValue('  > TRACCIATO'),
+            excel_pkg.TextCellValue(''),
+            excel_pkg.TextCellValue(r.cid),
+            excel_pkg.TextCellValue(r.numeroBolla),
+            excel_pkg.TextCellValue(r.localita),
+            excel_pkg.TextCellValue('${r.giustificativoSpesa}${dictionaryMap[r.giustificativoSpesa] != null ? " (${dictionaryMap[r.giustificativoSpesa]})" : ""}'),
+            excel_pkg.TextCellValue(''),
+            excel_pkg.TextCellValue(r.dataSpesa),
+            excel_pkg.DoubleCellValue(r.isNegative ? -r.importo : r.importo),
+            excel_pkg.TextCellValue(''),
+          ]);
+        }
+
+        // RIGHE ESTRATTO CONTO
+        for (final ec in ecForT) {
+          sheet.appendRow([
+            excel_pkg.TextCellValue('  > E. CONTO'),
+            excel_pkg.TextCellValue(''),
+            excel_pkg.TextCellValue(ec.nomePasseggero),
+            excel_pkg.TextCellValue(ec.bolla),
+            excel_pkg.TextCellValue(ec.itinerario),
+            excel_pkg.TextCellValue(ec.descrizioneServizio),
+            excel_pkg.TextCellValue(''),
+            excel_pkg.TextCellValue(ec.dataBolla),
+            excel_pkg.DoubleCellValue(ec.totaleServizio),
+            excel_pkg.TextCellValue(''),
+          ]);
+        }
+
+        // Riga vuota tra trasferte
+        sheet.appendRow([excel_pkg.TextCellValue('')]);
+      }
+
+      final fileBytes = excel.encode();
+      if (fileBytes == null) return;
+
+      final outputFile = await FilePicker.saveFile(
+        dialogTitle: 'Salva Report Controlli',
+        fileName: 'report_controlli_trasferte_${DateTime.now().millisecondsSinceEpoch}.xlsx',
+        type: FileType.custom,
+        allowedExtensions: ['xlsx'],
+      );
+
+      if (outputFile != null) {
+        final file = File(outputFile);
+        await file.writeAsBytes(fileBytes);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Report esportato con successo!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Errore durante l\'esportazione: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  Widget _buildFilterChip(String label, VoidCallback onDeleted) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: InputChip(
+        label: Text(label, style: const TextStyle(fontSize: 11)),
+        onDeleted: onDeleted,
+        deleteIconColor: Colors.red.shade400,
+        backgroundColor: SkyTheme.timBlue.withAlpha(20),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        side: BorderSide(color: SkyTheme.timBlue.withAlpha(50)),
+      ),
+    );
+  }
+
+  void _resetAllFilters(WidgetRef ref) {
+    ref.read(controlsMonthProvider.notifier).state = <String>{};
+    ref.read(controlsYearProvider.notifier).state = null;
+    ref.read(controlsSocietaProvider.notifier).state = <String>{};
+    ref.read(controlsTipoDipendenteProvider.notifier).state = <String>{};
+    ref.read(controlsSearchProvider.notifier).state = '';
+    ref.read(controlsCidProvider.notifier).state = '';
+    ref.read(controlsSortAscendingProvider.notifier).state = false;
+    ref.read(controlsPageProvider.notifier).state = 0;
+    ref.read(controlsMinDiffProvider.notifier).state = null;
+    ref.read(controlsMaxDiffProvider.notifier).state = null;
+    ref.read(controlsMatchStatusProvider.notifier).state = null;
+    ref.read(controlsShowOnlyOrphansProvider.notifier).state = false;
+
+    _searchController.clear();
+    _cidController.clear();
+    _minDiffController.clear();
+    _maxDiffController.clear();
+  }
+
+  Widget _buildFilterDrawer(
+    BuildContext context, 
+    WidgetRef ref, 
+    Map<String, String> dictionaryMap
+  ) {
+    // Re-use options calculation or pass them
+    final allTracciato = ref.watch(tracciatoContabilesProvider);
+    final years = allTracciato.map((e) => e.dataSpesa.split('/').last).toSet().toList()..sort();
+    final months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+    final societaOptions = allTracciato.map((e) => e.societa).toSet().toList()..sort();
+    final tipoDipendenteOptions = allTracciato.map((e) => e.tipoDipendente).toSet().toList()..sort();
+
+    return Drawer(
+      width: 350,
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
+            color: const Color(0xFF001529), // Navy scuro professionale per distinguersi dal TIM Blue
+            child: Row(
+              children: [
+                const Icon(Icons.filter_alt_outlined, color: Colors.white),
+                const SizedBox(width: 12),
+                const Text(
+                  'FILTRI AVANZATI',
+                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white),
+                  onPressed: () => Navigator.pop(context),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.all(20),
+              children: [
+                _buildDrawerSectionTitle('PERIODI'),
+                const SizedBox(height: 12),
+                _buildFilterDropdown<String?>(
+                  'Seleziona Anno',
+                  ref.watch(controlsYearProvider),
+                  years,
+                  (val) => ref.read(controlsYearProvider.notifier).state = val,
+                  icon: Icons.calendar_today,
+                ),
+                const SizedBox(height: 16),
+                _buildMultiSelectFilter(
+                  'Seleziona Mesi',
+                  ref.watch(controlsMonthProvider),
+                  months,
+                  (val) => ref.read(controlsMonthProvider.notifier).state = val,
+                  icon: Icons.calendar_month,
+                ),
+                
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('ANAGRAFICA'),
+                const SizedBox(height: 12),
+                _buildMultiSelectFilter(
+                  'Società',
+                  ref.watch(controlsSocietaProvider),
+                  societaOptions,
+                  (val) => ref.read(controlsSocietaProvider.notifier).state = val,
+                  icon: Icons.business,
+                  dictionary: dictionaryMap,
+                ),
+                const SizedBox(height: 16),
+                _buildMultiSelectFilter(
+                  'Tipo Dipendente',
+                  ref.watch(controlsTipoDipendenteProvider),
+                  tipoDipendenteOptions,
+                  (val) => ref.read(controlsTipoDipendenteProvider.notifier).state = val,
+                  icon: Icons.people,
+                  dictionary: dictionaryMap,
+                ),
+                const SizedBox(height: 16),
+                _buildDrawerTextField(
+                  'Cerca per CID',
+                  _cidController,
+                  Icons.person_search,
+                  (val) => ref.read(controlsCidProvider.notifier).state = val,
+                ),
+
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('CONTABILITÀ'),
+                const SizedBox(height: 12),
+                _buildFilterDropdown<String?>(
+                  'Stato Quadratura',
+                  ref.watch(controlsMatchStatusProvider),
+                  ['match', 'diff'],
+                  (val) => ref.read(controlsMatchStatusProvider.notifier).state = val,
+                  icon: Icons.check_circle_outline,
+                  labelMapper: (val) {
+                    if (val == 'match') return 'Quadrate';
+                    if (val == 'diff') return 'Discrepanze';
+                    return 'Tutti';
+                  },
+                ),
+                const SizedBox(height: 16),
+                const Text('Range Discrepanza (€)', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _buildDrawerTextField(
+                        'Min', _minDiffController, null, 
+                        (v) => ref.read(controlsMinDiffProvider.notifier).state = double.tryParse(v)
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _buildDrawerTextField(
+                        'Max', _maxDiffController, null, 
+                        (v) => ref.read(controlsMaxDiffProvider.notifier).state = double.tryParse(v)
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SwitchListTile(
+                  title: const Text('Solo Record Orfani', style: TextStyle(fontSize: 14)),
+                  value: ref.watch(controlsShowOnlyOrphansProvider),
+                  onChanged: (v) => ref.read(controlsShowOnlyOrphansProvider.notifier).state = v,
+                  activeThumbColor: SkyTheme.timBlue,
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(20),
+            child: Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => _resetAllFilters(ref),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      foregroundColor: Colors.red,
+                      side: const BorderSide(color: Colors.red),
+                    ),
+                    child: const Text('RESET FILTRI'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: SkyTheme.timBlue,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('APPLICA'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDrawerSectionTitle(String title) {
+    return Text(
+      title,
+      style: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+        color: SkyTheme.timBlue.withAlpha(150),
+        letterSpacing: 1.2,
+      ),
+    );
+  }
+
+  Widget _buildDrawerTextField(String hint, TextEditingController controller, IconData? icon, Function(String) onChanged) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: hint,
+          icon: icon != null ? Icon(icon, size: 18, color: Colors.grey) : null,
+          border: InputBorder.none,
+          isDense: true,
+        ),
+        style: const TextStyle(fontSize: 14),
+        onChanged: onChanged,
+      ),
+    );
+  }
+
+  Widget _buildFilterDropdown<T>(
+    String label,
+    T value,
+    List<T> items,
+    Function(T) onChanged, {
+    IconData? icon,
+    String Function(T)? labelMapper,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<T>(
+          value: value,
+          hint: Text(label, style: const TextStyle(fontSize: 14)),
+          isExpanded: true,
+          icon: Icon(icon ?? Icons.arrow_drop_down, size: 20),
+          items: [
+            DropdownMenuItem<T>(
+              value: null as T,
+              child: Text('Tutti ($label)', style: const TextStyle(fontSize: 14)),
+            ),
+            ...items.map((item) => DropdownMenuItem<T>(
+                  value: item,
+                  child: Text(
+                    labelMapper != null ? labelMapper(item) : item.toString(),
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                )),
+          ],
+          onChanged: (val) {
+            if (val != null || (null is T)) {
+              onChanged(val as T);
+            }
+          },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMultiSelectFilter(
+    String label,
+    Set<String> selectedValues,
+    List<String> options,
+    Function(Set<String>) onChanged, {
+    IconData? icon,
+    Map<String, String>? dictionary,
+  }) {
+    return InkWell(
+      onTap: () async {
+        final results = await showDialog<Set<String>>(
+          context: context,
+          builder: (context) {
+            Set<String> tempSelected = Set.from(selectedValues);
+            return StatefulBuilder(
+              builder: (context, setModalState) {
+                return AlertDialog(
+                  title: Text('Seleziona $label'),
+                  content: SizedBox(
+                    width: 300,
+                    height: 400,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            TextButton(
+                              onPressed: () => setModalState(() => tempSelected = Set.from(options)),
+                              child: const Text('Tutti'),
+                            ),
+                            TextButton(
+                              onPressed: () => setModalState(() => tempSelected.clear()),
+                              child: const Text('Reset'),
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: options.length,
+                            itemBuilder: (context, index) {
+                              final option = options[index];
+                              final displayLabel = dictionary != null 
+                                  ? '${dictionary[option] ?? option} ($option)'
+                                  : option;
+                              return CheckboxListTile(
+                                title: Text(displayLabel, style: const TextStyle(fontSize: 14)),
+                                value: tempSelected.contains(option),
+                                onChanged: (val) {
+                                  setModalState(() {
+                                    if (val == true) {
+                                      tempSelected.add(option);
+                                    } else {
+                                      tempSelected.remove(option);
+                                    }
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
+                    ElevatedButton(onPressed: () => Navigator.pop(context, tempSelected), child: const Text('Conferma')),
+                  ],
+                );
+              },
+            );
+          },
+        );
+        if (results != null) onChanged(results);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Row(
+          children: [
+            if (icon != null) Icon(icon, size: 18, color: Colors.grey),
+            if (icon != null) const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                selectedValues.isEmpty ? label : '${selectedValues.length} selezionati',
+                style: const TextStyle(fontSize: 14),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const Icon(Icons.arrow_drop_down, size: 20, color: Colors.grey),
+          ],
+        ),
+      ),
     );
   }
 
@@ -1486,62 +1698,4 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     );
   }
 
-  void _showMultiSelectSocieta(
-    BuildContext context,
-    List<String> availableSocieta,
-  ) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Consumer(
-          builder: (context, ref, child) {
-            final selectedSocieta = ref.watch(controlsSocietaProvider);
-            return AlertDialog(
-              title: const Text('Seleziona Società'),
-              content: SizedBox(
-                width: 350,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: availableSocieta.map((s) {
-                      final isSelected = selectedSocieta.contains(s);
-                      return CheckboxListTile(
-                        title: Text(s),
-                        value: isSelected,
-                        onChanged: (bool? value) {
-                          final notifier = ref.read(
-                            controlsSocietaProvider.notifier,
-                          );
-                          if (value == true) {
-                            notifier.state = {...selectedSocieta, s};
-                          } else {
-                            notifier.state = {...selectedSocieta}..remove(s);
-                          }
-                          ref.read(controlsPageProvider.notifier).state = 0;
-                        },
-                      );
-                    }).toList(),
-                  ),
-                ),
-              ),
-              actions: [
-                TextButton(
-                  onPressed: () {
-                    ref.read(controlsSocietaProvider.notifier).state =
-                        <String>{};
-                    ref.read(controlsPageProvider.notifier).state = 0;
-                  },
-                  child: const Text('Reset'),
-                ),
-                ElevatedButton(
-                  onPressed: () => Navigator.of(context).pop(),
-                  child: const Text('Chiudi'),
-                ),
-              ],
-            );
-          },
-        );
-      },
-    );
-  }
 }

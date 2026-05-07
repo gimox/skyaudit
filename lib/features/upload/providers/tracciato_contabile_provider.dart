@@ -8,7 +8,6 @@ import 'package:travel_check/core/db/isar_provider.dart';
 import '../models/tracciato_contabile.dart';
 import '../models/log_history.dart';
 import 'log_history_provider.dart';
-import '../../settings/providers/app_settings_provider.dart';
 
 class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
   @override
@@ -19,111 +18,39 @@ class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
     return isar.tracciatoContabiles.where().anyId().findAllSync();
   }
 
-  Future<Map<String, int>> loadFromFile(XFile file) async {
-    final List<TracciatoContabile> newRecords = [];
+  Future<Map<String, dynamic>> loadFromFile(XFile file) async {
     final isar = ref.read(isarProvider);
-
-    debugPrint('Caricamento file: ${file.path}');
-
     final uniqueCode = DateTime.now().millisecondsSinceEpoch.toString();
-    final logHistory = LogHistory(
-      fileName: file.name,
-      date: DateTime.now(),
-      uniqueCode: uniqueCode,
-    );
 
-    final stream = File(file.path)
-        .openRead()
-        .transform(const Utf8Decoder(allowMalformed: true))
-        .transform(const LineSplitter());
+    debugPrint('Caricamento file contabile in background: ${file.path}');
 
-    String? bufferedLine;
-    bool isFirstLine = true;
-    int linesCount = 0;
+    // Eseguiamo il parsing pesante in un isolate separato
+    final List<Map<String, dynamic>> parsedData = await compute(_parseTracciatoIsolate, {
+      'filePath': file.path,
+      'uniqueCode': uniqueCode,
+    });
 
-    await for (final line in stream) {
-      if (line.trim().isEmpty) continue;
+    final List<TracciatoContabile> newRecords = parsedData.map((map) => TracciatoContabile.fromMap(map)).toList();
 
-      linesCount++;
-      if (isFirstLine) {
-        debugPrint('Saltata riga di intestazione: $line');
-        isFirstLine = false;
-        continue;
-      }
-
-      if (bufferedLine != null) {
-        try {
-          final record = TracciatoContabile.fromString(
-            bufferedLine,
-            logHistoryId: uniqueCode,
-          );
-          newRecords.add(record);
-        } catch (e) {
-          debugPrint('Error parsing line: $e');
-        }
-      }
-
-      bufferedLine = line;
+    if (newRecords.isEmpty) {
+      throw Exception('Nessun record valido trovato nel file.');
     }
 
-    debugPrint('Totale righe lette: $linesCount');
-    debugPrint('Record parsati correttamente: ${newRecords.length}');
-
-    // 1. Rimuovi duplicati interni al file (tieni l'ultimo)
-    final Map<String, TracciatoContabile> distinctMap = {};
-    for (final r in newRecords) {
-      distinctMap[r.numeroBolla] = r;
-    }
-
-    final bollaNumbers = distinctMap.keys.toList();
-
-    final settings = ref.read(appSettingsProvider);
-    int insertedCount = 0;
+    // Identifichiamo i record da salvare (tutti quelli nel file)
+    final List<TracciatoContabile> recordsToSave = List.from(newRecords);
+    
+    int insertedCount = recordsToSave.length;
     int updatedCount = 0;
-    int discardedInDbCount = 0;
+    const totalDiscarded = 0;
 
     await isar.writeTxn(() async {
-      // 2. Recupera i record esistenti per questi numeri bolla
-      final existingRecords = await isar.tracciatoContabiles
-          .filter()
-          .anyOf(bollaNumbers, (q, String b) => q.numeroBollaEqualTo(b))
-          .findAll();
-
-      // Crea una mappa per un accesso veloce
-      final existingMap = {for (var r in existingRecords) r.numeroBolla: r.id};
-
-      // 3. Decidi cosa fare con ogni record
-      final List<TracciatoContabile> recordsToSave = [];
-
-      for (final newRecord in distinctMap.values) {
-        if (existingMap.containsKey(newRecord.numeroBolla)) {
-          if (settings.discardIdenticalBolla) {
-            // SCARTA: non aggiungiamo nulla a recordsToSave
-            discardedInDbCount++;
-          } else {
-            // IMPORTA (UPDATE): assegniamo l'ID esistente
-            newRecord.id = existingMap[newRecord.numeroBolla]!;
-            recordsToSave.add(newRecord);
-            updatedCount++;
-          }
-        } else {
-          // INSERT
-          recordsToSave.add(newRecord);
-          insertedCount++;
-        }
-      }
-
-      // 4. Salva tutto
+      // Salva tutto come nuovi record
       await isar.tracciatoContabiles.putAll(recordsToSave);
 
-      // 5. Salva la history log con statistiche
-      final duplicatesInFile = newRecords.length - distinctMap.length;
-      final totalDiscarded = duplicatesInFile + discardedInDbCount;
-
       final logWithStats = LogHistory(
-        fileName: logHistory.fileName,
-        date: logHistory.date,
-        uniqueCode: logHistory.uniqueCode,
+        fileName: file.name,
+        date: DateTime.now(),
+        uniqueCode: uniqueCode,
         totalRecords: newRecords.length,
         insertedRecords: insertedCount,
         updatedRecords: updatedCount,
@@ -132,9 +59,9 @@ class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
       await isar.logHistorys.put(logWithStats);
     });
 
-    final duplicatesInFile = newRecords.length - distinctMap.length;
-    final totalDiscarded = duplicatesInFile + discardedInDbCount;
-    state = isar.tracciatoContabiles.where().anyId().findAllSync();
+    // Aggiorniamo lo stato in modo asincrono
+    final allRecords = await isar.tracciatoContabiles.where().anyId().findAll();
+    state = allRecords;
 
     // Invalidate LogHistory provider to update its UI
     ref.invalidate(logHistoryProvider);
@@ -143,6 +70,9 @@ class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
       'inserted': insertedCount,
       'updated': updatedCount,
       'duplicates': totalDiscarded,
+      'total': newRecords.length,
+      'updatedRecords': [],
+      'discardedRecords': [],
     };
   }
 
@@ -157,6 +87,51 @@ class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
     await isar.writeTxn(() => isar.tracciatoContabiles.delete(id));
     state = state.where((r) => r.id != id).toList();
   }
+}
+
+// Funzione top-level per l'isolate
+Future<List<Map<String, dynamic>>> _parseTracciatoIsolate(Map<String, dynamic> params) async {
+  final String filePath = params['filePath'];
+  final String uniqueCode = params['uniqueCode'];
+  
+  final List<Map<String, dynamic>> results = [];
+  final file = File(filePath);
+  
+  // Utilizziamo un modo più robusto per leggere il file con caratteri malformati
+  final bytes = file.readAsBytesSync();
+  final content = const Utf8Decoder(allowMalformed: true).convert(bytes);
+  final lines = const LineSplitter().convert(content);
+
+  if (lines.isEmpty) return [];
+
+  bool isFirstLine = true;
+  for (int i = 0; i < lines.length; i++) {
+    final line = lines[i];
+    if (line.trim().isEmpty) continue;
+
+    if (isFirstLine) {
+      isFirstLine = false;
+      continue;
+    }
+
+    // Regola: ignora l'ultima riga del file (Footer/Controllo)
+    if (i == lines.length - 1 && lines.length > 2) {
+      continue;
+    }
+
+    try {
+      final record = TracciatoContabile.fromString(
+        line, 
+        logHistoryId: uniqueCode,
+        sourceFileLine: i + 1,
+      );
+      results.add(record.toMap());
+    } catch (e) {
+      // Salta righe malformate
+    }
+  }
+  
+  return results;
 }
 
 final tracciatoContabilesProvider =

@@ -13,7 +13,7 @@ class TracciatoContabile {
   final String societa;
   final String tipoDipendente;
   final String giustificativoSpesa;
-  @Index(unique: true, replace: true)
+  @Index(unique: false)
   final String numeroBolla;
   final String dataSpesa;
   final String localita;
@@ -26,6 +26,7 @@ class TracciatoContabile {
   final String valuta;
   final bool isNegative;
   final String? logHistoryId;
+  final int? sourceFileLine;
 
   TracciatoContabile({
     required this.recordType,
@@ -47,6 +48,7 @@ class TracciatoContabile {
     required this.valuta,
     required this.isNegative,
     this.logHistoryId,
+    this.sourceFileLine,
   });
 
   static String _formatDate(String yyyymmdd) {
@@ -65,7 +67,7 @@ class TracciatoContabile {
     return '$hh:$mm:$ss';
   }
 
-  factory TracciatoContabile.fromString(String line, {String? logHistoryId}) {
+  factory TracciatoContabile.fromString(String line, {String? logHistoryId, int? sourceFileLine}) {
     // Pad line to ensure we can reach position 166 without FormatException
     if (line.length < 166) {
       line = line.padRight(166, ' ');
@@ -94,6 +96,57 @@ class TracciatoContabile {
       valuta: line.substring(160, 163).trim(),
       isNegative: line.substring(165, 166) == 'R',
       logHistoryId: logHistoryId,
+      sourceFileLine: sourceFileLine,
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'recordType': recordType,
+      'cid': cid,
+      'numeroTrasferta': numeroTrasferta,
+      'progressivo': progressivo,
+      'societa': societa,
+      'tipoDipendente': tipoDipendente,
+      'giustificativoSpesa': giustificativoSpesa,
+      'numeroBolla': numeroBolla,
+      'dataSpesa': dataSpesa,
+      'localita': localita,
+      'dataInizio': dataInizio,
+      'oraInizio': oraInizio,
+      'dataFine': dataFine,
+      'oraFine': oraFine,
+      'tipoAttivita': tipoAttivita,
+      'importo': importo,
+      'valuta': valuta,
+      'isNegative': isNegative,
+      'logHistoryId': logHistoryId,
+      'sourceFileLine': sourceFileLine,
+    };
+  }
+
+  factory TracciatoContabile.fromMap(Map<String, dynamic> map) {
+    return TracciatoContabile(
+      recordType: map['recordType'] ?? '',
+      cid: map['cid'] ?? '',
+      numeroTrasferta: map['numeroTrasferta'] ?? '',
+      progressivo: map['progressivo'] ?? '',
+      societa: map['societa'] ?? '',
+      tipoDipendente: map['tipoDipendente'] ?? '',
+      giustificativoSpesa: map['giustificativoSpesa'] ?? '',
+      numeroBolla: map['numeroBolla'] ?? '',
+      dataSpesa: map['dataSpesa'] ?? '',
+      localita: map['localita'] ?? '',
+      dataInizio: map['dataInizio'] ?? '',
+      oraInizio: map['oraInizio'] ?? '',
+      dataFine: map['dataFine'] ?? '',
+      oraFine: map['oraFine'] ?? '',
+      tipoAttivita: map['tipoAttivita'] ?? '',
+      importo: (map['importo'] as num?)?.toDouble() ?? 0.0,
+      valuta: map['valuta'] ?? '',
+      isNegative: map['isNegative'] ?? false,
+      logHistoryId: map['logHistoryId'],
+      sourceFileLine: map['sourceFileLine'] as int?,
     );
   }
 }
