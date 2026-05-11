@@ -37,6 +37,21 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
   final _minDiffController = TextEditingController();
   final _maxDiffController = TextEditingController();
   final _scrollController = ScrollController();
+  
+  static const Map<String, String> monthNames = {
+    '01': 'Gennaio',
+    '02': 'Febbraio',
+    '03': 'Marzo',
+    '04': 'Aprile',
+    '05': 'Maggio',
+    '06': 'Giugno',
+    '07': 'Luglio',
+    '08': 'Agosto',
+    '09': 'Settembre',
+    '10': 'Ottobre',
+    '11': 'Novembre',
+    '12': 'Dicembre',
+  };
 
   @override
   void dispose() {
@@ -159,7 +174,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         final tEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
 
         final diff = (tTracciato - tEC).abs();
-        final isMatching = diff < 0.01;
+        final isMatching = diff < 0.001;
 
         if (matchStatusFilter != null) {
           if (matchStatusFilter == 'match' && !isMatching) return false;
@@ -384,7 +399,12 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                         if (selectedYear != null)
                           _buildFilterChip('Anno: $selectedYear', () => ref.read(controlsYearProvider.notifier).state = null),
                         if (selectedMonth.isNotEmpty)
-                          _buildFilterChip('${selectedMonth.length} Mesi', () => ref.read(controlsMonthProvider.notifier).state = {}),
+                          _buildFilterChip(
+                            selectedMonth.length == 1 
+                                ? 'Mese: ${monthNames[selectedMonth.first]}' 
+                                : '${selectedMonth.length} Mesi', 
+                            () => ref.read(controlsMonthProvider.notifier).state = {}
+                          ),
                         if (selectedSocieta.isNotEmpty)
                           _buildFilterChip('${selectedSocieta.length} Società', () => ref.read(controlsSocietaProvider.notifier).state = {}),
                         if (ref.watch(controlsCidProvider).isNotEmpty)
@@ -438,7 +458,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
                 final ecForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
                 final totaleEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
-                final isMatching = (totaleTrasferta - totaleEC).abs() < 0.01;
+                final isMatching = (totaleTrasferta - totaleEC).abs() < 0.001;
                 
                 final statusBgColor = isMatching ? Colors.green.shade50 : Colors.red.shade50;
                 final statusTextColor = isMatching ? Colors.green.shade900 : Colors.red.shade900;
@@ -633,7 +653,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                         builder: (context) {
                                           final tracciatoVal = record.isNegative ? -record.importo : record.importo;
                                           final ecVal = matchingEC.first.totaleServizio;
-                                          final isIdentical = (tracciatoVal - ecVal).abs() < 0.01;
+                                          final isIdentical = (tracciatoVal - ecVal).abs() < 0.001;
 
                                           return Text(
                                             '${ecVal.toStringAsFixed(2)} €',
@@ -812,7 +832,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                       final ecForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
                                       final totaleEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
                                       final diffVal = (totaleTrasferta - totaleEC).abs();
-                                      final isMatching = diffVal < 0.01;
+                                      final isMatching = diffVal < 0.001;
 
                                       return Wrap(
                                         spacing: 32,
@@ -835,7 +855,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                   final ecForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
                                   final totaleEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
                                   final diff = totaleTrasferta - totaleEC;
-                                  final isMatching = diff.abs() < 0.01;
+                                  final isMatching = diff.abs() < 0.001;
 
 
                                   if (isMatching) {
@@ -1115,7 +1135,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         
         double totEC = ecForT.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
         final diff = totTracciato - totEC;
-        final isMatching = diff.abs() < 0.01;
+        final isMatching = diff.abs() < 0.001;
 
         // RIGA TESTATA TRASFERTA (Grigio Chiaro)
         sheet.appendRow([
@@ -1242,7 +1262,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
   ) {
     // Re-use options calculation or pass them
     final allTracciato = ref.watch(tracciatoContabilesProvider);
-    final years = allTracciato.map((e) => e.dataSpesa.split('/').last).toSet().toList()..sort();
+    final years = allTracciato.map((e) => e.dataFine.split('/').last).toSet().toList()..sort();
     final months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
     final societaOptions = allTracciato.map((e) => e.societa).toSet().toList()..sort();
     final tipoDipendenteOptions = allTracciato.map((e) => e.tipoDipendente).toSet().toList()..sort();
@@ -1290,6 +1310,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                   months,
                   (val) => ref.read(controlsMonthProvider.notifier).state = val,
                   icon: Icons.calendar_month,
+                  dictionary: monthNames,
                 ),
                 
                 const SizedBox(height: 32),

@@ -514,7 +514,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                   _buildDetailRow('Data Bolla', record.dataBolla),
                   _buildDetailRow('Società', record.ragioneSociale),
                   _buildDetailRow('Tipo Servizio', record.tipoServizio),
-                  _buildDetailRow('Importo Servizio', '${record.importoServizio.toStringAsFixed(2)} €'),
+                   _buildDetailRow('Importo Servizio', '${record.importoServizio.toStringAsFixed(2)} €'),
                   _buildDetailRow('Fee', '${record.fee.toStringAsFixed(2)} €'),
                   _buildDetailRow('Totale Servizio', '${record.totaleServizio.toStringAsFixed(2)} €', isHighlight: true),
                 ],
