@@ -17,7 +17,11 @@ const EstrattoContoSchema = CollectionSchema(
   name: r'EstrattoConto',
   id: -6768238905630775642,
   properties: {
-    r'bolla': PropertySchema(id: 0, name: r'bolla', type: IsarType.string),
+    r'bolla': PropertySchema(
+      id: 0,
+      name: r'bolla',
+      type: IsarType.string,
+    ),
     r'campoStatistico10': PropertySchema(
       id: 1,
       name: r'campoStatistico10',
@@ -48,7 +52,11 @@ const EstrattoContoSchema = CollectionSchema(
       name: r'centroCosto',
       type: IsarType.string,
     ),
-    r'cid': PropertySchema(id: 7, name: r'cid', type: IsarType.string),
+    r'cid': PropertySchema(
+      id: 7,
+      name: r'cid',
+      type: IsarType.string,
+    ),
     r'codiceCliente': PropertySchema(
       id: 8,
       name: r'codiceCliente',
@@ -84,8 +92,16 @@ const EstrattoContoSchema = CollectionSchema(
       name: r'dataCompetenza',
       type: IsarType.string,
     ),
-    r'dataIn': PropertySchema(id: 15, name: r'dataIn', type: IsarType.string),
-    r'dataOut': PropertySchema(id: 16, name: r'dataOut', type: IsarType.string),
+    r'dataIn': PropertySchema(
+      id: 15,
+      name: r'dataIn',
+      type: IsarType.string,
+    ),
+    r'dataOut': PropertySchema(
+      id: 16,
+      name: r'dataOut',
+      type: IsarType.string,
+    ),
     r'descrizioneRighePratiche': PropertySchema(
       id: 17,
       name: r'descrizioneRighePratiche',
@@ -101,7 +117,11 @@ const EstrattoContoSchema = CollectionSchema(
       name: r'descrizioneSpedireA',
       type: IsarType.string,
     ),
-    r'fee': PropertySchema(id: 20, name: r'fee', type: IsarType.double),
+    r'fee': PropertySchema(
+      id: 20,
+      name: r'fee',
+      type: IsarType.double,
+    ),
     r'fornitore': PropertySchema(
       id: 21,
       name: r'fornitore',
@@ -142,121 +162,151 @@ const EstrattoContoSchema = CollectionSchema(
       name: r'localitaPartenza',
       type: IsarType.string,
     ),
-    r'merchantFee': PropertySchema(
+    r'logHistoryId': PropertySchema(
       id: 29,
+      name: r'logHistoryId',
+      type: IsarType.string,
+    ),
+    r'merchantFee': PropertySchema(
+      id: 30,
       name: r'merchantFee',
       type: IsarType.double,
     ),
     r'metPagamentoFee': PropertySchema(
-      id: 30,
+      id: 31,
       name: r'metPagamentoFee',
       type: IsarType.string,
     ),
     r'metPagamentoServ': PropertySchema(
-      id: 31,
+      id: 32,
       name: r'metPagamentoServ',
       type: IsarType.string,
     ),
     r'nomePasseggero': PropertySchema(
-      id: 32,
+      id: 33,
       name: r'nomePasseggero',
       type: IsarType.string,
     ),
-    r'nrBolla': PropertySchema(id: 33, name: r'nrBolla', type: IsarType.string),
-    r'nrEstrattoConto': PropertySchema(
+    r'nrBolla': PropertySchema(
       id: 34,
+      name: r'nrBolla',
+      type: IsarType.string,
+    ),
+    r'nrEstrattoConto': PropertySchema(
+      id: 35,
       name: r'nrEstrattoConto',
       type: IsarType.string,
     ),
-    r'nrNotti': PropertySchema(id: 35, name: r'nrNotti', type: IsarType.string),
-    r'nrPax': PropertySchema(id: 36, name: r'nrPax', type: IsarType.string),
-    r'nrTktBolla': PropertySchema(
+    r'nrNotti': PropertySchema(
+      id: 36,
+      name: r'nrNotti',
+      type: IsarType.string,
+    ),
+    r'nrPax': PropertySchema(
       id: 37,
+      name: r'nrPax',
+      type: IsarType.string,
+    ),
+    r'nrTktBolla': PropertySchema(
+      id: 38,
       name: r'nrTktBolla',
       type: IsarType.string,
     ),
     r'numeroCCFee': PropertySchema(
-      id: 38,
+      id: 39,
       name: r'numeroCCFee',
       type: IsarType.string,
     ),
     r'numeroCCServizio': PropertySchema(
-      id: 39,
+      id: 40,
       name: r'numeroCCServizio',
       type: IsarType.string,
     ),
     r'numeroDocumFee': PropertySchema(
-      id: 40,
+      id: 41,
       name: r'numeroDocumFee',
       type: IsarType.string,
     ),
     r'numeroDocumServizio': PropertySchema(
-      id: 41,
+      id: 42,
       name: r'numeroDocumServizio',
       type: IsarType.string,
     ),
     r'numeroTrasferta': PropertySchema(
-      id: 42,
+      id: 43,
       name: r'numeroTrasferta',
       type: IsarType.string,
     ),
     r'ragioneSociale': PropertySchema(
-      id: 43,
+      id: 44,
       name: r'ragioneSociale',
       type: IsarType.string,
     ),
     r'richiedente': PropertySchema(
-      id: 44,
+      id: 45,
       name: r'richiedente',
       type: IsarType.string,
     ),
-    r'rigaCrm': PropertySchema(id: 45, name: r'rigaCrm', type: IsarType.string),
-    r'sapNoSap': PropertySchema(
+    r'rigaCrm': PropertySchema(
       id: 46,
+      name: r'rigaCrm',
+      type: IsarType.string,
+    ),
+    r'sapNoSap': PropertySchema(
+      id: 47,
       name: r'sapNoSap',
       type: IsarType.string,
     ),
     r'segueFatturaServizi': PropertySchema(
-      id: 47,
+      id: 48,
       name: r'segueFatturaServizi',
       type: IsarType.string,
     ),
     r'servizioDaPagare': PropertySchema(
-      id: 48,
+      id: 49,
       name: r'servizioDaPagare',
       type: IsarType.string,
     ),
-    r'tasse': PropertySchema(id: 49, name: r'tasse', type: IsarType.double),
-    r'tipoServizio': PropertySchema(
+    r'sourceFileLine': PropertySchema(
       id: 50,
+      name: r'sourceFileLine',
+      type: IsarType.long,
+    ),
+    r'tasse': PropertySchema(
+      id: 51,
+      name: r'tasse',
+      type: IsarType.double,
+    ),
+    r'tipoServizio': PropertySchema(
+      id: 52,
       name: r'tipoServizio',
       type: IsarType.string,
     ),
     r'tipoTransazione': PropertySchema(
-      id: 51,
+      id: 53,
       name: r'tipoTransazione',
       type: IsarType.string,
     ),
     r'totaleFee': PropertySchema(
-      id: 52,
+      id: 54,
       name: r'totaleFee',
       type: IsarType.double,
     ),
     r'totaleServizio': PropertySchema(
-      id: 53,
+      id: 55,
       name: r'totaleServizio',
       type: IsarType.double,
     ),
     r'totaleServizioGenerale': PropertySchema(
-      id: 54,
+      id: 56,
       name: r'totaleServizioGenerale',
       type: IsarType.double,
     ),
     r'totaleTasse': PropertySchema(
-      id: 55,
+      id: 57,
       name: r'totaleTasse',
       type: IsarType.double,
-    ),
+    )
   },
   estimateSize: _estrattoContoEstimateSize,
   serialize: _estrattoContoSerialize,
@@ -274,9 +324,22 @@ const EstrattoContoSchema = CollectionSchema(
           name: r'bolla',
           type: IndexType.hash,
           caseSensitive: true,
-        ),
+        )
       ],
     ),
+    r'logHistoryId': IndexSchema(
+      id: 5902007790734565246,
+      name: r'logHistoryId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'logHistoryId',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    )
   },
   links: {},
   embeddedSchemas: {},
@@ -316,6 +379,12 @@ int _estrattoContoEstimateSize(
   bytesCount += 3 + object.itinerario.length * 3;
   bytesCount += 3 + object.localitaArrivo.length * 3;
   bytesCount += 3 + object.localitaPartenza.length * 3;
+  {
+    final value = object.logHistoryId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.metPagamentoFee.length * 3;
   bytesCount += 3 + object.metPagamentoServ.length * 3;
   bytesCount += 3 + object.nomePasseggero.length * 3;
@@ -375,33 +444,35 @@ void _estrattoContoSerialize(
   writer.writeString(offsets[26], object.itinerario);
   writer.writeString(offsets[27], object.localitaArrivo);
   writer.writeString(offsets[28], object.localitaPartenza);
-  writer.writeDouble(offsets[29], object.merchantFee);
-  writer.writeString(offsets[30], object.metPagamentoFee);
-  writer.writeString(offsets[31], object.metPagamentoServ);
-  writer.writeString(offsets[32], object.nomePasseggero);
-  writer.writeString(offsets[33], object.nrBolla);
-  writer.writeString(offsets[34], object.nrEstrattoConto);
-  writer.writeString(offsets[35], object.nrNotti);
-  writer.writeString(offsets[36], object.nrPax);
-  writer.writeString(offsets[37], object.nrTktBolla);
-  writer.writeString(offsets[38], object.numeroCCFee);
-  writer.writeString(offsets[39], object.numeroCCServizio);
-  writer.writeString(offsets[40], object.numeroDocumFee);
-  writer.writeString(offsets[41], object.numeroDocumServizio);
-  writer.writeString(offsets[42], object.numeroTrasferta);
-  writer.writeString(offsets[43], object.ragioneSociale);
-  writer.writeString(offsets[44], object.richiedente);
-  writer.writeString(offsets[45], object.rigaCrm);
-  writer.writeString(offsets[46], object.sapNoSap);
-  writer.writeString(offsets[47], object.segueFatturaServizi);
-  writer.writeString(offsets[48], object.servizioDaPagare);
-  writer.writeDouble(offsets[49], object.tasse);
-  writer.writeString(offsets[50], object.tipoServizio);
-  writer.writeString(offsets[51], object.tipoTransazione);
-  writer.writeDouble(offsets[52], object.totaleFee);
-  writer.writeDouble(offsets[53], object.totaleServizio);
-  writer.writeDouble(offsets[54], object.totaleServizioGenerale);
-  writer.writeDouble(offsets[55], object.totaleTasse);
+  writer.writeString(offsets[29], object.logHistoryId);
+  writer.writeDouble(offsets[30], object.merchantFee);
+  writer.writeString(offsets[31], object.metPagamentoFee);
+  writer.writeString(offsets[32], object.metPagamentoServ);
+  writer.writeString(offsets[33], object.nomePasseggero);
+  writer.writeString(offsets[34], object.nrBolla);
+  writer.writeString(offsets[35], object.nrEstrattoConto);
+  writer.writeString(offsets[36], object.nrNotti);
+  writer.writeString(offsets[37], object.nrPax);
+  writer.writeString(offsets[38], object.nrTktBolla);
+  writer.writeString(offsets[39], object.numeroCCFee);
+  writer.writeString(offsets[40], object.numeroCCServizio);
+  writer.writeString(offsets[41], object.numeroDocumFee);
+  writer.writeString(offsets[42], object.numeroDocumServizio);
+  writer.writeString(offsets[43], object.numeroTrasferta);
+  writer.writeString(offsets[44], object.ragioneSociale);
+  writer.writeString(offsets[45], object.richiedente);
+  writer.writeString(offsets[46], object.rigaCrm);
+  writer.writeString(offsets[47], object.sapNoSap);
+  writer.writeString(offsets[48], object.segueFatturaServizi);
+  writer.writeString(offsets[49], object.servizioDaPagare);
+  writer.writeLong(offsets[50], object.sourceFileLine);
+  writer.writeDouble(offsets[51], object.tasse);
+  writer.writeString(offsets[52], object.tipoServizio);
+  writer.writeString(offsets[53], object.tipoTransazione);
+  writer.writeDouble(offsets[54], object.totaleFee);
+  writer.writeDouble(offsets[55], object.totaleServizio);
+  writer.writeDouble(offsets[56], object.totaleServizioGenerale);
+  writer.writeDouble(offsets[57], object.totaleTasse);
 }
 
 EstrattoConto _estrattoContoDeserialize(
@@ -440,33 +511,35 @@ EstrattoConto _estrattoContoDeserialize(
     itinerario: reader.readString(offsets[26]),
     localitaArrivo: reader.readString(offsets[27]),
     localitaPartenza: reader.readString(offsets[28]),
-    merchantFee: reader.readDouble(offsets[29]),
-    metPagamentoFee: reader.readString(offsets[30]),
-    metPagamentoServ: reader.readString(offsets[31]),
-    nomePasseggero: reader.readString(offsets[32]),
-    nrBolla: reader.readString(offsets[33]),
-    nrEstrattoConto: reader.readString(offsets[34]),
-    nrNotti: reader.readString(offsets[35]),
-    nrPax: reader.readString(offsets[36]),
-    nrTktBolla: reader.readString(offsets[37]),
-    numeroCCFee: reader.readString(offsets[38]),
-    numeroCCServizio: reader.readString(offsets[39]),
-    numeroDocumFee: reader.readString(offsets[40]),
-    numeroDocumServizio: reader.readString(offsets[41]),
-    numeroTrasferta: reader.readString(offsets[42]),
-    ragioneSociale: reader.readString(offsets[43]),
-    richiedente: reader.readString(offsets[44]),
-    rigaCrm: reader.readString(offsets[45]),
-    sapNoSap: reader.readString(offsets[46]),
-    segueFatturaServizi: reader.readString(offsets[47]),
-    servizioDaPagare: reader.readString(offsets[48]),
-    tasse: reader.readDouble(offsets[49]),
-    tipoServizio: reader.readString(offsets[50]),
-    tipoTransazione: reader.readString(offsets[51]),
-    totaleFee: reader.readDouble(offsets[52]),
-    totaleServizio: reader.readDouble(offsets[53]),
-    totaleServizioGenerale: reader.readDouble(offsets[54]),
-    totaleTasse: reader.readDouble(offsets[55]),
+    logHistoryId: reader.readStringOrNull(offsets[29]),
+    merchantFee: reader.readDouble(offsets[30]),
+    metPagamentoFee: reader.readString(offsets[31]),
+    metPagamentoServ: reader.readString(offsets[32]),
+    nomePasseggero: reader.readString(offsets[33]),
+    nrBolla: reader.readString(offsets[34]),
+    nrEstrattoConto: reader.readString(offsets[35]),
+    nrNotti: reader.readString(offsets[36]),
+    nrPax: reader.readString(offsets[37]),
+    nrTktBolla: reader.readString(offsets[38]),
+    numeroCCFee: reader.readString(offsets[39]),
+    numeroCCServizio: reader.readString(offsets[40]),
+    numeroDocumFee: reader.readString(offsets[41]),
+    numeroDocumServizio: reader.readString(offsets[42]),
+    numeroTrasferta: reader.readString(offsets[43]),
+    ragioneSociale: reader.readString(offsets[44]),
+    richiedente: reader.readString(offsets[45]),
+    rigaCrm: reader.readString(offsets[46]),
+    sapNoSap: reader.readString(offsets[47]),
+    segueFatturaServizi: reader.readString(offsets[48]),
+    servizioDaPagare: reader.readString(offsets[49]),
+    sourceFileLine: reader.readLongOrNull(offsets[50]),
+    tasse: reader.readDouble(offsets[51]),
+    tipoServizio: reader.readString(offsets[52]),
+    tipoTransazione: reader.readString(offsets[53]),
+    totaleFee: reader.readDouble(offsets[54]),
+    totaleServizio: reader.readDouble(offsets[55]),
+    totaleServizioGenerale: reader.readDouble(offsets[56]),
+    totaleTasse: reader.readDouble(offsets[57]),
   );
   object.id = id;
   return object;
@@ -538,9 +611,9 @@ P _estrattoContoDeserializeProp<P>(
     case 28:
       return (reader.readString(offset)) as P;
     case 29:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 30:
-      return (reader.readString(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 31:
       return (reader.readString(offset)) as P;
     case 32:
@@ -578,18 +651,22 @@ P _estrattoContoDeserializeProp<P>(
     case 48:
       return (reader.readString(offset)) as P;
     case 49:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 50:
-      return (reader.readString(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 51:
-      return (reader.readString(offset)) as P;
+      return (reader.readDouble(offset)) as P;
     case 52:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 53:
-      return (reader.readDouble(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 54:
       return (reader.readDouble(offset)) as P;
     case 55:
+      return (reader.readDouble(offset)) as P;
+    case 56:
+      return (reader.readDouble(offset)) as P;
+    case 57:
       return (reader.readDouble(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -605,10 +682,7 @@ List<IsarLinkBase<dynamic>> _estrattoContoGetLinks(EstrattoConto object) {
 }
 
 void _estrattoContoAttach(
-  IsarCollection<dynamic> col,
-  Id id,
-  EstrattoConto object,
-) {
+    IsarCollection<dynamic> col, Id id, EstrattoConto object) {
   object.id = id;
 }
 
@@ -624,16 +698,17 @@ extension EstrattoContoQueryWhereSort
 extension EstrattoContoQueryWhere
     on QueryBuilder<EstrattoConto, EstrattoConto, QWhereClause> {
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterWhereClause> idEqualTo(
-    Id id,
-  ) {
+      Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterWhereClause> idNotEqualTo(
-    Id id,
-  ) {
+      Id id) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -656,9 +731,8 @@ extension EstrattoContoQueryWhere
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterWhereClause> idGreaterThan(
-    Id id, {
-    bool include = false,
-  }) {
+      Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -667,9 +741,8 @@ extension EstrattoContoQueryWhere
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterWhereClause> idLessThan(
-    Id id, {
-    bool include = false,
-  }) {
+      Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -684,67 +757,123 @@ extension EstrattoContoQueryWhere
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.between(
-          lower: lowerId,
-          includeLower: includeLower,
-          upper: upperId,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterWhereClause> bollaEqualTo(
-    String bolla,
-  ) {
+      String bolla) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.equalTo(indexName: r'bolla', value: [bolla]),
-      );
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'bolla',
+        value: [bolla],
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterWhereClause> bollaNotEqualTo(
-    String bolla,
-  ) {
+      String bolla) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'bolla',
-                lower: [],
-                upper: [bolla],
-                includeUpper: false,
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'bolla',
-                lower: [bolla],
-                includeLower: false,
-                upper: [],
-              ),
-            );
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'bolla',
+              lower: [],
+              upper: [bolla],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'bolla',
+              lower: [bolla],
+              includeLower: false,
+              upper: [],
+            ));
       } else {
         return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'bolla',
-                lower: [bolla],
-                includeLower: false,
-                upper: [],
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'bolla',
-                lower: [],
-                upper: [bolla],
-                includeUpper: false,
-              ),
-            );
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'bolla',
+              lower: [bolla],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'bolla',
+              lower: [],
+              upper: [bolla],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterWhereClause>
+      logHistoryIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'logHistoryId',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterWhereClause>
+      logHistoryIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'logHistoryId',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterWhereClause>
+      logHistoryIdEqualTo(String? logHistoryId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'logHistoryId',
+        value: [logHistoryId],
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterWhereClause>
+      logHistoryIdNotEqualTo(String? logHistoryId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'logHistoryId',
+              lower: [],
+              upper: [logHistoryId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'logHistoryId',
+              lower: [logHistoryId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'logHistoryId',
+              lower: [logHistoryId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'logHistoryId',
+              lower: [],
+              upper: [logHistoryId],
+              includeUpper: false,
+            ));
       }
     });
   }
@@ -753,56 +882,53 @@ extension EstrattoContoQueryWhere
 extension EstrattoContoQueryFilter
     on QueryBuilder<EstrattoConto, EstrattoConto, QFilterCondition> {
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  bollaEqualTo(String value, {bool caseSensitive = true}) {
+      bollaEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'bolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'bolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  bollaGreaterThan(
+      bollaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'bolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'bolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  bollaLessThan(
+      bollaLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'bolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'bolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  bollaBetween(
+      bollaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -810,140 +936,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'bolla',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'bolla',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  bollaStartsWith(String value, {bool caseSensitive = true}) {
+      bollaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'bolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'bolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  bollaEndsWith(String value, {bool caseSensitive = true}) {
+      bollaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'bolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'bolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  bollaContains(String value, {bool caseSensitive = true}) {
+      bollaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'bolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'bolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  bollaMatches(String pattern, {bool caseSensitive = true}) {
+      bollaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'bolla',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'bolla',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  bollaIsEmpty() {
+      bollaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'bolla', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'bolla',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  bollaIsNotEmpty() {
+      bollaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'bolla', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'bolla',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico10EqualTo(String value, {bool caseSensitive = true}) {
+      campoStatistico10EqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'campoStatistico10',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'campoStatistico10',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico10GreaterThan(
+      campoStatistico10GreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'campoStatistico10',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'campoStatistico10',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico10LessThan(
+      campoStatistico10LessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'campoStatistico10',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'campoStatistico10',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico10Between(
+      campoStatistico10Between(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -951,140 +1072,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'campoStatistico10',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'campoStatistico10',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico10StartsWith(String value, {bool caseSensitive = true}) {
+      campoStatistico10StartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'campoStatistico10',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'campoStatistico10',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico10EndsWith(String value, {bool caseSensitive = true}) {
+      campoStatistico10EndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'campoStatistico10',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'campoStatistico10',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico10Contains(String value, {bool caseSensitive = true}) {
+      campoStatistico10Contains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'campoStatistico10',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'campoStatistico10',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico10Matches(String pattern, {bool caseSensitive = true}) {
+      campoStatistico10Matches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'campoStatistico10',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'campoStatistico10',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico10IsEmpty() {
+      campoStatistico10IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'campoStatistico10', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'campoStatistico10',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico10IsNotEmpty() {
+      campoStatistico10IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'campoStatistico10', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'campoStatistico10',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico4EqualTo(String value, {bool caseSensitive = true}) {
+      campoStatistico4EqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'campoStatistico4',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'campoStatistico4',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico4GreaterThan(
+      campoStatistico4GreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'campoStatistico4',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'campoStatistico4',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico4LessThan(
+      campoStatistico4LessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'campoStatistico4',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'campoStatistico4',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico4Between(
+      campoStatistico4Between(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1092,140 +1208,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'campoStatistico4',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'campoStatistico4',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico4StartsWith(String value, {bool caseSensitive = true}) {
+      campoStatistico4StartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'campoStatistico4',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'campoStatistico4',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico4EndsWith(String value, {bool caseSensitive = true}) {
+      campoStatistico4EndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'campoStatistico4',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'campoStatistico4',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico4Contains(String value, {bool caseSensitive = true}) {
+      campoStatistico4Contains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'campoStatistico4',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'campoStatistico4',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico4Matches(String pattern, {bool caseSensitive = true}) {
+      campoStatistico4Matches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'campoStatistico4',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'campoStatistico4',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico4IsEmpty() {
+      campoStatistico4IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'campoStatistico4', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'campoStatistico4',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico4IsNotEmpty() {
+      campoStatistico4IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'campoStatistico4', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'campoStatistico4',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico7EqualTo(String value, {bool caseSensitive = true}) {
+      campoStatistico7EqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'campoStatistico7',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'campoStatistico7',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico7GreaterThan(
+      campoStatistico7GreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'campoStatistico7',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'campoStatistico7',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico7LessThan(
+      campoStatistico7LessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'campoStatistico7',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'campoStatistico7',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico7Between(
+      campoStatistico7Between(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1233,140 +1344,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'campoStatistico7',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'campoStatistico7',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico7StartsWith(String value, {bool caseSensitive = true}) {
+      campoStatistico7StartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'campoStatistico7',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'campoStatistico7',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico7EndsWith(String value, {bool caseSensitive = true}) {
+      campoStatistico7EndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'campoStatistico7',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'campoStatistico7',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico7Contains(String value, {bool caseSensitive = true}) {
+      campoStatistico7Contains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'campoStatistico7',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'campoStatistico7',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico7Matches(String pattern, {bool caseSensitive = true}) {
+      campoStatistico7Matches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'campoStatistico7',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'campoStatistico7',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico7IsEmpty() {
+      campoStatistico7IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'campoStatistico7', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'campoStatistico7',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico7IsNotEmpty() {
+      campoStatistico7IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'campoStatistico7', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'campoStatistico7',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico8EqualTo(String value, {bool caseSensitive = true}) {
+      campoStatistico8EqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'campoStatistico8',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'campoStatistico8',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico8GreaterThan(
+      campoStatistico8GreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'campoStatistico8',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'campoStatistico8',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico8LessThan(
+      campoStatistico8LessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'campoStatistico8',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'campoStatistico8',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico8Between(
+      campoStatistico8Between(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1374,140 +1480,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'campoStatistico8',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'campoStatistico8',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico8StartsWith(String value, {bool caseSensitive = true}) {
+      campoStatistico8StartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'campoStatistico8',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'campoStatistico8',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico8EndsWith(String value, {bool caseSensitive = true}) {
+      campoStatistico8EndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'campoStatistico8',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'campoStatistico8',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico8Contains(String value, {bool caseSensitive = true}) {
+      campoStatistico8Contains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'campoStatistico8',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'campoStatistico8',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico8Matches(String pattern, {bool caseSensitive = true}) {
+      campoStatistico8Matches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'campoStatistico8',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'campoStatistico8',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico8IsEmpty() {
+      campoStatistico8IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'campoStatistico8', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'campoStatistico8',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico8IsNotEmpty() {
+      campoStatistico8IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'campoStatistico8', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'campoStatistico8',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico9EqualTo(String value, {bool caseSensitive = true}) {
+      campoStatistico9EqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'campoStatistico9',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'campoStatistico9',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico9GreaterThan(
+      campoStatistico9GreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'campoStatistico9',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'campoStatistico9',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico9LessThan(
+      campoStatistico9LessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'campoStatistico9',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'campoStatistico9',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico9Between(
+      campoStatistico9Between(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1515,140 +1616,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'campoStatistico9',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'campoStatistico9',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico9StartsWith(String value, {bool caseSensitive = true}) {
+      campoStatistico9StartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'campoStatistico9',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'campoStatistico9',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico9EndsWith(String value, {bool caseSensitive = true}) {
+      campoStatistico9EndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'campoStatistico9',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'campoStatistico9',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico9Contains(String value, {bool caseSensitive = true}) {
+      campoStatistico9Contains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'campoStatistico9',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'campoStatistico9',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico9Matches(String pattern, {bool caseSensitive = true}) {
+      campoStatistico9Matches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'campoStatistico9',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'campoStatistico9',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico9IsEmpty() {
+      campoStatistico9IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'campoStatistico9', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'campoStatistico9',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  campoStatistico9IsNotEmpty() {
+      campoStatistico9IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'campoStatistico9', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'campoStatistico9',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  centroCostoEqualTo(String value, {bool caseSensitive = true}) {
+      centroCostoEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'centroCosto',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'centroCosto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  centroCostoGreaterThan(
+      centroCostoGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'centroCosto',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'centroCosto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  centroCostoLessThan(
+      centroCostoLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'centroCosto',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'centroCosto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  centroCostoBetween(
+      centroCostoBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1656,86 +1752,84 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'centroCosto',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'centroCosto',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  centroCostoStartsWith(String value, {bool caseSensitive = true}) {
+      centroCostoStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'centroCosto',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'centroCosto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  centroCostoEndsWith(String value, {bool caseSensitive = true}) {
+      centroCostoEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'centroCosto',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'centroCosto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  centroCostoContains(String value, {bool caseSensitive = true}) {
+      centroCostoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'centroCosto',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'centroCosto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  centroCostoMatches(String pattern, {bool caseSensitive = true}) {
+      centroCostoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'centroCosto',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'centroCosto',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  centroCostoIsEmpty() {
+      centroCostoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'centroCosto', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'centroCosto',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  centroCostoIsNotEmpty() {
+      centroCostoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'centroCosto', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'centroCosto',
+        value: '',
+      ));
     });
   }
 
@@ -1744,31 +1838,27 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'cid',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'cid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  cidGreaterThan(
+      cidGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'cid',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'cid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -1778,14 +1868,12 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'cid',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'cid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -1797,29 +1885,28 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'cid',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'cid',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  cidStartsWith(String value, {bool caseSensitive = true}) {
+      cidStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'cid',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'cid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -1828,115 +1915,106 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'cid',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'cid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition> cidContains(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      String value,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'cid',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'cid',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition> cidMatches(
-    String pattern, {
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'cid',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      cidIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'cid',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      cidIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'cid',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      codiceClienteEqualTo(
+    String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'cid',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'codiceCliente',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  cidIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'cid', value: ''),
-      );
-    });
-  }
-
-  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  cidIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'cid', value: ''),
-      );
-    });
-  }
-
-  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceClienteEqualTo(String value, {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'codiceCliente',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceClienteGreaterThan(
+      codiceClienteGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'codiceCliente',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'codiceCliente',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceClienteLessThan(
+      codiceClienteLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'codiceCliente',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'codiceCliente',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceClienteBetween(
+      codiceClienteBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1944,140 +2022,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'codiceCliente',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'codiceCliente',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceClienteStartsWith(String value, {bool caseSensitive = true}) {
+      codiceClienteStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'codiceCliente',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'codiceCliente',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceClienteEndsWith(String value, {bool caseSensitive = true}) {
+      codiceClienteEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'codiceCliente',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'codiceCliente',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceClienteContains(String value, {bool caseSensitive = true}) {
+      codiceClienteContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'codiceCliente',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'codiceCliente',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceClienteMatches(String pattern, {bool caseSensitive = true}) {
+      codiceClienteMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'codiceCliente',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'codiceCliente',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceClienteIsEmpty() {
+      codiceClienteIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'codiceCliente', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'codiceCliente',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceClienteIsNotEmpty() {
+      codiceClienteIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'codiceCliente', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'codiceCliente',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceIvaEqualTo(String value, {bool caseSensitive = true}) {
+      codiceIvaEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'codiceIva',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'codiceIva',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceIvaGreaterThan(
+      codiceIvaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'codiceIva',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'codiceIva',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceIvaLessThan(
+      codiceIvaLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'codiceIva',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'codiceIva',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceIvaBetween(
+      codiceIvaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2085,140 +2158,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'codiceIva',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'codiceIva',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceIvaStartsWith(String value, {bool caseSensitive = true}) {
+      codiceIvaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'codiceIva',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'codiceIva',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceIvaEndsWith(String value, {bool caseSensitive = true}) {
+      codiceIvaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'codiceIva',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'codiceIva',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceIvaContains(String value, {bool caseSensitive = true}) {
+      codiceIvaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'codiceIva',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'codiceIva',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceIvaMatches(String pattern, {bool caseSensitive = true}) {
+      codiceIvaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'codiceIva',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'codiceIva',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceIvaIsEmpty() {
+      codiceIvaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'codiceIva', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'codiceIva',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceIvaIsNotEmpty() {
+      codiceIvaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'codiceIva', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'codiceIva',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceSistemazioneEqualTo(String value, {bool caseSensitive = true}) {
+      codiceSistemazioneEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'codiceSistemazione',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'codiceSistemazione',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceSistemazioneGreaterThan(
+      codiceSistemazioneGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'codiceSistemazione',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'codiceSistemazione',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceSistemazioneLessThan(
+      codiceSistemazioneLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'codiceSistemazione',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'codiceSistemazione',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceSistemazioneBetween(
+      codiceSistemazioneBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2226,140 +2294,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'codiceSistemazione',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'codiceSistemazione',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceSistemazioneStartsWith(String value, {bool caseSensitive = true}) {
+      codiceSistemazioneStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'codiceSistemazione',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'codiceSistemazione',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceSistemazioneEndsWith(String value, {bool caseSensitive = true}) {
+      codiceSistemazioneEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'codiceSistemazione',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'codiceSistemazione',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceSistemazioneContains(String value, {bool caseSensitive = true}) {
+      codiceSistemazioneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'codiceSistemazione',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'codiceSistemazione',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceSistemazioneMatches(String pattern, {bool caseSensitive = true}) {
+      codiceSistemazioneMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'codiceSistemazione',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'codiceSistemazione',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceSistemazioneIsEmpty() {
+      codiceSistemazioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'codiceSistemazione', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'codiceSistemazione',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceSistemazioneIsNotEmpty() {
+      codiceSistemazioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'codiceSistemazione', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'codiceSistemazione',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceTrattamentoEqualTo(String value, {bool caseSensitive = true}) {
+      codiceTrattamentoEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'codiceTrattamento',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'codiceTrattamento',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceTrattamentoGreaterThan(
+      codiceTrattamentoGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'codiceTrattamento',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'codiceTrattamento',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceTrattamentoLessThan(
+      codiceTrattamentoLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'codiceTrattamento',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'codiceTrattamento',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceTrattamentoBetween(
+      codiceTrattamentoBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2367,140 +2430,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'codiceTrattamento',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'codiceTrattamento',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceTrattamentoStartsWith(String value, {bool caseSensitive = true}) {
+      codiceTrattamentoStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'codiceTrattamento',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'codiceTrattamento',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceTrattamentoEndsWith(String value, {bool caseSensitive = true}) {
+      codiceTrattamentoEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'codiceTrattamento',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'codiceTrattamento',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceTrattamentoContains(String value, {bool caseSensitive = true}) {
+      codiceTrattamentoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'codiceTrattamento',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'codiceTrattamento',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceTrattamentoMatches(String pattern, {bool caseSensitive = true}) {
+      codiceTrattamentoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'codiceTrattamento',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'codiceTrattamento',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceTrattamentoIsEmpty() {
+      codiceTrattamentoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'codiceTrattamento', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'codiceTrattamento',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceTrattamentoIsNotEmpty() {
+      codiceTrattamentoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'codiceTrattamento', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'codiceTrattamento',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceViaggioEqualTo(String value, {bool caseSensitive = true}) {
+      codiceViaggioEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'codiceViaggio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'codiceViaggio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceViaggioGreaterThan(
+      codiceViaggioGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'codiceViaggio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'codiceViaggio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceViaggioLessThan(
+      codiceViaggioLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'codiceViaggio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'codiceViaggio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceViaggioBetween(
+      codiceViaggioBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2508,140 +2566,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'codiceViaggio',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'codiceViaggio',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceViaggioStartsWith(String value, {bool caseSensitive = true}) {
+      codiceViaggioStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'codiceViaggio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'codiceViaggio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceViaggioEndsWith(String value, {bool caseSensitive = true}) {
+      codiceViaggioEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'codiceViaggio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'codiceViaggio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceViaggioContains(String value, {bool caseSensitive = true}) {
+      codiceViaggioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'codiceViaggio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'codiceViaggio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceViaggioMatches(String pattern, {bool caseSensitive = true}) {
+      codiceViaggioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'codiceViaggio',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'codiceViaggio',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceViaggioIsEmpty() {
+      codiceViaggioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'codiceViaggio', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'codiceViaggio',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  codiceViaggioIsNotEmpty() {
+      codiceViaggioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'codiceViaggio', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'codiceViaggio',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataBollaEqualTo(String value, {bool caseSensitive = true}) {
+      dataBollaEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'dataBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dataBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataBollaGreaterThan(
+      dataBollaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'dataBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dataBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataBollaLessThan(
+      dataBollaLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'dataBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dataBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataBollaBetween(
+      dataBollaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2649,140 +2702,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'dataBolla',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dataBolla',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataBollaStartsWith(String value, {bool caseSensitive = true}) {
+      dataBollaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'dataBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'dataBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataBollaEndsWith(String value, {bool caseSensitive = true}) {
+      dataBollaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'dataBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'dataBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataBollaContains(String value, {bool caseSensitive = true}) {
+      dataBollaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'dataBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'dataBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataBollaMatches(String pattern, {bool caseSensitive = true}) {
+      dataBollaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'dataBolla',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'dataBolla',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataBollaIsEmpty() {
+      dataBollaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'dataBolla', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dataBolla',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataBollaIsNotEmpty() {
+      dataBollaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'dataBolla', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'dataBolla',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataCompetenzaEqualTo(String value, {bool caseSensitive = true}) {
+      dataCompetenzaEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'dataCompetenza',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dataCompetenza',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataCompetenzaGreaterThan(
+      dataCompetenzaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'dataCompetenza',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dataCompetenza',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataCompetenzaLessThan(
+      dataCompetenzaLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'dataCompetenza',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dataCompetenza',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataCompetenzaBetween(
+      dataCompetenzaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2790,140 +2838,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'dataCompetenza',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dataCompetenza',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataCompetenzaStartsWith(String value, {bool caseSensitive = true}) {
+      dataCompetenzaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'dataCompetenza',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'dataCompetenza',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataCompetenzaEndsWith(String value, {bool caseSensitive = true}) {
+      dataCompetenzaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'dataCompetenza',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'dataCompetenza',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataCompetenzaContains(String value, {bool caseSensitive = true}) {
+      dataCompetenzaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'dataCompetenza',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'dataCompetenza',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataCompetenzaMatches(String pattern, {bool caseSensitive = true}) {
+      dataCompetenzaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'dataCompetenza',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'dataCompetenza',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataCompetenzaIsEmpty() {
+      dataCompetenzaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'dataCompetenza', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dataCompetenza',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataCompetenzaIsNotEmpty() {
+      dataCompetenzaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'dataCompetenza', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'dataCompetenza',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataInEqualTo(String value, {bool caseSensitive = true}) {
+      dataInEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'dataIn',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dataIn',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataInGreaterThan(
+      dataInGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'dataIn',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dataIn',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataInLessThan(
+      dataInLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'dataIn',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dataIn',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataInBetween(
+      dataInBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2931,140 +2974,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'dataIn',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dataIn',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataInStartsWith(String value, {bool caseSensitive = true}) {
+      dataInStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'dataIn',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'dataIn',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataInEndsWith(String value, {bool caseSensitive = true}) {
+      dataInEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'dataIn',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'dataIn',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataInContains(String value, {bool caseSensitive = true}) {
+      dataInContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'dataIn',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'dataIn',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataInMatches(String pattern, {bool caseSensitive = true}) {
+      dataInMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'dataIn',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'dataIn',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataInIsEmpty() {
+      dataInIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'dataIn', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dataIn',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataInIsNotEmpty() {
+      dataInIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'dataIn', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'dataIn',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataOutEqualTo(String value, {bool caseSensitive = true}) {
+      dataOutEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'dataOut',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dataOut',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataOutGreaterThan(
+      dataOutGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'dataOut',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'dataOut',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataOutLessThan(
+      dataOutLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'dataOut',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'dataOut',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataOutBetween(
+      dataOutBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -3072,140 +3110,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'dataOut',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'dataOut',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataOutStartsWith(String value, {bool caseSensitive = true}) {
+      dataOutStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'dataOut',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'dataOut',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataOutEndsWith(String value, {bool caseSensitive = true}) {
+      dataOutEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'dataOut',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'dataOut',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataOutContains(String value, {bool caseSensitive = true}) {
+      dataOutContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'dataOut',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'dataOut',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataOutMatches(String pattern, {bool caseSensitive = true}) {
+      dataOutMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'dataOut',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'dataOut',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataOutIsEmpty() {
+      dataOutIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'dataOut', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'dataOut',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  dataOutIsNotEmpty() {
+      dataOutIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'dataOut', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'dataOut',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneRighePraticheEqualTo(String value, {bool caseSensitive = true}) {
+      descrizioneRighePraticheEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'descrizioneRighePratiche',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'descrizioneRighePratiche',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneRighePraticheGreaterThan(
+      descrizioneRighePraticheGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'descrizioneRighePratiche',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'descrizioneRighePratiche',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneRighePraticheLessThan(
+      descrizioneRighePraticheLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'descrizioneRighePratiche',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'descrizioneRighePratiche',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneRighePraticheBetween(
+      descrizioneRighePraticheBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -3213,149 +3246,137 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'descrizioneRighePratiche',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'descrizioneRighePratiche',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneRighePraticheStartsWith(
+      descrizioneRighePraticheStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'descrizioneRighePratiche',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'descrizioneRighePratiche',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneRighePraticheEndsWith(String value, {bool caseSensitive = true}) {
+      descrizioneRighePraticheEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'descrizioneRighePratiche',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'descrizioneRighePratiche',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneRighePraticheContains(String value, {bool caseSensitive = true}) {
+      descrizioneRighePraticheContains(String value,
+          {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'descrizioneRighePratiche',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'descrizioneRighePratiche',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneRighePraticheMatches(String pattern, {bool caseSensitive = true}) {
+      descrizioneRighePraticheMatches(String pattern,
+          {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'descrizioneRighePratiche',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'descrizioneRighePratiche',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneRighePraticheIsEmpty() {
+      descrizioneRighePraticheIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'descrizioneRighePratiche',
-          value: '',
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'descrizioneRighePratiche',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneRighePraticheIsNotEmpty() {
+      descrizioneRighePraticheIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          property: r'descrizioneRighePratiche',
-          value: '',
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'descrizioneRighePratiche',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneServizioEqualTo(String value, {bool caseSensitive = true}) {
+      descrizioneServizioEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'descrizioneServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'descrizioneServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneServizioGreaterThan(
+      descrizioneServizioGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'descrizioneServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'descrizioneServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneServizioLessThan(
+      descrizioneServizioLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'descrizioneServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'descrizioneServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneServizioBetween(
+      descrizioneServizioBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -3363,143 +3384,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'descrizioneServizio',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'descrizioneServizio',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneServizioStartsWith(String value, {bool caseSensitive = true}) {
+      descrizioneServizioStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'descrizioneServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'descrizioneServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneServizioEndsWith(String value, {bool caseSensitive = true}) {
+      descrizioneServizioEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'descrizioneServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'descrizioneServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneServizioContains(String value, {bool caseSensitive = true}) {
+      descrizioneServizioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'descrizioneServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'descrizioneServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneServizioMatches(String pattern, {bool caseSensitive = true}) {
+      descrizioneServizioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'descrizioneServizio',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'descrizioneServizio',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneServizioIsEmpty() {
+      descrizioneServizioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'descrizioneServizio', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'descrizioneServizio',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneServizioIsNotEmpty() {
+      descrizioneServizioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          property: r'descrizioneServizio',
-          value: '',
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'descrizioneServizio',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneSpedireAEqualTo(String value, {bool caseSensitive = true}) {
+      descrizioneSpedireAEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'descrizioneSpedireA',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'descrizioneSpedireA',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneSpedireAGreaterThan(
+      descrizioneSpedireAGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'descrizioneSpedireA',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'descrizioneSpedireA',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneSpedireALessThan(
+      descrizioneSpedireALessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'descrizioneSpedireA',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'descrizioneSpedireA',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneSpedireABetween(
+      descrizioneSpedireABetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -3507,89 +3520,84 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'descrizioneSpedireA',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'descrizioneSpedireA',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneSpedireAStartsWith(String value, {bool caseSensitive = true}) {
+      descrizioneSpedireAStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'descrizioneSpedireA',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'descrizioneSpedireA',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneSpedireAEndsWith(String value, {bool caseSensitive = true}) {
+      descrizioneSpedireAEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'descrizioneSpedireA',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'descrizioneSpedireA',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneSpedireAContains(String value, {bool caseSensitive = true}) {
+      descrizioneSpedireAContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'descrizioneSpedireA',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'descrizioneSpedireA',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneSpedireAMatches(String pattern, {bool caseSensitive = true}) {
+      descrizioneSpedireAMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'descrizioneSpedireA',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'descrizioneSpedireA',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneSpedireAIsEmpty() {
+      descrizioneSpedireAIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'descrizioneSpedireA', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'descrizioneSpedireA',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  descrizioneSpedireAIsNotEmpty() {
+      descrizioneSpedireAIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          property: r'descrizioneSpedireA',
-          value: '',
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'descrizioneSpedireA',
+        value: '',
+      ));
     });
   }
 
@@ -3598,31 +3606,27 @@ extension EstrattoContoQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'fee',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'fee',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  feeGreaterThan(
+      feeGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'fee',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'fee',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
@@ -3632,14 +3636,12 @@ extension EstrattoContoQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'fee',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'fee',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
@@ -3651,70 +3653,65 @@ extension EstrattoContoQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'fee',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'fee',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  fornitoreEqualTo(String value, {bool caseSensitive = true}) {
+      fornitoreEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'fornitore',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'fornitore',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  fornitoreGreaterThan(
+      fornitoreGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'fornitore',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'fornitore',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  fornitoreLessThan(
+      fornitoreLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'fornitore',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'fornitore',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  fornitoreBetween(
+      fornitoreBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -3722,109 +3719,108 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'fornitore',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'fornitore',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  fornitoreStartsWith(String value, {bool caseSensitive = true}) {
+      fornitoreStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'fornitore',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'fornitore',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  fornitoreEndsWith(String value, {bool caseSensitive = true}) {
+      fornitoreEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'fornitore',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'fornitore',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  fornitoreContains(String value, {bool caseSensitive = true}) {
+      fornitoreContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'fornitore',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'fornitore',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  fornitoreMatches(String pattern, {bool caseSensitive = true}) {
+      fornitoreMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'fornitore',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'fornitore',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  fornitoreIsEmpty() {
+      fornitoreIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'fornitore', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'fornitore',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  fornitoreIsNotEmpty() {
+      fornitoreIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'fornitore', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'fornitore',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition> idEqualTo(
-    Id value,
-  ) {
+      Id value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'id', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  idGreaterThan(Id value, {bool include = false}) {
+      idGreaterThan(
+    Id value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'id',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
     });
   }
 
@@ -3833,13 +3829,11 @@ extension EstrattoContoQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'id',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
     });
   }
 
@@ -3850,69 +3844,64 @@ extension EstrattoContoQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'id',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoIvaFeeEqualTo(double value, {double epsilon = Query.epsilon}) {
+      importoIvaFeeEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'importoIvaFee',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'importoIvaFee',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoIvaFeeGreaterThan(
+      importoIvaFeeGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'importoIvaFee',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'importoIvaFee',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoIvaFeeLessThan(
+      importoIvaFeeLessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'importoIvaFee',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'importoIvaFee',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoIvaFeeBetween(
+      importoIvaFeeBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -3920,70 +3909,65 @@ extension EstrattoContoQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'importoIvaFee',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'importoIvaFee',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoIvaServizioEqualTo(double value, {double epsilon = Query.epsilon}) {
+      importoIvaServizioEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'importoIvaServizio',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'importoIvaServizio',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoIvaServizioGreaterThan(
+      importoIvaServizioGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'importoIvaServizio',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'importoIvaServizio',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoIvaServizioLessThan(
+      importoIvaServizioLessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'importoIvaServizio',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'importoIvaServizio',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoIvaServizioBetween(
+      importoIvaServizioBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -3991,70 +3975,65 @@ extension EstrattoContoQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'importoIvaServizio',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'importoIvaServizio',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoIvaTasseEqualTo(double value, {double epsilon = Query.epsilon}) {
+      importoIvaTasseEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'importoIvaTasse',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'importoIvaTasse',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoIvaTasseGreaterThan(
+      importoIvaTasseGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'importoIvaTasse',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'importoIvaTasse',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoIvaTasseLessThan(
+      importoIvaTasseLessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'importoIvaTasse',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'importoIvaTasse',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoIvaTasseBetween(
+      importoIvaTasseBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -4062,70 +4041,65 @@ extension EstrattoContoQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'importoIvaTasse',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'importoIvaTasse',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoServizioEqualTo(double value, {double epsilon = Query.epsilon}) {
+      importoServizioEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'importoServizio',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'importoServizio',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoServizioGreaterThan(
+      importoServizioGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'importoServizio',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'importoServizio',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoServizioLessThan(
+      importoServizioLessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'importoServizio',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'importoServizio',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  importoServizioBetween(
+      importoServizioBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -4133,70 +4107,65 @@ extension EstrattoContoQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'importoServizio',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'importoServizio',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  itinerarioEqualTo(String value, {bool caseSensitive = true}) {
+      itinerarioEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'itinerario',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'itinerario',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  itinerarioGreaterThan(
+      itinerarioGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'itinerario',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'itinerario',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  itinerarioLessThan(
+      itinerarioLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'itinerario',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'itinerario',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  itinerarioBetween(
+      itinerarioBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -4204,140 +4173,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'itinerario',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'itinerario',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  itinerarioStartsWith(String value, {bool caseSensitive = true}) {
+      itinerarioStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'itinerario',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'itinerario',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  itinerarioEndsWith(String value, {bool caseSensitive = true}) {
+      itinerarioEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'itinerario',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'itinerario',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  itinerarioContains(String value, {bool caseSensitive = true}) {
+      itinerarioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'itinerario',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'itinerario',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  itinerarioMatches(String pattern, {bool caseSensitive = true}) {
+      itinerarioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'itinerario',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'itinerario',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  itinerarioIsEmpty() {
+      itinerarioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'itinerario', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'itinerario',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  itinerarioIsNotEmpty() {
+      itinerarioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'itinerario', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'itinerario',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaArrivoEqualTo(String value, {bool caseSensitive = true}) {
+      localitaArrivoEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'localitaArrivo',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'localitaArrivo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaArrivoGreaterThan(
+      localitaArrivoGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'localitaArrivo',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'localitaArrivo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaArrivoLessThan(
+      localitaArrivoLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'localitaArrivo',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'localitaArrivo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaArrivoBetween(
+      localitaArrivoBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -4345,140 +4309,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'localitaArrivo',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'localitaArrivo',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaArrivoStartsWith(String value, {bool caseSensitive = true}) {
+      localitaArrivoStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'localitaArrivo',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'localitaArrivo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaArrivoEndsWith(String value, {bool caseSensitive = true}) {
+      localitaArrivoEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'localitaArrivo',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'localitaArrivo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaArrivoContains(String value, {bool caseSensitive = true}) {
+      localitaArrivoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'localitaArrivo',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'localitaArrivo',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaArrivoMatches(String pattern, {bool caseSensitive = true}) {
+      localitaArrivoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'localitaArrivo',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'localitaArrivo',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaArrivoIsEmpty() {
+      localitaArrivoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'localitaArrivo', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'localitaArrivo',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaArrivoIsNotEmpty() {
+      localitaArrivoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'localitaArrivo', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'localitaArrivo',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaPartenzaEqualTo(String value, {bool caseSensitive = true}) {
+      localitaPartenzaEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'localitaPartenza',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'localitaPartenza',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaPartenzaGreaterThan(
+      localitaPartenzaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'localitaPartenza',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'localitaPartenza',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaPartenzaLessThan(
+      localitaPartenzaLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'localitaPartenza',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'localitaPartenza',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaPartenzaBetween(
+      localitaPartenzaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -4486,140 +4445,289 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'localitaPartenza',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'localitaPartenza',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaPartenzaStartsWith(String value, {bool caseSensitive = true}) {
+      localitaPartenzaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'localitaPartenza',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'localitaPartenza',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaPartenzaEndsWith(String value, {bool caseSensitive = true}) {
+      localitaPartenzaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'localitaPartenza',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'localitaPartenza',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaPartenzaContains(String value, {bool caseSensitive = true}) {
+      localitaPartenzaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'localitaPartenza',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'localitaPartenza',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaPartenzaMatches(String pattern, {bool caseSensitive = true}) {
+      localitaPartenzaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'localitaPartenza',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'localitaPartenza',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaPartenzaIsEmpty() {
+      localitaPartenzaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'localitaPartenza', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'localitaPartenza',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  localitaPartenzaIsNotEmpty() {
+      localitaPartenzaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'localitaPartenza', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'localitaPartenza',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  merchantFeeEqualTo(double value, {double epsilon = Query.epsilon}) {
+      logHistoryIdIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'merchantFee',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'logHistoryId',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  merchantFeeGreaterThan(
+      logHistoryIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'logHistoryId',
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      logHistoryIdEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'logHistoryId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      logHistoryIdGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'logHistoryId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      logHistoryIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'logHistoryId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      logHistoryIdBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'logHistoryId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      logHistoryIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'logHistoryId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      logHistoryIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'logHistoryId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      logHistoryIdContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'logHistoryId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      logHistoryIdMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'logHistoryId',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      logHistoryIdIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'logHistoryId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      logHistoryIdIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'logHistoryId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      merchantFeeEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'merchantFee',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      merchantFeeGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'merchantFee',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'merchantFee',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  merchantFeeLessThan(
+      merchantFeeLessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'merchantFee',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'merchantFee',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  merchantFeeBetween(
+      merchantFeeBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -4627,70 +4735,65 @@ extension EstrattoContoQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'merchantFee',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'merchantFee',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoFeeEqualTo(String value, {bool caseSensitive = true}) {
+      metPagamentoFeeEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'metPagamentoFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'metPagamentoFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoFeeGreaterThan(
+      metPagamentoFeeGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'metPagamentoFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'metPagamentoFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoFeeLessThan(
+      metPagamentoFeeLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'metPagamentoFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'metPagamentoFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoFeeBetween(
+      metPagamentoFeeBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -4698,140 +4801,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'metPagamentoFee',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'metPagamentoFee',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoFeeStartsWith(String value, {bool caseSensitive = true}) {
+      metPagamentoFeeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'metPagamentoFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'metPagamentoFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoFeeEndsWith(String value, {bool caseSensitive = true}) {
+      metPagamentoFeeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'metPagamentoFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'metPagamentoFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoFeeContains(String value, {bool caseSensitive = true}) {
+      metPagamentoFeeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'metPagamentoFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'metPagamentoFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoFeeMatches(String pattern, {bool caseSensitive = true}) {
+      metPagamentoFeeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'metPagamentoFee',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'metPagamentoFee',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoFeeIsEmpty() {
+      metPagamentoFeeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'metPagamentoFee', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'metPagamentoFee',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoFeeIsNotEmpty() {
+      metPagamentoFeeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'metPagamentoFee', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'metPagamentoFee',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoServEqualTo(String value, {bool caseSensitive = true}) {
+      metPagamentoServEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'metPagamentoServ',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'metPagamentoServ',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoServGreaterThan(
+      metPagamentoServGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'metPagamentoServ',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'metPagamentoServ',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoServLessThan(
+      metPagamentoServLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'metPagamentoServ',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'metPagamentoServ',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoServBetween(
+      metPagamentoServBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -4839,140 +4937,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'metPagamentoServ',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'metPagamentoServ',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoServStartsWith(String value, {bool caseSensitive = true}) {
+      metPagamentoServStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'metPagamentoServ',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'metPagamentoServ',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoServEndsWith(String value, {bool caseSensitive = true}) {
+      metPagamentoServEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'metPagamentoServ',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'metPagamentoServ',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoServContains(String value, {bool caseSensitive = true}) {
+      metPagamentoServContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'metPagamentoServ',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'metPagamentoServ',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoServMatches(String pattern, {bool caseSensitive = true}) {
+      metPagamentoServMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'metPagamentoServ',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'metPagamentoServ',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoServIsEmpty() {
+      metPagamentoServIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'metPagamentoServ', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'metPagamentoServ',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  metPagamentoServIsNotEmpty() {
+      metPagamentoServIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'metPagamentoServ', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'metPagamentoServ',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nomePasseggeroEqualTo(String value, {bool caseSensitive = true}) {
+      nomePasseggeroEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'nomePasseggero',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nomePasseggero',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nomePasseggeroGreaterThan(
+      nomePasseggeroGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'nomePasseggero',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'nomePasseggero',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nomePasseggeroLessThan(
+      nomePasseggeroLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'nomePasseggero',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'nomePasseggero',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nomePasseggeroBetween(
+      nomePasseggeroBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -4980,140 +5073,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'nomePasseggero',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'nomePasseggero',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nomePasseggeroStartsWith(String value, {bool caseSensitive = true}) {
+      nomePasseggeroStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'nomePasseggero',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'nomePasseggero',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nomePasseggeroEndsWith(String value, {bool caseSensitive = true}) {
+      nomePasseggeroEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'nomePasseggero',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'nomePasseggero',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nomePasseggeroContains(String value, {bool caseSensitive = true}) {
+      nomePasseggeroContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'nomePasseggero',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'nomePasseggero',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nomePasseggeroMatches(String pattern, {bool caseSensitive = true}) {
+      nomePasseggeroMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'nomePasseggero',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'nomePasseggero',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nomePasseggeroIsEmpty() {
+      nomePasseggeroIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'nomePasseggero', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nomePasseggero',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nomePasseggeroIsNotEmpty() {
+      nomePasseggeroIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'nomePasseggero', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'nomePasseggero',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrBollaEqualTo(String value, {bool caseSensitive = true}) {
+      nrBollaEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'nrBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nrBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrBollaGreaterThan(
+      nrBollaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'nrBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'nrBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrBollaLessThan(
+      nrBollaLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'nrBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'nrBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrBollaBetween(
+      nrBollaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -5121,140 +5209,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'nrBolla',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'nrBolla',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrBollaStartsWith(String value, {bool caseSensitive = true}) {
+      nrBollaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'nrBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'nrBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrBollaEndsWith(String value, {bool caseSensitive = true}) {
+      nrBollaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'nrBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'nrBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrBollaContains(String value, {bool caseSensitive = true}) {
+      nrBollaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'nrBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'nrBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrBollaMatches(String pattern, {bool caseSensitive = true}) {
+      nrBollaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'nrBolla',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'nrBolla',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrBollaIsEmpty() {
+      nrBollaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'nrBolla', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nrBolla',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrBollaIsNotEmpty() {
+      nrBollaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'nrBolla', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'nrBolla',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrEstrattoContoEqualTo(String value, {bool caseSensitive = true}) {
+      nrEstrattoContoEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'nrEstrattoConto',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nrEstrattoConto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrEstrattoContoGreaterThan(
+      nrEstrattoContoGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'nrEstrattoConto',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'nrEstrattoConto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrEstrattoContoLessThan(
+      nrEstrattoContoLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'nrEstrattoConto',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'nrEstrattoConto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrEstrattoContoBetween(
+      nrEstrattoContoBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -5262,140 +5345,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'nrEstrattoConto',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'nrEstrattoConto',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrEstrattoContoStartsWith(String value, {bool caseSensitive = true}) {
+      nrEstrattoContoStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'nrEstrattoConto',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'nrEstrattoConto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrEstrattoContoEndsWith(String value, {bool caseSensitive = true}) {
+      nrEstrattoContoEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'nrEstrattoConto',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'nrEstrattoConto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrEstrattoContoContains(String value, {bool caseSensitive = true}) {
+      nrEstrattoContoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'nrEstrattoConto',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'nrEstrattoConto',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrEstrattoContoMatches(String pattern, {bool caseSensitive = true}) {
+      nrEstrattoContoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'nrEstrattoConto',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'nrEstrattoConto',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrEstrattoContoIsEmpty() {
+      nrEstrattoContoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'nrEstrattoConto', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nrEstrattoConto',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrEstrattoContoIsNotEmpty() {
+      nrEstrattoContoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'nrEstrattoConto', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'nrEstrattoConto',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrNottiEqualTo(String value, {bool caseSensitive = true}) {
+      nrNottiEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'nrNotti',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nrNotti',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrNottiGreaterThan(
+      nrNottiGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'nrNotti',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'nrNotti',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrNottiLessThan(
+      nrNottiLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'nrNotti',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'nrNotti',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrNottiBetween(
+      nrNottiBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -5403,140 +5481,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'nrNotti',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'nrNotti',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrNottiStartsWith(String value, {bool caseSensitive = true}) {
+      nrNottiStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'nrNotti',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'nrNotti',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrNottiEndsWith(String value, {bool caseSensitive = true}) {
+      nrNottiEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'nrNotti',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'nrNotti',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrNottiContains(String value, {bool caseSensitive = true}) {
+      nrNottiContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'nrNotti',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'nrNotti',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrNottiMatches(String pattern, {bool caseSensitive = true}) {
+      nrNottiMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'nrNotti',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'nrNotti',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrNottiIsEmpty() {
+      nrNottiIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'nrNotti', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nrNotti',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrNottiIsNotEmpty() {
+      nrNottiIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'nrNotti', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'nrNotti',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrPaxEqualTo(String value, {bool caseSensitive = true}) {
+      nrPaxEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'nrPax',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nrPax',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrPaxGreaterThan(
+      nrPaxGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'nrPax',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'nrPax',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrPaxLessThan(
+      nrPaxLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'nrPax',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'nrPax',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrPaxBetween(
+      nrPaxBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -5544,140 +5617,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'nrPax',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'nrPax',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrPaxStartsWith(String value, {bool caseSensitive = true}) {
+      nrPaxStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'nrPax',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'nrPax',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrPaxEndsWith(String value, {bool caseSensitive = true}) {
+      nrPaxEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'nrPax',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'nrPax',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrPaxContains(String value, {bool caseSensitive = true}) {
+      nrPaxContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'nrPax',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'nrPax',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrPaxMatches(String pattern, {bool caseSensitive = true}) {
+      nrPaxMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'nrPax',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'nrPax',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrPaxIsEmpty() {
+      nrPaxIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'nrPax', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nrPax',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrPaxIsNotEmpty() {
+      nrPaxIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'nrPax', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'nrPax',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrTktBollaEqualTo(String value, {bool caseSensitive = true}) {
+      nrTktBollaEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'nrTktBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nrTktBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrTktBollaGreaterThan(
+      nrTktBollaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'nrTktBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'nrTktBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrTktBollaLessThan(
+      nrTktBollaLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'nrTktBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'nrTktBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrTktBollaBetween(
+      nrTktBollaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -5685,140 +5753,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'nrTktBolla',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'nrTktBolla',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrTktBollaStartsWith(String value, {bool caseSensitive = true}) {
+      nrTktBollaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'nrTktBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'nrTktBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrTktBollaEndsWith(String value, {bool caseSensitive = true}) {
+      nrTktBollaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'nrTktBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'nrTktBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrTktBollaContains(String value, {bool caseSensitive = true}) {
+      nrTktBollaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'nrTktBolla',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'nrTktBolla',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrTktBollaMatches(String pattern, {bool caseSensitive = true}) {
+      nrTktBollaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'nrTktBolla',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'nrTktBolla',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrTktBollaIsEmpty() {
+      nrTktBollaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'nrTktBolla', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'nrTktBolla',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  nrTktBollaIsNotEmpty() {
+      nrTktBollaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'nrTktBolla', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'nrTktBolla',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCFeeEqualTo(String value, {bool caseSensitive = true}) {
+      numeroCCFeeEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'numeroCCFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numeroCCFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCFeeGreaterThan(
+      numeroCCFeeGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'numeroCCFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'numeroCCFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCFeeLessThan(
+      numeroCCFeeLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'numeroCCFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'numeroCCFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCFeeBetween(
+      numeroCCFeeBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -5826,140 +5889,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'numeroCCFee',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'numeroCCFee',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCFeeStartsWith(String value, {bool caseSensitive = true}) {
+      numeroCCFeeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'numeroCCFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'numeroCCFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCFeeEndsWith(String value, {bool caseSensitive = true}) {
+      numeroCCFeeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'numeroCCFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'numeroCCFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCFeeContains(String value, {bool caseSensitive = true}) {
+      numeroCCFeeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'numeroCCFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'numeroCCFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCFeeMatches(String pattern, {bool caseSensitive = true}) {
+      numeroCCFeeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'numeroCCFee',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'numeroCCFee',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCFeeIsEmpty() {
+      numeroCCFeeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'numeroCCFee', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numeroCCFee',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCFeeIsNotEmpty() {
+      numeroCCFeeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'numeroCCFee', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'numeroCCFee',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCServizioEqualTo(String value, {bool caseSensitive = true}) {
+      numeroCCServizioEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'numeroCCServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numeroCCServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCServizioGreaterThan(
+      numeroCCServizioGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'numeroCCServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'numeroCCServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCServizioLessThan(
+      numeroCCServizioLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'numeroCCServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'numeroCCServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCServizioBetween(
+      numeroCCServizioBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -5967,140 +6025,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'numeroCCServizio',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'numeroCCServizio',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCServizioStartsWith(String value, {bool caseSensitive = true}) {
+      numeroCCServizioStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'numeroCCServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'numeroCCServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCServizioEndsWith(String value, {bool caseSensitive = true}) {
+      numeroCCServizioEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'numeroCCServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'numeroCCServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCServizioContains(String value, {bool caseSensitive = true}) {
+      numeroCCServizioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'numeroCCServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'numeroCCServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCServizioMatches(String pattern, {bool caseSensitive = true}) {
+      numeroCCServizioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'numeroCCServizio',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'numeroCCServizio',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCServizioIsEmpty() {
+      numeroCCServizioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'numeroCCServizio', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numeroCCServizio',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroCCServizioIsNotEmpty() {
+      numeroCCServizioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'numeroCCServizio', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'numeroCCServizio',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumFeeEqualTo(String value, {bool caseSensitive = true}) {
+      numeroDocumFeeEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'numeroDocumFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numeroDocumFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumFeeGreaterThan(
+      numeroDocumFeeGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'numeroDocumFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'numeroDocumFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumFeeLessThan(
+      numeroDocumFeeLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'numeroDocumFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'numeroDocumFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumFeeBetween(
+      numeroDocumFeeBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -6108,140 +6161,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'numeroDocumFee',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'numeroDocumFee',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumFeeStartsWith(String value, {bool caseSensitive = true}) {
+      numeroDocumFeeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'numeroDocumFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'numeroDocumFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumFeeEndsWith(String value, {bool caseSensitive = true}) {
+      numeroDocumFeeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'numeroDocumFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'numeroDocumFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumFeeContains(String value, {bool caseSensitive = true}) {
+      numeroDocumFeeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'numeroDocumFee',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'numeroDocumFee',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumFeeMatches(String pattern, {bool caseSensitive = true}) {
+      numeroDocumFeeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'numeroDocumFee',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'numeroDocumFee',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumFeeIsEmpty() {
+      numeroDocumFeeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'numeroDocumFee', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numeroDocumFee',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumFeeIsNotEmpty() {
+      numeroDocumFeeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'numeroDocumFee', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'numeroDocumFee',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumServizioEqualTo(String value, {bool caseSensitive = true}) {
+      numeroDocumServizioEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'numeroDocumServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numeroDocumServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumServizioGreaterThan(
+      numeroDocumServizioGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'numeroDocumServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'numeroDocumServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumServizioLessThan(
+      numeroDocumServizioLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'numeroDocumServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'numeroDocumServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumServizioBetween(
+      numeroDocumServizioBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -6249,143 +6297,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'numeroDocumServizio',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'numeroDocumServizio',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumServizioStartsWith(String value, {bool caseSensitive = true}) {
+      numeroDocumServizioStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'numeroDocumServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'numeroDocumServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumServizioEndsWith(String value, {bool caseSensitive = true}) {
+      numeroDocumServizioEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'numeroDocumServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'numeroDocumServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumServizioContains(String value, {bool caseSensitive = true}) {
+      numeroDocumServizioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'numeroDocumServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'numeroDocumServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumServizioMatches(String pattern, {bool caseSensitive = true}) {
+      numeroDocumServizioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'numeroDocumServizio',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'numeroDocumServizio',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumServizioIsEmpty() {
+      numeroDocumServizioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'numeroDocumServizio', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numeroDocumServizio',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroDocumServizioIsNotEmpty() {
+      numeroDocumServizioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          property: r'numeroDocumServizio',
-          value: '',
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'numeroDocumServizio',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroTrasfertaEqualTo(String value, {bool caseSensitive = true}) {
+      numeroTrasfertaEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'numeroTrasferta',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numeroTrasferta',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroTrasfertaGreaterThan(
+      numeroTrasfertaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'numeroTrasferta',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'numeroTrasferta',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroTrasfertaLessThan(
+      numeroTrasfertaLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'numeroTrasferta',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'numeroTrasferta',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroTrasfertaBetween(
+      numeroTrasfertaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -6393,140 +6433,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'numeroTrasferta',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'numeroTrasferta',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroTrasfertaStartsWith(String value, {bool caseSensitive = true}) {
+      numeroTrasfertaStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'numeroTrasferta',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'numeroTrasferta',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroTrasfertaEndsWith(String value, {bool caseSensitive = true}) {
+      numeroTrasfertaEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'numeroTrasferta',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'numeroTrasferta',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroTrasfertaContains(String value, {bool caseSensitive = true}) {
+      numeroTrasfertaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'numeroTrasferta',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'numeroTrasferta',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroTrasfertaMatches(String pattern, {bool caseSensitive = true}) {
+      numeroTrasfertaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'numeroTrasferta',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'numeroTrasferta',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroTrasfertaIsEmpty() {
+      numeroTrasfertaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'numeroTrasferta', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'numeroTrasferta',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  numeroTrasfertaIsNotEmpty() {
+      numeroTrasfertaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'numeroTrasferta', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'numeroTrasferta',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  ragioneSocialeEqualTo(String value, {bool caseSensitive = true}) {
+      ragioneSocialeEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'ragioneSociale',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'ragioneSociale',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  ragioneSocialeGreaterThan(
+      ragioneSocialeGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'ragioneSociale',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'ragioneSociale',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  ragioneSocialeLessThan(
+      ragioneSocialeLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'ragioneSociale',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'ragioneSociale',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  ragioneSocialeBetween(
+      ragioneSocialeBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -6534,140 +6569,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'ragioneSociale',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'ragioneSociale',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  ragioneSocialeStartsWith(String value, {bool caseSensitive = true}) {
+      ragioneSocialeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'ragioneSociale',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'ragioneSociale',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  ragioneSocialeEndsWith(String value, {bool caseSensitive = true}) {
+      ragioneSocialeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'ragioneSociale',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'ragioneSociale',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  ragioneSocialeContains(String value, {bool caseSensitive = true}) {
+      ragioneSocialeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'ragioneSociale',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'ragioneSociale',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  ragioneSocialeMatches(String pattern, {bool caseSensitive = true}) {
+      ragioneSocialeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'ragioneSociale',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'ragioneSociale',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  ragioneSocialeIsEmpty() {
+      ragioneSocialeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'ragioneSociale', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'ragioneSociale',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  ragioneSocialeIsNotEmpty() {
+      ragioneSocialeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'ragioneSociale', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'ragioneSociale',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  richiedenteEqualTo(String value, {bool caseSensitive = true}) {
+      richiedenteEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'richiedente',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'richiedente',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  richiedenteGreaterThan(
+      richiedenteGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'richiedente',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'richiedente',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  richiedenteLessThan(
+      richiedenteLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'richiedente',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'richiedente',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  richiedenteBetween(
+      richiedenteBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -6675,140 +6705,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'richiedente',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'richiedente',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  richiedenteStartsWith(String value, {bool caseSensitive = true}) {
+      richiedenteStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'richiedente',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'richiedente',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  richiedenteEndsWith(String value, {bool caseSensitive = true}) {
+      richiedenteEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'richiedente',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'richiedente',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  richiedenteContains(String value, {bool caseSensitive = true}) {
+      richiedenteContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'richiedente',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'richiedente',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  richiedenteMatches(String pattern, {bool caseSensitive = true}) {
+      richiedenteMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'richiedente',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'richiedente',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  richiedenteIsEmpty() {
+      richiedenteIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'richiedente', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'richiedente',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  richiedenteIsNotEmpty() {
+      richiedenteIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'richiedente', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'richiedente',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  rigaCrmEqualTo(String value, {bool caseSensitive = true}) {
+      rigaCrmEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'rigaCrm',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'rigaCrm',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  rigaCrmGreaterThan(
+      rigaCrmGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'rigaCrm',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'rigaCrm',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  rigaCrmLessThan(
+      rigaCrmLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'rigaCrm',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'rigaCrm',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  rigaCrmBetween(
+      rigaCrmBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -6816,140 +6841,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'rigaCrm',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'rigaCrm',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  rigaCrmStartsWith(String value, {bool caseSensitive = true}) {
+      rigaCrmStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'rigaCrm',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'rigaCrm',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  rigaCrmEndsWith(String value, {bool caseSensitive = true}) {
+      rigaCrmEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'rigaCrm',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'rigaCrm',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  rigaCrmContains(String value, {bool caseSensitive = true}) {
+      rigaCrmContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'rigaCrm',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'rigaCrm',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  rigaCrmMatches(String pattern, {bool caseSensitive = true}) {
+      rigaCrmMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'rigaCrm',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'rigaCrm',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  rigaCrmIsEmpty() {
+      rigaCrmIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'rigaCrm', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'rigaCrm',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  rigaCrmIsNotEmpty() {
+      rigaCrmIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'rigaCrm', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'rigaCrm',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  sapNoSapEqualTo(String value, {bool caseSensitive = true}) {
+      sapNoSapEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'sapNoSap',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sapNoSap',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  sapNoSapGreaterThan(
+      sapNoSapGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'sapNoSap',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'sapNoSap',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  sapNoSapLessThan(
+      sapNoSapLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'sapNoSap',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'sapNoSap',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  sapNoSapBetween(
+      sapNoSapBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -6957,140 +6977,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'sapNoSap',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'sapNoSap',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  sapNoSapStartsWith(String value, {bool caseSensitive = true}) {
+      sapNoSapStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'sapNoSap',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'sapNoSap',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  sapNoSapEndsWith(String value, {bool caseSensitive = true}) {
+      sapNoSapEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'sapNoSap',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'sapNoSap',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  sapNoSapContains(String value, {bool caseSensitive = true}) {
+      sapNoSapContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'sapNoSap',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'sapNoSap',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  sapNoSapMatches(String pattern, {bool caseSensitive = true}) {
+      sapNoSapMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'sapNoSap',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'sapNoSap',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  sapNoSapIsEmpty() {
+      sapNoSapIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'sapNoSap', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sapNoSap',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  sapNoSapIsNotEmpty() {
+      sapNoSapIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'sapNoSap', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'sapNoSap',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  segueFatturaServiziEqualTo(String value, {bool caseSensitive = true}) {
+      segueFatturaServiziEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'segueFatturaServizi',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'segueFatturaServizi',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  segueFatturaServiziGreaterThan(
+      segueFatturaServiziGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'segueFatturaServizi',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'segueFatturaServizi',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  segueFatturaServiziLessThan(
+      segueFatturaServiziLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'segueFatturaServizi',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'segueFatturaServizi',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  segueFatturaServiziBetween(
+      segueFatturaServiziBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -7098,143 +7113,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'segueFatturaServizi',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'segueFatturaServizi',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  segueFatturaServiziStartsWith(String value, {bool caseSensitive = true}) {
+      segueFatturaServiziStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'segueFatturaServizi',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'segueFatturaServizi',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  segueFatturaServiziEndsWith(String value, {bool caseSensitive = true}) {
+      segueFatturaServiziEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'segueFatturaServizi',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'segueFatturaServizi',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  segueFatturaServiziContains(String value, {bool caseSensitive = true}) {
+      segueFatturaServiziContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'segueFatturaServizi',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'segueFatturaServizi',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  segueFatturaServiziMatches(String pattern, {bool caseSensitive = true}) {
+      segueFatturaServiziMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'segueFatturaServizi',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'segueFatturaServizi',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  segueFatturaServiziIsEmpty() {
+      segueFatturaServiziIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'segueFatturaServizi', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'segueFatturaServizi',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  segueFatturaServiziIsNotEmpty() {
+      segueFatturaServiziIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          property: r'segueFatturaServizi',
-          value: '',
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'segueFatturaServizi',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  servizioDaPagareEqualTo(String value, {bool caseSensitive = true}) {
+      servizioDaPagareEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'servizioDaPagare',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'servizioDaPagare',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  servizioDaPagareGreaterThan(
+      servizioDaPagareGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'servizioDaPagare',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'servizioDaPagare',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  servizioDaPagareLessThan(
+      servizioDaPagareLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'servizioDaPagare',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'servizioDaPagare',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  servizioDaPagareBetween(
+      servizioDaPagareBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -7242,140 +7249,209 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'servizioDaPagare',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'servizioDaPagare',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  servizioDaPagareStartsWith(String value, {bool caseSensitive = true}) {
+      servizioDaPagareStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'servizioDaPagare',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'servizioDaPagare',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  servizioDaPagareEndsWith(String value, {bool caseSensitive = true}) {
+      servizioDaPagareEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'servizioDaPagare',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'servizioDaPagare',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  servizioDaPagareContains(String value, {bool caseSensitive = true}) {
+      servizioDaPagareContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'servizioDaPagare',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'servizioDaPagare',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  servizioDaPagareMatches(String pattern, {bool caseSensitive = true}) {
+      servizioDaPagareMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'servizioDaPagare',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'servizioDaPagare',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  servizioDaPagareIsEmpty() {
+      servizioDaPagareIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'servizioDaPagare', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'servizioDaPagare',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  servizioDaPagareIsNotEmpty() {
+      servizioDaPagareIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'servizioDaPagare', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'servizioDaPagare',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tasseEqualTo(double value, {double epsilon = Query.epsilon}) {
+      sourceFileLineIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'tasse',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'sourceFileLine',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tasseGreaterThan(
+      sourceFileLineIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'sourceFileLine',
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      sourceFileLineEqualTo(int? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sourceFileLine',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      sourceFileLineGreaterThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'sourceFileLine',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      sourceFileLineLessThan(
+    int? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'sourceFileLine',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      sourceFileLineBetween(
+    int? lower,
+    int? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'sourceFileLine',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      tasseEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'tasse',
+        value: value,
+        epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
+      tasseGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'tasse',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'tasse',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tasseLessThan(
+      tasseLessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'tasse',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'tasse',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tasseBetween(
+      tasseBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -7383,70 +7459,65 @@ extension EstrattoContoQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'tasse',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'tasse',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoServizioEqualTo(String value, {bool caseSensitive = true}) {
+      tipoServizioEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'tipoServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'tipoServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoServizioGreaterThan(
+      tipoServizioGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'tipoServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'tipoServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoServizioLessThan(
+      tipoServizioLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'tipoServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'tipoServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoServizioBetween(
+      tipoServizioBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -7454,140 +7525,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'tipoServizio',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'tipoServizio',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoServizioStartsWith(String value, {bool caseSensitive = true}) {
+      tipoServizioStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'tipoServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'tipoServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoServizioEndsWith(String value, {bool caseSensitive = true}) {
+      tipoServizioEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'tipoServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'tipoServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoServizioContains(String value, {bool caseSensitive = true}) {
+      tipoServizioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'tipoServizio',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'tipoServizio',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoServizioMatches(String pattern, {bool caseSensitive = true}) {
+      tipoServizioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'tipoServizio',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'tipoServizio',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoServizioIsEmpty() {
+      tipoServizioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'tipoServizio', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'tipoServizio',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoServizioIsNotEmpty() {
+      tipoServizioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'tipoServizio', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'tipoServizio',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoTransazioneEqualTo(String value, {bool caseSensitive = true}) {
+      tipoTransazioneEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'tipoTransazione',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'tipoTransazione',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoTransazioneGreaterThan(
+      tipoTransazioneGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'tipoTransazione',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'tipoTransazione',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoTransazioneLessThan(
+      tipoTransazioneLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'tipoTransazione',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'tipoTransazione',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoTransazioneBetween(
+      tipoTransazioneBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -7595,140 +7661,135 @@ extension EstrattoContoQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'tipoTransazione',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'tipoTransazione',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoTransazioneStartsWith(String value, {bool caseSensitive = true}) {
+      tipoTransazioneStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'tipoTransazione',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'tipoTransazione',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoTransazioneEndsWith(String value, {bool caseSensitive = true}) {
+      tipoTransazioneEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'tipoTransazione',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'tipoTransazione',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoTransazioneContains(String value, {bool caseSensitive = true}) {
+      tipoTransazioneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'tipoTransazione',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'tipoTransazione',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoTransazioneMatches(String pattern, {bool caseSensitive = true}) {
+      tipoTransazioneMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'tipoTransazione',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'tipoTransazione',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoTransazioneIsEmpty() {
+      tipoTransazioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'tipoTransazione', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'tipoTransazione',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  tipoTransazioneIsNotEmpty() {
+      tipoTransazioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'tipoTransazione', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'tipoTransazione',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleFeeEqualTo(double value, {double epsilon = Query.epsilon}) {
+      totaleFeeEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'totaleFee',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'totaleFee',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleFeeGreaterThan(
+      totaleFeeGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'totaleFee',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'totaleFee',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleFeeLessThan(
+      totaleFeeLessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'totaleFee',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'totaleFee',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleFeeBetween(
+      totaleFeeBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -7736,70 +7797,65 @@ extension EstrattoContoQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'totaleFee',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'totaleFee',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleServizioEqualTo(double value, {double epsilon = Query.epsilon}) {
+      totaleServizioEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'totaleServizio',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'totaleServizio',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleServizioGreaterThan(
+      totaleServizioGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'totaleServizio',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'totaleServizio',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleServizioLessThan(
+      totaleServizioLessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'totaleServizio',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'totaleServizio',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleServizioBetween(
+      totaleServizioBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -7807,73 +7863,65 @@ extension EstrattoContoQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'totaleServizio',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'totaleServizio',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleServizioGeneraleEqualTo(
+      totaleServizioGeneraleEqualTo(
     double value, {
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'totaleServizioGenerale',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'totaleServizioGenerale',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleServizioGeneraleGreaterThan(
+      totaleServizioGeneraleGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'totaleServizioGenerale',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'totaleServizioGenerale',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleServizioGeneraleLessThan(
+      totaleServizioGeneraleLessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'totaleServizioGenerale',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'totaleServizioGenerale',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleServizioGeneraleBetween(
+      totaleServizioGeneraleBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -7881,70 +7929,65 @@ extension EstrattoContoQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'totaleServizioGenerale',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'totaleServizioGenerale',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleTasseEqualTo(double value, {double epsilon = Query.epsilon}) {
+      totaleTasseEqualTo(
+    double value, {
+    double epsilon = Query.epsilon,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'totaleTasse',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'totaleTasse',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleTasseGreaterThan(
+      totaleTasseGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'totaleTasse',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'totaleTasse',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleTasseLessThan(
+      totaleTasseLessThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'totaleTasse',
-          value: value,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'totaleTasse',
+        value: value,
+        epsilon: epsilon,
+      ));
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterFilterCondition>
-  totaleTasseBetween(
+      totaleTasseBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -7952,16 +7995,14 @@ extension EstrattoContoQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'totaleTasse',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          epsilon: epsilon,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'totaleTasse',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        epsilon: epsilon,
+      ));
     });
   }
 }
@@ -7987,70 +8028,70 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCampoStatistico10() {
+      sortByCampoStatistico10() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico10', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCampoStatistico10Desc() {
+      sortByCampoStatistico10Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico10', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCampoStatistico4() {
+      sortByCampoStatistico4() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico4', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCampoStatistico4Desc() {
+      sortByCampoStatistico4Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico4', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCampoStatistico7() {
+      sortByCampoStatistico7() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico7', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCampoStatistico7Desc() {
+      sortByCampoStatistico7Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico7', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCampoStatistico8() {
+      sortByCampoStatistico8() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico8', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCampoStatistico8Desc() {
+      sortByCampoStatistico8Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico8', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCampoStatistico9() {
+      sortByCampoStatistico9() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico9', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCampoStatistico9Desc() {
+      sortByCampoStatistico9Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico9', Sort.desc);
     });
@@ -8063,7 +8104,7 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCentroCostoDesc() {
+      sortByCentroCostoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'centroCosto', Sort.desc);
     });
@@ -8082,14 +8123,14 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCodiceCliente() {
+      sortByCodiceCliente() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceCliente', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCodiceClienteDesc() {
+      sortByCodiceClienteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceCliente', Sort.desc);
     });
@@ -8102,49 +8143,49 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCodiceIvaDesc() {
+      sortByCodiceIvaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceIva', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCodiceSistemazione() {
+      sortByCodiceSistemazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceSistemazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCodiceSistemazioneDesc() {
+      sortByCodiceSistemazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceSistemazione', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCodiceTrattamento() {
+      sortByCodiceTrattamento() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceTrattamento', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCodiceTrattamentoDesc() {
+      sortByCodiceTrattamentoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceTrattamento', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCodiceViaggio() {
+      sortByCodiceViaggio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceViaggio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByCodiceViaggioDesc() {
+      sortByCodiceViaggioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceViaggio', Sort.desc);
     });
@@ -8157,21 +8198,21 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByDataBollaDesc() {
+      sortByDataBollaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataBolla', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByDataCompetenza() {
+      sortByDataCompetenza() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataCompetenza', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByDataCompetenzaDesc() {
+      sortByDataCompetenzaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataCompetenza', Sort.desc);
     });
@@ -8202,42 +8243,42 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByDescrizioneRighePratiche() {
+      sortByDescrizioneRighePratiche() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneRighePratiche', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByDescrizioneRighePraticheDesc() {
+      sortByDescrizioneRighePraticheDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneRighePratiche', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByDescrizioneServizio() {
+      sortByDescrizioneServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByDescrizioneServizioDesc() {
+      sortByDescrizioneServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneServizio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByDescrizioneSpedireA() {
+      sortByDescrizioneSpedireA() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneSpedireA', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByDescrizioneSpedireADesc() {
+      sortByDescrizioneSpedireADesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneSpedireA', Sort.desc);
     });
@@ -8262,63 +8303,63 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByFornitoreDesc() {
+      sortByFornitoreDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'fornitore', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByImportoIvaFee() {
+      sortByImportoIvaFee() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoIvaFee', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByImportoIvaFeeDesc() {
+      sortByImportoIvaFeeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoIvaFee', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByImportoIvaServizio() {
+      sortByImportoIvaServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoIvaServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByImportoIvaServizioDesc() {
+      sortByImportoIvaServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoIvaServizio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByImportoIvaTasse() {
+      sortByImportoIvaTasse() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoIvaTasse', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByImportoIvaTasseDesc() {
+      sortByImportoIvaTasseDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoIvaTasse', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByImportoServizio() {
+      sortByImportoServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByImportoServizioDesc() {
+      sortByImportoServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoServizio', Sort.desc);
     });
@@ -8331,37 +8372,51 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByItinerarioDesc() {
+      sortByItinerarioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'itinerario', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByLocalitaArrivo() {
+      sortByLocalitaArrivo() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localitaArrivo', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByLocalitaArrivoDesc() {
+      sortByLocalitaArrivoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localitaArrivo', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByLocalitaPartenza() {
+      sortByLocalitaPartenza() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localitaPartenza', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByLocalitaPartenzaDesc() {
+      sortByLocalitaPartenzaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localitaPartenza', Sort.desc);
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
+      sortByLogHistoryId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'logHistoryId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
+      sortByLogHistoryIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'logHistoryId', Sort.desc);
     });
   }
 
@@ -8372,49 +8427,49 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByMerchantFeeDesc() {
+      sortByMerchantFeeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'merchantFee', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByMetPagamentoFee() {
+      sortByMetPagamentoFee() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'metPagamentoFee', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByMetPagamentoFeeDesc() {
+      sortByMetPagamentoFeeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'metPagamentoFee', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByMetPagamentoServ() {
+      sortByMetPagamentoServ() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'metPagamentoServ', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByMetPagamentoServDesc() {
+      sortByMetPagamentoServDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'metPagamentoServ', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNomePasseggero() {
+      sortByNomePasseggero() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomePasseggero', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNomePasseggeroDesc() {
+      sortByNomePasseggeroDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomePasseggero', Sort.desc);
     });
@@ -8433,14 +8488,14 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNrEstrattoConto() {
+      sortByNrEstrattoConto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nrEstrattoConto', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNrEstrattoContoDesc() {
+      sortByNrEstrattoContoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nrEstrattoConto', Sort.desc);
     });
@@ -8477,7 +8532,7 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNrTktBollaDesc() {
+      sortByNrTktBollaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nrTktBolla', Sort.desc);
     });
@@ -8490,77 +8545,77 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNumeroCCFeeDesc() {
+      sortByNumeroCCFeeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroCCFee', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNumeroCCServizio() {
+      sortByNumeroCCServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroCCServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNumeroCCServizioDesc() {
+      sortByNumeroCCServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroCCServizio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNumeroDocumFee() {
+      sortByNumeroDocumFee() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroDocumFee', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNumeroDocumFeeDesc() {
+      sortByNumeroDocumFeeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroDocumFee', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNumeroDocumServizio() {
+      sortByNumeroDocumServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroDocumServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNumeroDocumServizioDesc() {
+      sortByNumeroDocumServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroDocumServizio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNumeroTrasferta() {
+      sortByNumeroTrasferta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByNumeroTrasfertaDesc() {
+      sortByNumeroTrasfertaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByRagioneSociale() {
+      sortByRagioneSociale() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ragioneSociale', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByRagioneSocialeDesc() {
+      sortByRagioneSocialeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ragioneSociale', Sort.desc);
     });
@@ -8573,7 +8628,7 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByRichiedenteDesc() {
+      sortByRichiedenteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'richiedente', Sort.desc);
     });
@@ -8598,37 +8653,51 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortBySapNoSapDesc() {
+      sortBySapNoSapDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sapNoSap', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortBySegueFatturaServizi() {
+      sortBySegueFatturaServizi() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'segueFatturaServizi', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortBySegueFatturaServiziDesc() {
+      sortBySegueFatturaServiziDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'segueFatturaServizi', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByServizioDaPagare() {
+      sortByServizioDaPagare() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'servizioDaPagare', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByServizioDaPagareDesc() {
+      sortByServizioDaPagareDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'servizioDaPagare', Sort.desc);
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
+      sortBySourceFileLine() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceFileLine', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
+      sortBySourceFileLineDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceFileLine', Sort.desc);
     });
   }
 
@@ -8645,28 +8714,28 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByTipoServizio() {
+      sortByTipoServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByTipoServizioDesc() {
+      sortByTipoServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoServizio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByTipoTransazione() {
+      sortByTipoTransazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoTransazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByTipoTransazioneDesc() {
+      sortByTipoTransazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoTransazione', Sort.desc);
     });
@@ -8679,35 +8748,35 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByTotaleFeeDesc() {
+      sortByTotaleFeeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleFee', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByTotaleServizio() {
+      sortByTotaleServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByTotaleServizioDesc() {
+      sortByTotaleServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleServizio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByTotaleServizioGenerale() {
+      sortByTotaleServizioGenerale() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleServizioGenerale', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByTotaleServizioGeneraleDesc() {
+      sortByTotaleServizioGeneraleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleServizioGenerale', Sort.desc);
     });
@@ -8720,7 +8789,7 @@ extension EstrattoContoQuerySortBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  sortByTotaleTasseDesc() {
+      sortByTotaleTasseDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleTasse', Sort.desc);
     });
@@ -8742,70 +8811,70 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCampoStatistico10() {
+      thenByCampoStatistico10() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico10', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCampoStatistico10Desc() {
+      thenByCampoStatistico10Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico10', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCampoStatistico4() {
+      thenByCampoStatistico4() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico4', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCampoStatistico4Desc() {
+      thenByCampoStatistico4Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico4', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCampoStatistico7() {
+      thenByCampoStatistico7() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico7', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCampoStatistico7Desc() {
+      thenByCampoStatistico7Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico7', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCampoStatistico8() {
+      thenByCampoStatistico8() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico8', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCampoStatistico8Desc() {
+      thenByCampoStatistico8Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico8', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCampoStatistico9() {
+      thenByCampoStatistico9() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico9', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCampoStatistico9Desc() {
+      thenByCampoStatistico9Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'campoStatistico9', Sort.desc);
     });
@@ -8818,7 +8887,7 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCentroCostoDesc() {
+      thenByCentroCostoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'centroCosto', Sort.desc);
     });
@@ -8837,14 +8906,14 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCodiceCliente() {
+      thenByCodiceCliente() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceCliente', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCodiceClienteDesc() {
+      thenByCodiceClienteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceCliente', Sort.desc);
     });
@@ -8857,49 +8926,49 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCodiceIvaDesc() {
+      thenByCodiceIvaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceIva', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCodiceSistemazione() {
+      thenByCodiceSistemazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceSistemazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCodiceSistemazioneDesc() {
+      thenByCodiceSistemazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceSistemazione', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCodiceTrattamento() {
+      thenByCodiceTrattamento() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceTrattamento', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCodiceTrattamentoDesc() {
+      thenByCodiceTrattamentoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceTrattamento', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCodiceViaggio() {
+      thenByCodiceViaggio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceViaggio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByCodiceViaggioDesc() {
+      thenByCodiceViaggioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceViaggio', Sort.desc);
     });
@@ -8912,21 +8981,21 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByDataBollaDesc() {
+      thenByDataBollaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataBolla', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByDataCompetenza() {
+      thenByDataCompetenza() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataCompetenza', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByDataCompetenzaDesc() {
+      thenByDataCompetenzaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataCompetenza', Sort.desc);
     });
@@ -8957,42 +9026,42 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByDescrizioneRighePratiche() {
+      thenByDescrizioneRighePratiche() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneRighePratiche', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByDescrizioneRighePraticheDesc() {
+      thenByDescrizioneRighePraticheDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneRighePratiche', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByDescrizioneServizio() {
+      thenByDescrizioneServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByDescrizioneServizioDesc() {
+      thenByDescrizioneServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneServizio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByDescrizioneSpedireA() {
+      thenByDescrizioneSpedireA() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneSpedireA', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByDescrizioneSpedireADesc() {
+      thenByDescrizioneSpedireADesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneSpedireA', Sort.desc);
     });
@@ -9017,7 +9086,7 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByFornitoreDesc() {
+      thenByFornitoreDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'fornitore', Sort.desc);
     });
@@ -9036,56 +9105,56 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByImportoIvaFee() {
+      thenByImportoIvaFee() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoIvaFee', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByImportoIvaFeeDesc() {
+      thenByImportoIvaFeeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoIvaFee', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByImportoIvaServizio() {
+      thenByImportoIvaServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoIvaServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByImportoIvaServizioDesc() {
+      thenByImportoIvaServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoIvaServizio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByImportoIvaTasse() {
+      thenByImportoIvaTasse() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoIvaTasse', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByImportoIvaTasseDesc() {
+      thenByImportoIvaTasseDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoIvaTasse', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByImportoServizio() {
+      thenByImportoServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByImportoServizioDesc() {
+      thenByImportoServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoServizio', Sort.desc);
     });
@@ -9098,37 +9167,51 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByItinerarioDesc() {
+      thenByItinerarioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'itinerario', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByLocalitaArrivo() {
+      thenByLocalitaArrivo() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localitaArrivo', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByLocalitaArrivoDesc() {
+      thenByLocalitaArrivoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localitaArrivo', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByLocalitaPartenza() {
+      thenByLocalitaPartenza() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localitaPartenza', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByLocalitaPartenzaDesc() {
+      thenByLocalitaPartenzaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localitaPartenza', Sort.desc);
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
+      thenByLogHistoryId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'logHistoryId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
+      thenByLogHistoryIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'logHistoryId', Sort.desc);
     });
   }
 
@@ -9139,49 +9222,49 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByMerchantFeeDesc() {
+      thenByMerchantFeeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'merchantFee', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByMetPagamentoFee() {
+      thenByMetPagamentoFee() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'metPagamentoFee', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByMetPagamentoFeeDesc() {
+      thenByMetPagamentoFeeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'metPagamentoFee', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByMetPagamentoServ() {
+      thenByMetPagamentoServ() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'metPagamentoServ', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByMetPagamentoServDesc() {
+      thenByMetPagamentoServDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'metPagamentoServ', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNomePasseggero() {
+      thenByNomePasseggero() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomePasseggero', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNomePasseggeroDesc() {
+      thenByNomePasseggeroDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomePasseggero', Sort.desc);
     });
@@ -9200,14 +9283,14 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNrEstrattoConto() {
+      thenByNrEstrattoConto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nrEstrattoConto', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNrEstrattoContoDesc() {
+      thenByNrEstrattoContoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nrEstrattoConto', Sort.desc);
     });
@@ -9244,7 +9327,7 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNrTktBollaDesc() {
+      thenByNrTktBollaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nrTktBolla', Sort.desc);
     });
@@ -9257,77 +9340,77 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNumeroCCFeeDesc() {
+      thenByNumeroCCFeeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroCCFee', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNumeroCCServizio() {
+      thenByNumeroCCServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroCCServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNumeroCCServizioDesc() {
+      thenByNumeroCCServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroCCServizio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNumeroDocumFee() {
+      thenByNumeroDocumFee() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroDocumFee', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNumeroDocumFeeDesc() {
+      thenByNumeroDocumFeeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroDocumFee', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNumeroDocumServizio() {
+      thenByNumeroDocumServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroDocumServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNumeroDocumServizioDesc() {
+      thenByNumeroDocumServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroDocumServizio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNumeroTrasferta() {
+      thenByNumeroTrasferta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByNumeroTrasfertaDesc() {
+      thenByNumeroTrasfertaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByRagioneSociale() {
+      thenByRagioneSociale() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ragioneSociale', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByRagioneSocialeDesc() {
+      thenByRagioneSocialeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ragioneSociale', Sort.desc);
     });
@@ -9340,7 +9423,7 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByRichiedenteDesc() {
+      thenByRichiedenteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'richiedente', Sort.desc);
     });
@@ -9365,37 +9448,51 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenBySapNoSapDesc() {
+      thenBySapNoSapDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sapNoSap', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenBySegueFatturaServizi() {
+      thenBySegueFatturaServizi() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'segueFatturaServizi', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenBySegueFatturaServiziDesc() {
+      thenBySegueFatturaServiziDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'segueFatturaServizi', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByServizioDaPagare() {
+      thenByServizioDaPagare() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'servizioDaPagare', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByServizioDaPagareDesc() {
+      thenByServizioDaPagareDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'servizioDaPagare', Sort.desc);
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
+      thenBySourceFileLine() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceFileLine', Sort.asc);
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
+      thenBySourceFileLineDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceFileLine', Sort.desc);
     });
   }
 
@@ -9412,28 +9509,28 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByTipoServizio() {
+      thenByTipoServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByTipoServizioDesc() {
+      thenByTipoServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoServizio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByTipoTransazione() {
+      thenByTipoTransazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoTransazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByTipoTransazioneDesc() {
+      thenByTipoTransazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoTransazione', Sort.desc);
     });
@@ -9446,35 +9543,35 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByTotaleFeeDesc() {
+      thenByTotaleFeeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleFee', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByTotaleServizio() {
+      thenByTotaleServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleServizio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByTotaleServizioDesc() {
+      thenByTotaleServizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleServizio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByTotaleServizioGenerale() {
+      thenByTotaleServizioGenerale() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleServizioGenerale', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByTotaleServizioGeneraleDesc() {
+      thenByTotaleServizioGeneraleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleServizioGenerale', Sort.desc);
     });
@@ -9487,7 +9584,7 @@ extension EstrattoContoQuerySortThenBy
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QAfterSortBy>
-  thenByTotaleTasseDesc() {
+      thenByTotaleTasseDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleTasse', Sort.desc);
     });
@@ -9496,189 +9593,156 @@ extension EstrattoContoQuerySortThenBy
 
 extension EstrattoContoQueryWhereDistinct
     on QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> {
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByBolla({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByBolla(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'bolla', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByCampoStatistico10({bool caseSensitive = true}) {
+      distinctByCampoStatistico10({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'campoStatistico10',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'campoStatistico10',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByCampoStatistico4({bool caseSensitive = true}) {
+      distinctByCampoStatistico4({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'campoStatistico4',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'campoStatistico4',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByCampoStatistico7({bool caseSensitive = true}) {
+      distinctByCampoStatistico7({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'campoStatistico7',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'campoStatistico7',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByCampoStatistico8({bool caseSensitive = true}) {
+      distinctByCampoStatistico8({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'campoStatistico8',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'campoStatistico8',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByCampoStatistico9({bool caseSensitive = true}) {
+      distinctByCampoStatistico9({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'campoStatistico9',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'campoStatistico9',
+          caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByCentroCosto({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByCentroCosto(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'centroCosto', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByCid({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByCid(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'cid', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByCodiceCliente({bool caseSensitive = true}) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByCodiceCliente(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'codiceCliente',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'codiceCliente',
+          caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByCodiceIva({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByCodiceIva(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'codiceIva', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByCodiceSistemazione({bool caseSensitive = true}) {
+      distinctByCodiceSistemazione({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'codiceSistemazione',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'codiceSistemazione',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByCodiceTrattamento({bool caseSensitive = true}) {
+      distinctByCodiceTrattamento({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'codiceTrattamento',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'codiceTrattamento',
+          caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByCodiceViaggio({bool caseSensitive = true}) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByCodiceViaggio(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'codiceViaggio',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'codiceViaggio',
+          caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByDataBolla({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByDataBolla(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dataBolla', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByDataCompetenza({bool caseSensitive = true}) {
+      distinctByDataCompetenza({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'dataCompetenza',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'dataCompetenza',
+          caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByDataIn({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByDataIn(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dataIn', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByDataOut({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByDataOut(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dataOut', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByDescrizioneRighePratiche({bool caseSensitive = true}) {
+      distinctByDescrizioneRighePratiche({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'descrizioneRighePratiche',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'descrizioneRighePratiche',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByDescrizioneServizio({bool caseSensitive = true}) {
+      distinctByDescrizioneServizio({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'descrizioneServizio',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'descrizioneServizio',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByDescrizioneSpedireA({bool caseSensitive = true}) {
+      distinctByDescrizioneSpedireA({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'descrizioneSpedireA',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'descrizioneSpedireA',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -9688,248 +9752,226 @@ extension EstrattoContoQueryWhereDistinct
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByFornitore({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByFornitore(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'fornitore', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByImportoIvaFee() {
+      distinctByImportoIvaFee() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'importoIvaFee');
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByImportoIvaServizio() {
+      distinctByImportoIvaServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'importoIvaServizio');
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByImportoIvaTasse() {
+      distinctByImportoIvaTasse() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'importoIvaTasse');
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByImportoServizio() {
+      distinctByImportoServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'importoServizio');
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByItinerario({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByItinerario(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'itinerario', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByLocalitaArrivo({bool caseSensitive = true}) {
+      distinctByLocalitaArrivo({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'localitaArrivo',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'localitaArrivo',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByLocalitaPartenza({bool caseSensitive = true}) {
+      distinctByLocalitaPartenza({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'localitaPartenza',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'localitaPartenza',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByLogHistoryId(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'logHistoryId', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByMerchantFee() {
+      distinctByMerchantFee() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'merchantFee');
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByMetPagamentoFee({bool caseSensitive = true}) {
+      distinctByMetPagamentoFee({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'metPagamentoFee',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'metPagamentoFee',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByMetPagamentoServ({bool caseSensitive = true}) {
+      distinctByMetPagamentoServ({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'metPagamentoServ',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'metPagamentoServ',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByNomePasseggero({bool caseSensitive = true}) {
+      distinctByNomePasseggero({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'nomePasseggero',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'nomePasseggero',
+          caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByNrBolla({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByNrBolla(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nrBolla', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByNrEstrattoConto({bool caseSensitive = true}) {
+      distinctByNrEstrattoConto({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'nrEstrattoConto',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'nrEstrattoConto',
+          caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByNrNotti({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByNrNotti(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nrNotti', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByNrPax({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByNrPax(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nrPax', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByNrTktBolla({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByNrTktBolla(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nrTktBolla', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByNumeroCCFee({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByNumeroCCFee(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'numeroCCFee', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByNumeroCCServizio({bool caseSensitive = true}) {
+      distinctByNumeroCCServizio({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'numeroCCServizio',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'numeroCCServizio',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByNumeroDocumFee({bool caseSensitive = true}) {
+      distinctByNumeroDocumFee({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'numeroDocumFee',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'numeroDocumFee',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByNumeroDocumServizio({bool caseSensitive = true}) {
+      distinctByNumeroDocumServizio({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'numeroDocumServizio',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'numeroDocumServizio',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByNumeroTrasferta({bool caseSensitive = true}) {
+      distinctByNumeroTrasferta({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'numeroTrasferta',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'numeroTrasferta',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByRagioneSociale({bool caseSensitive = true}) {
+      distinctByRagioneSociale({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'ragioneSociale',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'ragioneSociale',
+          caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByRichiedente({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByRichiedente(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'richiedente', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByRigaCrm({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByRigaCrm(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rigaCrm', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctBySapNoSap({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctBySapNoSap(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'sapNoSap', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctBySegueFatturaServizi({bool caseSensitive = true}) {
+      distinctBySegueFatturaServizi({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'segueFatturaServizi',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'segueFatturaServizi',
+          caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByServizioDaPagare({bool caseSensitive = true}) {
+      distinctByServizioDaPagare({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'servizioDaPagare',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'servizioDaPagare',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
+      distinctBySourceFileLine() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'sourceFileLine');
     });
   }
 
@@ -9939,21 +9981,18 @@ extension EstrattoContoQueryWhereDistinct
     });
   }
 
-  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByTipoServizio({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<EstrattoConto, EstrattoConto, QDistinct> distinctByTipoServizio(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'tipoServizio', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByTipoTransazione({bool caseSensitive = true}) {
+      distinctByTipoTransazione({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(
-        r'tipoTransazione',
-        caseSensitive: caseSensitive,
-      );
+      return query.addDistinctBy(r'tipoTransazione',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -9964,21 +10003,21 @@ extension EstrattoContoQueryWhereDistinct
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByTotaleServizio() {
+      distinctByTotaleServizio() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'totaleServizio');
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByTotaleServizioGenerale() {
+      distinctByTotaleServizioGenerale() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'totaleServizioGenerale');
     });
   }
 
   QueryBuilder<EstrattoConto, EstrattoConto, QDistinct>
-  distinctByTotaleTasse() {
+      distinctByTotaleTasse() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'totaleTasse');
     });
@@ -10000,35 +10039,35 @@ extension EstrattoContoQueryProperty
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  campoStatistico10Property() {
+      campoStatistico10Property() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'campoStatistico10');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  campoStatistico4Property() {
+      campoStatistico4Property() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'campoStatistico4');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  campoStatistico7Property() {
+      campoStatistico7Property() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'campoStatistico7');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  campoStatistico8Property() {
+      campoStatistico8Property() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'campoStatistico8');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  campoStatistico9Property() {
+      campoStatistico9Property() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'campoStatistico9');
     });
@@ -10047,7 +10086,7 @@ extension EstrattoContoQueryProperty
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  codiceClienteProperty() {
+      codiceClienteProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'codiceCliente');
     });
@@ -10060,21 +10099,21 @@ extension EstrattoContoQueryProperty
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  codiceSistemazioneProperty() {
+      codiceSistemazioneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'codiceSistemazione');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  codiceTrattamentoProperty() {
+      codiceTrattamentoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'codiceTrattamento');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  codiceViaggioProperty() {
+      codiceViaggioProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'codiceViaggio');
     });
@@ -10087,7 +10126,7 @@ extension EstrattoContoQueryProperty
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  dataCompetenzaProperty() {
+      dataCompetenzaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dataCompetenza');
     });
@@ -10106,21 +10145,21 @@ extension EstrattoContoQueryProperty
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  descrizioneRighePraticheProperty() {
+      descrizioneRighePraticheProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'descrizioneRighePratiche');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  descrizioneServizioProperty() {
+      descrizioneServizioProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'descrizioneServizio');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  descrizioneSpedireAProperty() {
+      descrizioneSpedireAProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'descrizioneSpedireA');
     });
@@ -10139,28 +10178,28 @@ extension EstrattoContoQueryProperty
   }
 
   QueryBuilder<EstrattoConto, double, QQueryOperations>
-  importoIvaFeeProperty() {
+      importoIvaFeeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'importoIvaFee');
     });
   }
 
   QueryBuilder<EstrattoConto, double, QQueryOperations>
-  importoIvaServizioProperty() {
+      importoIvaServizioProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'importoIvaServizio');
     });
   }
 
   QueryBuilder<EstrattoConto, double, QQueryOperations>
-  importoIvaTasseProperty() {
+      importoIvaTasseProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'importoIvaTasse');
     });
   }
 
   QueryBuilder<EstrattoConto, double, QQueryOperations>
-  importoServizioProperty() {
+      importoServizioProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'importoServizio');
     });
@@ -10173,16 +10212,23 @@ extension EstrattoContoQueryProperty
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  localitaArrivoProperty() {
+      localitaArrivoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'localitaArrivo');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  localitaPartenzaProperty() {
+      localitaPartenzaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'localitaPartenza');
+    });
+  }
+
+  QueryBuilder<EstrattoConto, String?, QQueryOperations>
+      logHistoryIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'logHistoryId');
     });
   }
 
@@ -10193,21 +10239,21 @@ extension EstrattoContoQueryProperty
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  metPagamentoFeeProperty() {
+      metPagamentoFeeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'metPagamentoFee');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  metPagamentoServProperty() {
+      metPagamentoServProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'metPagamentoServ');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  nomePasseggeroProperty() {
+      nomePasseggeroProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nomePasseggero');
     });
@@ -10220,7 +10266,7 @@ extension EstrattoContoQueryProperty
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  nrEstrattoContoProperty() {
+      nrEstrattoContoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nrEstrattoConto');
     });
@@ -10251,35 +10297,35 @@ extension EstrattoContoQueryProperty
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  numeroCCServizioProperty() {
+      numeroCCServizioProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'numeroCCServizio');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  numeroDocumFeeProperty() {
+      numeroDocumFeeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'numeroDocumFee');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  numeroDocumServizioProperty() {
+      numeroDocumServizioProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'numeroDocumServizio');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  numeroTrasfertaProperty() {
+      numeroTrasfertaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'numeroTrasferta');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  ragioneSocialeProperty() {
+      ragioneSocialeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'ragioneSociale');
     });
@@ -10304,16 +10350,22 @@ extension EstrattoContoQueryProperty
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  segueFatturaServiziProperty() {
+      segueFatturaServiziProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'segueFatturaServizi');
     });
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  servizioDaPagareProperty() {
+      servizioDaPagareProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'servizioDaPagare');
+    });
+  }
+
+  QueryBuilder<EstrattoConto, int?, QQueryOperations> sourceFileLineProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sourceFileLine');
     });
   }
 
@@ -10330,7 +10382,7 @@ extension EstrattoContoQueryProperty
   }
 
   QueryBuilder<EstrattoConto, String, QQueryOperations>
-  tipoTransazioneProperty() {
+      tipoTransazioneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'tipoTransazione');
     });
@@ -10343,14 +10395,14 @@ extension EstrattoContoQueryProperty
   }
 
   QueryBuilder<EstrattoConto, double, QQueryOperations>
-  totaleServizioProperty() {
+      totaleServizioProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'totaleServizio');
     });
   }
 
   QueryBuilder<EstrattoConto, double, QQueryOperations>
-  totaleServizioGeneraleProperty() {
+      totaleServizioGeneraleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'totaleServizioGenerale');
     });

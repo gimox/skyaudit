@@ -15,6 +15,7 @@ import 'package:travel_check/features/upload/models/log_history.dart';
 import 'package:travel_check/features/settings/models/dictionary.dart';
 import 'package:travel_check/features/settings/models/app_settings.dart';
 import 'package:travel_check/features/upload/models/estratto_conto.dart';
+import 'package:travel_check/features/upload/models/tracciato_sap.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +29,7 @@ void main() async {
       DictionarySchema,
       AppSettingsSchema,
       EstrattoContoSchema,
+      TracciatoSapSchema,
     ],
     directory: dir.path,
     inspector: true, // Assicurati che sia su true

@@ -10,6 +10,8 @@ import 'package:travel_check/features/settings/providers/dictionary_provider.dar
 import 'package:travel_check/features/settings/models/dictionary.dart';
 import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
 import 'package:travel_check/features/upload/models/estratto_conto.dart';
+import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
+import 'package:travel_check/features/upload/models/tracciato_sap.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView({super.key});
@@ -49,6 +51,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         ref.invalidate(dictionaryProvider);
       } else if (collectionName == 'Estratto Conto') {
         await ref.read(estrattoContoProvider.notifier).clear();
+      } else if (collectionName == 'Tracciato Sap') {
+        await ref.read(tracciatoSapProvider.notifier).clear();
       }
 
       if (mounted) {
@@ -76,11 +80,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         await isar.tracciatoContabiles.clear();
         await isar.logHistorys.clear();
         await isar.estrattoContos.clear();
+        await isar.tracciatoSaps.clear();
       });
       // Aggiorniamo anche lo stato in memoria per le collection caricate
       ref.invalidate(tracciatoContabilesProvider);
       ref.invalidate(logHistoryProvider);
       ref.invalidate(estrattoContoProvider);
+      ref.invalidate(tracciatoSapProvider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -308,6 +314,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   'Collection: Estratto Conto',
                   'Elimina tutti i dati caricati dagli estratti conto',
                   () => _clearCollection('Estratto Conto'),
+                ),
+                _buildCollectionTile(
+                  context,
+                  Icons.analytics_outlined,
+                  'Collection: Tracciato Sap',
+                  'Elimina tutti i dati caricati dal tracciato SAP',
+                  () => _clearCollection('Tracciato Sap'),
                 ),
                 const Divider(height: 32),
                 _buildHardResetAction(context),

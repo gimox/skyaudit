@@ -3,7 +3,11 @@ import 'package:isar/isar.dart';
 import 'package:travel_check/core/db/isar_provider.dart';
 import 'package:travel_check/features/upload/models/log_history.dart';
 import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
+import 'package:travel_check/features/upload/models/tracciato_sap.dart';
+import 'package:travel_check/features/upload/models/estratto_conto.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
+import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
 
 class LogHistoryNotifier extends Notifier<List<LogHistory>> {
   @override
@@ -26,10 +30,24 @@ class LogHistoryNotifier extends Notifier<List<LogHistory>> {
           .filter()
           .logHistoryIdEqualTo(uniqueCode)
           .deleteAll();
+
+      // Delete from TracciatoSap
+      await isar.tracciatoSaps
+          .filter()
+          .logHistoryIdEqualTo(uniqueCode)
+          .deleteAll();
+
+      // Delete from EstrattoConto
+      await isar.estrattoContos
+          .filter()
+          .logHistoryIdEqualTo(uniqueCode)
+          .deleteAll();
     });
 
     // Invalidate main records provider to refresh the UI
     ref.invalidate(tracciatoContabilesProvider);
+    ref.invalidate(tracciatoSapProvider);
+    ref.invalidate(estrattoContoProvider);
 
     // Refresh state
     final logs = isar.logHistorys.where().anyId().findAllSync();

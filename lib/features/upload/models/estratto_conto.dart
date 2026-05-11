@@ -67,6 +67,9 @@ class EstrattoConto {
   final String descrizioneRighePratiche; // 54
   final int? sourceFileLine;
 
+  @Index(unique: false)
+  final String? logHistoryId;
+
   EstrattoConto({
     required this.nrEstrattoConto,
     required this.nrBolla,
@@ -125,6 +128,7 @@ class EstrattoConto {
     required this.descrizioneSpedireA,
     required this.descrizioneRighePratiche,
     this.sourceFileLine,
+    this.logHistoryId,
   });
 
   Map<String, dynamic> toMap() {
@@ -186,6 +190,7 @@ class EstrattoConto {
       'descrizioneSpedireA': descrizioneSpedireA,
       'descrizioneRighePratiche': descrizioneRighePratiche,
       'sourceFileLine': sourceFileLine,
+      'logHistoryId': logHistoryId,
     };
   }
 
@@ -248,6 +253,7 @@ class EstrattoConto {
       descrizioneSpedireA: map['descrizioneSpedireA'] ?? '',
       descrizioneRighePratiche: map['descrizioneRighePratiche'] ?? '',
       sourceFileLine: map['sourceFileLine'] as int?,
+      logHistoryId: map['logHistoryId'] as String?,
     );
   }
 }

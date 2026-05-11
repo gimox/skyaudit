@@ -22,7 +22,10 @@ class EstrattoContoNotifier extends Notifier<List<EstrattoConto>> {
     final uniqueCode = DateTime.now().millisecondsSinceEpoch.toString();
     
     // Eseguiamo il parsing pesante in un isolate separato per non bloccare la UI
-    final List<Map<String, dynamic>> parsedData = await compute(_parseExcelIsolate, file.path);
+    final List<Map<String, dynamic>> parsedData = await compute(_parseExcelIsolate, {
+      'filePath': file.path,
+      'uniqueCode': uniqueCode,
+    });
 
     final List<EstrattoConto> newRecords = parsedData.map((map) => EstrattoConto.fromMap(map)).toList();
 
@@ -85,7 +88,10 @@ class EstrattoContoNotifier extends Notifier<List<EstrattoConto>> {
 }
 
 // Funzione top-level per l'isolate
-Future<List<Map<String, dynamic>>> _parseExcelIsolate(String filePath) async {
+Future<List<Map<String, dynamic>>> _parseExcelIsolate(Map<String, dynamic> params) async {
+  final String filePath = params['filePath'];
+  final String uniqueCode = params['uniqueCode'];
+  
   final bytes = File(filePath).readAsBytesSync();
   final excel = Excel.decodeBytes(bytes);
 
@@ -199,6 +205,7 @@ Future<List<Map<String, dynamic>>> _parseExcelIsolate(String filePath) async {
       'descrizioneSpedireA': val(53),
       'descrizioneRighePratiche': val(54),
       'sourceFileLine': i + 1, // Excel row number
+      'logHistoryId': uniqueCode,
     });
   }
 

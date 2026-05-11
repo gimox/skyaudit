@@ -7,14 +7,24 @@ import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/models/estratto_conto.dart';
 import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
+import 'package:travel_check/features/upload/models/tracciato_sap.dart';
+import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
 import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 
 final controlsMonthProvider = StateProvider<Set<String>>((ref) => {});
 final controlsYearProvider = StateProvider<String?>((ref) => DateTime.now().year.toString());
+final controlsStartDateProvider = StateProvider<DateTime?>((ref) {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month - 1, 1);
+});
+final controlsEndDateProvider = StateProvider<DateTime?>((ref) {
+  final now = DateTime.now();
+  return DateTime(now.year, now.month, 0);
+});
 final controlsSearchProvider = StateProvider<String>((ref) => '');
 final controlsSocietaProvider = StateProvider<Set<String>>((ref) => {});
-final controlsTipoDipendenteProvider = StateProvider<Set<String>>((ref) => {});
+final controlsTipoDipendenteProvider = StateProvider<Set<String>>((ref) => {'DR', 'IM', 'QD'});
 final controlsCidProvider = StateProvider<String>((ref) => '');
 final controlsSortAscendingProvider = StateProvider<bool>((ref) => false);
 final controlsPageProvider = StateProvider<int>((ref) => 0);
@@ -67,6 +77,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
   Widget build(BuildContext context) {
     final allRecords = ref.watch(tracciatoContabilesProvider);
     final allEstrattiConto = ref.watch(estrattoContoProvider);
+    final allSapRecords = ref.watch(tracciatoSapProvider);
 
     if (allRecords.isEmpty) {
       return Center(
@@ -78,8 +89,6 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       );
     }
 
-    final selectedMonth = ref.watch(controlsMonthProvider);
-    final selectedYear = ref.watch(controlsYearProvider);
     final searchQuery = ref.watch(controlsSearchProvider);
     final selectedSocieta = ref.watch(controlsSocietaProvider);
     final selectedTipo = ref.watch(controlsTipoDipendenteProvider);
@@ -107,9 +116,13 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           .toList();
     }
 
-    if (selectedMonth.isNotEmpty ||
-        selectedYear != null ||
-        selectedSocieta.isNotEmpty) {
+    final startDate = ref.watch(controlsStartDateProvider);
+    final endDate = ref.watch(controlsEndDateProvider);
+
+    if (startDate != null ||
+        endDate != null ||
+        selectedSocieta.isNotEmpty ||
+        selectedTipo.isNotEmpty) {
       trasferte = trasferte.where((t) {
         final firstRecord = groupedRecords[t]!.first;
 
@@ -123,17 +136,19 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           return false;
         }
 
-        if (selectedMonth.isNotEmpty || selectedYear != null) {
-          final parts = firstRecord.dataFine.split('/');
-          if (parts.length != 3) return false;
+        if (startDate != null || endDate != null) {
+          try {
+            final parts = firstRecord.dataFine.split('/');
+            if (parts.length != 3) return false;
+            final recordDate = DateTime(
+              int.parse(parts[2]),
+              int.parse(parts[1]),
+              int.parse(parts[0]),
+            );
 
-          final m = parts[1];
-          final y = parts[2];
-
-          if (selectedMonth.isNotEmpty && !selectedMonth.contains(m)) {
-            return false;
-          }
-          if (selectedYear != null && selectedYear != y) {
+            if (startDate != null && recordDate.isBefore(startDate)) return false;
+            if (endDate != null && recordDate.isAfter(endDate)) return false;
+          } catch (_) {
             return false;
           }
         }
@@ -150,8 +165,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         
         final orphans = allEstrattiConto.where((ec) => 
           ec.numeroTrasferta == t && 
-          !bolleInTracciato.contains(ec.bolla) &&
-          ec.totaleServizio.abs() > 0.001
+          !bolleInTracciato.contains(ec.bolla)
         );
         
         return orphans.isNotEmpty;
@@ -172,17 +186,21 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
         final ecForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == t).toList();
         final tEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
+        final isMatchingEC = (tTracciato - tEC).abs() < 0.001;
 
-        final diff = (tTracciato - tEC).abs();
-        final isMatching = diff < 0.001;
+        final sapForTrasferta = allSapRecords.where((sap) => sap.numeroTrasferta == t).toList();
+        final tSap = sapForTrasferta.fold<double>(0, (sum, sap) => sum + sap.importo);
+        final isMatchingSap = (tTracciato - tSap).abs() < 0.001;
 
         if (matchStatusFilter != null) {
-          if (matchStatusFilter == 'match' && !isMatching) return false;
-          if (matchStatusFilter == 'diff' && isMatching) return false;
+          if (matchStatusFilter == 'match' && (!isMatchingEC || !isMatchingSap)) return false;
+          if (matchStatusFilter == 'diff' && (isMatchingEC && isMatchingSap)) return false;
+          if (matchStatusFilter == 'diff_ec' && isMatchingEC) return false;
+          if (matchStatusFilter == 'diff_sap' && isMatchingSap) return false;
         }
 
-        if (minDiff != null && diff < minDiff) return false;
-        if (maxDiff != null && diff > maxDiff) return false;
+        if (minDiff != null && (tTracciato - tEC).abs() < minDiff) return false;
+        if (maxDiff != null && (tTracciato - tEC).abs() > maxDiff) return false;
 
         return true;
       }).toList();
@@ -190,9 +208,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
     trasferte.sort((a, b) => sortAscending ? a.compareTo(b) : b.compareTo(a));
 
-    // Calcolo totali globali filtrati
     double globalTracciato = 0;
     double globalEC = 0;
+    double globalSap = 0;
     for (final t in trasferte) {
       final records = groupedRecords[t]!;
       for (final r in records) {
@@ -201,6 +219,10 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       final ecForT = allEstrattiConto.where((ec) => ec.numeroTrasferta == t);
       for (final ec in ecForT) {
         globalEC += ec.totaleServizio;
+      }
+      final sapForT = allSapRecords.where((sap) => sap.numeroTrasferta == t);
+      for (final sap in sapForT) {
+        globalSap += sap.importo;
       }
     }
 
@@ -217,8 +239,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     };
 
     final activeFiltersCount = [
-      selectedMonth.isNotEmpty,
-      selectedYear != null,
+      startDate != null,
+      endDate != null,
       selectedSocieta.isNotEmpty,
       selectedTipo.isNotEmpty,
       ref.watch(controlsCidProvider).isNotEmpty,
@@ -249,59 +271,32 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final isWideHeader = constraints.maxWidth > 900;
-                    
-                    final headerContent = Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'CONTROLLI TRASFERTE',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w200,
-                            letterSpacing: 2.0,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Audit e quadratura dati contabili',
-                          style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
-                        ),
-                      ],
-                    );
-
-                    final totalsWrap = Wrap(
-                      spacing: 24,
-                      runSpacing: 8,
-                      alignment: WrapAlignment.end,
-                      children: [
-                        _buildGlobalTotal('TRACCIATO', globalTracciato, SkyTheme.timBlue),
-                        _buildGlobalTotal('E.C.', globalEC, Colors.purple.shade700),
-                        _buildGlobalTotal('DISCREPANZA', globalTracciato - globalEC, Colors.red.shade700),
-                      ],
-                    );
-
-                    if (isWideHeader) {
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Expanded(child: headerContent),
-                          totalsWrap,
-                        ],
-                      );
-                    } else {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          headerContent,
-                          const SizedBox(height: 16),
-                          totalsWrap,
-                        ],
-                      );
-                    }
-                  },
+                const Text(
+                  'CONTROLLI TRASFERTE',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w200,
+                    letterSpacing: 2.0,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'Audit e quadratura dati contabili',
+                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
+                ),
+                const SizedBox(height: 20),
+                // TOTALI SU RIGA DEDICATA
+                Wrap(
+                  spacing: 32,
+                  runSpacing: 12,
+                  alignment: WrapAlignment.start,
+                  children: [
+                    _buildGlobalTotal('TRACCIATO', globalTracciato, SkyTheme.timBlue),
+                    _buildGlobalTotal('E.C.', globalEC, Colors.purple.shade700),
+                    _buildGlobalTotal('SAP', globalSap, Colors.green.shade700),
+                    _buildGlobalTotal('DISCREPANZA E.C.', globalTracciato - globalEC, Colors.red.shade700),
+                    _buildGlobalTotal('DISCREPANZA SAP', globalTracciato - globalSap, Colors.orange.shade800),
+                  ],
                 ),
                 const SizedBox(height: 24),
                 // BARRA AZIONI E RICERCA
@@ -375,7 +370,13 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                     const SizedBox(width: 12),
                     // ESPORTA EXCEL
                     ElevatedButton.icon(
-                      onPressed: () => _exportToExcel(trasferte, groupedRecords, allEstrattiConto, dictionaryMap),
+                      onPressed: () => _exportToExcel(
+                        trasferte, 
+                        groupedRecords, 
+                        allEstrattiConto, 
+                        allSapRecords,
+                        dictionaryMap
+                      ),
                       icon: const Icon(Icons.download_rounded),
                       label: const Text('Esporta'),
                       style: ElevatedButton.styleFrom(
@@ -396,15 +397,10 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
-                        if (selectedYear != null)
-                          _buildFilterChip('Anno: $selectedYear', () => ref.read(controlsYearProvider.notifier).state = null),
-                        if (selectedMonth.isNotEmpty)
-                          _buildFilterChip(
-                            selectedMonth.length == 1 
-                                ? 'Mese: ${monthNames[selectedMonth.first]}' 
-                                : '${selectedMonth.length} Mesi', 
-                            () => ref.read(controlsMonthProvider.notifier).state = {}
-                          ),
+                        if (startDate != null)
+                          _buildFilterChip('Dal: ${startDate.day}/${startDate.month}/${startDate.year}', () => ref.read(controlsStartDateProvider.notifier).state = null),
+                        if (endDate != null)
+                          _buildFilterChip('Al: ${endDate.day}/${endDate.month}/${endDate.year}', () => ref.read(controlsEndDateProvider.notifier).state = null),
                         if (selectedSocieta.isNotEmpty)
                           _buildFilterChip('${selectedSocieta.length} Società', () => ref.read(controlsSocietaProvider.notifier).state = {}),
                         if (ref.watch(controlsCidProvider).isNotEmpty)
@@ -423,7 +419,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                           _buildFilterChip('${selectedTipo.length} Tipi', () => ref.read(controlsTipoDipendenteProvider.notifier).state = {}),
                         if (matchStatusFilter != null)
                           _buildFilterChip(
-                            matchStatusFilter == 'match' ? 'Stato: Quadrate' : 'Stato: Discrepanze', 
+                            matchStatusFilter == 'match' ? 'Tutto Quadrato' : 
+                            matchStatusFilter == 'diff' ? 'Qualsiasi Discrepanza' :
+                            matchStatusFilter == 'diff_ec' ? 'Discrepanza E.C.' : 'Discrepanza SAP', 
                             () => ref.read(controlsMatchStatusProvider.notifier).state = null
                           ),
                         if (ref.watch(controlsShowOnlyOrphansProvider))
@@ -458,11 +456,15 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
                 final ecForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
                 final totaleEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
+
+                final sapForTrasferta = allSapRecords.where((sap) => sap.numeroTrasferta == numeroTrasferta).toList();
+                final totaleSap = sapForTrasferta.fold<double>(0, (sum, sap) => sum + sap.importo);
+
                 final isMatching = (totaleTrasferta - totaleEC).abs() < 0.001;
                 
-                final statusBgColor = isMatching ? Colors.green.shade50 : Colors.red.shade50;
-                final statusTextColor = isMatching ? Colors.green.shade900 : Colors.red.shade900;
-                final statusBorderColor = isMatching ? Colors.green.shade200 : Colors.red.shade200;
+                final statusBgColor = isMatching ? Colors.purple.shade50 : Colors.red.shade50;
+                final statusTextColor = isMatching ? Colors.purple.shade900 : Colors.red.shade900;
+                final statusBorderColor = isMatching ? Colors.purple.shade200 : Colors.red.shade200;
 
                 return Card(
                   margin: const EdgeInsets.only(bottom: 24, left: 8, right: 8),
@@ -496,10 +498,11 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                 color: statusTextColor,
                               ),
                             ),
+                            // BADGE E.C. (Viola/Rosso)
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                               decoration: BoxDecoration(
-                                color: isMatching ? Colors.green.shade100 : Colors.red.shade100,
+                                color: isMatching ? Colors.purple.shade50 : Colors.red.shade100,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               child: Row(
@@ -512,7 +515,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    isMatching ? 'QUADRATA' : 'DISCREPANZA: ${(totaleTrasferta - totaleEC).toStringAsFixed(2)} €',
+                                    isMatching ? 'E.C. QUADRATA' : 'E.C. DISCREPANZA: ${(totaleTrasferta - totaleEC).toStringAsFixed(2)} €',
                                     style: TextStyle(
                                       fontSize: 10,
                                       fontWeight: FontWeight.bold,
@@ -521,6 +524,42 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                   ),
                                 ],
                               ),
+                            ),
+                            // BADGE SAP (Verde/Arancione)
+                            Builder(
+                              builder: (context) {
+                                final isSapMatching = (totaleTrasferta - totaleSap).abs() < 0.001;
+                                final sapColor = isSapMatching ? Colors.green.shade700 : Colors.orange.shade800;
+                                final sapBg = isSapMatching ? Colors.green.shade50 : Colors.orange.shade50;
+                                
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  decoration: BoxDecoration(
+                                    color: sapBg,
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(color: isSapMatching ? Colors.green.shade200 : Colors.orange.shade200),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        isSapMatching ? Icons.analytics_outlined : Icons.warning_amber_rounded,
+                                        size: 12,
+                                        color: sapColor,
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        isSapMatching ? 'SAP QUADRATA' : 'SAP DISCREPANZA: ${(totaleTrasferta - totaleSap).toStringAsFixed(2)} €',
+                                        style: TextStyle(
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.bold,
+                                          color: sapColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
                             ),
                           ],
                         ),
@@ -697,14 +736,99 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                       ];
                     }).toList()
                       ..addAll([
+                        // SEZIONE RECORD SAP
+                        Builder(
+                          builder: (context) {
+                            final sapForTrasferta = allSapRecords.where((sap) => sap.numeroTrasferta == numeroTrasferta).toList();
+                            if (sapForTrasferta.isEmpty) return const SizedBox.shrink();
+
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.analytics_outlined, size: 16, color: Colors.green.shade800),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'Record Tracciato SAP',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                          color: Colors.green.shade800,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                ...sapForTrasferta.map((sap) => Container(
+                                  margin: const EdgeInsets.only(left: 20, bottom: 8, right: 8),
+                                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.green.shade50.withAlpha(150),
+                                    borderRadius: BorderRadius.circular(12),
+                                    border: Border.all(color: Colors.green.shade100),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Icon(Icons.description_outlined, size: 16, color: Colors.green.shade700),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'SAP',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.green.shade700,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 12),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              sap.tipoSpesaDescrizione,
+                                              style: TextStyle(fontSize: 12, color: Colors.grey.shade800, fontWeight: FontWeight.w500),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                            Text(
+                                              'Data: ${sap.data} • Stato: ${sap.codiceStato ?? "-"}',
+                                              style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        width: 160,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.end,
+                                          children: [
+                                            Text(
+                                              '${sap.importo.toStringAsFixed(2)} ${sap.valuta}',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: Colors.green.shade800,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )),
+                              ],
+                            );
+                          },
+                        ),
                         // Sezione per EC senza match nel Tracciato
                         Builder(
                           builder: (context) {
                             final bolleInTracciato = recordsTrasferta.map((r) => r.numeroBolla).toSet();
                             final orphansForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
                             final orphanedEC = orphansForTrasferta.where((ec) => 
-                              !bolleInTracciato.contains(ec.bolla) && 
-                              ec.totaleServizio.abs() > 0.001
+                              !bolleInTracciato.contains(ec.bolla)
                             ).toList();
 
                             if (orphanedEC.isEmpty) return const SizedBox.shrink();
@@ -844,6 +968,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                             totaleEC, 
                                             isMatching ? Colors.green.shade700 : Colors.red.shade700
                                           ),
+                                          _buildTotalIndicator('SAP', totaleSap, Colors.green.shade700),
                                         ],
                                       );
                                     },
@@ -852,13 +977,13 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                               ),
                               Builder(
                                 builder: (context) {
-                                  final ecForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
-                                  final totaleEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
-                                  final diff = totaleTrasferta - totaleEC;
-                                  final isMatching = diff.abs() < 0.001;
+                                  final diffEC = totaleTrasferta - totaleEC;
+                                  final isMatchingEC = diffEC.abs() < 0.001;
+                                  
+                                  final diffSap = totaleTrasferta - totaleSap;
+                                  final isMatchingSap = diffSap.abs() < 0.001;
 
-
-                                  if (isMatching) {
+                                  if (isMatchingEC && isMatchingSap) {
                                     return Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                       decoration: BoxDecoration(
@@ -878,6 +1003,10 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                       ),
                                     );
                                   } else {
+                                    List<String> labels = [];
+                                    if (!isMatchingEC) labels.add('EC: ${_formatCurrency(diffEC)}');
+                                    if (!isMatchingSap) labels.add('SAP: ${_formatCurrency(diffSap)}');
+
                                     return Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                                       decoration: BoxDecoration(
@@ -890,7 +1019,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                           Icon(Icons.warning, color: Colors.red.shade700, size: 16),
                                           const SizedBox(width: 8),
                                           Text(
-                                            'DISCREPANZA: ${_formatCurrency(diff)}',
+                                            'DISCREPANZA: ${labels.join(" | ")}',
                                             style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: 12),
                                           ),
                                         ],
@@ -1102,6 +1231,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     List<String> trasferte,
     Map<String, List<TracciatoContabile>> groupedRecords,
     List<EstrattoConto> allEstrattiConto,
+    List<TracciatoSap> allSapRecords,
     Map<String, String> dictionaryMap,
   ) async {
     try {
@@ -1109,24 +1239,46 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       final sheet = excel['ControlliTrasferte'];
       excel.delete('Sheet1');
 
-      // Header principale
-      sheet.appendRow([
-        excel_pkg.TextCellValue('TIPO RIGA'),
-        excel_pkg.TextCellValue('TRASFERTA'),
-        excel_pkg.TextCellValue('CID / PASSEGGERO'),
-        excel_pkg.TextCellValue('BOLLA'),
-        excel_pkg.TextCellValue('LOCALITÀ / DESCRIZIONE'),
-        excel_pkg.TextCellValue('GIUSTIFICATIVO / SERVIZIO'),
-        excel_pkg.TextCellValue('SOCIETÀ'),
-        excel_pkg.TextCellValue('DATA'),
-        excel_pkg.TextCellValue('IMPORTO €'),
-        excel_pkg.TextCellValue('DISCREPANZA €'),
-      ]);
+      // STILI
+      final headerStyle = excel_pkg.CellStyle(
+        backgroundColorHex: excel_pkg.ExcelColor.fromHexString('#003399'), // TIM Blue
+        fontColorHex: excel_pkg.ExcelColor.fromHexString('#FFFFFF'),
+        bold: true,
+        horizontalAlign: excel_pkg.HorizontalAlign.Center,
+        verticalAlign: excel_pkg.VerticalAlign.Center,
+      );
 
+      final tripHeaderStyle = excel_pkg.CellStyle(
+        backgroundColorHex: excel_pkg.ExcelColor.fromHexString('#F0F2F5'),
+        bold: true,
+      );
+
+      final tracciatoStyle = excel_pkg.CellStyle(fontColorHex: excel_pkg.ExcelColor.fromHexString('#003399'));
+      final ecStyle = excel_pkg.CellStyle(fontColorHex: excel_pkg.ExcelColor.fromHexString('#6B21A8')); // Purple
+      final sapStyle = excel_pkg.CellStyle(fontColorHex: excel_pkg.ExcelColor.fromHexString('#15803D')); // Green
+
+      // Header principale
+      final headers = [
+        'TIPO RIGA', 'TRASFERTA', 'CID / PASSEGGERO', 'BOLLA', 
+        'DATA INIZIO TRASF.', 'DATA FINE TRASF.',
+        'LOCALITÀ / DESCRIZIONE', 'GIUSTIFICATIVO / SERVIZIO', 
+        'SOCIETÀ', 'DATA SPESA/BOLLA', 'IMPORTO €', 'DISC. E.C. €', 'DISC. SAP €',
+        'DISC. E.C. (SI/NO)', 'DISC. SAP (SI/NO)'
+      ];
+      
+      for (var i = 0; i < headers.length; i++) {
+        var cell = sheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0));
+        cell.value = excel_pkg.TextCellValue(headers[i]);
+        cell.cellStyle = headerStyle;
+      }
+      sheet.setRowHeight(0, 30);
+
+      int currentRow = 1;
       for (final t in trasferte) {
         final records = groupedRecords[t]!;
         final first = records.first;
         final ecForT = allEstrattiConto.where((ec) => ec.numeroTrasferta == t).toList();
+        final sapForT = allSapRecords.where((sap) => sap.numeroTrasferta == t).toList();
         
         double totTracciato = 0;
         for (var r in records) {
@@ -1134,58 +1286,112 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         }
         
         double totEC = ecForT.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
-        final diff = totTracciato - totEC;
-        final isMatching = diff.abs() < 0.001;
+        double totSap = sapForT.fold<double>(0, (sum, sap) => sum + sap.importo);
+        
+        final diffEC = totTracciato - totEC;
+        final diffSap = totTracciato - totSap;
+        final isMatchingEC = diffEC.abs() < 0.001;
+        final isMatchingSap = diffSap.abs() < 0.001;
 
-        // RIGA TESTATA TRASFERTA (Grigio Chiaro)
-        sheet.appendRow([
-          excel_pkg.TextCellValue('TESTATA'),
-          excel_pkg.TextCellValue(t),
-          excel_pkg.TextCellValue('CID: ${first.cid}'),
-          excel_pkg.TextCellValue(''),
-          excel_pkg.TextCellValue('Dal ${first.dataInizio} al ${first.dataFine}'),
-          excel_pkg.TextCellValue(isMatching ? 'QUADRATA' : 'DISCREPANZA'),
-          excel_pkg.TextCellValue(first.societa),
-          excel_pkg.TextCellValue(''),
-          excel_pkg.DoubleCellValue(totTracciato),
-          excel_pkg.DoubleCellValue(diff),
-        ]);
+        // RIGA TRASFERTA (RIEPILOGO)
+        final tripHeaderRow = [
+          'TRASFERTA', t, 'CID: ${first.cid}', '', 
+          first.dataInizio, first.dataFine,
+          'Stato: ${isMatchingEC ? "OK" : "KO"} | SAP: ${isMatchingSap ? "OK" : "KO"}',
+          '', first.societa, '', totTracciato, diffEC, diffSap,
+          isMatchingEC ? 'NO' : 'SI',
+          isMatchingSap ? 'NO' : 'SI'
+        ];
+
+        for (var i = 0; i < tripHeaderRow.length; i++) {
+          var cell = sheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
+          final val = tripHeaderRow[i];
+          if (val is double) {
+            cell.value = excel_pkg.DoubleCellValue(val);
+          } else {
+            cell.value = excel_pkg.TextCellValue(val.toString());
+          }
+          cell.cellStyle = tripHeaderStyle;
+        }
+        currentRow++;
 
         // RIGHE TRACCIATO
         for (final r in records) {
-          sheet.appendRow([
-            excel_pkg.TextCellValue('  > TRACCIATO'),
-            excel_pkg.TextCellValue(''),
-            excel_pkg.TextCellValue(r.cid),
-            excel_pkg.TextCellValue(r.numeroBolla),
-            excel_pkg.TextCellValue(r.localita),
-            excel_pkg.TextCellValue('${r.giustificativoSpesa}${dictionaryMap[r.giustificativoSpesa] != null ? " (${dictionaryMap[r.giustificativoSpesa]})" : ""}'),
-            excel_pkg.TextCellValue(''),
-            excel_pkg.TextCellValue(r.dataSpesa),
-            excel_pkg.DoubleCellValue(r.isNegative ? -r.importo : r.importo),
-            excel_pkg.TextCellValue(''),
-          ]);
+          final rowData = [
+            '  > TRACCIATO', '', r.cid, r.numeroBolla, '', '', r.localita, 
+            '${r.giustificativoSpesa}${dictionaryMap[r.giustificativoSpesa] != null ? " (${dictionaryMap[r.giustificativoSpesa]})" : ""}', 
+            '', r.dataSpesa, r.isNegative ? -r.importo : r.importo, '', '', '', ''
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = sheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = excel_pkg.DoubleCellValue(val);
+            } else {
+              cell.value = excel_pkg.TextCellValue(val.toString());
+            }
+            cell.cellStyle = tracciatoStyle;
+          }
+          currentRow++;
         }
 
         // RIGHE ESTRATTO CONTO
         for (final ec in ecForT) {
-          sheet.appendRow([
-            excel_pkg.TextCellValue('  > E. CONTO'),
-            excel_pkg.TextCellValue(''),
-            excel_pkg.TextCellValue(ec.nomePasseggero),
-            excel_pkg.TextCellValue(ec.bolla),
-            excel_pkg.TextCellValue(ec.itinerario),
-            excel_pkg.TextCellValue(ec.descrizioneServizio),
-            excel_pkg.TextCellValue(''),
-            excel_pkg.TextCellValue(ec.dataBolla),
-            excel_pkg.DoubleCellValue(ec.totaleServizio),
-            excel_pkg.TextCellValue(''),
-          ]);
+          final rowData = [
+            '  > E. CONTO', '', ec.nomePasseggero, ec.bolla, '', '', ec.itinerario, 
+            ec.descrizioneServizio, '', ec.dataBolla, ec.totaleServizio, '', '', '', ''
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = sheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = excel_pkg.DoubleCellValue(val);
+            } else {
+              cell.value = excel_pkg.TextCellValue(val.toString());
+            }
+            cell.cellStyle = ecStyle;
+          }
+          currentRow++;
         }
 
-        // Riga vuota tra trasferte
-        sheet.appendRow([excel_pkg.TextCellValue('')]);
+        // RIGHE SAP
+        for (final sap in sapForT) {
+          final rowData = [
+            '  > SAP', '', sap.cid, sap.cdRichiesta ?? '', '', '', sap.tipoSpesaDescrizione, 
+            sap.tipoSpesaCodice, sap.societaDescrizione, sap.data, sap.importo, '', '', '', ''
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = sheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = excel_pkg.DoubleCellValue(val);
+            } else {
+              cell.value = excel_pkg.TextCellValue(val.toString());
+            }
+            cell.cellStyle = sapStyle;
+          }
+          currentRow++;
+        }
+
+        currentRow++; // Riga vuota
       }
+
+      // Autofit colonne (approssimativo)
+      sheet.setColumnWidth(0, 15);
+      sheet.setColumnWidth(1, 15);
+      sheet.setColumnWidth(2, 25);
+      sheet.setColumnWidth(3, 15);
+      sheet.setColumnWidth(4, 20); // Data Inizio
+      sheet.setColumnWidth(5, 20); // Data Fine
+      sheet.setColumnWidth(6, 40);
+      sheet.setColumnWidth(7, 30);
+      sheet.setColumnWidth(8, 20);
+      sheet.setColumnWidth(9, 15);
+      sheet.setColumnWidth(10, 15);
+      sheet.setColumnWidth(11, 15);
+      sheet.setColumnWidth(12, 15);
+      sheet.setColumnWidth(13, 20);
+      sheet.setColumnWidth(14, 20);
 
       final fileBytes = excel.encode();
       if (fileBytes == null) return;
@@ -1238,8 +1444,10 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
   void _resetAllFilters(WidgetRef ref) {
     ref.read(controlsMonthProvider.notifier).state = <String>{};
     ref.read(controlsYearProvider.notifier).state = null;
+    ref.read(controlsStartDateProvider.notifier).state = null;
+    ref.read(controlsEndDateProvider.notifier).state = null;
     ref.read(controlsSocietaProvider.notifier).state = <String>{};
-    ref.read(controlsTipoDipendenteProvider.notifier).state = <String>{};
+    ref.read(controlsTipoDipendenteProvider.notifier).state = {'DR', 'IM', 'QD'};
     ref.read(controlsSearchProvider.notifier).state = '';
     ref.read(controlsCidProvider.notifier).state = '';
     ref.read(controlsSortAscendingProvider.notifier).state = false;
@@ -1262,8 +1470,6 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
   ) {
     // Re-use options calculation or pass them
     final allTracciato = ref.watch(tracciatoContabilesProvider);
-    final years = allTracciato.map((e) => e.dataFine.split('/').last).toSet().toList()..sort();
-    final months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
     final societaOptions = allTracciato.map((e) => e.societa).toSet().toList()..sort();
     final tipoDipendenteOptions = allTracciato.map((e) => e.tipoDipendente).toSet().toList()..sort();
 
@@ -1296,21 +1502,60 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
               children: [
                 _buildDrawerSectionTitle('PERIODI'),
                 const SizedBox(height: 12),
-                _buildFilterDropdown<String?>(
-                  'Seleziona Anno',
-                  ref.watch(controlsYearProvider),
-                  years,
-                  (val) => ref.read(controlsYearProvider.notifier).state = val,
-                  icon: Icons.calendar_today,
+                // SCORCIATOIE RAPIDE
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _buildShortcutChip('Questo Mese', () {
+                      final now = DateTime.now();
+                      ref.read(controlsStartDateProvider.notifier).state = DateTime(now.year, now.month, 1);
+                      ref.read(controlsEndDateProvider.notifier).state = DateTime(now.year, now.month + 1, 0);
+                    }),
+                    Builder(
+                      builder: (context) {
+                        final now = DateTime.now();
+                        final prevDate = DateTime(now.year, now.month - 1, 1);
+                        final mKey = prevDate.month.toString().padLeft(2, '0');
+                        final monthLabel = monthNames[mKey] ?? 'Mese Precedente';
+                        
+                        return _buildShortcutChip(monthLabel, () {
+                          ref.read(controlsStartDateProvider.notifier).state = DateTime(now.year, now.month - 1, 1);
+                          ref.read(controlsEndDateProvider.notifier).state = DateTime(now.year, now.month, 0);
+                        });
+                      }
+                    ),
+                    Builder(
+                      builder: (context) {
+                        final now = DateTime.now();
+                        final twoMonthsAgoDate = DateTime(now.year, now.month - 2, 1);
+                        final mKey = twoMonthsAgoDate.month.toString().padLeft(2, '0');
+                        final monthLabel = monthNames[mKey] ?? '2 Mesi Fa';
+                        
+                        return _buildShortcutChip(monthLabel, () {
+                          ref.read(controlsStartDateProvider.notifier).state = DateTime(now.year, now.month - 2, 1);
+                          ref.read(controlsEndDateProvider.notifier).state = DateTime(now.year, now.month - 1, 0);
+                        });
+                      }
+                    ),
+                    _buildShortcutChip('Ultimi 6 Mesi', () {
+                      final now = DateTime.now();
+                      ref.read(controlsStartDateProvider.notifier).state = DateTime(now.year, now.month - 6, 1);
+                      ref.read(controlsEndDateProvider.notifier).state = now;
+                    }),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                _buildMultiSelectFilter(
-                  'Seleziona Mesi',
-                  ref.watch(controlsMonthProvider),
-                  months,
-                  (val) => ref.read(controlsMonthProvider.notifier).state = val,
-                  icon: Icons.calendar_month,
-                  dictionary: monthNames,
+                const SizedBox(height: 20),
+                _buildDatePickerFilter(
+                  'Data Inizio',
+                  ref.watch(controlsStartDateProvider),
+                  (val) => ref.read(controlsStartDateProvider.notifier).state = val,
+                ),
+                const SizedBox(height: 12),
+                _buildDatePickerFilter(
+                  'Data Fine',
+                  ref.watch(controlsEndDateProvider),
+                  (val) => ref.read(controlsEndDateProvider.notifier).state = val,
                 ),
                 
                 const SizedBox(height: 32),
@@ -1347,12 +1592,14 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 _buildFilterDropdown<String?>(
                   'Stato Quadratura',
                   ref.watch(controlsMatchStatusProvider),
-                  ['match', 'diff'],
+                  ['match', 'diff', 'diff_ec', 'diff_sap'],
                   (val) => ref.read(controlsMatchStatusProvider.notifier).state = val,
                   icon: Icons.check_circle_outline,
                   labelMapper: (val) {
-                    if (val == 'match') return 'Quadrate';
-                    if (val == 'diff') return 'Discrepanze';
+                    if (val == 'match') return 'Tutto Quadrato (EC + SAP)';
+                    if (val == 'diff') return 'Qualsiasi Discrepanza';
+                    if (val == 'diff_ec') return 'Discrepanza E.C.';
+                    if (val == 'diff_sap') return 'Discrepanza SAP';
                     return 'Tutti';
                   },
                 ),
@@ -1419,6 +1666,83 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildShortcutChip(String label, VoidCallback onTap) {
+    return ActionChip(
+      label: Text(label, style: const TextStyle(fontSize: 11)),
+      onPressed: onTap,
+      backgroundColor: SkyTheme.timBlue.withAlpha(15),
+      labelStyle: const TextStyle(color: SkyTheme.timBlue, fontWeight: FontWeight.bold),
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      side: BorderSide(color: SkyTheme.timBlue.withAlpha(40)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+    );
+  }
+
+  Widget _buildDatePickerFilter(String label, DateTime? selectedDate, Function(DateTime?) onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () async {
+            final DateTime? picked = await showDatePicker(
+              context: context,
+              initialDate: selectedDate ?? DateTime.now(),
+              firstDate: DateTime(2000),
+              lastDate: DateTime(2100),
+              builder: (context, child) {
+                return Theme(
+                  data: Theme.of(context).copyWith(
+                    colorScheme: const ColorScheme.light(
+                      primary: SkyTheme.timBlue,
+                    ),
+                  ),
+                  child: child!,
+                );
+              },
+            );
+            onChanged(picked);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.calendar_today, size: 18, color: SkyTheme.timBlue),
+                const SizedBox(width: 12),
+                Text(
+                  selectedDate == null 
+                      ? 'Seleziona data' 
+                      : '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                  style: TextStyle(
+                    color: selectedDate == null ? Colors.grey : Colors.black87,
+                    fontSize: 14,
+                  ),
+                ),
+                const Spacer(),
+                if (selectedDate != null)
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 16),
+                    onPressed: () => onChanged(null),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 

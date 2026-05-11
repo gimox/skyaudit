@@ -17,7 +17,11 @@ const LogHistorySchema = CollectionSchema(
   name: r'LogHistory',
   id: -3283775972220701330,
   properties: {
-    r'date': PropertySchema(id: 0, name: r'date', type: IsarType.dateTime),
+    r'date': PropertySchema(
+      id: 0,
+      name: r'date',
+      type: IsarType.dateTime,
+    ),
     r'discardedRecords': PropertySchema(
       id: 1,
       name: r'discardedRecords',
@@ -47,7 +51,7 @@ const LogHistorySchema = CollectionSchema(
       id: 6,
       name: r'updatedRecords',
       type: IsarType.long,
-    ),
+    )
   },
   estimateSize: _logHistoryEstimateSize,
   serialize: _logHistorySerialize,
@@ -65,9 +69,9 @@ const LogHistorySchema = CollectionSchema(
           name: r'uniqueCode',
           type: IndexType.hash,
           caseSensitive: true,
-        ),
+        )
       ],
-    ),
+    )
   },
   links: {},
   embeddedSchemas: {},
@@ -209,10 +213,8 @@ extension LogHistoryByIndex on IsarCollection<LogHistory> {
     return putAllByIndex(r'uniqueCode', objects);
   }
 
-  List<Id> putAllByUniqueCodeSync(
-    List<LogHistory> objects, {
-    bool saveLinks = true,
-  }) {
+  List<Id> putAllByUniqueCodeSync(List<LogHistory> objects,
+      {bool saveLinks = true}) {
     return putAllByIndexSync(r'uniqueCode', objects, saveLinks: saveLinks);
   }
 }
@@ -230,7 +232,10 @@ extension LogHistoryQueryWhere
     on QueryBuilder<LogHistory, LogHistory, QWhereClause> {
   QueryBuilder<LogHistory, LogHistory, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
+      return query.addWhereClause(IdWhereClause.between(
+        lower: id,
+        upper: id,
+      ));
     });
   }
 
@@ -256,10 +261,8 @@ extension LogHistoryQueryWhere
     });
   }
 
-  QueryBuilder<LogHistory, LogHistory, QAfterWhereClause> idGreaterThan(
-    Id id, {
-    bool include = false,
-  }) {
+  QueryBuilder<LogHistory, LogHistory, QAfterWhereClause> idGreaterThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -267,10 +270,8 @@ extension LogHistoryQueryWhere
     });
   }
 
-  QueryBuilder<LogHistory, LogHistory, QAfterWhereClause> idLessThan(
-    Id id, {
-    bool include = false,
-  }) {
+  QueryBuilder<LogHistory, LogHistory, QAfterWhereClause> idLessThan(Id id,
+      {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -285,67 +286,56 @@ extension LogHistoryQueryWhere
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.between(
-          lower: lowerId,
-          includeLower: includeLower,
-          upper: upperId,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addWhereClause(IdWhereClause.between(
+        lower: lowerId,
+        includeLower: includeLower,
+        upper: upperId,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterWhereClause> uniqueCodeEqualTo(
-    String uniqueCode,
-  ) {
+      String uniqueCode) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IndexWhereClause.equalTo(indexName: r'uniqueCode', value: [uniqueCode]),
-      );
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'uniqueCode',
+        value: [uniqueCode],
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterWhereClause> uniqueCodeNotEqualTo(
-    String uniqueCode,
-  ) {
+      String uniqueCode) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'uniqueCode',
-                lower: [],
-                upper: [uniqueCode],
-                includeUpper: false,
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'uniqueCode',
-                lower: [uniqueCode],
-                includeLower: false,
-                upper: [],
-              ),
-            );
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'uniqueCode',
+              lower: [],
+              upper: [uniqueCode],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'uniqueCode',
+              lower: [uniqueCode],
+              includeLower: false,
+              upper: [],
+            ));
       } else {
         return query
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'uniqueCode',
-                lower: [uniqueCode],
-                includeLower: false,
-                upper: [],
-              ),
-            )
-            .addWhereClause(
-              IndexWhereClause.between(
-                indexName: r'uniqueCode',
-                lower: [],
-                upper: [uniqueCode],
-                includeUpper: false,
-              ),
-            );
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'uniqueCode',
+              lower: [uniqueCode],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'uniqueCode',
+              lower: [],
+              upper: [uniqueCode],
+              includeUpper: false,
+            ));
       }
     });
   }
@@ -354,12 +344,12 @@ extension LogHistoryQueryWhere
 extension LogHistoryQueryFilter
     on QueryBuilder<LogHistory, LogHistory, QFilterCondition> {
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition> dateEqualTo(
-    DateTime value,
-  ) {
+      DateTime value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'date', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'date',
+        value: value,
+      ));
     });
   }
 
@@ -368,13 +358,11 @@ extension LogHistoryQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'date',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'date',
+        value: value,
+      ));
     });
   }
 
@@ -383,13 +371,11 @@ extension LogHistoryQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'date',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'date',
+        value: value,
+      ));
     });
   }
 
@@ -400,70 +386,69 @@ extension LogHistoryQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'date',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'date',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  discardedRecordsEqualTo(int value) {
+      discardedRecordsEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'discardedRecords', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'discardedRecords',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  discardedRecordsGreaterThan(int value, {bool include = false}) {
+      discardedRecordsGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'discardedRecords',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'discardedRecords',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  discardedRecordsLessThan(int value, {bool include = false}) {
+      discardedRecordsLessThan(
+    int value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'discardedRecords',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'discardedRecords',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  discardedRecordsBetween(
+      discardedRecordsBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'discardedRecords',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'discardedRecords',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
@@ -472,31 +457,27 @@ extension LogHistoryQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'fileName',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'fileName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  fileNameGreaterThan(
+      fileNameGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'fileName',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'fileName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -506,14 +487,12 @@ extension LogHistoryQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'fileName',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'fileName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -525,29 +504,28 @@ extension LogHistoryQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'fileName',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'fileName',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  fileNameStartsWith(String value, {bool caseSensitive = true}) {
+      fileNameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'fileName',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'fileName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -556,71 +534,65 @@ extension LogHistoryQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'fileName',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'fileName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition> fileNameContains(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+      String value,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'fileName',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'fileName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition> fileNameMatches(
-    String pattern, {
-    bool caseSensitive = true,
-  }) {
+      String pattern,
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'fileName',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'fileName',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  fileNameIsEmpty() {
+      fileNameIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'fileName', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'fileName',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  fileNameIsNotEmpty() {
+      fileNameIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'fileName', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'fileName',
+        value: '',
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition> idEqualTo(
-    Id value,
-  ) {
+      Id value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'id', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'id',
+        value: value,
+      ));
     });
   }
 
@@ -629,13 +601,11 @@ extension LogHistoryQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'id',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
     });
   }
 
@@ -644,13 +614,11 @@ extension LogHistoryQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'id',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'id',
+        value: value,
+      ));
     });
   }
 
@@ -661,125 +629,125 @@ extension LogHistoryQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'id',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  insertedRecordsEqualTo(int value) {
+      insertedRecordsEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'insertedRecords', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'insertedRecords',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  insertedRecordsGreaterThan(int value, {bool include = false}) {
+      insertedRecordsGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'insertedRecords',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'insertedRecords',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  insertedRecordsLessThan(int value, {bool include = false}) {
+      insertedRecordsLessThan(
+    int value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'insertedRecords',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'insertedRecords',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  insertedRecordsBetween(
+      insertedRecordsBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'insertedRecords',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'insertedRecords',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  totalRecordsEqualTo(int value) {
+      totalRecordsEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'totalRecords', value: value),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'totalRecords',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  totalRecordsGreaterThan(int value, {bool include = false}) {
+      totalRecordsGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'totalRecords',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'totalRecords',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  totalRecordsLessThan(int value, {bool include = false}) {
+      totalRecordsLessThan(
+    int value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'totalRecords',
-          value: value,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'totalRecords',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  totalRecordsBetween(
+      totalRecordsBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'totalRecords',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'totalRecords',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 
@@ -788,49 +756,43 @@ extension LogHistoryQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(
-          property: r'uniqueCode',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'uniqueCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  uniqueCodeGreaterThan(
+      uniqueCodeGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'uniqueCode',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'uniqueCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  uniqueCodeLessThan(
+      uniqueCodeLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'uniqueCode',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'uniqueCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
@@ -842,143 +804,141 @@ extension LogHistoryQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'uniqueCode',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'uniqueCode',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  uniqueCodeStartsWith(String value, {bool caseSensitive = true}) {
+      uniqueCodeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.startsWith(
-          property: r'uniqueCode',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'uniqueCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  uniqueCodeEndsWith(String value, {bool caseSensitive = true}) {
+      uniqueCodeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.endsWith(
-          property: r'uniqueCode',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'uniqueCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  uniqueCodeContains(String value, {bool caseSensitive = true}) {
+      uniqueCodeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.contains(
-          property: r'uniqueCode',
-          value: value,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'uniqueCode',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition> uniqueCodeMatches(
-    String pattern, {
-    bool caseSensitive = true,
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'uniqueCode',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
+      uniqueCodeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'uniqueCode',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
+      uniqueCodeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'uniqueCode',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
+      updatedRecordsEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'updatedRecords',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
+      updatedRecordsGreaterThan(
+    int value, {
+    bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.matches(
-          property: r'uniqueCode',
-          wildcard: pattern,
-          caseSensitive: caseSensitive,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'updatedRecords',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  uniqueCodeIsEmpty() {
+      updatedRecordsLessThan(
+    int value, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'uniqueCode', value: ''),
-      );
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'updatedRecords',
+        value: value,
+      ));
     });
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  uniqueCodeIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(property: r'uniqueCode', value: ''),
-      );
-    });
-  }
-
-  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  updatedRecordsEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.equalTo(property: r'updatedRecords', value: value),
-      );
-    });
-  }
-
-  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  updatedRecordsGreaterThan(int value, {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.greaterThan(
-          include: include,
-          property: r'updatedRecords',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  updatedRecordsLessThan(int value, {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.lessThan(
-          include: include,
-          property: r'updatedRecords',
-          value: value,
-        ),
-      );
-    });
-  }
-
-  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
-  updatedRecordsBetween(
+      updatedRecordsBetween(
     int lower,
     int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(
-        FilterCondition.between(
-          property: r'updatedRecords',
-          lower: lower,
-          includeLower: includeLower,
-          upper: upper,
-          includeUpper: includeUpper,
-        ),
-      );
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'updatedRecords',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
     });
   }
 }
@@ -1010,7 +970,7 @@ extension LogHistoryQuerySortBy
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterSortBy>
-  sortByDiscardedRecordsDesc() {
+      sortByDiscardedRecordsDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'discardedRecords', Sort.desc);
     });
@@ -1035,7 +995,7 @@ extension LogHistoryQuerySortBy
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterSortBy>
-  sortByInsertedRecordsDesc() {
+      sortByInsertedRecordsDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'insertedRecords', Sort.desc);
     });
@@ -1072,7 +1032,7 @@ extension LogHistoryQuerySortBy
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterSortBy>
-  sortByUpdatedRecordsDesc() {
+      sortByUpdatedRecordsDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedRecords', Sort.desc);
     });
@@ -1100,7 +1060,7 @@ extension LogHistoryQuerySortThenBy
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterSortBy>
-  thenByDiscardedRecordsDesc() {
+      thenByDiscardedRecordsDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'discardedRecords', Sort.desc);
     });
@@ -1137,7 +1097,7 @@ extension LogHistoryQuerySortThenBy
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterSortBy>
-  thenByInsertedRecordsDesc() {
+      thenByInsertedRecordsDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'insertedRecords', Sort.desc);
     });
@@ -1174,7 +1134,7 @@ extension LogHistoryQuerySortThenBy
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterSortBy>
-  thenByUpdatedRecordsDesc() {
+      thenByUpdatedRecordsDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'updatedRecords', Sort.desc);
     });
@@ -1195,9 +1155,8 @@ extension LogHistoryQueryWhereDistinct
     });
   }
 
-  QueryBuilder<LogHistory, LogHistory, QDistinct> distinctByFileName({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<LogHistory, LogHistory, QDistinct> distinctByFileName(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'fileName', caseSensitive: caseSensitive);
     });
@@ -1215,9 +1174,8 @@ extension LogHistoryQueryWhereDistinct
     });
   }
 
-  QueryBuilder<LogHistory, LogHistory, QDistinct> distinctByUniqueCode({
-    bool caseSensitive = true,
-  }) {
+  QueryBuilder<LogHistory, LogHistory, QDistinct> distinctByUniqueCode(
+      {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'uniqueCode', caseSensitive: caseSensitive);
     });

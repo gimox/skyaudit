@@ -7,8 +7,7 @@ import 'package:travel_check/core/theme/app_theme.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
-import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
-import 'package:travel_check/features/upload/models/estratto_conto.dart';
+import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
 
 class UploadView extends ConsumerStatefulWidget {
   const UploadView({super.key});
@@ -20,41 +19,60 @@ class UploadView extends ConsumerStatefulWidget {
 class _UploadViewState extends ConsumerState<UploadView> {
   XFile? _selectedContabileFile;
   XFile? _selectedEstrattoFile;
+  XFile? _selectedSapFile;
   bool _isDraggingContabile = false;
   bool _isDraggingEstratto = false;
+  bool _isDraggingSap = false;
   bool _isProcessingContabile = false;
   bool _isProcessingEstratto = false;
+  bool _isProcessingSap = false;
 
   Map<String, dynamic>? _lastContabileResult;
   Map<String, dynamic>? _lastEstrattoResult;
+  Map<String, dynamic>? _lastSapResult;
 
-  Future<void> _pickFile(bool isContabile) async {
+  Future<void> _pickFile(String type) async {
+    List<String> extensions;
+    if (type == 'contabile') {
+      extensions = ['txt'];
+    } else if (type == 'sap') {
+      extensions = ['xlsx'];
+    } else {
+      extensions = ['xlsx'];
+    }
+
     FilePickerResult? result = await FilePicker.pickFiles(
       type: FileType.custom,
-      allowedExtensions: isContabile ? ['txt'] : ['xlsx', 'csv', 'pdf'],
+      allowedExtensions: extensions,
     );
 
     if (result != null && result.files.single.path != null) {
       setState(() {
-        if (isContabile) {
+        if (type == 'contabile') {
           _selectedContabileFile = XFile(result.files.single.path!);
           _lastContabileResult = null;
-        } else {
+        } else if (type == 'estratto') {
           _selectedEstrattoFile = XFile(result.files.single.path!);
           _lastEstrattoResult = null;
+        } else if (type == 'sap') {
+          _selectedSapFile = XFile(result.files.single.path!);
+          _lastSapResult = null;
         }
       });
     }
   }
 
-  void _removeFile(bool isContabile) {
+  void _removeFile(String type) {
     setState(() {
-      if (isContabile) {
+      if (type == 'contabile') {
         _selectedContabileFile = null;
         _lastContabileResult = null;
-      } else {
+      } else if (type == 'estratto') {
         _selectedEstrattoFile = null;
         _lastEstrattoResult = null;
+      } else if (type == 'sap') {
+        _selectedSapFile = null;
+        _lastSapResult = null;
       }
     });
   }
@@ -163,6 +181,55 @@ class _UploadViewState extends ConsumerState<UploadView> {
     }
   }
 
+  Future<void> _processSapData() async {
+    if (_selectedSapFile == null) return;
+
+    setState(() {
+      _isProcessingSap = true;
+      _lastSapResult = null;
+    });
+
+    try {
+      final result = await ref
+          .read(tracciatoSapProvider.notifier)
+          .loadFromFile(_selectedSapFile!);
+
+      if (mounted) {
+        setState(() {
+          _lastSapResult = result;
+        });
+
+        final inserted = result['inserted'] ?? 0;
+        final total = result['total'] ?? inserted;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Elaborazione SAP completata: $total record totali.\n'
+              '• $inserted nuovi record inseriti',
+            ),
+            backgroundColor: Colors.green.shade700,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+        _selectedSapFile = null;
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Errore durante l\'elaborazione del tracciato SAP: $e',
+            ),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isProcessingSap = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -190,22 +257,26 @@ class _UploadViewState extends ConsumerState<UploadView> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Expanded(child: _buildContabileSection()),
-                        const SizedBox(width: 32),
+                        const SizedBox(width: 24),
                         Expanded(child: _buildEstrattoSection()),
+                        const SizedBox(width: 24),
+                        Expanded(child: _buildSapSection()),
                       ],
                     );
                   } else {
                     return Column(
                       children: [
                         _buildContabileSection(),
-                        const SizedBox(height: 48),
+                        const SizedBox(height: 32),
                         _buildEstrattoSection(),
+                        const SizedBox(height: 32),
+                        _buildSapSection(),
                       ],
                     );
                   }
                 },
               ),
-              if (_lastContabileResult != null || _lastEstrattoResult != null) ...[
+              if (_lastContabileResult != null || _lastEstrattoResult != null || _lastSapResult != null) ...[
                 const SizedBox(height: 48),
                 const Divider(),
                 const SizedBox(height: 24),
@@ -230,6 +301,14 @@ class _UploadViewState extends ConsumerState<UploadView> {
                   _buildDetailedResultCard(
                     title: 'RISULTATI ESTRATTO CONTO',
                     result: _lastEstrattoResult!,
+                    isContabile: false,
+                  ),
+                ],
+                if (_lastSapResult != null) ...[
+                  const SizedBox(height: 24),
+                  _buildDetailedResultCard(
+                    title: 'RISULTATI TRACCIATO SAP',
+                    result: _lastSapResult!,
                     isContabile: false,
                   ),
                 ],
@@ -330,7 +409,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
         ),
         const SizedBox(height: 24),
         _buildDropZone(
-          isContabile: true,
+          type: 'contabile',
           selectedFile: _selectedContabileFile,
           isDragging: _isDraggingContabile,
           allowedExtensions: ['txt'],
@@ -353,14 +432,14 @@ class _UploadViewState extends ConsumerState<UploadView> {
       children: [
         _buildSectionHeader(
           'ESTRATTI CONTO',
-          'File estratti conto (XLSX, CSV, PDF)',
+          'File estratti conto (.xlsx)',
         ),
         const SizedBox(height: 24),
         _buildDropZone(
-          isContabile: false,
+          type: 'estratto',
           selectedFile: _selectedEstrattoFile,
           isDragging: _isDraggingEstratto,
-          allowedExtensions: ['xlsx', 'csv', 'pdf'],
+          allowedExtensions: ['xlsx'],
         ),
         const SizedBox(height: 24),
         _buildActionButton(
@@ -369,6 +448,33 @@ class _UploadViewState extends ConsumerState<UploadView> {
               : null,
           label: 'ELABORA ESTRATTI CONTO',
           isLoading: _isProcessingEstratto,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSapSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildSectionHeader(
+          'TRACCIATO SAP',
+          'File tracciato SAP (.xlsx)',
+        ),
+        const SizedBox(height: 24),
+        _buildDropZone(
+          type: 'sap',
+          selectedFile: _selectedSapFile,
+          isDragging: _isDraggingSap,
+          allowedExtensions: ['xlsx'],
+        ),
+        const SizedBox(height: 24),
+        _buildActionButton(
+          onPressed: (_selectedSapFile != null && !_isProcessingSap)
+              ? _processSapData
+              : null,
+          label: 'ELABORA TRACCIATO SAP',
+          isLoading: _isProcessingSap,
         ),
       ],
     );
@@ -396,7 +502,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
   }
 
   Widget _buildDropZone({
-    required bool isContabile,
+    required String type,
     required XFile? selectedFile,
     required bool isDragging,
     required List<String> allowedExtensions,
@@ -410,10 +516,12 @@ class _UploadViewState extends ConsumerState<UploadView> {
 
         if (filteredFiles.isNotEmpty) {
           setState(() {
-            if (isContabile) {
+            if (type == 'contabile') {
               _selectedContabileFile = filteredFiles.first;
-            } else {
+            } else if (type == 'estratto') {
               _selectedEstrattoFile = filteredFiles.first;
+            } else if (type == 'sap') {
+              _selectedSapFile = filteredFiles.first;
             }
           });
         } else {
@@ -429,19 +537,23 @@ class _UploadViewState extends ConsumerState<UploadView> {
       },
       onDragEntered: (detail) {
         setState(() {
-          if (isContabile) {
+          if (type == 'contabile') {
             _isDraggingContabile = true;
-          } else {
+          } else if (type == 'estratto') {
             _isDraggingEstratto = true;
+          } else if (type == 'sap') {
+            _isDraggingSap = true;
           }
         });
       },
       onDragExited: (detail) {
         setState(() {
-          if (isContabile) {
+          if (type == 'contabile') {
             _isDraggingContabile = false;
-          } else {
+          } else if (type == 'estratto') {
             _isDraggingEstratto = false;
+          } else if (type == 'sap') {
+            _isDraggingSap = false;
           }
         });
       },
@@ -471,14 +583,20 @@ class _UploadViewState extends ConsumerState<UploadView> {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
-            onTap: (isContabile ? _isProcessingContabile : _isProcessingEstratto) 
-                ? null 
-                : () => _pickFile(isContabile),
+            onTap: () {
+              if (type == 'contabile' && !_isProcessingContabile) _pickFile('contabile');
+              if (type == 'estratto' && !_isProcessingEstratto) _pickFile('estratto');
+              if (type == 'sap' && !_isProcessingSap) _pickFile('sap');
+            },
             borderRadius: BorderRadius.circular(16),
             child: Center(
               child: selectedFile == null
                   ? _buildEmptyState()
-                  : _buildSelectedFileState(selectedFile, isContabile, (isContabile ? _isProcessingContabile : _isProcessingEstratto)),
+                  : _buildSelectedFileState(
+                      selectedFile, 
+                      type, 
+                      type == 'contabile' ? _isProcessingContabile : (type == 'estratto' ? _isProcessingEstratto : _isProcessingSap)
+                    ),
             ),
           ),
         ),
@@ -540,7 +658,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
     );
   }
 
-  Widget _buildSelectedFileState(XFile file, bool isContabile, bool isLoading) {
+  Widget _buildSelectedFileState(XFile file, String type, bool isLoading) {
     return Stack(
       children: [
         Center(
@@ -579,7 +697,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
             right: 8,
             child: IconButton(
               icon: const Icon(Icons.close, size: 20, color: Colors.grey),
-              onPressed: () => _removeFile(isContabile),
+              onPressed: () => _removeFile(type),
               tooltip: 'Rimuovi file',
             ),
           ),
