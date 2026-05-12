@@ -139,6 +139,15 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       endDrawer: _buildFilterDrawer(context, ref, availableYears, availableSocieta),
+      floatingActionButton: filteredRecords.isNotEmpty 
+          ? FloatingActionButton(
+              onPressed: () => _exportToExcel(filteredRecords),
+              backgroundColor: Colors.green.shade700,
+              foregroundColor: Colors.white,
+              tooltip: 'Esporta in Excel',
+              child: const Icon(Icons.table_view_rounded),
+            )
+          : null,
       body: Column(
         children: [
           Container(
@@ -159,36 +168,11 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('TRACCIATO SAP', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w200, letterSpacing: 2.0)),
-                        const SizedBox(height: 4),
-                        Text('Visualizzazione tracciato SAP prepagati', style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
-                      ],
-                    ),
+                    const SizedBox.shrink(),
                     Row(
                       children: [
-                        TextButton.icon(
-                          onPressed: () => _showClearDialog(context, ref),
-                          icon: const Icon(Icons.delete_sweep_outlined, size: 20),
-                          label: const Text('Svuota Dati'),
-                          style: TextButton.styleFrom(foregroundColor: Colors.red.shade700),
-                        ),
-                        const SizedBox(width: 12),
-                        if (filteredRecords.isNotEmpty)
-                          ElevatedButton.icon(
-                            onPressed: () => _exportToExcel(filteredRecords),
-                            icon: const Icon(Icons.download_rounded),
-                            label: const Text('Esporta'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green.shade700,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                          ),
+
+
                       ],
                     ),
                   ],
@@ -341,26 +325,59 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
           ),
           if (totalPages > 1)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: currentPage > 0 ? () {
-                      ref.read(sapPageProvider.notifier).state--;
-                      _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                    } : null,
-                    icon: const Icon(Icons.chevron_left),
-                  ),
-                  Text('Pagina ${currentPage + 1} di $totalPages (${filteredRecords.length} record)', style: const TextStyle(fontWeight: FontWeight.bold)),
-                  IconButton(
-                    onPressed: currentPage < totalPages - 1 ? () {
-                      ref.read(sapPageProvider.notifier).state++;
-                      _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                    } : null,
-                    icon: const Icon(Icons.chevron_right),
-                  ),
-                ],
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(12),
+                      blurRadius: 10,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: currentPage > 0 ? () {
+                        ref.read(sapPageProvider.notifier).state--;
+                        _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                      } : null,
+                      icon: const Icon(Icons.chevron_left),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Pagina ${currentPage + 1} di $totalPages',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: currentPage < totalPages - 1 ? () {
+                        ref.read(sapPageProvider.notifier).state++;
+                        _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                      } : null,
+                      icon: const Icon(Icons.chevron_right),
+                    ),
+                    Container(
+                      height: 24,
+                      width: 1,
+                      color: Colors.grey.shade300,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    Text(
+                      'Totale record: ${filteredRecords.length}',
+                      style: const TextStyle(
+                        color: SkyTheme.timBlue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
         ],
@@ -484,69 +501,225 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     );
   }
 
-  void _showRecordDetails(BuildContext context, TracciatoSap record) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Dettaglio SAP - ${record.numeroTrasferta}'),
-        content: SizedBox(
-          width: 500,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                _buildDetailRow('CID', record.cid),
-                _buildDetailRow('Nome', record.nomeDipendente),
-                _buildDetailRow('Società', '${record.societaCodice} - ${record.societaDescrizione}'),
-                _buildDetailRow('Trasferta', record.numeroTrasferta),
-                _buildDetailRow('Tipo Spesa', '${record.tipoSpesaCodice} - ${record.tipoSpesaDescrizione}'),
-                _buildDetailRow('Data', record.data),
-                _buildDetailRow('Importo', '${record.importo.toStringAsFixed(2)} ${record.valuta}'),
-                _buildDetailRow('CD Richiesta', record.cdRichiesta ?? '-'),
-                _buildDetailRow('Codice Stato', record.codiceStato ?? '-'),
-                _buildDetailRow('Classe Retr.', record.classeRetributiva),
-              ],
-            ),
+  Widget _buildDetailSection(String title, IconData icon, Color color, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 0, 0, 12),
+          child: Row(
+            children: [
+              Icon(icon, size: 14, color: color.withAlpha(180)),
+              const SizedBox(width: 8),
+              Text(
+                title.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: color.withAlpha(180),
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ],
           ),
         ),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Chiudi'))],
-      ),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.shade200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(5),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            children: children,
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
+  Widget _buildDetailRow(
+    String label,
+    String value, {
+    bool isHighlight = false,
+    Color? highlightColor,
+  }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 120, child: Text('$label:', style: const TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(child: Text(value)),
-        ],
-      ),
-    );
-  }
-
-  void _showClearDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Conferma Svuotamento SAP'),
-        content: const Text('Sei sicuro di voler eliminare tutti i dati del tracciato SAP?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
-          ElevatedButton(
-            onPressed: () async {
-              ref.read(tracciatoSapProvider.notifier).clear();
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Svuota tutto'),
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Colors.grey.shade500,
+                fontSize: 13,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value.isEmpty ? '-' : value,
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontWeight: isHighlight ? FontWeight.bold : FontWeight.w600,
+                color: isHighlight ? (highlightColor ?? Colors.green.shade700) : Colors.black87,
+                fontSize: 14,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
+
+  void _showRecordDetails(BuildContext context, TracciatoSap record) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.grey.shade50,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // HEADER
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.green.shade700, Colors.green.shade900],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(40),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(Icons.analytics_outlined, color: Colors.white, size: 28),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'DETTAGLIO RECORD SAP',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Trasferta n. ${record.numeroTrasferta}',
+                              style: TextStyle(
+                                color: Colors.white.withAlpha(200),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white.withAlpha(20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // CONTENT
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        _buildDetailSection('Dipendente', Icons.person_outline, Colors.green.shade700, [
+                          _buildDetailRow('CID', record.cid),
+                          _buildDetailRow('Nome', record.nomeDipendente),
+                          _buildDetailRow('Tipo', record.tipoDipendente),
+                          _buildDetailRow('Classe Retr.', record.classeRetributiva),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Società e Trasferta', Icons.business_outlined, Colors.green.shade700, [
+                          _buildDetailRow('Società', '${record.societaDescrizione} (${record.societaCodice})'),
+                          _buildDetailRow('Trasferta', record.numeroTrasferta),
+                          _buildDetailRow('Data', record.data),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Spesa e Contabilità', Icons.payments_outlined, Colors.green.shade700, [
+                          _buildDetailRow('Tipo Spesa', '${record.tipoSpesaDescrizione} (${record.tipoSpesaCodice})'),
+                          _buildDetailRow('Importo', '${record.importo.toStringAsFixed(2)} ${record.valuta}', isHighlight: true, highlightColor: Colors.green.shade700),
+                          _buildDetailRow('Stato SAP', record.codiceStato ?? '-'),
+                          _buildDetailRow('Richiesta CD', record.cdRichiesta ?? '-'),
+                          _buildDetailRow('Codice FI', record.fi ?? '-'),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Altri Dati SAP', Icons.data_usage_outlined, Colors.green.shade700, [
+                          _buildDetailRow('RI/TR', record.riTr ?? '-'),
+                          _buildDetailRow('Calc', record.calc ?? '-'),
+                          _buildDetailRow('Trasf. FI', record.codiceTrasferimentoFi ?? '-'),
+                          _buildDetailRow('Colonna T', record.colonnaT ?? '-'),
+                          _buildDetailRow('Progressivo', record.progressivoGiustificativo ?? '-'),
+                        ]),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                // ACTIONS
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade700,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                      ),
+                      child: const Text('CHIUDI', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
 
   Future<void> _exportToExcel(List<TracciatoSap> records) async {
     try {

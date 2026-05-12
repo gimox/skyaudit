@@ -200,7 +200,7 @@ class _HomeScreenState extends State<HomeScreen> {
       case 4:
         return 'Tracciato SAP';
       case 5:
-        return 'Controlli';
+        return 'Controlli Trasferte';
       case 6:
         return 'Log History';
       case 7:

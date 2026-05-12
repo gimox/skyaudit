@@ -67,14 +67,7 @@ class DashboardView extends ConsumerWidget {
                   ? Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          'DASHBOARD ANALITICA',
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.w200,
-                                letterSpacing: 2.0,
-                              ),
-                        ),
+                        const SizedBox.shrink(),
                         const SizedBox(height: 16),
                         _buildYearSelector(context, ref, selectedYear),
                       ],
@@ -82,14 +75,7 @@ class DashboardView extends ConsumerWidget {
                   : Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          'DASHBOARD ANALITICA',
-                          style: Theme.of(context).textTheme.headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.w200,
-                                letterSpacing: 2.0,
-                              ),
-                        ),
+                        const SizedBox.shrink(),
                         _buildYearSelector(context, ref, selectedYear),
                       ],
                     ),

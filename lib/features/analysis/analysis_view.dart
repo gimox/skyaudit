@@ -202,6 +202,15 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       endDrawer: _buildFilterDrawer(context, ref, dictionaryMap, availableYears, availableSocieta, availableTipi, selectedTipi),
+      floatingActionButton: filteredRecords.isNotEmpty 
+          ? FloatingActionButton(
+              onPressed: () => _exportToExcel(filteredRecords),
+              backgroundColor: Colors.green.shade700,
+              foregroundColor: Colors.white,
+              tooltip: 'Esporta in Excel',
+              child: const Icon(Icons.table_view_rounded),
+            )
+          : null,
       body: Column(
         children: [
           Container(
@@ -222,37 +231,12 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final isWideHeader = constraints.maxWidth > 800;
-                    final headerContent = Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('TRACCIATO CONTABILE', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w200, letterSpacing: 2.0)),
-                        const SizedBox(height: 4),
-                        Text('Visualizzazione tracciato contabile UVET', style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
-                      ],
-                    );
+                    const headerContent = SizedBox.shrink();
                     final actionsContent = Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        TextButton.icon(
-                          onPressed: () => _showClearDialog(context, ref),
-                          icon: const Icon(Icons.delete_sweep_outlined, size: 20),
-                          label: const Text('Svuota Dati'),
-                          style: TextButton.styleFrom(foregroundColor: Colors.red.shade700),
-                        ),
-                        const SizedBox(width: 12),
-                        if (filteredRecords.isNotEmpty)
-                          ElevatedButton.icon(
-                            onPressed: () => _exportToExcel(filteredRecords),
-                            icon: const Icon(Icons.download_rounded),
-                            label: const Text('Esporta'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green.shade700,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                          ),
+
+
                       ],
                     );
                     return isWideHeader ? Row(crossAxisAlignment: CrossAxisAlignment.center, children: [Expanded(child: headerContent), actionsContent]) : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [headerContent, const SizedBox(height: 16), actionsContent]);
@@ -410,26 +394,59 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
           ),
           if (totalPages > 1)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: currentPage > 0 ? () {
-                      ref.read(analysisPageProvider.notifier).state--;
-                      _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                    } : null,
-                    icon: const Icon(Icons.chevron_left),
-                  ),
-                  Text('Pagina ${currentPage + 1} di $totalPages (${filteredRecords.length} record)', style: const TextStyle(fontWeight: FontWeight.bold)),
-                  IconButton(
-                    onPressed: currentPage < totalPages - 1 ? () {
-                      ref.read(analysisPageProvider.notifier).state++;
-                      _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                    } : null,
-                    icon: const Icon(Icons.chevron_right),
-                  ),
-                ],
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(12),
+                      blurRadius: 10,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: currentPage > 0 ? () {
+                        ref.read(analysisPageProvider.notifier).state--;
+                        _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                      } : null,
+                      icon: const Icon(Icons.chevron_left),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Pagina ${currentPage + 1} di $totalPages',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: currentPage < totalPages - 1 ? () {
+                        ref.read(analysisPageProvider.notifier).state++;
+                        _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                      } : null,
+                      icon: const Icon(Icons.chevron_right),
+                    ),
+                    Container(
+                      height: 24,
+                      width: 1,
+                      color: Colors.grey.shade300,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    Text(
+                      'Totale record: ${filteredRecords.length}',
+                      style: const TextStyle(
+                        color: SkyTheme.timBlue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
         ],
@@ -619,64 +636,222 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     );
   }
 
-  void _showRecordDetails(BuildContext context, TracciatoContabile record, Map<String, String> dictionaryMap) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Dettaglio Record - ${record.numeroTrasferta}'),
-        content: SizedBox(
-          width: 500,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
+  Widget _buildDetailSection(String title, IconData icon, Color color, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 0, 0, 12),
+          child: Row(
             children: [
-              _buildDetailRow('Società', '${record.societa} - ${dictionaryMap[record.societa] ?? ''}'),
-              _buildDetailRow('Dipendente', '${record.cid} (${record.tipoDipendente})'),
-              _buildDetailRow('Data Spesa', record.dataSpesa),
-              _buildDetailRow('Località', record.localita),
-              _buildDetailRow('Giustificativo', '${record.giustificativoSpesa} - ${dictionaryMap[record.giustificativoSpesa] ?? ''}'),
-              _buildDetailRow('Numero Bolla', record.numeroBolla),
-              _buildDetailRow('Importo', '${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}'),
+              Icon(icon, size: 14, color: color.withAlpha(180)),
+              const SizedBox(width: 8),
+              Text(
+                title.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: color.withAlpha(180),
+                  letterSpacing: 1.2,
+                ),
+              ),
             ],
           ),
         ),
-        actions: [TextButton(onPressed: () => Navigator.pop(context), child: const Text('Chiudi'))],
-      ),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.shade200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(5),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            children: children,
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
+  Widget _buildDetailRow(
+    String label,
+    String value, {
+    bool isHighlight = false,
+    Color? highlightColor,
+  }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(width: 120, child: Text('$label:', style: const TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(child: Text(value)),
-        ],
-      ),
-    );
-  }
-
-  void _showClearDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Conferma Svuotamento'),
-        content: const Text('Sei sicuro di voler eliminare tutti i dati del tracciato contabile? questa azione non è reversibile.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
-          ElevatedButton(
-            onPressed: () async {
-              ref.read(tracciatoContabilesProvider.notifier).clear();
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Svuota tutto'),
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Colors.grey.shade500,
+                fontSize: 13,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value.isEmpty ? '-' : value,
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontWeight: isHighlight ? FontWeight.bold : FontWeight.w600,
+                color: isHighlight ? (highlightColor ?? SkyTheme.timBlue) : Colors.black87,
+                fontSize: 14,
+              ),
+            ),
           ),
         ],
       ),
     );
   }
+
+  void _showRecordDetails(BuildContext context, TracciatoContabile record, Map<String, String> dictionaryMap) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.grey.shade50,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // HEADER ELEGANTE
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [SkyTheme.timBlue, Color(0xFF0056B3)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(40),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(Icons.description_outlined, color: Colors.white, size: 28),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'DETTAGLIO TRACCIATO',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Bolla n. ${record.numeroBolla}',
+                              style: TextStyle(
+                                color: Colors.white.withAlpha(200),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white.withAlpha(20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // CONTENUTO
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        _buildDetailSection('Anagrafica Trasferta', Icons.person_outline, SkyTheme.timBlue, [
+                          _buildDetailRow('CID Dipendente', record.cid),
+                          _buildDetailRow('Numero Trasferta', record.numeroTrasferta),
+                          _buildDetailRow('Società', '${record.societa} - ${dictionaryMap[record.societa] ?? ''}'),
+                          _buildDetailRow('Tipo Dipendente', record.tipoDipendente),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Dati Spesa', Icons.receipt_long_outlined, SkyTheme.timBlue, [
+                          _buildDetailRow('Giustificativo', '${record.giustificativoSpesa} - ${dictionaryMap[record.giustificativoSpesa] ?? ''}'),
+                          _buildDetailRow('Località', record.localita),
+                          _buildDetailRow('Data Spesa', record.dataSpesa),
+                          _buildDetailRow('Periodo', '${record.dataInizio} - ${record.dataFine}'),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Contabilità', Icons.payments_outlined, SkyTheme.timBlue, [
+                          _buildDetailRow(
+                            'Importo Totale', 
+                            '${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}',
+                            isHighlight: true,
+                            highlightColor: record.isNegative ? Colors.red.shade700 : Colors.green.shade700,
+                          ),
+                          _buildDetailRow('Numero Bolla', record.numeroBolla),
+                          _buildDetailRow('Tipo Attività', record.tipoAttivita),
+                          _buildDetailRow('Progressivo', record.progressivo),
+                        ]),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                // ACTIONS
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: SkyTheme.timBlue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                      ),
+                      child: const Text('CHIUDI', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+
 
   Future<void> _exportToExcel(List<TracciatoContabile> records) async {
     try {

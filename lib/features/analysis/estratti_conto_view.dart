@@ -110,6 +110,15 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       endDrawer: _buildFilterDrawer(context, ref, availableSocieta),
+      floatingActionButton: filteredRecords.isNotEmpty 
+          ? FloatingActionButton(
+              onPressed: () => _exportToExcel(filteredRecords),
+              backgroundColor: Colors.green.shade700,
+              foregroundColor: Colors.white,
+              tooltip: 'Esporta in Excel',
+              child: const Icon(Icons.table_view_rounded),
+            )
+          : null,
       body: Column(
         children: [
           // HEADER
@@ -131,37 +140,12 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                 LayoutBuilder(
                   builder: (context, constraints) {
                     final isWideHeader = constraints.maxWidth > 800;
-                    final headerContent = Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text('ESTRATTI CONTO', style: TextStyle(fontSize: 24, fontWeight: FontWeight.w200, letterSpacing: 2.0)),
-                        const SizedBox(height: 4),
-                        Text('Visualizzazione estratti conto bancari', style: TextStyle(color: Colors.grey.shade600, fontSize: 13)),
-                      ],
-                    );
+                    const headerContent = SizedBox.shrink();
                     final actionsContent = Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        TextButton.icon(
-                          onPressed: () => _showClearDialog(context, ref),
-                          icon: const Icon(Icons.delete_sweep_outlined, size: 20),
-                          label: const Text('Svuota Dati'),
-                          style: TextButton.styleFrom(foregroundColor: Colors.red.shade700),
-                        ),
-                        const SizedBox(width: 12),
-                        if (filteredRecords.isNotEmpty)
-                          ElevatedButton.icon(
-                            onPressed: () => _exportToExcel(filteredRecords),
-                            icon: const Icon(Icons.download_rounded),
-                            label: const Text('Esporta'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.green.shade700,
-                              foregroundColor: Colors.white,
-                              elevation: 0,
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                            ),
-                          ),
+
+
                       ],
                     );
                     return isWideHeader ? Row(children: [Expanded(child: headerContent), actionsContent]) : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [headerContent, const SizedBox(height: 16), actionsContent]);
@@ -314,20 +298,53 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
           // PAGINATION
           if (totalPages > 1)
             Padding(
-              padding: const EdgeInsets.symmetric(vertical: 20),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    onPressed: currentPage > 0 ? () => ref.read(ecPageProvider.notifier).state-- : null,
-                    icon: const Icon(Icons.chevron_left),
-                  ),
-                  Text('Pagina ${currentPage + 1} di $totalPages (${filteredRecords.length} record)', style: const TextStyle(fontWeight: FontWeight.bold)),
-                  IconButton(
-                    onPressed: currentPage < totalPages - 1 ? () => ref.read(ecPageProvider.notifier).state++ : null,
-                    icon: const Icon(Icons.chevron_right),
-                  ),
-                ],
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(12),
+                      blurRadius: 10,
+                      offset: const Offset(0, -2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: currentPage > 0 ? () => ref.read(ecPageProvider.notifier).state-- : null,
+                      icon: const Icon(Icons.chevron_left),
+                    ),
+                    const SizedBox(width: 8),
+                    Text(
+                      'Pagina ${currentPage + 1} di $totalPages',
+                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                    ),
+                    const SizedBox(width: 8),
+                    IconButton(
+                      onPressed: currentPage < totalPages - 1 ? () => ref.read(ecPageProvider.notifier).state++ : null,
+                      icon: const Icon(Icons.chevron_right),
+                    ),
+                    Container(
+                      height: 24,
+                      width: 1,
+                      color: Colors.grey.shade300,
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                    ),
+                    Text(
+                      'Totale record: ${filteredRecords.length}',
+                      style: const TextStyle(
+                        color: SkyTheme.timBlue,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
         ],
@@ -453,26 +470,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     );
   }
 
-  void _showClearDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Conferma Svuotamento'),
-        content: const Text('Sei sicuro di voler eliminare tutti i dati degli estratti conto? questa azione non è reversibile.'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
-          ElevatedButton(
-            onPressed: () async {
-              ref.read(estrattoContoProvider.notifier).clear();
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Svuota tutto'),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   void _showDeleteDialog(BuildContext context, WidgetRef ref, EstrattoConto record) {
     showDialog(
@@ -495,48 +493,216 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     );
   }
 
+  Widget _buildDetailSection(String title, IconData icon, Color color, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 0, 0, 12),
+          child: Row(
+            children: [
+              Icon(icon, size: 14, color: color.withAlpha(180)),
+              const SizedBox(width: 8),
+              Text(
+                title.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: color.withAlpha(180),
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.shade200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(5),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            children: children,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDetailRow(
+    String label,
+    String value, {
+    bool isHighlight = false,
+    Color? highlightColor,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Expanded(
+            flex: 2,
+            child: Text(
+              label,
+              style: TextStyle(
+                color: Colors.grey.shade500,
+                fontSize: 13,
+                fontWeight: FontWeight.w400,
+              ),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            flex: 3,
+            child: Text(
+              value.isEmpty ? '-' : value,
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                fontWeight: isHighlight ? FontWeight.bold : FontWeight.w600,
+                color: isHighlight ? (highlightColor ?? Colors.purple.shade700) : Colors.black87,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   void _showRecordDetails(BuildContext context, EstrattoConto record) {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text('Dettaglio Estratto Conto - ${record.bolla}', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-          content: SingleChildScrollView(
-            child: SizedBox(
-              width: 500,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildDetailRow('CID', record.cid),
-                  _buildDetailRow('Trasferta', record.numeroTrasferta),
-                  _buildDetailRow('Bolla', record.bolla),
-                  _buildDetailRow('Data Bolla', record.dataBolla),
-                  _buildDetailRow('Società', record.ragioneSociale),
-                  _buildDetailRow('Tipo Servizio', record.tipoServizio),
-                   _buildDetailRow('Importo Servizio', '${record.importoServizio.toStringAsFixed(2)} €'),
-                  _buildDetailRow('Fee', '${record.fee.toStringAsFixed(2)} €'),
-                  _buildDetailRow('Totale Servizio', '${record.totaleServizio.toStringAsFixed(2)} €', isHighlight: true),
-                ],
-              ),
+        return Dialog(
+          backgroundColor: Colors.grey.shade50,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // HEADER
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.purple.shade700, Colors.purple.shade900],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(40),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 28),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'DETTAGLIO ESTRATTO CONTO',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Bolla: ${record.bolla}',
+                              style: TextStyle(
+                                color: Colors.white.withAlpha(200),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white.withAlpha(20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // CONTENT
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        _buildDetailSection('Anagrafica', Icons.person_outline, Colors.purple.shade700, [
+                          _buildDetailRow('CID', record.cid),
+                          _buildDetailRow('Passeggero', record.nomePasseggero),
+                          _buildDetailRow('Società', record.ragioneSociale),
+                          _buildDetailRow('Trasferta', record.numeroTrasferta),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Dettagli Servizio', Icons.receipt_long_outlined, Colors.purple.shade700, [
+                          _buildDetailRow('Tipo Servizio', record.tipoServizio),
+                          _buildDetailRow('Descrizione', record.descrizioneServizio),
+                          _buildDetailRow('Fornitore', record.fornitore),
+                          _buildDetailRow('Itinerario', record.itinerario),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Contabilità', Icons.payments_outlined, Colors.purple.shade700, [
+                          _buildDetailRow('Importo Servizio', '${record.importoServizio.toStringAsFixed(2)} €'),
+                          _buildDetailRow('Tasse', '${record.tasse.toStringAsFixed(2)} €'),
+                          _buildDetailRow('Fee', '${record.fee.toStringAsFixed(2)} €'),
+                          _buildDetailRow('Totale Servizio', '${record.totaleServizio.toStringAsFixed(2)} €', isHighlight: true, highlightColor: Colors.purple.shade700),
+                          _buildDetailRow('Bolla', record.bolla),
+                          _buildDetailRow('Data Bolla', record.dataBolla),
+                          _buildDetailRow('Competenza', record.dataCompetenza),
+                        ]),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                // ACTIONS
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple.shade700,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                      ),
+                      child: const Text('CHIUDI', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          actions: [TextButton(onPressed: () => Navigator.of(context).pop(), child: const Text('Chiudi'))],
         );
       },
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value, {bool isHighlight = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(width: 150, child: Text('$label:', style: const TextStyle(fontWeight: FontWeight.bold))),
-          Expanded(child: Text(value, style: TextStyle(color: isHighlight ? SkyTheme.timBlue : null, fontWeight: isHighlight ? FontWeight.bold : null))),
-        ],
-      ),
     );
   }
 

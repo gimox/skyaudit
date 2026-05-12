@@ -11,6 +11,7 @@ import 'package:travel_check/features/upload/models/tracciato_sap.dart';
 import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
 import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
+import 'package:intl/intl.dart';
 
 final controlsMonthProvider = StateProvider<Set<String>>((ref) => {});
 final controlsYearProvider = StateProvider<String?>((ref) => DateTime.now().year.toString());
@@ -33,6 +34,7 @@ final controlsShowOnlyOrphansProvider = StateProvider<bool>((ref) => false);
 final controlsMatchStatusProvider = StateProvider<String?>((ref) => null); // null, 'match', 'diff'
 final controlsMinDiffProvider = StateProvider<double?>((ref) => null);
 final controlsMaxDiffProvider = StateProvider<double?>((ref) => null);
+final controlsCidMismatchProvider = StateProvider<bool>((ref) => false);
 
 class ControlsView extends ConsumerStatefulWidget {
   const ControlsView({super.key});
@@ -175,8 +177,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     final matchStatusFilter = ref.watch(controlsMatchStatusProvider);
     final minDiff = ref.watch(controlsMinDiffProvider);
     final maxDiff = ref.watch(controlsMaxDiffProvider);
+    final cidMismatchFilter = ref.watch(controlsCidMismatchProvider);
 
-    if (matchStatusFilter != null || minDiff != null || maxDiff != null) {
+    if (matchStatusFilter != null || minDiff != null || maxDiff != null || cidMismatchFilter) {
       trasferte = trasferte.where((t) {
         final recordsTrasferta = groupedRecords[t]!;
         double tTracciato = 0;
@@ -198,6 +201,21 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           if (matchStatusFilter == 'diff_ec' && isMatchingEC) return false;
           if (matchStatusFilter == 'diff_sap' && isMatchingSap) return false;
         }
+
+        if (cidMismatchFilter) {
+          final Set<String> cids = {};
+          for (var r in recordsTrasferta) {
+            cids.add(r.cid);
+          }
+          for (var ec in ecForTrasferta) {
+            cids.add(ec.cid);
+          }
+          for (var sap in sapForTrasferta) {
+            cids.add(sap.cid);
+          }
+          if (cids.length <= 1) return false;
+        }
+
 
         if (minDiff != null && (tTracciato - tEC).abs() < minDiff) return false;
         if (maxDiff != null && (tTracciato - tEC).abs() > maxDiff) return false;
@@ -253,6 +271,19 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
       endDrawer: _buildFilterDrawer(context, ref, dictionaryMap),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _exportToExcel(
+          trasferte, 
+          groupedRecords, 
+          allEstrattiConto, 
+          allSapRecords,
+          dictionaryMap
+        ),
+        backgroundColor: Colors.green.shade700,
+        foregroundColor: Colors.white,
+        tooltip: 'Esporta in Excel',
+        child: const Icon(Icons.table_view_rounded),
+      ),
       body: Column(
         children: [
           // HEADER SEMPLIFICATO E MODERNO
@@ -271,19 +302,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'CONTROLLI TRASFERTE',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.w200,
-                    letterSpacing: 2.0,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  'Audit e quadratura dati contabili',
-                  style: TextStyle(color: Colors.grey.shade600, fontSize: 13),
-                ),
+                const SizedBox.shrink(),
                 const SizedBox(height: 20),
                 // TOTALI SU RIGA DEDICATA
                 Wrap(
@@ -369,24 +388,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                     ),
                     const SizedBox(width: 12),
                     // ESPORTA EXCEL
-                    ElevatedButton.icon(
-                      onPressed: () => _exportToExcel(
-                        trasferte, 
-                        groupedRecords, 
-                        allEstrattiConto, 
-                        allSapRecords,
-                        dictionaryMap
-                      ),
-                      icon: const Icon(Icons.download_rounded),
-                      label: const Text('Esporta'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green.shade700,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                      ),
-                    ),
+
                   ],
                 ),
                 // CHIPS FILTRI ATTIVI
@@ -427,6 +429,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                         if (ref.watch(controlsShowOnlyOrphansProvider))
                           _buildFilterChip('Solo Orfani', () => ref.read(controlsShowOnlyOrphansProvider.notifier).state = false),
                         
+                        if (ref.watch(controlsCidMismatchProvider))
+                          _buildFilterChip('CID Differenti', () => ref.read(controlsCidMismatchProvider.notifier).state = false),
+                        
                         TextButton(
                           onPressed: () => _resetAllFilters(ref),
                           child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red)),
@@ -459,6 +464,18 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
                 final sapForTrasferta = allSapRecords.where((sap) => sap.numeroTrasferta == numeroTrasferta).toList();
                 final totaleSap = sapForTrasferta.fold<double>(0, (sum, sap) => sum + sap.importo);
+
+                final Set<String> allCids = {};
+                for (var r in recordsTrasferta) {
+                  allCids.add(r.cid);
+                }
+                for (var ec in ecForTrasferta) {
+                  allCids.add(ec.cid);
+                }
+                for (var sap in sapForTrasferta) {
+                  allCids.add(sap.cid);
+                }
+                final bool hasCidMismatch = allCids.length > 1;
 
                 final isMatching = (totaleTrasferta - totaleEC).abs() < 0.001;
                 
@@ -561,14 +578,38 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                 );
                               },
                             ),
+                            // BADGE CID DIFFERENTI (Rosso Intenso)
+                            if (hasCidMismatch)
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.shade900,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: const Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.person_off_outlined, size: 12, color: Colors.white),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'CID DIFFERENTI',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                           ],
                         ),
                         Text(
-                          'Cid: ${firstRecord.cid}',
+                          'Cid prevalente: ${firstRecord.cid}',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey.shade700,
-                            fontWeight: FontWeight.w500,
+                            color: hasCidMismatch ? Colors.red.shade700 : Colors.grey.shade700,
+                            fontWeight: hasCidMismatch ? FontWeight.bold : FontWeight.w500,
                           ),
                         ),
                       ],
@@ -614,8 +655,17 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                     ),
                                     const SizedBox(height: 2),
                                     Text(
-                                      'Tracciato • Bolla: ${record.numeroBolla} • ${record.giustificativoSpesa}${dictionaryMap[record.giustificativoSpesa] != null ? " (${dictionaryMap[record.giustificativoSpesa]})" : ""}',
-                                      style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                                      'CID: ${record.cid}',
+                                      style: TextStyle(
+                                        fontSize: 10, 
+                                        color: (hasCidMismatch && record.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade600,
+                                        fontWeight: (hasCidMismatch && record.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Bolla: ${record.numeroBolla} • ${record.giustificativoSpesa}${dictionaryMap[record.giustificativoSpesa] != null ? " (${dictionaryMap[record.giustificativoSpesa]})" : ""}',
+                                      style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
                                     ),
                                   ],
                                 ),
@@ -676,10 +726,28 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                 ),
                                 const SizedBox(width: 12),
                                 Expanded(
-                                  child: Text(
-                                    matchingEC.first.descrizioneServizio,
-                                    style: TextStyle(fontSize: 12, color: Colors.grey.shade700),
-                                    overflow: TextOverflow.ellipsis,
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        matchingEC.first.descrizioneServizio,
+                                        style: TextStyle(fontSize: 12, color: Colors.grey.shade700, fontWeight: FontWeight.w500),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      Text(
+                                        'CID: ${matchingEC.first.cid}',
+                                        style: TextStyle(
+                                          fontSize: 10, 
+                                          color: (hasCidMismatch && matchingEC.first.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade500,
+                                          fontWeight: (hasCidMismatch && matchingEC.first.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        'Bolla: ${matchingEC.first.bolla}',
+                                        style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                                      ),
+                                    ],
                                   ),
                                 ),
                                 // Qui applichiamo lo stesso trailingWidth per allineare perfettamente
@@ -793,6 +861,15 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                             Text(
+                                              'CID: ${sap.cid}',
+                                              style: TextStyle(
+                                                fontSize: 10, 
+                                                color: (hasCidMismatch && sap.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade600,
+                                                fontWeight: (hasCidMismatch && sap.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
                                               'Data: ${sap.data} • Stato: ${sap.codiceStato ?? "-"}',
                                               style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
                                             ),
@@ -811,6 +888,14 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                                 color: Colors.green.shade800,
                                                 fontSize: 13,
                                               ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            IconButton(
+                                              icon: const Icon(Icons.analytics_outlined, color: Colors.green, size: 18),
+                                              onPressed: () => _showSapRecordDetails(context, sap),
+                                              tooltip: 'Dettaglio SAP',
+                                              constraints: const BoxConstraints(),
+                                              padding: const EdgeInsets.all(8),
                                             ),
                                           ],
                                         ),
@@ -884,6 +969,15 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                             Text(
+                                              'CID: ${ec.cid}',
+                                              style: TextStyle(
+                                                fontSize: 10, 
+                                                color: (hasCidMismatch && ec.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade500,
+                                                fontWeight: (hasCidMismatch && ec.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
+                                              ),
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Text(
                                               'Bolla: ${ec.bolla} • ${ec.fornitore}',
                                               style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
                                             ),
@@ -955,8 +1049,6 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                     builder: (context) {
                                       final ecForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
                                       final totaleEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
-                                      final diffVal = (totaleTrasferta - totaleEC).abs();
-                                      final isMatching = diffVal < 0.001;
 
                                       return Wrap(
                                         spacing: 32,
@@ -966,7 +1058,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                           _buildTotalIndicator(
                                             'Estratto Conto', 
                                             totaleEC, 
-                                            isMatching ? Colors.green.shade700 : Colors.red.shade700
+                                            Colors.purple.shade700,
                                           ),
                                           _buildTotalIndicator('SAP', totaleSap, Colors.green.shade700),
                                         ],
@@ -1039,18 +1131,18 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           ),
           if (totalPages > 1)
             Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 8,
+                  horizontal: 16,
+                  vertical: 4,
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.05),
+                      color: Colors.black.withAlpha(13),
                       blurRadius: 10,
                       offset: const Offset(0, -2),
                     ),
@@ -1074,7 +1166,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             }
                           : null,
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 8),
                     Text(
                       'Pagina ${currentPage + 1} di $totalPages',
                       style: const TextStyle(
@@ -1082,7 +1174,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                         fontSize: 14,
                       ),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 8),
                     IconButton(
                       icon: const Icon(Icons.chevron_right),
                       onPressed: currentPage < totalPages - 1
@@ -1156,13 +1248,13 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     );
   }
 
-  Widget _buildTotalIndicator(String label, double value, Color color) {
+  Widget _buildTotalIndicator(String label, double value, Color color, {Color? labelColor}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+          style: TextStyle(fontSize: 11, color: labelColor ?? Colors.grey.shade600, fontWeight: labelColor != null ? FontWeight.bold : FontWeight.normal),
         ),
         Text(
           _formatCurrency(value),
@@ -1180,48 +1272,261 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text(
-            'Dettaglio Estratto Conto - ${record.bolla}',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          content: SingleChildScrollView(
-            child: SizedBox(
-              width: 500,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildDetailRow('CID', record.cid),
-                  _buildDetailRow('Trasferta', record.numeroTrasferta),
-                  _buildDetailRow('Bolla', record.bolla),
-                  _buildDetailRow('NR Bolla', record.nrBolla),
-                  _buildDetailRow('Data Bolla', record.dataBolla),
-                  _buildDetailRow('Data Competenza', record.dataCompetenza),
-                  _buildDetailRow('Società', record.ragioneSociale),
-                  _buildDetailRow('Tipo Servizio', record.tipoServizio),
-                  _buildDetailRow('Descrizione', record.descrizioneServizio),
-                  _buildDetailRow('Itinerario', record.itinerario),
-                  _buildDetailRow('Fornitore', record.fornitore),
-                  _buildDetailRow('Passeggero', record.nomePasseggero),
-                  _buildDetailRow('Importo Servizio', '${record.importoServizio.toStringAsFixed(2)} €'),
-                  _buildDetailRow('Tasse', '${record.tasse.toStringAsFixed(2)} €'),
-                  _buildDetailRow('Fee', '${record.fee.toStringAsFixed(2)} €'),
-                  _buildDetailRow('Totale Servizio', '${record.totaleServizio.toStringAsFixed(2)} €', isHighlight: true),
-                  _buildDetailRow('Località Partenza', record.localitaPartenza),
-                  _buildDetailRow('Località Arrivo', record.localitaArrivo),
-                  _buildDetailRow('Data In', record.dataIn),
-                  _buildDetailRow('Data Out', record.dataOut),
-                ],
-              ),
+        return Dialog(
+          backgroundColor: Colors.grey.shade50,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // HEADER
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.purple.shade700, Colors.purple.shade900],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(40),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 28),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'DETTAGLIO ESTRATTO CONTO',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Bolla: ${record.bolla}',
+                              style: TextStyle(
+                                color: Colors.white.withAlpha(200),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white.withAlpha(20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // CONTENT
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        _buildDetailSection('Anagrafica', Icons.person_outline, Colors.purple.shade700, [
+                          _buildDetailRow('CID', record.cid),
+                          _buildDetailRow('Passeggero', record.nomePasseggero),
+                          _buildDetailRow('Società', record.ragioneSociale),
+                          _buildDetailRow('Trasferta', record.numeroTrasferta),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Dettagli Servizio', Icons.receipt_long_outlined, Colors.purple.shade700, [
+                          _buildDetailRow('Tipo Servizio', record.tipoServizio),
+                          _buildDetailRow('Descrizione', record.descrizioneServizio),
+                          _buildDetailRow('Fornitore', record.fornitore),
+                          _buildDetailRow('Itinerario', record.itinerario),
+                          _buildDetailRow('Date', '${record.dataIn} - ${record.dataOut}'),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Contabilità', Icons.payments_outlined, Colors.purple.shade700, [
+                          _buildDetailRow('Importo Servizio', '${record.importoServizio.toStringAsFixed(2)} €'),
+                          _buildDetailRow('Tasse', '${record.tasse.toStringAsFixed(2)} €'),
+                          _buildDetailRow('Fee', '${record.fee.toStringAsFixed(2)} €'),
+                          _buildDetailRow('Totale Servizio', '${record.totaleServizio.toStringAsFixed(2)} €', isHighlight: true, highlightColor: Colors.purple.shade700),
+                          _buildDetailRow('Bolla', record.bolla),
+                          _buildDetailRow('Data Bolla', record.dataBolla),
+                          _buildDetailRow('Competenza', record.dataCompetenza),
+                        ]),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                // ACTIONS
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple.shade700,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                      ),
+                      child: const Text('CHIUDI', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Chiudi'),
+        );
+      },
+    );
+  }
+
+  void _showSapRecordDetails(BuildContext context, TracciatoSap record) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.grey.shade50,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // HEADER
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.green.shade700, Colors.green.shade900],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(40),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(Icons.analytics_outlined, color: Colors.white, size: 28),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'DETTAGLIO RECORD SAP',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Trasferta n. ${record.numeroTrasferta}',
+                              style: TextStyle(
+                                color: Colors.white.withAlpha(200),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white.withAlpha(20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                
+                // CONTENT
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        _buildDetailSection('Dipendente', Icons.person_outline, Colors.green.shade700, [
+                          _buildDetailRow('CID', record.cid),
+                          _buildDetailRow('Nome', record.nomeDipendente),
+                          _buildDetailRow('Tipo', record.tipoDipendente),
+                          _buildDetailRow('Classe Retr.', record.classeRetributiva),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Società e Trasferta', Icons.business_outlined, Colors.green.shade700, [
+                          _buildDetailRow('Società', '${record.societaDescrizione} (${record.societaCodice})'),
+                          _buildDetailRow('Trasferta', record.numeroTrasferta),
+                          _buildDetailRow('Data', record.data),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Spesa e Contabilità', Icons.payments_outlined, Colors.green.shade700, [
+                          _buildDetailRow('Tipo Spesa', '${record.tipoSpesaDescrizione} (${record.tipoSpesaCodice})'),
+                          _buildDetailRow('Importo', '${record.importo.toStringAsFixed(2)} ${record.valuta}', isHighlight: true, highlightColor: Colors.green.shade700),
+                          _buildDetailRow('Stato SAP', record.codiceStato ?? '-'),
+                          _buildDetailRow('Richiesta CD', record.cdRichiesta ?? '-'),
+                          _buildDetailRow('Codice FI', record.fi ?? '-'),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Altri Dati SAP', Icons.data_usage_outlined, Colors.green.shade700, [
+                          _buildDetailRow('RI/TR', record.riTr ?? '-'),
+                          _buildDetailRow('Calc', record.calc ?? '-'),
+                          _buildDetailRow('Trasf. FI', record.codiceTrasferimentoFi ?? '-'),
+                          _buildDetailRow('Colonna T', record.colonnaT ?? '-'),
+                          _buildDetailRow('Progressivo', record.progressivoGiustificativo ?? '-'),
+                        ]),
+                      ],
+                    ),
+                  ),
+                ),
+                
+                // ACTIONS
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green.shade700,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                      ),
+                      child: const Text('CHIUDI', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         );
       },
     );
@@ -1296,7 +1601,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         // RIGA TRASFERTA (RIEPILOGO)
         final tripHeaderRow = [
           'TRASFERTA', t, 'CID: ${first.cid}', '', 
-          first.dataInizio, first.dataFine,
+          _normalizeDate(first.dataInizio), _normalizeDate(first.dataFine),
           'Stato: ${isMatchingEC ? "OK" : "KO"} | SAP: ${isMatchingSap ? "OK" : "KO"}',
           '', first.societa, '', totTracciato, diffEC, diffSap,
           isMatchingEC ? 'NO' : 'SI',
@@ -1320,7 +1625,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           final rowData = [
             '  > TRACCIATO', '', r.cid, r.numeroBolla, '', '', r.localita, 
             '${r.giustificativoSpesa}${dictionaryMap[r.giustificativoSpesa] != null ? " (${dictionaryMap[r.giustificativoSpesa]})" : ""}', 
-            '', r.dataSpesa, r.isNegative ? -r.importo : r.importo, '', '', '', ''
+            '', _normalizeDate(r.dataSpesa), r.isNegative ? -r.importo : r.importo, '', '', '', ''
           ];
           for (var i = 0; i < rowData.length; i++) {
             var cell = sheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
@@ -1339,7 +1644,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         for (final ec in ecForT) {
           final rowData = [
             '  > E. CONTO', '', ec.nomePasseggero, ec.bolla, '', '', ec.itinerario, 
-            ec.descrizioneServizio, '', ec.dataBolla, ec.totaleServizio, '', '', '', ''
+            ec.descrizioneServizio, '', _normalizeDate(ec.dataBolla), ec.totaleServizio, '', '', '', ''
           ];
           for (var i = 0; i < rowData.length; i++) {
             var cell = sheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
@@ -1358,7 +1663,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         for (final sap in sapForT) {
           final rowData = [
             '  > SAP', '', sap.cid, sap.cdRichiesta ?? '', '', '', sap.tipoSpesaDescrizione, 
-            sap.tipoSpesaCodice, sap.societaDescrizione, sap.data, sap.importo, '', '', '', ''
+            sap.tipoSpesaCodice, sap.societaDescrizione, _normalizeDate(sap.data), sap.importo, '', '', '', ''
           ];
           for (var i = 0; i < rowData.length; i++) {
             var cell = sheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
@@ -1393,12 +1698,102 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       sheet.setColumnWidth(13, 20);
       sheet.setColumnWidth(14, 20);
 
+      // SECONDO FOGLIO: DETTAGLIO FLAT (RIGA PER RIGA)
+      final detailSheet = excel['DettaglioFlat'];
+      final detailHeaders = [
+        'TRASFERTA', 'FONTE', 'CID', 'PASSEGGERO / DETTAGLIO', 'BOLLA', 
+        'DATA', 'LOCALITÀ / DESCRIZIONE', 'GIUSTIFICATIVO / SERVIZIO', 
+        'IMPORTO €', 'SOCIETÀ'
+      ];
+      
+      for (var i = 0; i < detailHeaders.length; i++) {
+        var cell = detailSheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0));
+        cell.value = excel_pkg.TextCellValue(detailHeaders[i]);
+        cell.cellStyle = headerStyle;
+      }
+      detailSheet.setRowHeight(0, 30);
+      
+      int dRow = 1;
+      for (final t in trasferte) {
+        // Records Tracciato
+        for (final r in groupedRecords[t]!) {
+           final rowData = [
+            t, 'TRACCIATO', r.cid, '', r.numeroBolla, 
+            _normalizeDate(r.dataSpesa), r.localita, 
+            '${r.giustificativoSpesa}${dictionaryMap[r.giustificativoSpesa] != null ? " (${dictionaryMap[r.giustificativoSpesa]})" : ""}', 
+            r.isNegative ? -r.importo : r.importo, r.societa
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = detailSheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = excel_pkg.DoubleCellValue(val);
+            } else {
+              cell.value = excel_pkg.TextCellValue(val.toString());
+            }
+          }
+          dRow++;
+        }
+
+        // Records EC
+        final ecForT = allEstrattiConto.where((ec) => ec.numeroTrasferta == t).toList();
+        for (final ec in ecForT) {
+          final rowData = [
+            t, 'E. CONTO', ec.cid, ec.nomePasseggero, ec.bolla, 
+            _normalizeDate(ec.dataBolla), ec.itinerario, ec.descrizioneServizio, 
+            ec.totaleServizio, ec.ragioneSociale
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = detailSheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = excel_pkg.DoubleCellValue(val);
+            } else {
+              cell.value = excel_pkg.TextCellValue(val.toString());
+            }
+          }
+          dRow++;
+        }
+
+        // Records SAP
+        final sapForT = allSapRecords.where((sap) => sap.numeroTrasferta == t).toList();
+        for (final sap in sapForT) {
+          final rowData = [
+            t, 'SAP', sap.cid, '', sap.cdRichiesta ?? '', 
+            _normalizeDate(sap.data), sap.tipoSpesaDescrizione, sap.tipoSpesaCodice, 
+            sap.importo, sap.societaDescrizione
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = detailSheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = excel_pkg.DoubleCellValue(val);
+            } else {
+              cell.value = excel_pkg.TextCellValue(val.toString());
+            }
+          }
+          dRow++;
+        }
+      }
+
+      // Autofit detailSheet
+      detailSheet.setColumnWidth(0, 15);
+      detailSheet.setColumnWidth(1, 15);
+      detailSheet.setColumnWidth(2, 15);
+      detailSheet.setColumnWidth(3, 25);
+      detailSheet.setColumnWidth(4, 15);
+      detailSheet.setColumnWidth(5, 15);
+      detailSheet.setColumnWidth(6, 40);
+      detailSheet.setColumnWidth(7, 30);
+      detailSheet.setColumnWidth(8, 15);
+      detailSheet.setColumnWidth(9, 25);
+
       final fileBytes = excel.encode();
       if (fileBytes == null) return;
 
       final outputFile = await FilePicker.saveFile(
-        dialogTitle: 'Salva Report Controlli',
-        fileName: 'report_controlli_trasferte_${DateTime.now().millisecondsSinceEpoch}.xlsx',
+        dialogTitle: 'Salva Export Controlli',
+        fileName: 'SkyAudit_Controlli_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.xlsx',
         type: FileType.custom,
         allowedExtensions: ['xlsx'],
       );
@@ -1408,22 +1803,49 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         await file.writeAsBytes(fileBytes);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Report esportato con successo!'),
-              backgroundColor: Colors.green,
-            ),
+            const SnackBar(content: Text('Export completato con successo'), backgroundColor: Colors.green),
           );
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Errore durante l\'esportazione: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Errore durante l\'export: $e'), backgroundColor: Colors.red),
         );
       }
+    }
+  }
+
+  String _normalizeDate(String dateStr) {
+    if (dateStr.trim().isEmpty) return '';
+    final d = dateStr.trim();
+    try {
+      // 1. Prova a gestire dd/MM/yy o d/M/yy o dd/MM/yyyy
+      final slashMatch = RegExp(r'^(\d{1,2})/(\d{1,2})/(\d{2,4})').firstMatch(d);
+      if (slashMatch != null) {
+        final day = slashMatch.group(1)!.padLeft(2, '0');
+        final month = slashMatch.group(2)!.padLeft(2, '0');
+        var year = slashMatch.group(3)!;
+        if (year.length == 2) {
+          year = "20$year";
+        }
+        return "$day/$month/$year";
+      }
+
+      // 2. Prova DateTime.tryParse (ISO yyyy-MM-dd)
+      final dt = DateTime.tryParse(d);
+      if (dt != null) {
+        return DateFormat('dd/MM/yyyy').format(dt);
+      }
+      
+      // 3. Formato compatto yyyyMMdd
+      if (d.length == 8 && RegExp(r'^\d{8}$').hasMatch(d)) {
+        return "${d.substring(6, 8)}/${d.substring(4, 6)}/${d.substring(0, 4)}";
+      }
+
+      return d;
+    } catch (_) {
+      return d;
     }
   }
 
@@ -1452,6 +1874,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     ref.read(controlsCidProvider.notifier).state = '';
     ref.read(controlsSortAscendingProvider.notifier).state = false;
     ref.read(controlsPageProvider.notifier).state = 0;
+    ref.read(controlsShowOnlyOrphansProvider.notifier).state = false;
+    ref.read(controlsCidMismatchProvider.notifier).state = false;
     ref.read(controlsMinDiffProvider.notifier).state = null;
     ref.read(controlsMaxDiffProvider.notifier).state = null;
     ref.read(controlsMatchStatusProvider.notifier).state = null;
@@ -1628,6 +2052,13 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                   title: const Text('Solo Record Orfani', style: TextStyle(fontSize: 14)),
                   value: ref.watch(controlsShowOnlyOrphansProvider),
                   onChanged: (v) => ref.read(controlsShowOnlyOrphansProvider.notifier).state = v,
+                  activeThumbColor: SkyTheme.timBlue,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                SwitchListTile(
+                  title: const Text('CID Differenti', style: TextStyle(fontSize: 14)),
+                  value: ref.watch(controlsCidMismatchProvider),
+                  onChanged: (v) => ref.read(controlsCidMismatchProvider.notifier).state = v,
                   activeThumbColor: SkyTheme.timBlue,
                   contentPadding: EdgeInsets.zero,
                 ),
@@ -1926,86 +2357,174 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     showDialog(
       context: context,
       builder: (context) {
-        return AlertDialog(
-          title: Text(
-            'Dettaglio Record - ${record.numeroBolla}',
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          content: SingleChildScrollView(
-            child: SizedBox(
-              width: 400,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _buildDetailRow('CID', record.cid),
-                  _buildDetailRow('Trasferta', record.numeroTrasferta),
-                  _buildDetailRow('Progressivo', record.progressivo),
-                  _buildDetailRow(
-                    'Società',
-                    ref
-                            .read(dictionaryProvider)
-                            .any(
-                              (e) =>
-                                  e.code == record.societa &&
-                                  e.category == 'societa',
-                            )
-                        ? '${record.societa} - ${ref.read(dictionaryProvider).firstWhere((e) => e.code == record.societa && e.category == 'societa').value}'
-                        : record.societa,
+        return Dialog(
+          backgroundColor: Colors.grey.shade50,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // HEADER ELEGANTE
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [SkyTheme.timBlue, Color(0xFF0056B3)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
                   ),
-                  _buildDetailRow(
-                    'Tipo Dipendente',
-                    ref
-                            .read(dictionaryProvider)
-                            .any(
-                              (e) =>
-                                  e.code == record.tipoDipendente &&
-                                  e.category == 'tipo_dipendente',
-                            )
-                        ? '${record.tipoDipendente} - ${ref.read(dictionaryProvider).firstWhere((e) => e.code == record.tipoDipendente && e.category == 'tipo_dipendente').value}'
-                        : record.tipoDipendente,
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(40),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(Icons.description_outlined, color: Colors.white, size: 28),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'DETTAGLIO TRACCIATO',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Bolla n. ${record.numeroBolla}',
+                              style: TextStyle(
+                                color: Colors.white.withAlpha(200),
+                                fontSize: 14,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white.withAlpha(20),
+                        ),
+                      ),
+                    ],
                   ),
-                  _buildDetailRow(
-                    'Giustificativo',
-                    ref
-                            .read(dictionaryProvider)
-                            .any(
-                              (e) =>
-                                  e.code == record.giustificativoSpesa &&
-                                  e.category == 'giustificativi_prepagati',
-                            )
-                        ? '${record.giustificativoSpesa} - ${ref.read(dictionaryProvider).firstWhere((e) => e.code == record.giustificativoSpesa && e.category == 'giustificativi_prepagati').value}'
-                        : record.giustificativoSpesa,
+                ),
+                
+                // CONTENUTO
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        _buildDetailSection('Anagrafica Trasferta', Icons.person_outline, SkyTheme.timBlue, [
+                          _buildDetailRow('CID Dipendente', record.cid),
+                          _buildDetailRow('Numero Trasferta', record.numeroTrasferta),
+                          _buildDetailRow('Società', record.societa),
+                          _buildDetailRow('Tipo Dipendente', record.tipoDipendente),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Dati Spesa', Icons.receipt_long_outlined, SkyTheme.timBlue, [
+                          _buildDetailRow('Giustificativo', record.giustificativoSpesa),
+                          _buildDetailRow('Località', record.localita),
+                          _buildDetailRow('Data Spesa', record.dataSpesa),
+                          _buildDetailRow('Periodo', '${record.dataInizio} - ${record.dataFine}'),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Contabilità', Icons.payments_outlined, SkyTheme.timBlue, [
+                          _buildDetailRow(
+                            'Importo Totale', 
+                            '${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}',
+                            isHighlight: true,
+                            highlightColor: record.isNegative ? Colors.red.shade700 : Colors.green.shade700,
+                          ),
+                          _buildDetailRow('Numero Bolla', record.numeroBolla),
+                          _buildDetailRow('Tipo Attività', record.tipoAttivita),
+                          _buildDetailRow('Progressivo', record.progressivo),
+                        ]),
+                      ],
+                    ),
                   ),
-                  _buildDetailRow('Numero Bolla', record.numeroBolla),
-                  _buildDetailRow('Data Spesa', record.dataSpesa),
-                  _buildDetailRow('Località', record.localita),
-                  _buildDetailRow(
-                    'Inizio',
-                    '${record.dataInizio} ${record.oraInizio}',
+                ),
+                
+                // ACTIONS
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: SkyTheme.timBlue,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                      ),
+                      child: const Text('CHIUDI', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
                   ),
-                  _buildDetailRow(
-                    'Fine',
-                    '${record.dataFine} ${record.oraFine}',
-                  ),
-                  _buildDetailRow('Tipo Attività', record.tipoAttivita),
-                  _buildDetailRow(
-                    'Importo',
-                    '${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}',
-                    isHighlight: true,
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: const Text('Chiudi'),
-            ),
-          ],
         );
       },
+    );
+  }
+
+  Widget _buildDetailSection(String title, IconData icon, Color color, List<Widget> children) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 0, 0, 12),
+          child: Row(
+            children: [
+              Icon(icon, size: 14, color: color.withAlpha(180)),
+              const SizedBox(width: 8),
+              Text(
+                title.toUpperCase(),
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  color: color.withAlpha(180),
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ],
+          ),
+        ),
+        Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: Colors.grey.shade200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(5),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            children: children,
+          ),
+        ),
+      ],
     );
   }
 
@@ -2013,28 +2532,34 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     String label,
     String value, {
     bool isHighlight = false,
+    Color? highlightColor,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6.0),
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SizedBox(
-            width: 140,
+          Expanded(
+            flex: 2,
             child: Text(
               label,
               style: TextStyle(
-                color: Colors.grey.shade600,
-                fontWeight: FontWeight.w500,
+                color: Colors.grey.shade500,
+                fontSize: 13,
+                fontWeight: FontWeight.w400,
               ),
             ),
           ),
+          const SizedBox(width: 16),
           Expanded(
+            flex: 3,
             child: Text(
               value.isEmpty ? '-' : value,
+              textAlign: TextAlign.right,
               style: TextStyle(
-                fontWeight: isHighlight ? FontWeight.bold : FontWeight.normal,
-                color: isHighlight ? Colors.blue.shade700 : Colors.black87,
+                fontWeight: isHighlight ? FontWeight.bold : FontWeight.w600,
+                color: isHighlight ? (highlightColor ?? SkyTheme.timBlue) : Colors.black87,
+                fontSize: 14,
               ),
             ),
           ),

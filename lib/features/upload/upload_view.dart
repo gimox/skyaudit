@@ -240,15 +240,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                'GESTIONE CARICAMENTO DATI',
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                  fontWeight: FontWeight.w200,
-                  letterSpacing: 2.0,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 48),
+              const SizedBox(height: 16),
 
               LayoutBuilder(
                 builder: (context, constraints) {

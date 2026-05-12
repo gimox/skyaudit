@@ -97,18 +97,7 @@ class _LogHistoryViewState extends ConsumerState<LogHistoryView> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'LOG HISTORY',
-                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.w200,
-                      letterSpacing: 2.0,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'Storico delle importazioni effettuate nel sistema',
-                    style: TextStyle(color: Colors.grey.shade600),
-                  ),
+                  const SizedBox.shrink(),
                 ],
               ),
               Container(

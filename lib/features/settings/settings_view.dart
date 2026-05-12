@@ -223,18 +223,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'IMPOSTAZIONI',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              fontWeight: FontWeight.w200,
-              letterSpacing: 2.0,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Gestione configurazioni e manutenzione sistema',
-            style: TextStyle(color: Colors.grey.shade600),
-          ),
+          const SizedBox.shrink(),
           const SizedBox(height: 48),
 
           // Sezione Dizionari
