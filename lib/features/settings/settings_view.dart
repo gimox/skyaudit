@@ -12,6 +12,8 @@ import 'package:travel_check/features/upload/providers/estratto_conto_provider.d
 import 'package:travel_check/features/upload/models/estratto_conto.dart';
 import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
 import 'package:travel_check/features/upload/models/tracciato_sap.dart';
+import 'package:travel_check/features/upload/providers/estratto_amex_provider.dart';
+import 'package:travel_check/features/upload/models/estratto_amex.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView({super.key});
@@ -53,6 +55,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         await ref.read(estrattoContoProvider.notifier).clear();
       } else if (collectionName == 'Tracciato Sap') {
         await ref.read(tracciatoSapProvider.notifier).clear();
+      } else if (collectionName == 'Estratti Amex') {
+        await ref.read(estrattoAmexProvider.notifier).clear();
       }
 
       if (mounted) {
@@ -81,12 +85,14 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         await isar.logHistorys.clear();
         await isar.estrattoContos.clear();
         await isar.tracciatoSaps.clear();
+        await isar.estrattoAmexs.clear();
       });
       // Aggiorniamo anche lo stato in memoria per le collection caricate
       ref.invalidate(tracciatoContabilesProvider);
       ref.invalidate(logHistoryProvider);
       ref.invalidate(estrattoContoProvider);
       ref.invalidate(tracciatoSapProvider);
+      ref.invalidate(estrattoAmexProvider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -310,6 +316,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   'Collection: Tracciato Sap',
                   'Elimina tutti i dati caricati dal tracciato SAP',
                   () => _clearCollection('Tracciato Sap'),
+                ),
+                _buildCollectionTile(
+                  context,
+                  Icons.credit_card_outlined,
+                  'Collection: Estratti Amex',
+                  'Elimina tutti i dati caricati dagli estratti American Express',
+                  () => _clearCollection('Estratti Amex'),
                 ),
                 const Divider(height: 32),
                 _buildHardResetAction(context),

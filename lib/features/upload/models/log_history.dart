@@ -15,6 +15,7 @@ class LogHistory {
   final int insertedRecords;
   final int updatedRecords;
   final int discardedRecords;
+  final String? sourceType;
 
   LogHistory({
     required this.fileName,
@@ -24,5 +25,6 @@ class LogHistory {
     this.insertedRecords = 0,
     this.updatedRecords = 0,
     this.discardedRecords = 0,
+    this.sourceType,
   });
 }

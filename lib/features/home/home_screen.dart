@@ -13,6 +13,7 @@ import 'package:travel_check/features/settings/settings_view.dart';
 import 'package:travel_check/features/log_history/log_history_view.dart';
 import 'package:travel_check/features/analysis/estratti_conto_view.dart';
 import 'package:travel_check/features/analysis/sap_analysis_view.dart';
+import 'package:travel_check/features/analysis/amex_analysis_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -120,15 +121,18 @@ class _HomeScreenState extends State<HomeScreen> {
       return const EstrattiContoView();
     }
     if (_selectedIndex == 4) {
-      return const SapAnalysisView();
+      return const AmexAnalysisView();
     }
     if (_selectedIndex == 5) {
-      return const ControlsView();
+      return const SapAnalysisView();
     }
     if (_selectedIndex == 6) {
-      return const LogHistoryView();
+      return const ControlsView();
     }
     if (_selectedIndex == 7) {
+      return const LogHistoryView();
+    }
+    if (_selectedIndex == 8) {
       return const SettingsView();
     }
 
@@ -173,14 +177,16 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         return Icons.account_balance_wallet_outlined;
       case 4:
-        return Icons.analytics_outlined;
+        return Icons.credit_card_outlined;
       case 5:
-        return Icons.fact_check_outlined;
+        return Icons.analytics_outlined;
       case 6:
-        return Icons.history_outlined;
+        return Icons.fact_check_outlined;
       case 7:
-        return Icons.settings_outlined;
+        return Icons.history_outlined;
       case 8:
+        return Icons.settings_outlined;
+      case 9:
         return Icons.help_outline;
       default:
         return Icons.home_outlined;
@@ -198,14 +204,16 @@ class _HomeScreenState extends State<HomeScreen> {
       case 3:
         return 'Estratti Conto';
       case 4:
-        return 'Tracciato SAP';
+        return 'Estratti AMEX';
       case 5:
-        return 'Controlli Trasferte';
+        return 'Tracciato SAP';
       case 6:
-        return 'Log History';
+        return 'Controlli Trasferte';
       case 7:
-        return 'Impostazioni';
+        return 'Log History';
       case 8:
+        return 'Impostazioni';
+      case 9:
         return 'Supporto';
       default:
         return 'Home';

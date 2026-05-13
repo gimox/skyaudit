@@ -55,6 +55,7 @@ class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
         insertedRecords: insertedCount,
         updatedRecords: updatedCount,
         discardedRecords: totalDiscarded,
+        sourceType: 'Tracciato Contabile',
       );
       await isar.logHistorys.put(logWithStats);
     });

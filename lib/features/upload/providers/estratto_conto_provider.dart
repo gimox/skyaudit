@@ -52,6 +52,7 @@ class EstrattoContoNotifier extends Notifier<List<EstrattoConto>> {
         insertedRecords: insertedCount,
         updatedRecords: updatedCount,
         discardedRecords: totalDiscarded,
+        sourceType: 'Estratto Conto',
       );
       await isar.logHistorys.put(logWithStats);
     });

@@ -12,6 +12,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
 import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
+import 'package:travel_check/features/upload/providers/estratto_amex_provider.dart';
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
 
 class UploadView extends ConsumerStatefulWidget {
@@ -31,6 +32,11 @@ class _UploadViewState extends ConsumerState<UploadView> {
   bool _isProcessingContabile = false;
   bool _isProcessingEstratto = false;
   bool _isProcessingSap = false;
+  bool _isProcessingAmex = false;
+
+  XFile? _selectedAmexFile;
+  bool _isDraggingAmex = false;
+  Map<String, dynamic>? _lastAmexResult;
 
   Map<String, dynamic>? _lastContabileResult;
   Map<String, dynamic>? _lastEstrattoResult;
@@ -46,6 +52,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
       extensions = ['txt'];
     } else if (type == 'sap') {
       extensions = ['xlsx'];
+    } else if (type == 'amex') {
+      extensions = ['xls'];
     } else {
       extensions = ['xlsx'];
     }
@@ -66,6 +74,9 @@ class _UploadViewState extends ConsumerState<UploadView> {
         } else if (type == 'sap') {
           _selectedSapFile = XFile(result.files.single.path!);
           _lastSapResult = null;
+        } else if (type == 'amex') {
+          _selectedAmexFile = XFile(result.files.single.path!);
+          _lastAmexResult = null;
         }
       });
     }
@@ -82,6 +93,9 @@ class _UploadViewState extends ConsumerState<UploadView> {
       } else if (type == 'sap') {
         _selectedSapFile = null;
         _lastSapResult = null;
+      } else if (type == 'amex') {
+        _selectedAmexFile = null;
+        _lastAmexResult = null;
       }
     });
   }
@@ -401,6 +415,59 @@ class _UploadViewState extends ConsumerState<UploadView> {
     }
   }
 
+  Future<void> _processAmexData() async {
+    if (_selectedAmexFile == null) return;
+
+    if (!await _checkDuplicateFile(_selectedAmexFile!)) {
+      return;
+    }
+
+    setState(() {
+      _isProcessingAmex = true;
+      _lastAmexResult = null;
+    });
+
+    try {
+      final result = await ref
+          .read(estrattoAmexProvider.notifier)
+          .loadFromFile(_selectedAmexFile!);
+
+      if (mounted) {
+        setState(() {
+          _lastAmexResult = result;
+        });
+
+        final inserted = result['inserted'] ?? 0;
+        final total = result['total'] ?? inserted;
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Elaborazione AMEX completata: $total record totali.\n'
+              '• $inserted nuovi record inseriti',
+            ),
+            backgroundColor: Colors.green.shade700,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+        _selectedAmexFile = null;
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Errore durante l\'elaborazione dell\'estratto AMEX: $e',
+            ),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isProcessingAmex = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -418,13 +485,15 @@ class _UploadViewState extends ConsumerState<UploadView> {
                   if (constraints.maxWidth > 800) {
                     return Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(child: _buildContabileSection()),
-                        const SizedBox(width: 24),
-                        Expanded(child: _buildEstrattoSection()),
-                        const SizedBox(width: 24),
-                        Expanded(child: _buildSapSection()),
-                      ],
+                        children: [
+                          Expanded(child: _buildContabileSection()),
+                          const SizedBox(width: 24),
+                          Expanded(child: _buildEstrattoSection()),
+                          const SizedBox(width: 24),
+                          Expanded(child: _buildSapSection()),
+                          const SizedBox(width: 24),
+                          Expanded(child: _buildAmexSection()),
+                        ],
                     );
                   } else {
                     return Column(
@@ -434,12 +503,14 @@ class _UploadViewState extends ConsumerState<UploadView> {
                         _buildEstrattoSection(),
                         const SizedBox(height: 32),
                         _buildSapSection(),
+                        const SizedBox(height: 32),
+                        _buildAmexSection(),
                       ],
                     );
                   }
                 },
               ),
-              if (_lastContabileResult != null || _lastEstrattoResult != null || _lastSapResult != null) ...[
+              if (_lastContabileResult != null || _lastEstrattoResult != null || _lastSapResult != null || _lastAmexResult != null) ...[
                 const SizedBox(height: 48),
                 const Divider(),
                 const SizedBox(height: 24),
@@ -473,6 +544,14 @@ class _UploadViewState extends ConsumerState<UploadView> {
                     title: 'RISULTATI TRACCIATO SAP',
                     result: _lastSapResult!,
                     dataType: 'sap',
+                  ),
+                ],
+                if (_lastAmexResult != null) ...[
+                  const SizedBox(height: 24),
+                  _buildDetailedResultCard(
+                    title: 'RISULTATI ESTRATTI AMEX',
+                    result: _lastAmexResult!,
+                    dataType: 'amex',
                   ),
                 ],
               ],
@@ -525,7 +604,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
                   TextButton.icon(
                     onPressed: () => _confirmDeleteFullImport(
                       result['uniqueCode'], 
-                      title.contains('CONTABILE') ? 'contabile' : (title.contains('SAP') ? 'sap' : 'estratto')
+                      dataType
                     ),
                     icon: const Icon(Icons.history_toggle_off, color: Colors.redAccent, size: 18),
                     label: const Text(
@@ -783,6 +862,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
           _deletedRecordIds.clear();
         } else if (type == 'sap') {
           _lastSapResult = null;
+        } else if (type == 'amex') {
+          _lastAmexResult = null;
         }
       });
 
@@ -1082,6 +1163,32 @@ class _UploadViewState extends ConsumerState<UploadView> {
       ],
     );
   }
+  Widget _buildAmexSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildSectionHeader(
+          'ESTRATTI AMEX',
+          'File estratti AMEX (.xls)',
+        ),
+        const SizedBox(height: 24),
+        _buildDropZone(
+          type: 'amex',
+          selectedFile: _selectedAmexFile,
+          isDragging: _isDraggingAmex,
+          allowedExtensions: ['xls'],
+        ),
+        const SizedBox(height: 24),
+        _buildActionButton(
+          onPressed: (_selectedAmexFile != null && !_isProcessingAmex)
+              ? _processAmexData
+              : null,
+          label: 'ELABORA ESTRATTI AMEX',
+          isLoading: _isProcessingAmex,
+        ),
+      ],
+    );
+  }
 
   Widget _buildSectionHeader(String title, String subtitle) {
     return Column(
@@ -1125,6 +1232,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
               _selectedEstrattoFile = filteredFiles.first;
             } else if (type == 'sap') {
               _selectedSapFile = filteredFiles.first;
+            } else if (type == 'amex') {
+              _selectedAmexFile = filteredFiles.first;
             }
           });
         } else {
@@ -1146,6 +1255,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
             _isDraggingEstratto = true;
           } else if (type == 'sap') {
             _isDraggingSap = true;
+          } else if (type == 'amex') {
+            _isDraggingAmex = true;
           }
         });
       },
@@ -1157,6 +1268,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
             _isDraggingEstratto = false;
           } else if (type == 'sap') {
             _isDraggingSap = false;
+          } else if (type == 'amex') {
+            _isDraggingAmex = false;
           }
         });
       },
@@ -1190,6 +1303,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
               if (type == 'contabile' && !_isProcessingContabile) _pickFile('contabile');
               if (type == 'estratto' && !_isProcessingEstratto) _pickFile('estratto');
               if (type == 'sap' && !_isProcessingSap) _pickFile('sap');
+              if (type == 'amex' && !_isProcessingAmex) _pickFile('amex');
             },
             borderRadius: BorderRadius.circular(16),
             child: Center(
@@ -1198,7 +1312,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
                   : _buildSelectedFileState(
                       selectedFile, 
                       type, 
-                      type == 'contabile' ? _isProcessingContabile : (type == 'estratto' ? _isProcessingEstratto : _isProcessingSap)
+                      type == 'contabile' ? _isProcessingContabile : (type == 'estratto' ? _isProcessingEstratto : (type == 'sap' ? _isProcessingSap : _isProcessingAmex))
                     ),
             ),
           ),

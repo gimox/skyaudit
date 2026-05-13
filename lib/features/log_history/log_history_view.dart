@@ -163,7 +163,7 @@ class _LogHistoryViewState extends ConsumerState<LogHistoryView> {
                     : SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: SizedBox(
-                          width: 1040,
+                          width: 1120,
                           child: Column(
                             children: [
                               // Header della tabella
@@ -183,7 +183,12 @@ class _LogHistoryViewState extends ConsumerState<LogHistoryView> {
                                   children: [
                                     _buildCell(
                                       'NOME FILE',
-                                      280,
+                                      220,
+                                      isHeader: true,
+                                    ),
+                                    _buildCell(
+                                      'TIPO DATI',
+                                      160,
                                       isHeader: true,
                                     ),
                                     _buildCell(
@@ -248,8 +253,14 @@ class _LogHistoryViewState extends ConsumerState<LogHistoryView> {
                                         children: [
                                           _buildCell(
                                             log.fileName,
-                                            280,
+                                            220,
                                             fontWeight: FontWeight.w500,
+                                          ),
+                                          _buildCell(
+                                            log.sourceType ?? 'N.D.',
+                                            160,
+                                            color: SkyTheme.timBlue,
+                                            fontWeight: FontWeight.bold,
                                           ),
                                           _buildCell(
                                             DateFormat(

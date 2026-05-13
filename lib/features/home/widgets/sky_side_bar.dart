@@ -17,58 +17,74 @@ class SkySideBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isCollapsed) {
-      return NavigationRail(
-        selectedIndex: selectedIndex,
-        onDestinationSelected: onDestinationSelected,
-        labelType: NavigationRailLabelType.none,
-        backgroundColor: Colors.white,
-        destinations: const [
-          NavigationRailDestination(
-            icon: Icon(Icons.dashboard_outlined),
-            selectedIcon: Icon(Icons.dashboard),
-            label: Text('Dashboard'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.file_upload_outlined),
-            selectedIcon: Icon(Icons.file_upload),
-            label: Text('Carica File'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.analytics_outlined),
-            selectedIcon: Icon(Icons.analytics),
-            label: Text('Tracciato Contabile'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.account_balance_wallet_outlined),
-            selectedIcon: Icon(Icons.account_balance_wallet),
-            label: Text('Estratti Conto'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.analytics_outlined),
-            selectedIcon: Icon(Icons.analytics),
-            label: Text('Tracciato SAP'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.fact_check_outlined),
-            selectedIcon: Icon(Icons.fact_check),
-            label: Text('Controlli Trasferte'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.history_outlined),
-            selectedIcon: Icon(Icons.history),
-            label: Text('Log History'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.settings_outlined),
-            selectedIcon: Icon(Icons.settings),
-            label: Text('Impostazioni'),
-          ),
-          NavigationRailDestination(
-            icon: Icon(Icons.help_outline),
-            selectedIcon: Icon(Icons.help),
-            label: Text('Supporto'),
-          ),
-        ],
+      return LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: IntrinsicHeight(
+                child: NavigationRail(
+                  selectedIndex: selectedIndex,
+                  onDestinationSelected: onDestinationSelected,
+                  labelType: NavigationRailLabelType.none,
+                  backgroundColor: Colors.white,
+                  destinations: const [
+                    NavigationRailDestination(
+                      icon: Icon(Icons.dashboard_outlined),
+                      selectedIcon: Icon(Icons.dashboard),
+                      label: Text('Dashboard'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.file_upload_outlined),
+                      selectedIcon: Icon(Icons.file_upload),
+                      label: Text('Carica File'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.analytics_outlined),
+                      selectedIcon: Icon(Icons.analytics),
+                      label: Text('Tracciato Contabile'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.account_balance_wallet_outlined),
+                      selectedIcon: Icon(Icons.account_balance_wallet),
+                      label: Text('Estratti Conto'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.credit_card_outlined),
+                      selectedIcon: Icon(Icons.credit_card),
+                      label: Text('Estratti AMEX'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.analytics_outlined),
+                      selectedIcon: Icon(Icons.analytics),
+                      label: Text('Tracciato SAP'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.fact_check_outlined),
+                      selectedIcon: Icon(Icons.fact_check),
+                      label: Text('Controlli Trasferte'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.history_outlined),
+                      selectedIcon: Icon(Icons.history),
+                      label: Text('Log History'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.settings_outlined),
+                      selectedIcon: Icon(Icons.settings),
+                      label: Text('Impostazioni'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.help_outline),
+                      selectedIcon: Icon(Icons.help),
+                      label: Text('Supporto'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
       );
     }
 
@@ -111,6 +127,11 @@ class SkySideBar extends StatelessWidget {
             icon: Icon(Icons.account_balance_wallet_outlined),
             selectedIcon: Icon(Icons.account_balance_wallet),
             label: Text('Estratti Conto'),
+          ),
+          const NavigationDrawerDestination(
+            icon: Icon(Icons.credit_card_outlined),
+            selectedIcon: Icon(Icons.credit_card),
+            label: Text('Estratti AMEX'),
           ),
           const NavigationDrawerDestination(
             icon: Icon(Icons.analytics_outlined),

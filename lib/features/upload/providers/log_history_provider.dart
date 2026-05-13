@@ -5,9 +5,11 @@ import 'package:travel_check/features/upload/models/log_history.dart';
 import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
 import 'package:travel_check/features/upload/models/tracciato_sap.dart';
 import 'package:travel_check/features/upload/models/estratto_conto.dart';
+import 'package:travel_check/features/upload/models/estratto_amex.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
 import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
+import 'package:travel_check/features/upload/providers/estratto_amex_provider.dart';
 
 class LogHistoryNotifier extends Notifier<List<LogHistory>> {
   @override
@@ -42,12 +44,19 @@ class LogHistoryNotifier extends Notifier<List<LogHistory>> {
           .filter()
           .logHistoryIdEqualTo(uniqueCode)
           .deleteAll();
+
+      // Delete from EstrattoAmex
+      await isar.estrattoAmexs
+          .filter()
+          .logHistoryIdEqualTo(uniqueCode)
+          .deleteAll();
     });
 
     // Invalidate main records provider to refresh the UI
     ref.invalidate(tracciatoContabilesProvider);
     ref.invalidate(tracciatoSapProvider);
     ref.invalidate(estrattoContoProvider);
+    ref.invalidate(estrattoAmexProvider);
 
     // Refresh state
     final logs = isar.logHistorys.where().anyId().findAllSync();

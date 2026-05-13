@@ -72,6 +72,7 @@ class TracciatoSapNotifier extends Notifier<List<TracciatoSap>> {
         insertedRecords: recordsToSave.length,
         updatedRecords: 0,
         discardedRecords: 0,
+        sourceType: 'Tracciato SAP',
       );
       await isar.logHistorys.put(log);
     });
