@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:math';
 import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
+import 'package:travel_check/features/upload/models/anagrafica.dart';
 
 // Mappa semplificata delle città italiane per geocoding statico
 final Map<String, LatLng> italianCitiesCoords = {
@@ -102,6 +104,8 @@ class _TravelHistoryViewState extends ConsumerState<TravelHistoryView> {
   Widget build(BuildContext context) {
     final tracciato = ref.watch(tracciatoContabilesProvider);
     final selectedCid = ref.watch(travelHistoryCidProvider);
+    final anagrafica = ref.watch(anagraficaProvider);
+    final selectedEmployee = anagrafica.where((e) => e.cid == selectedCid).firstOrNull;
 
     // Filtra record per CID e raggruppa per trasferta
     final userRecords = tracciato.where((r) => r.cid == selectedCid).toList();
@@ -260,28 +264,102 @@ class _TravelHistoryViewState extends ConsumerState<TravelHistoryView> {
             child: Row(
               children: [
                 Expanded(
-                  child: TextField(
-                    controller: _cidController,
-                    decoration: InputDecoration(
-                      hintText: 'Inserisci CID per visualizzare la storia viaggi...',
-                      prefixIcon: const Icon(Icons.search),
-                      filled: true,
-                      fillColor: Colors.grey.shade100,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                  child: LayoutBuilder(
+                    builder: (context, constraints) => Autocomplete<Anagrafica>(
+                      displayStringForOption: (e) => '${e.cid ?? ""} - ${e.nominativo ?? ""}',
+                      optionsBuilder: (textEditingValue) {
+                        if (textEditingValue.text.isEmpty) {
+                          return const Iterable<Anagrafica>.empty();
+                        }
+                        return anagrafica.where((e) =>
+                          (e.cid?.toLowerCase().contains(textEditingValue.text.toLowerCase()) ?? false) ||
+                          (e.nominativo?.toLowerCase().contains(textEditingValue.text.toLowerCase()) ?? false)
+                        ).take(10); // Limita suggerimenti per performance
+                      },
+                      onSelected: (e) {
+                        ref.read(travelHistoryCidProvider.notifier).state = e.cid ?? '';
+                        _cidController.text = e.cid ?? '';
+                      },
+                      fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                        return TextField(
+                          controller: controller,
+                          focusNode: focusNode,
+                          decoration: InputDecoration(
+                            hintText: 'Inserisci CID o Nominativo...',
+                            prefixIcon: const Icon(Icons.person_search_outlined),
+                            filled: true,
+                            fillColor: Colors.grey.shade100,
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(16),
+                              borderSide: BorderSide.none,
+                            ),
+                            contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+                          ),
+                          onSubmitted: (value) {
+                            ref.read(travelHistoryCidProvider.notifier).state = value;
+                          },
+                        );
+                      },
+                      optionsViewBuilder: (context, onSelected, options) {
+                        return Align(
+                          alignment: Alignment.topLeft,
+                          child: Material(
+                            elevation: 8,
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              width: constraints.maxWidth,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: ListView.builder(
+                                padding: EdgeInsets.zero,
+                                shrinkWrap: true,
+                                itemCount: options.length,
+                                itemBuilder: (context, index) {
+                                  final option = options.elementAt(index);
+                                  return ListTile(
+                                    title: Text(option.nominativo ?? '-', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                    subtitle: Text('CID: ${option.cid ?? ""} • ${option.societa ?? ""}'),
+                                    leading: const Icon(Icons.person_outline, color: Color(0xFF003399)),
+                                    onTap: () => onSelected(option),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        );
+                      },
                     ),
-                    onSubmitted: (value) {
-                      ref.read(travelHistoryCidProvider.notifier).state = value;
-                    },
                   ),
                 ),
                 const SizedBox(width: 16),
+                if (selectedEmployee != null) ...[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        selectedEmployee.nominativo ?? '-',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF003399),
+                        ),
+                      ),
+                      Text(
+                        'CID: ${selectedEmployee.cid} • ${selectedEmployee.societa}',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(width: 16),
+                ],
                 ElevatedButton(
                   onPressed: () {
-                    ref.read(travelHistoryCidProvider.notifier).state = _cidController.text;
+                    // La ricerca è gestita dall'autocomplete o dall'invio manuale
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF003399),
@@ -371,7 +449,7 @@ class _TravelHistoryViewState extends ConsumerState<TravelHistoryView> {
                                     userAgentPackageName: 'com.skyaudit.app',
                                   ),
                                   PolylineLayer(
-                                    polylines: [
+                                    polylines: pathPoints.isEmpty ? <Polyline<Object>>[] : [
                                       Polyline<Object>(
                                         points: pathPoints,
                                         color: const Color(0xFF003399).withAlpha(120),
@@ -636,7 +714,7 @@ class _TravelHistoryViewState extends ConsumerState<TravelHistoryView> {
                       controller: controller,
                       padding: const EdgeInsets.all(24),
                       itemCount: records.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 12),
+                      separatorBuilder: (_, _) => const SizedBox(height: 12),
                       itemBuilder: (context, index) {
                         final r = records[index];
                         final importoEffettivo = r.isNegative ? -r.importo : r.importo;

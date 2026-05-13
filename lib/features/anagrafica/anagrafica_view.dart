@@ -235,18 +235,70 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                             const Icon(Icons.search, color: Colors.grey, size: 20),
                             const SizedBox(width: 12),
                             Expanded(
-                              child: TextField(
-                                controller: _searchController,
-                                decoration: const InputDecoration(
-                                  hintText: 'Cerca per CID, Nominativo, Codice Fiscale o UID...',
-                                  border: InputBorder.none,
-                                  isDense: true,
+                              child: LayoutBuilder(
+                                builder: (context, constraints) => Autocomplete<Anagrafica>(
+                                  displayStringForOption: (e) => '${e.cid ?? ""} - ${e.nominativo ?? ""}',
+                                  optionsBuilder: (textEditingValue) {
+                                    if (textEditingValue.text.isEmpty) {
+                                      return const Iterable<Anagrafica>.empty();
+                                    }
+                                    return allRecords.where((e) =>
+                                      (e.cid?.toLowerCase().contains(textEditingValue.text.toLowerCase()) ?? false) ||
+                                      (e.nominativo?.toLowerCase().contains(textEditingValue.text.toLowerCase()) ?? false) ||
+                                      (e.codiceFiscale?.toLowerCase().contains(textEditingValue.text.toLowerCase()) ?? false)
+                                    ).take(10);
+                                  },
+                                  onSelected: (e) {
+                                    ref.read(anagraficaSearchProvider.notifier).state = e.nominativo;
+                                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                                  },
+                                  fieldViewBuilder: (context, controller, focusNode, onFieldSubmitted) {
+                                    return TextField(
+                                      controller: controller,
+                                      focusNode: focusNode,
+                                      decoration: const InputDecoration(
+                                        hintText: 'Cerca per CID, Nominativo, Codice Fiscale...',
+                                        border: InputBorder.none,
+                                        isDense: true,
+                                      ),
+                                      style: const TextStyle(fontSize: 14),
+                                      onChanged: (value) {
+                                        ref.read(anagraficaSearchProvider.notifier).state = value.isEmpty ? null : value;
+                                        ref.read(anagraficaPageProvider.notifier).state = 0;
+                                      },
+                                    );
+                                  },
+                                  optionsViewBuilder: (context, onSelected, options) {
+                                    return Align(
+                                      alignment: Alignment.topLeft,
+                                      child: Material(
+                                        elevation: 8,
+                                        borderRadius: BorderRadius.circular(12),
+                                        child: Container(
+                                          width: constraints.maxWidth,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius: BorderRadius.circular(12),
+                                          ),
+                                          child: ListView.builder(
+                                            padding: EdgeInsets.zero,
+                                            shrinkWrap: true,
+                                            itemCount: options.length,
+                                            itemBuilder: (context, index) {
+                                              final option = options.elementAt(index);
+                                              return ListTile(
+                                                title: Text(option.nominativo ?? '-', style: const TextStyle(fontWeight: FontWeight.bold)),
+                                                subtitle: Text('CID: ${option.cid} • CF: ${option.codiceFiscale}'),
+                                                leading: const Icon(Icons.person_outline, color: Color(0xFF003399)),
+                                                onTap: () => onSelected(option),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
-                                style: const TextStyle(fontSize: 14),
-                                onChanged: (value) {
-                                  ref.read(anagraficaSearchProvider.notifier).state = value.isEmpty ? null : value;
-                                  ref.read(anagraficaPageProvider.notifier).state = 0;
-                                },
                               ),
                             ),
                           ],
