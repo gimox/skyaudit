@@ -11,7 +11,6 @@ import 'package:travel_check/core/theme/app_theme.dart';
 final sapMonthProvider = StateProvider<String?>((ref) => null);
 final sapYearProvider = StateProvider<String?>((ref) => null);
 final sapTrasfertaProvider = StateProvider<String?>((ref) => null);
-final sapCidProvider = StateProvider<String?>((ref) => null);
 final sapSocietaProvider = StateProvider<String?>((ref) => null);
 final sapRichiestaProvider = StateProvider<String?>((ref) => null);
 final sapPageProvider = StateProvider<int>((ref) => 0);
@@ -26,15 +25,11 @@ class SapAnalysisView extends ConsumerStatefulWidget {
 
 class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
   final _trasfertaController = TextEditingController();
-  final _cidController = TextEditingController();
-  final _richiestaController = TextEditingController();
   final _scrollController = ScrollController();
 
   @override
   void dispose() {
     _trasfertaController.dispose();
-    _cidController.dispose();
-    _richiestaController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -45,7 +40,6 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     final selectedMonth = ref.watch(sapMonthProvider);
     final selectedYear = ref.watch(sapYearProvider);
     final selectedTrasferta = ref.watch(sapTrasfertaProvider);
-    final selectedCid = ref.watch(sapCidProvider);
     final selectedRichiesta = ref.watch(sapRichiestaProvider);
     final selectedSocieta = ref.watch(sapSocietaProvider);
     final sortAscending = ref.watch(sapSortAscendingProvider);
@@ -84,7 +78,6 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       selectedYear != null,
       selectedSocieta != null,
       selectedTrasferta != null,
-      selectedCid != null,
       selectedRichiesta != null,
     ].where((e) => e).length;
 
@@ -111,12 +104,26 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
         year = parts[2];
       }
 
-      if (selectedMonth != null && month != selectedMonth) return false;
-      if (selectedYear != null && year != selectedYear) return false;
-      if (selectedTrasferta != null && !r.numeroTrasferta.contains(selectedTrasferta)) return false;
-      if (selectedCid != null && !r.cid.contains(selectedCid)) return false;
-      if (selectedSocieta != null && r.societaCodice != selectedSocieta) return false;
-      if (selectedRichiesta != null && r.cdRichiesta != null && !r.cdRichiesta!.contains(selectedRichiesta)) return false;
+      if (selectedMonth != null && month != selectedMonth) {
+        return false;
+      }
+      if (selectedYear != null && year != selectedYear) {
+        return false;
+      }
+      if (selectedTrasferta != null) {
+        final query = selectedTrasferta.toLowerCase();
+        if (!r.numeroTrasferta.toLowerCase().contains(query) && 
+            !r.cid.toLowerCase().contains(query) &&
+            !(r.cdRichiesta?.toLowerCase().contains(query) ?? false)) {
+          return false;
+        }
+      }
+      if (selectedSocieta != null && r.societaCodice != selectedSocieta) {
+        return false;
+      }
+      if (selectedRichiesta != null && r.cdRichiesta != null && !r.cdRichiesta!.contains(selectedRichiesta)) {
+        return false;
+      }
 
       return true;
     }).toList()..sort((a, b) {
@@ -192,7 +199,11 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                             Expanded(
                               child: TextField(
                                 controller: _trasfertaController,
-                                decoration: const InputDecoration(hintText: 'Cerca per trasferta...', border: InputBorder.none, isDense: true),
+                                decoration: const InputDecoration(
+                                  hintText: 'Cerca per trasferta, CID o richiesta...', 
+                                  border: InputBorder.none, 
+                                  isDense: true
+                                ),
                                 style: const TextStyle(fontSize: 14),
                                 onChanged: (value) {
                                   ref.read(sapTrasfertaProvider.notifier).state = value.isEmpty ? null : value;
@@ -244,8 +255,6 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                         if (selectedYear != null) _buildFilterChip('Anno: $selectedYear', () => ref.read(sapYearProvider.notifier).state = null),
                         if (selectedMonth != null) _buildFilterChip('Mese: ${monthNames[selectedMonth]}', () => ref.read(sapMonthProvider.notifier).state = null),
                         if (selectedSocieta != null) _buildFilterChip('Società: $selectedSocieta', () => ref.read(sapSocietaProvider.notifier).state = null),
-                        if (selectedCid != null) _buildFilterChip('CID: $selectedCid', () { _cidController.clear(); ref.read(sapCidProvider.notifier).state = null; }),
-                        if (selectedRichiesta != null) _buildFilterChip('Richiesta: $selectedRichiesta', () { _richiestaController.clear(); ref.read(sapRichiestaProvider.notifier).state = null; }),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
                     ),
@@ -255,10 +264,20 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
             ),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
               child: Container(
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withAlpha(5), blurRadius: 15, offset: const Offset(0, 5))]),
+                decoration: BoxDecoration(
+                  color: Colors.white, 
+                  borderRadius: BorderRadius.circular(16), 
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(5), 
+                      blurRadius: 15, 
+                      offset: const Offset(0, 5)
+                    )
+                  ]
+                ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: SingleChildScrollView(
@@ -267,9 +286,13 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                       width: 1120,
                       child: Column(
                         children: [
+                          // HEADER FISSO
                           Container(
                             height: 56,
-                            decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: Colors.grey.shade200))),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade50, 
+                              border: Border(bottom: BorderSide(color: Colors.grey.shade200))
+                            ),
                             child: Row(
                               children: [
                                 _buildCell('CID', 100, isHeader: true),
@@ -284,36 +307,44 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                               ],
                             ),
                           ),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: paginatedRecords.length,
-                            itemBuilder: (context, index) {
-                              final record = paginatedRecords[index];
-                              return Container(
-                                decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: Colors.grey.shade100))),
-                                child: Row(
-                                  children: [
-                                    _buildCell(record.cid, 100, fontWeight: FontWeight.w500),
-                                    _buildCell(record.numeroTrasferta, 120),
-                                    _buildCell(record.data, 120),
-                                    _buildCell('${record.importo.toStringAsFixed(2)} ${record.valuta}', 140, color: Colors.green.shade800, fontWeight: FontWeight.bold),
-                                    _buildCell(record.cdRichiesta ?? '-', 150),
-                                    _buildCell(record.codiceStato ?? '-', 120),
-                                    _buildCell(record.societaCodice, 120),
-                                    _buildCell(record.tipoSpesaCodice, 150),
-                                    _buildCell('', 100, alignment: Alignment.center, child: Row(
-                                      mainAxisAlignment: MainAxisAlignment.center,
+                          // BODY SCROLLABILE
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: paginatedRecords.length,
+                                itemBuilder: (context, index) {
+                                  final record = paginatedRecords[index];
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: index % 2 == 0 ? Colors.white : Colors.grey.shade50.withAlpha(120), 
+                                      border: Border(bottom: BorderSide(color: Colors.grey.shade100))
+                                    ),
+                                    child: Row(
                                       children: [
-                                        IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-                                        const SizedBox(width: 8),
-                                        IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), onPressed: () => _deleteRecord(context, ref, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+                                        _buildCell(record.cid, 100, fontWeight: FontWeight.w500),
+                                        _buildCell(record.numeroTrasferta, 120),
+                                        _buildCell(record.data, 120),
+                                        _buildCell('${record.importo.toStringAsFixed(2)} ${record.valuta}', 140, color: Colors.green.shade800, fontWeight: FontWeight.bold),
+                                        _buildCell(record.cdRichiesta ?? '-', 150),
+                                        _buildCell(record.codiceStato ?? '-', 120),
+                                        _buildCell(record.societaCodice, 120),
+                                        _buildCell(record.tipoSpesaCodice, 150),
+                                        _buildCell('', 100, alignment: Alignment.center, child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+                                            const SizedBox(width: 8),
+                                            IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), onPressed: () => _deleteRecord(context, ref, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+                                          ],
+                                        )),
                                       ],
-                                    )),
-                                  ],
-                                ),
-                              );
-                            },
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -386,16 +417,12 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
   }
 
   void _resetAllFilters(WidgetRef ref) {
-    ref.read(sapMonthProvider.notifier).state = null;
     ref.read(sapYearProvider.notifier).state = null;
-    ref.read(sapTrasfertaProvider.notifier).state = null;
-    ref.read(sapCidProvider.notifier).state = null;
+    ref.read(sapMonthProvider.notifier).state = null;
     ref.read(sapSocietaProvider.notifier).state = null;
     ref.read(sapRichiestaProvider.notifier).state = null;
     ref.read(sapPageProvider.notifier).state = 0;
     _trasfertaController.clear();
-    _cidController.clear();
-    _richiestaController.clear();
   }
 
   Widget _buildFilterChip(String label, VoidCallback onDeleted) {
@@ -421,13 +448,61 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
-            color: const Color(0xFF001529),
-            child: const Row(
+            padding: const EdgeInsets.fromLTRB(20, 44, 20, 20),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [SkyTheme.timRed, Color(0xFF9E0007)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
+            child: Row(
               children: [
-                Icon(Icons.filter_alt_outlined, color: Colors.white),
-                SizedBox(width: 12),
-                Text('FILTRI SAP', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withAlpha(30),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.filter_alt_outlined, color: Colors.white, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'FILTRI SAP',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontWeight: FontWeight.bold, 
+                        fontSize: 16,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    Text(
+                      'Affina la tua ricerca',
+                      style: TextStyle(
+                        color: Colors.white70, 
+                        fontSize: 10,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ],
+                ),
+                const Spacer(),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white, size: 18),
+                  onPressed: () => Navigator.pop(context),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.white.withAlpha(20),
+                    padding: const EdgeInsets.all(6),
+                  ),
+                ),
               ],
             ),
           ),
@@ -440,10 +515,6 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                 _buildFilterDropdown<String?>('Seleziona Mese', ref.watch(sapMonthProvider), monthNames.keys.toList(), (val) => ref.read(sapMonthProvider.notifier).state = val, icon: Icons.calendar_month, labelMapper: (val) => monthNames[val] ?? val ?? ''),
                 const SizedBox(height: 24),
                 _buildFilterDropdown<String?>('Società', ref.watch(sapSocietaProvider), societa, (val) => ref.read(sapSocietaProvider.notifier).state = val, icon: Icons.business),
-                const SizedBox(height: 16),
-                _buildDrawerTextField('Cerca per CID', _cidController, Icons.person_search, (val) => ref.read(sapCidProvider.notifier).state = val.isEmpty ? null : val),
-                const SizedBox(height: 16),
-                _buildDrawerTextField('CD Richiesta', _richiestaController, Icons.receipt_long, (val) => ref.read(sapRichiestaProvider.notifier).state = val.isEmpty ? null : val),
               ],
             ),
           ),
@@ -462,18 +533,6 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     );
   }
 
-  Widget _buildDrawerTextField(String hint, TextEditingController controller, IconData? icon, Function(String) onChanged) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(hintText: hint, icon: icon != null ? Icon(icon, size: 18, color: Colors.grey) : null, border: InputBorder.none, isDense: true),
-        style: const TextStyle(fontSize: 14),
-        onChanged: onChanged,
-      ),
-    );
-  }
 
   Widget _buildFilterDropdown<T>(String label, T value, List<T> items, Function(T) onChanged, {IconData? icon, String Function(T)? labelMapper}) {
     return Container(

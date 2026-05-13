@@ -9,9 +9,10 @@ import 'package:travel_check/core/theme/app_theme.dart';
 
 // Filter providers for Estratti Conto
 final ecSelectedTrasfertaProvider = StateProvider<String?>((ref) => null);
-final ecSelectedCidProvider = StateProvider<String?>((ref) => null);
 final ecSelectedSocietaProvider = StateProvider<String?>((ref) => null);
-final ecSelectedBollaProvider = StateProvider<String?>((ref) => null);
+final ecStartDateProvider = StateProvider<DateTime?>((ref) => null);
+final ecEndDateProvider = StateProvider<DateTime?>((ref) => null);
+final ecSelectedTipiServizioProvider = StateProvider<Set<String>>((ref) => {});
 final ecSortAscendingProvider = StateProvider<bool>((ref) => false);
 final ecPageProvider = StateProvider<int>((ref) => 0);
 
@@ -24,15 +25,11 @@ class EstrattiContoView extends ConsumerStatefulWidget {
 
 class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
   final _trasfertaController = TextEditingController();
-  final _cidController = TextEditingController();
-  final _bollaController = TextEditingController();
   final _scrollController = ScrollController();
 
   @override
   void dispose() {
     _trasfertaController.dispose();
-    _cidController.dispose();
-    _bollaController.dispose();
     _scrollController.dispose();
     super.dispose();
   }
@@ -41,9 +38,10 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
   Widget build(BuildContext context) {
     final allRecords = ref.watch(estrattoContoProvider);
     final selectedTrasferta = ref.watch(ecSelectedTrasfertaProvider);
-    final selectedCid = ref.watch(ecSelectedCidProvider);
     final selectedSocieta = ref.watch(ecSelectedSocietaProvider);
-    final selectedBolla = ref.watch(ecSelectedBollaProvider);
+    final startDate = ref.watch(ecStartDateProvider);
+    final endDate = ref.watch(ecEndDateProvider);
+    final selectedTipi = ref.watch(ecSelectedTipiServizioProvider);
     final sortAscending = ref.watch(ecSortAscendingProvider);
     final currentPage = ref.watch(ecPageProvider);
     const pageSize = 100;
@@ -77,9 +75,10 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
 
     final activeFiltersCount = [
       selectedTrasferta != null,
-      selectedCid != null,
       selectedSocieta != null,
-      selectedBolla != null,
+      startDate != null,
+      endDate != null,
+      selectedTipi.isNotEmpty,
     ].where((e) => e).length;
 
     // Estrai società disponibili per il filtro
@@ -89,13 +88,43 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         .toSet()
         .toList()
       ..sort();
+    
+    final availableTipi = allRecords
+        .map((r) => r.tipoServizio)
+        .where((s) => s.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
 
     // Filtra i record
     final filteredRecords = allRecords.where((r) {
-      if (selectedTrasferta != null && !r.numeroTrasferta.toLowerCase().contains(selectedTrasferta.toLowerCase())) return false;
-      if (selectedCid != null && !r.cid.toLowerCase().contains(selectedCid.toLowerCase())) return false;
+      if (selectedTrasferta != null) {
+        final query = selectedTrasferta.toLowerCase();
+        if (!r.numeroTrasferta.toLowerCase().contains(query) &&
+            !r.cid.toLowerCase().contains(query) &&
+            !r.bolla.toLowerCase().contains(query)) {
+          return false;
+        }
+      }
       if (selectedSocieta != null && r.ragioneSociale != selectedSocieta) return false;
-      if (selectedBolla != null && !r.bolla.toLowerCase().contains(selectedBolla.toLowerCase())) return false;
+      
+      // Filtro Data Bolla
+      if (startDate != null || endDate != null) {
+        try {
+          final parts = r.dataBolla.split('/');
+          if (parts.length == 3) {
+            final date = DateTime(int.parse(parts[2]), int.parse(parts[1]), int.parse(parts[0]));
+            if (startDate != null && date.isBefore(startDate)) return false;
+            if (endDate != null && date.isAfter(endDate)) return false;
+          }
+        } catch (_) {
+          // Skip date filter if format is invalid
+        }
+      }
+      
+      // Filtro Tipo Servizio
+      if (selectedTipi.isNotEmpty && !selectedTipi.contains(r.tipoServizio)) return false;
+      
       return true;
     }).toList()
       ..sort((a, b) {
@@ -109,7 +138,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      endDrawer: _buildFilterDrawer(context, ref, availableSocieta),
+      endDrawer: _buildFilterDrawer(context, ref, availableSocieta, availableTipi),
       floatingActionButton: filteredRecords.isNotEmpty 
           ? FloatingActionButton(
               onPressed: () => _exportToExcel(filteredRecords),
@@ -167,7 +196,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                             Expanded(
                               child: TextField(
                                 controller: _trasfertaController,
-                                decoration: const InputDecoration(hintText: 'Cerca per trasferta...', border: InputBorder.none, isDense: true),
+                                decoration: const InputDecoration(hintText: 'Cerca per trasferta, CID o bolla...', border: InputBorder.none, isDense: true),
                                 style: const TextStyle(fontSize: 14),
                                 onChanged: (value) {
                                   ref.read(ecSelectedTrasfertaProvider.notifier).state = value.isEmpty ? null : value;
@@ -218,8 +247,9 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                       scrollDirection: Axis.horizontal,
                       children: [
                         if (selectedSocieta != null) _buildFilterChip('Società: $selectedSocieta', () => ref.read(ecSelectedSocietaProvider.notifier).state = null),
-                        if (selectedCid != null) _buildFilterChip('CID: $selectedCid', () { _cidController.clear(); ref.read(ecSelectedCidProvider.notifier).state = null; }),
-                        if (selectedBolla != null) _buildFilterChip('Bolla: $selectedBolla', () { _bollaController.clear(); ref.read(ecSelectedBollaProvider.notifier).state = null; }),
+                        if (startDate != null) _buildFilterChip('Dal: ${startDate.day}/${startDate.month}/${startDate.year}', () => ref.read(ecStartDateProvider.notifier).state = null),
+                        if (endDate != null) _buildFilterChip('Al: ${endDate.day}/${endDate.month}/${endDate.year}', () => ref.read(ecEndDateProvider.notifier).state = null),
+                        if (selectedTipi.isNotEmpty) _buildFilterChip('Tipi: ${selectedTipi.length}', () => ref.read(ecSelectedTipiServizioProvider.notifier).state = {}),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
                     ),
@@ -230,10 +260,20 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
           ),
           // MAIN TABLE
           Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
               child: Container(
-                decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(16), boxShadow: [BoxShadow(color: Colors.black.withAlpha(5), blurRadius: 15, offset: const Offset(0, 5))]),
+                decoration: BoxDecoration(
+                  color: Colors.white, 
+                  borderRadius: BorderRadius.circular(16), 
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(5), 
+                      blurRadius: 15, 
+                      offset: const Offset(0, 5)
+                    )
+                  ]
+                ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
                   child: SingleChildScrollView(
@@ -242,9 +282,13 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                       width: 1300,
                       child: Column(
                         children: [
+                          // HEADER FISSO
                           Container(
                             height: 56,
-                            decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: Colors.grey.shade200))),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade50, 
+                              border: Border(bottom: BorderSide(color: Colors.grey.shade200))
+                            ),
                             child: Row(
                               children: [
                                 _buildCell('CID', 120, isHeader: true),
@@ -259,33 +303,41 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                               ],
                             ),
                           ),
-                          ListView.builder(
-                            shrinkWrap: true,
-                            physics: const NeverScrollableScrollPhysics(),
-                            itemCount: paginatedRecords.length,
-                            itemBuilder: (context, index) {
-                              final record = paginatedRecords[index];
-                              return Container(
-                                decoration: BoxDecoration(color: Colors.white, border: Border(bottom: BorderSide(color: Colors.grey.shade100))),
-                                child: Row(
-                                  children: [
-                                    _buildCell(record.cid, 120, fontWeight: FontWeight.w500),
-                                    _buildCell(record.numeroTrasferta, 150),
-                                    _buildCell(record.tipoServizio, 150),
-                                    _buildCell(record.bolla, 150),
-                                    _buildCell(record.ragioneSociale, 250),
-                                    _buildCell(record.dataBolla, 120),
-                                    _buildCell(record.dataCompetenza, 140),
-                                    _buildCell('${record.totaleServizio.toStringAsFixed(2)} €', 100, fontWeight: FontWeight.bold, color: record.totaleServizio < 0 ? Colors.red.shade700 : Colors.green.shade800),
-                                    _buildCell('', 120, alignment: Alignment.center, child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                      IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-                                      const SizedBox(width: 12),
-                                      IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), onPressed: () => _showDeleteDialog(context, ref, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-                                    ])),
-                                  ],
-                                ),
-                              );
-                            },
+                          // BODY SCROLLABILE
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: paginatedRecords.length,
+                                itemBuilder: (context, index) {
+                                  final record = paginatedRecords[index];
+                                  return Container(
+                                    decoration: BoxDecoration(
+                                      color: index % 2 == 0 ? Colors.white : Colors.grey.shade50.withAlpha(120), 
+                                      border: Border(bottom: BorderSide(color: Colors.grey.shade100))
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        _buildCell(record.cid, 120, fontWeight: FontWeight.w500),
+                                        _buildCell(record.numeroTrasferta, 150),
+                                        _buildCell(record.tipoServizio, 150),
+                                        _buildCell(record.bolla, 150),
+                                        _buildCell(record.ragioneSociale, 250),
+                                        _buildCell(record.dataBolla, 120),
+                                        _buildCell(record.dataCompetenza, 140),
+                                        _buildCell('${record.totaleServizio.toStringAsFixed(2)} €', 100, fontWeight: FontWeight.bold, color: record.totaleServizio < 0 ? Colors.red.shade700 : Colors.green.shade800),
+                                        _buildCell('', 120, alignment: Alignment.center, child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                          IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+                                          const SizedBox(width: 12),
+                                          IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), onPressed: () => _showDeleteDialog(context, ref, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+                                        ])),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -354,13 +406,12 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
 
   void _resetAllFilters(WidgetRef ref) {
     ref.read(ecSelectedTrasfertaProvider.notifier).state = null;
-    ref.read(ecSelectedCidProvider.notifier).state = null;
     ref.read(ecSelectedSocietaProvider.notifier).state = null;
-    ref.read(ecSelectedBollaProvider.notifier).state = null;
+    ref.read(ecStartDateProvider.notifier).state = null;
+    ref.read(ecEndDateProvider.notifier).state = null;
+    ref.read(ecSelectedTipiServizioProvider.notifier).state = {};
     ref.read(ecPageProvider.notifier).state = 0;
     _trasfertaController.clear();
-    _cidController.clear();
-    _bollaController.clear();
   }
 
   Widget _buildFilterChip(String label, VoidCallback onDeleted) {
@@ -377,21 +428,67 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     );
   }
 
-  Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, List<String> societa) {
+  Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, List<String> societa, List<String> availableTipi) {
     return Drawer(
       width: 350,
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
-            color: const Color(0xFF001529),
+            padding: const EdgeInsets.fromLTRB(20, 44, 20, 20),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [SkyTheme.timRed, Color(0xFF9E0007)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
             child: Row(
               children: [
-                const Icon(Icons.filter_alt_outlined, color: Colors.white),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withAlpha(30),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.filter_alt_outlined, color: Colors.white, size: 20),
+                ),
                 const SizedBox(width: 12),
-                const Text('FILTRI AVANZATI', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18)),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'FILTRI AVANZATI',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontWeight: FontWeight.bold, 
+                        fontSize: 16,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    Text(
+                      'Affina la tua ricerca',
+                      style: TextStyle(
+                        color: Colors.white70, 
+                        fontSize: 10,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ],
+                ),
                 const Spacer(),
-                IconButton(icon: const Icon(Icons.close, color: Colors.white), onPressed: () => Navigator.pop(context)),
+                IconButton(
+                  icon: const Icon(Icons.close, color: Colors.white, size: 18),
+                  onPressed: () => Navigator.pop(context),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.white.withAlpha(20),
+                    padding: const EdgeInsets.all(6),
+                  ),
+                ),
               ],
             ),
           ),
@@ -399,15 +496,40 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
             child: ListView(
               padding: const EdgeInsets.all(20),
               children: [
+                _buildDrawerSectionTitle('PERIODI BOLLA'),
+                const SizedBox(height: 12),
+                _buildDatePickerFilter(
+                  'Data Inizio',
+                  ref.watch(ecStartDateProvider),
+                  (val) => ref.read(ecStartDateProvider.notifier).state = val,
+                ),
+                const SizedBox(height: 12),
+                _buildDatePickerFilter(
+                  'Data Fine',
+                  ref.watch(ecEndDateProvider),
+                  (val) => ref.read(ecEndDateProvider.notifier).state = val,
+                ),
+                const SizedBox(height: 32),
                 _buildDrawerSectionTitle('ANAGRAFICA'),
                 const SizedBox(height: 12),
                 _buildFilterDropdown<String?>('Società', ref.watch(ecSelectedSocietaProvider), societa, (val) => ref.read(ecSelectedSocietaProvider.notifier).state = val, icon: Icons.business),
-                const SizedBox(height: 16),
-                _buildDrawerTextField('Cerca per CID', _cidController, Icons.person_search, (val) => ref.read(ecSelectedCidProvider.notifier).state = val.isEmpty ? null : val),
-                const SizedBox(height: 32),
-                _buildDrawerSectionTitle('RIFERIMENTI'),
-                const SizedBox(height: 12),
-                _buildDrawerTextField('Numero Bolla', _bollaController, Icons.receipt_long, (val) => ref.read(ecSelectedBollaProvider.notifier).state = val.isEmpty ? null : val),
+                const SizedBox(height: 24),
+                _buildChipsMultiSelectFilter(
+                  'Tipo Servizio',
+                  ref.watch(ecSelectedTipiServizioProvider),
+                  availableTipi,
+                  (val) {
+                    final current = ref.read(ecSelectedTipiServizioProvider);
+                    final next = Set<String>.from(current);
+                    if (next.contains(val)) {
+                      next.remove(val);
+                    } else {
+                      next.add(val);
+                    }
+                    ref.read(ecSelectedTipiServizioProvider.notifier).state = next;
+                  },
+                  icon: Icons.layers_outlined,
+                ),
               ],
             ),
           ),
@@ -426,22 +548,125 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     );
   }
 
+  Widget _buildChipsMultiSelectFilter(
+    String label,
+    Set<String> selectedValues,
+    List<String> options,
+    Function(String) onToggle, {
+    IconData? icon,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 18, color: Colors.grey),
+              const SizedBox(width: 8),
+            ],
+            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: options.map((option) {
+            final isSelected = selectedValues.contains(option);
+            
+            return FilterChip(
+              label: Text(
+                option, 
+                style: TextStyle(
+                  fontSize: 12, 
+                  color: isSelected ? Colors.white : Colors.black87,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                )
+              ),
+              selected: isSelected,
+              onSelected: (_) => onToggle(option),
+              selectedColor: SkyTheme.timBlue,
+              checkmarkColor: Colors.white,
+              backgroundColor: Colors.grey.shade100,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(color: isSelected ? SkyTheme.timBlue : Colors.grey.shade300),
+              ),
+              showCheckmark: true,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDatePickerFilter(String label, DateTime? selectedDate, Function(DateTime?) onChanged) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () async {
+            final date = await showDatePicker(
+              context: context,
+              initialDate: selectedDate ?? DateTime.now(),
+              firstDate: DateTime(2020),
+              lastDate: DateTime(2030),
+              builder: (context, child) {
+                return Theme(
+                  data: Theme.of(context).copyWith(
+                    colorScheme: const ColorScheme.light(
+                      primary: SkyTheme.timBlue,
+                    ),
+                  ),
+                  child: child!,
+                );
+              },
+            );
+            if (date != null) onChanged(date);
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.calendar_today, size: 18, color: SkyTheme.timBlue),
+                const SizedBox(width: 12),
+                Text(
+                  selectedDate == null 
+                      ? 'Seleziona data' 
+                      : '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
+                  style: TextStyle(
+                    color: selectedDate == null ? Colors.grey : Colors.black87,
+                    fontSize: 14,
+                  ),
+                ),
+                const Spacer(),
+                if (selectedDate != null)
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 16),
+                    onPressed: () => onChanged(null),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   Widget _buildDrawerSectionTitle(String title) {
     return Text(title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: SkyTheme.timBlue.withAlpha(150), letterSpacing: 1.2));
   }
 
-  Widget _buildDrawerTextField(String hint, TextEditingController controller, IconData? icon, Function(String) onChanged) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
-      child: TextField(
-        controller: controller,
-        decoration: InputDecoration(hintText: hint, icon: icon != null ? Icon(icon, size: 18, color: Colors.grey) : null, border: InputBorder.none, isDense: true),
-        style: const TextStyle(fontSize: 14),
-        onChanged: onChanged,
-      ),
-    );
-  }
 
   Widget _buildFilterDropdown<T>(String label, T value, List<T> items, Function(T) onChanged, {IconData? icon, String Function(T)? labelMapper}) {
     return Container(

@@ -26,7 +26,6 @@ final controlsEndDateProvider = StateProvider<DateTime?>((ref) {
 final controlsSearchProvider = StateProvider<String>((ref) => '');
 final controlsSocietaProvider = StateProvider<Set<String>>((ref) => {});
 final controlsTipoDipendenteProvider = StateProvider<Set<String>>((ref) => {'DR', 'IM', 'QD'});
-final controlsCidProvider = StateProvider<String>((ref) => '');
 final controlsSortAscendingProvider = StateProvider<bool>((ref) => false);
 final controlsPageProvider = StateProvider<int>((ref) => 0);
 final controlsExpandAllProvider = StateProvider<bool>((ref) => true);
@@ -45,7 +44,6 @@ class ControlsView extends ConsumerStatefulWidget {
 
 class _ControlsViewState extends ConsumerState<ControlsView> {
   final _searchController = TextEditingController();
-  final _cidController = TextEditingController();
   final _minDiffController = TextEditingController();
   final _maxDiffController = TextEditingController();
   final _scrollController = ScrollController();
@@ -68,7 +66,6 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
   @override
   void dispose() {
     _searchController.dispose();
-    _cidController.dispose();
     _minDiffController.dispose();
     _maxDiffController.dispose();
     _scrollController.dispose();
@@ -94,7 +91,6 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     final searchQuery = ref.watch(controlsSearchProvider);
     final selectedSocieta = ref.watch(controlsSocietaProvider);
     final selectedTipo = ref.watch(controlsTipoDipendenteProvider);
-    final searchCid = ref.watch(controlsCidProvider);
     final sortAscending = ref.watch(controlsSortAscendingProvider);
     final currentPage = ref.watch(controlsPageProvider);
     const pageSize = 100;
@@ -107,15 +103,21 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     var trasferte = groupedRecords.keys.toList();
 
     if (searchQuery.isNotEmpty) {
-      trasferte = trasferte
-          .where((t) => t.toLowerCase().contains(searchQuery.toLowerCase()))
-          .toList();
-    }
-
-    if (searchCid.isNotEmpty) {
-      trasferte = trasferte
-          .where((t) => groupedRecords[t]!.first.cid.contains(searchCid))
-          .toList();
+      final query = searchQuery.toLowerCase();
+      trasferte = trasferte.where((t) {
+        final records = groupedRecords[t]!;
+        
+        // Verifica numero trasferta
+        if (t.toLowerCase().contains(query)) return true;
+        
+        // Verifica CID in qualsiasi record della trasferta
+        if (records.any((r) => r.cid.toLowerCase().contains(query))) return true;
+        
+        // Verifica località in qualsiasi record della trasferta
+        if (records.any((r) => r.localita.toLowerCase().contains(query))) return true;
+        
+        return false;
+      }).toList();
     }
 
     final startDate = ref.watch(controlsStartDateProvider);
@@ -261,7 +263,6 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       endDate != null,
       selectedSocieta.isNotEmpty,
       selectedTipo.isNotEmpty,
-      ref.watch(controlsCidProvider).isNotEmpty,
       minDiff != null,
       maxDiff != null,
       matchStatusFilter != null,
@@ -405,11 +406,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                           _buildFilterChip('Al: ${endDate.day}/${endDate.month}/${endDate.year}', () => ref.read(controlsEndDateProvider.notifier).state = null),
                         if (selectedSocieta.isNotEmpty)
                           _buildFilterChip('${selectedSocieta.length} Società', () => ref.read(controlsSocietaProvider.notifier).state = {}),
-                        if (ref.watch(controlsCidProvider).isNotEmpty)
-                          _buildFilterChip('CID: ${ref.watch(controlsCidProvider)}', () {
-                            _cidController.clear();
-                            ref.read(controlsCidProvider.notifier).state = '';
-                          }),
+                        if (selectedSocieta.isNotEmpty)
+                          _buildFilterChip('${selectedSocieta.length} Società', () => ref.read(controlsSocietaProvider.notifier).state = {}),
                         if (minDiff != null || maxDiff != null)
                           _buildFilterChip('Range Diff.', () {
                             _minDiffController.clear();
@@ -1871,7 +1869,6 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     ref.read(controlsSocietaProvider.notifier).state = <String>{};
     ref.read(controlsTipoDipendenteProvider.notifier).state = {'DR', 'IM', 'QD'};
     ref.read(controlsSearchProvider.notifier).state = '';
-    ref.read(controlsCidProvider.notifier).state = '';
     ref.read(controlsSortAscendingProvider.notifier).state = false;
     ref.read(controlsPageProvider.notifier).state = 0;
     ref.read(controlsShowOnlyOrphansProvider.notifier).state = false;
@@ -1882,7 +1879,6 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     ref.read(controlsShowOnlyOrphansProvider.notifier).state = false;
 
     _searchController.clear();
-    _cidController.clear();
     _minDiffController.clear();
     _maxDiffController.clear();
   }
@@ -1902,20 +1898,60 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       child: Column(
         children: [
           Container(
-            padding: const EdgeInsets.fromLTRB(20, 60, 20, 20),
-            color: const Color(0xFF001529), // Navy scuro professionale per distinguersi dal TIM Blue
+            padding: const EdgeInsets.fromLTRB(20, 44, 20, 20),
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [SkyTheme.timRed, Color(0xFF9E0007)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(20),
+                bottomRight: Radius.circular(20),
+              ),
+            ),
             child: Row(
               children: [
-                const Icon(Icons.filter_alt_outlined, color: Colors.white),
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withAlpha(30),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(Icons.filter_alt_outlined, color: Colors.white, size: 20),
+                ),
                 const SizedBox(width: 12),
-                const Text(
-                  'FILTRI AVANZATI',
-                  style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 18),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'FILTRI AVANZATI',
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontWeight: FontWeight.bold, 
+                        fontSize: 16,
+                        letterSpacing: 0.5,
+                      ),
+                    ),
+                    Text(
+                      'Affina la tua ricerca',
+                      style: TextStyle(
+                        color: Colors.white70, 
+                        fontSize: 10,
+                        letterSpacing: 0.2,
+                      ),
+                    ),
+                  ],
                 ),
                 const Spacer(),
                 IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white),
+                  icon: const Icon(Icons.close, color: Colors.white, size: 18),
                   onPressed: () => Navigator.pop(context),
+                  style: IconButton.styleFrom(
+                    backgroundColor: Colors.white.withAlpha(20),
+                    padding: const EdgeInsets.all(6),
+                  ),
                 ),
               ],
             ),
@@ -1994,20 +2030,22 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                   dictionary: dictionaryMap,
                 ),
                 const SizedBox(height: 16),
-                _buildMultiSelectFilter(
+                _buildChipsMultiSelectFilter(
                   'Tipo Dipendente',
                   ref.watch(controlsTipoDipendenteProvider),
                   tipoDipendenteOptions,
-                  (val) => ref.read(controlsTipoDipendenteProvider.notifier).state = val,
+                  (val) {
+                    final current = ref.read(controlsTipoDipendenteProvider);
+                    final next = Set<String>.from(current);
+                    if (next.contains(val)) {
+                      next.remove(val);
+                    } else {
+                      next.add(val);
+                    }
+                    ref.read(controlsTipoDipendenteProvider.notifier).state = next;
+                  },
                   icon: Icons.people,
                   dictionary: dictionaryMap,
-                ),
-                const SizedBox(height: 16),
-                _buildDrawerTextField(
-                  'Cerca per CID',
-                  _cidController,
-                  Icons.person_search,
-                  (val) => ref.read(controlsCidProvider.notifier).state = val,
                 ),
 
                 const SizedBox(height: 32),
@@ -2252,6 +2290,62 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildChipsMultiSelectFilter(
+    String label,
+    Set<String> selectedValues,
+    List<String> options,
+    Function(String) onToggle, {
+    IconData? icon,
+    Map<String, String>? dictionary,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 18, color: Colors.grey),
+              const SizedBox(width: 8),
+            ],
+            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: options.map((option) {
+            final isSelected = selectedValues.contains(option);
+            final description = dictionary?[option];
+            final displayLabel = description != null ? '$option - $description' : option;
+            
+            return FilterChip(
+              label: Text(
+                displayLabel, 
+                style: TextStyle(
+                  fontSize: 12, 
+                  color: isSelected ? Colors.white : Colors.black87,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                )
+              ),
+              selected: isSelected,
+              onSelected: (_) => onToggle(option),
+              selectedColor: SkyTheme.timBlue,
+              checkmarkColor: Colors.white,
+              backgroundColor: Colors.grey.shade100,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+                side: BorderSide(color: isSelected ? SkyTheme.timBlue : Colors.grey.shade300),
+              ),
+              showCheckmark: true,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 
