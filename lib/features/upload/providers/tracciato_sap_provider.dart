@@ -82,6 +82,7 @@ class TracciatoSapNotifier extends Notifier<List<TracciatoSap>> {
     return {
       'inserted': recordsToSave.length,
       'total': recordsToSave.length,
+      'uniqueCode': uniqueCode,
     };
   }
 

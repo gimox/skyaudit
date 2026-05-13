@@ -56,6 +56,72 @@ class EstrattoContoNotifier extends Notifier<List<EstrattoConto>> {
       await isar.logHistorys.put(logWithStats);
     });
 
+    // --- LOGICA DI CONTROLLO BOLLE DUPLICATE ---
+    final List<Map<String, dynamic>> collisions = [];
+    
+    // Recuperiamo i record appena salvati per avere gli ID
+    final savedCurrentRecords = await isar.estrattoContos
+        .filter()
+        .logHistoryIdEqualTo(uniqueCode)
+        .findAll();
+
+    final Map<String, List<EstrattoConto>> internalGroups = {};
+    for (var record in savedCurrentRecords) {
+      if (record.bolla.isNotEmpty) {
+        internalGroups.putIfAbsent(record.bolla, () => []).add(record);
+      }
+    }
+
+    for (var bolla in internalGroups.keys) {
+      final currentRecords = internalGroups[bolla]!;
+      
+      if (currentRecords.length > 1) {
+        for (int i = 1; i < currentRecords.length; i++) {
+          collisions.add({
+            'type': 'internal',
+            'bolla': bolla,
+            'current': currentRecords[i].toMap()..['id'] = currentRecords[i].id,
+            'found': currentRecords[0].toMap()..['id'] = currentRecords[0].id,
+            'foundFileName': file.name,
+          });
+        }
+      }
+
+      final existingRecords = await isar.estrattoContos
+          .filter()
+          .bollaEqualTo(bolla)
+          .and()
+          .not()
+          .logHistoryIdEqualTo(uniqueCode)
+          .findAll();
+
+      if (existingRecords.isNotEmpty) {
+        for (var current in currentRecords) {
+          for (var existing in existingRecords) {
+            String existingFileName = 'Sconosciuto';
+            if (existing.logHistoryId != null) {
+              final log = await isar.logHistorys
+                  .filter()
+                  .uniqueCodeEqualTo(existing.logHistoryId!)
+                  .findFirst();
+              if (log != null) {
+                existingFileName = log.fileName;
+              }
+            }
+
+            collisions.add({
+              'type': 'database',
+              'bolla': bolla,
+              'current': current.toMap()..['id'] = current.id,
+              'found': existing.toMap()..['id'] = existing.id,
+              'foundFileName': existingFileName,
+            });
+          }
+        }
+      }
+    }
+    // --- FINE LOGICA DI CONTROLLO ---
+
     // Aggiorniamo lo stato in modo asincrono
     final allRecords = await isar.estrattoContos.where().anyId().findAll();
     state = allRecords;
@@ -68,6 +134,8 @@ class EstrattoContoNotifier extends Notifier<List<EstrattoConto>> {
       'updated': updatedCount,
       'duplicates': totalDiscarded,
       'total': newRecords.length,
+      'uniqueCode': uniqueCode,
+      'collisions': collisions,
       'updatedRecords': [],
       'discardedRecords': [],
     };

@@ -3,11 +3,16 @@ import 'package:desktop_drop/desktop_drop.dart';
 import 'package:cross_file/cross_file.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
+import 'package:intl/intl.dart';
+import 'package:travel_check/core/db/isar_provider.dart';
+import 'package:isar/isar.dart';
+import 'package:travel_check/features/upload/models/log_history.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
 import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
+import 'package:travel_check/features/upload/providers/log_history_provider.dart';
 
 class UploadView extends ConsumerStatefulWidget {
   const UploadView({super.key});
@@ -30,6 +35,10 @@ class _UploadViewState extends ConsumerState<UploadView> {
   Map<String, dynamic>? _lastContabileResult;
   Map<String, dynamic>? _lastEstrattoResult;
   Map<String, dynamic>? _lastSapResult;
+  final Set<int> _deletedRecordIds = {};
+  int _collisionPage = 0;
+  int _collisionPageEstratto = 0;
+  static const int _itemsPerPage = 50;
 
   Future<void> _pickFile(String type) async {
     List<String> extensions;
@@ -77,12 +86,164 @@ class _UploadViewState extends ConsumerState<UploadView> {
     });
   }
 
+  Future<bool> _checkDuplicateFile(XFile file) async {
+    final isar = ref.read(isarProvider);
+    final existingLog = await isar.logHistorys
+        .filter()
+        .fileNameEqualTo(file.name)
+        .sortByDateDesc()
+        .findFirst();
+
+    if (existingLog != null) {
+      if (!mounted) return false;
+      
+      final bool? proceed = await showGeneralDialog<bool>(
+        context: context,
+        barrierDismissible: true,
+        barrierLabel: '',
+        transitionDuration: const Duration(milliseconds: 300),
+        pageBuilder: (context, anim1, anim2) => Container(),
+        transitionBuilder: (context, anim1, anim2, child) {
+          return Transform.scale(
+            scale: anim1.value,
+            child: Opacity(
+              opacity: anim1.value,
+              child: Dialog(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                elevation: 0,
+                backgroundColor: Colors.transparent,
+                child: Container(
+                  constraints: const BoxConstraints(maxWidth: 450),
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withAlpha(20),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.orange.shade50,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.warning_rounded, color: Colors.orange.shade800, size: 40),
+                      ),
+                      const SizedBox(height: 20),
+                      const Text(
+                        'Attenzione: File già caricato',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1A1A1A),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        'Un file con il nome "${file.name}" è già stato importato.',
+                        style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 24),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.grey.shade200),
+                        ),
+                        child: Column(
+                          children: [
+                            _buildLogDetailRow(Icons.calendar_today_outlined, 'Caricato il:', DateFormat('dd/MM/yyyy HH:mm').format(existingLog.date)),
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 8),
+                              child: Divider(height: 1),
+                            ),
+                            _buildLogDetailRow(Icons.description_outlined, 'Record totali:', existingLog.totalRecords.toString()),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 32),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: TextButton(
+                              onPressed: () => Navigator.pop(context, false),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
+                              child: Text(
+                                'ANNULLA',
+                                style: TextStyle(color: Colors.grey.shade600, fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: ElevatedButton(
+                              onPressed: () => Navigator.pop(context, true),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: SkyTheme.timBlue,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(vertical: 16),
+                                elevation: 0,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              ),
+                              child: const Text(
+                                'PROCEDI',
+                                style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          );
+        },
+      );
+      return proceed ?? false;
+    }
+    return true;
+  }
+
+  Widget _buildLogDetailRow(IconData icon, String label, String value) {
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: SkyTheme.timBlue.withAlpha(150)),
+        const SizedBox(width: 12),
+        Text(label, style: TextStyle(fontSize: 13, color: Colors.grey.shade600)),
+        const Spacer(),
+        Text(value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Color(0xFF1A1A1A))),
+      ],
+    );
+  }
+
   Future<void> _processContabileData() async {
     if (_selectedContabileFile == null) return;
+
+    if (!await _checkDuplicateFile(_selectedContabileFile!)) {
+      return;
+    }
 
     setState(() {
       _isProcessingContabile = true;
       _lastContabileResult = null;
+      _collisionPage = 0;
+      _deletedRecordIds.clear();
     });
 
     try {
@@ -131,9 +292,15 @@ class _UploadViewState extends ConsumerState<UploadView> {
   Future<void> _processEstrattoData() async {
     if (_selectedEstrattoFile == null) return;
 
+    if (!await _checkDuplicateFile(_selectedEstrattoFile!)) {
+      return;
+    }
+
     setState(() {
       _isProcessingEstratto = true;
       _lastEstrattoResult = null;
+      _collisionPageEstratto = 0;
+      _deletedRecordIds.clear();
     });
 
     try {
@@ -183,6 +350,10 @@ class _UploadViewState extends ConsumerState<UploadView> {
 
   Future<void> _processSapData() async {
     if (_selectedSapFile == null) return;
+
+    if (!await _checkDuplicateFile(_selectedSapFile!)) {
+      return;
+    }
 
     setState(() {
       _isProcessingSap = true;
@@ -286,14 +457,14 @@ class _UploadViewState extends ConsumerState<UploadView> {
                   _buildDetailedResultCard(
                     title: 'RISULTATI FLUSSO CONTABILE',
                     result: _lastContabileResult!,
-                    isContabile: true,
+                    dataType: 'contabile',
                   ),
                 if (_lastEstrattoResult != null) ...[
                   const SizedBox(height: 24),
                   _buildDetailedResultCard(
                     title: 'RISULTATI ESTRATTO CONTO',
                     result: _lastEstrattoResult!,
-                    isContabile: false,
+                    dataType: 'estratto',
                   ),
                 ],
                 if (_lastSapResult != null) ...[
@@ -301,7 +472,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
                   _buildDetailedResultCard(
                     title: 'RISULTATI TRACCIATO SAP',
                     result: _lastSapResult!,
-                    isContabile: false,
+                    dataType: 'sap',
                   ),
                 ],
               ],
@@ -315,10 +486,12 @@ class _UploadViewState extends ConsumerState<UploadView> {
   Widget _buildDetailedResultCard({
     required String title,
     required Map<String, dynamic> result,
-    required bool isContabile,
+    required String dataType,
   }) {
+    final bool isContabile = dataType == 'contabile';
     final inserted = result['inserted'] as int? ?? 0;
     final total = result['total'] as int? ?? 0;
+    final collisions = result['collisions'] as List<dynamic>? ?? [];
 
     return Card(
       elevation: 0,
@@ -331,19 +504,49 @@ class _UploadViewState extends ConsumerState<UploadView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16,
-                color: SkyTheme.timBlue,
-              ),
+            Row(
+              children: [
+                Icon(
+                  isContabile ? Icons.receipt_long : Icons.account_balance_wallet,
+                  color: SkyTheme.timBlue,
+                  size: 24,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: SkyTheme.timBlue,
+                  ),
+                ),
+                const Spacer(),
+                if (result['uniqueCode'] != null)
+                  TextButton.icon(
+                    onPressed: () => _confirmDeleteFullImport(
+                      result['uniqueCode'], 
+                      title.contains('CONTABILE') ? 'contabile' : (title.contains('SAP') ? 'sap' : 'estratto')
+                    ),
+                    icon: const Icon(Icons.history_toggle_off, color: Colors.redAccent, size: 18),
+                    label: const Text(
+                      'ELIMINA INTERO IMPORT',
+                      style: TextStyle(color: Colors.redAccent, fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      backgroundColor: Colors.red.shade50,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                    ),
+                  ),
+              ],
             ),
             const SizedBox(height: 24),
             Row(
               children: [
                 _buildStatItem('Record Inseriti', inserted, Colors.green),
                 _buildStatItem('Totale File', total, Colors.grey.shade700),
+                if (collisions.isNotEmpty)
+                  _buildStatItem(isContabile ? 'Conflitti Bolla' : 'Conflitti', collisions.length, Colors.orange),
               ],
             ),
             const SizedBox(height: 16),
@@ -358,8 +561,416 @@ class _UploadViewState extends ConsumerState<UploadView> {
                 style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
               ),
             ),
+            if (collisions.isNotEmpty) ...[
+              const SizedBox(height: 32),
+              const Divider(),
+              const SizedBox(height: 24),
+              const Row(
+                children: [
+                  Icon(Icons.warning_amber_rounded, color: Colors.orange, size: 20),
+                  SizedBox(width: 8),
+                  Text(
+                    'REPORT CONFLITTI',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      letterSpacing: 0.5,
+                      color: Colors.orange,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              _buildBollaCollisionsReport(collisions, dataType),
+            ],
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildBollaCollisionsReport(List<dynamic> collisions, String dataType) {
+    final currentPage = dataType == 'contabile' ? _collisionPage : _collisionPageEstratto;
+    final totalItems = collisions.length;
+    final totalPages = (totalItems / _itemsPerPage).ceil();
+    final startIndex = currentPage * _itemsPerPage;
+    final endIndex = (startIndex + _itemsPerPage < totalItems) ? startIndex + _itemsPerPage : totalItems;
+    final visibleCollisions = collisions.sublist(startIndex, endIndex);
+
+    return Column(
+      children: [
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: visibleCollisions.length,
+          separatorBuilder: (context, index) => const SizedBox(height: 16),
+          itemBuilder: (context, index) {
+            final collision = visibleCollisions[index];
+            final type = collision['type'];
+            final bolla = collision['bolla'];
+            final currentMap = collision['current'] as Map<String, dynamic>;
+            final foundMap = collision['found'] as Map<String, dynamic>;
+            final foundFileName = collision['foundFileName'];
+
+            return Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.orange.withAlpha(50)),
+                color: Colors.orange.withAlpha(5),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: Colors.orange.withAlpha(20),
+                      borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'IDENTIFICATIVO: $bolla',
+                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.orange),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: type == 'internal' ? Colors.blue.withAlpha(40) : Colors.purple.withAlpha(40),
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            type == 'internal' ? 'DUPLICATO NEL FILE' : 'PRESENTE NEL DATABASE',
+                            style: TextStyle(
+                              fontSize: 10, 
+                              fontWeight: FontWeight.bold, 
+                              color: type == 'internal' ? Colors.blue.shade800 : Colors.purple.shade800,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isSmall = constraints.maxWidth < 600;
+                        return isSmall 
+                          ? Column(
+                              children: [
+                                _buildCollisionRecordCard('RECORD ATTUALE (FILE)', currentMap, null, dataType),
+                                const SizedBox(height: 12),
+                                _buildCollisionRecordCard('RECORD TROVATO', foundMap, foundFileName, dataType),
+                              ],
+                            )
+                          : Row(
+                              children: [
+                                Expanded(child: _buildCollisionRecordCard('RECORD ATTUALE (FILE)', currentMap, null, dataType)),
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(horizontal: 12),
+                                  child: Icon(Icons.compare_arrows, color: Colors.grey),
+                                ),
+                                Expanded(child: _buildCollisionRecordCard('RECORD TROVATO', foundMap, foundFileName, dataType)),
+                              ],
+                            );
+                      },
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
+        if (totalPages > 1) ...[
+          const SizedBox(height: 24),
+          _buildPaginationControls(totalPages, dataType),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildPaginationControls(int totalPages, String dataType) {
+    final currentPage = dataType == 'contabile' ? _collisionPage : _collisionPageEstratto;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        IconButton(
+          onPressed: currentPage > 0 
+              ? () {
+                  setState(() {
+                    if (dataType == 'contabile') {
+                      _collisionPage--;
+                    } else {
+                      _collisionPageEstratto--;
+                    }
+                  });
+                }
+              : null,
+          icon: const Icon(Icons.chevron_left),
+          style: IconButton.styleFrom(
+            backgroundColor: Colors.white,
+            side: BorderSide(color: Colors.grey.shade300),
+          ),
+        ),
+        const SizedBox(width: 24),
+        Text(
+          'PAGINA ${currentPage + 1} DI $totalPages',
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.1,
+            color: Colors.grey.shade700,
+          ),
+        ),
+        const SizedBox(width: 24),
+        IconButton(
+          onPressed: currentPage < totalPages - 1 
+              ? () {
+                  setState(() {
+                    if (dataType == 'contabile') {
+                      _collisionPage++;
+                    } else {
+                      _collisionPageEstratto++;
+                    }
+                  });
+                }
+              : null,
+          icon: const Icon(Icons.chevron_right),
+          style: IconButton.styleFrom(
+            backgroundColor: Colors.white,
+            side: BorderSide(color: Colors.grey.shade300),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _confirmDeleteFullImport(String uniqueCode, String type) async {
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Conferma Eliminazione Totale'),
+        content: const Text(
+          'Sei sicuro di voler eliminare TUTTI i record di questo import e il relativo log storico? '
+          'Questa azione non può essere annullata.'
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('ANNULLA'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+            child: const Text('ELIMINA TUTTO'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      await ref.read(logHistoryProvider.notifier).deleteLogHistoryAndRecords(uniqueCode);
+      
+      setState(() {
+        if (type == 'contabile') {
+          _lastContabileResult = null;
+          _deletedRecordIds.clear();
+        } else if (type == 'estratto') {
+          _lastEstrattoResult = null;
+          _deletedRecordIds.clear();
+        } else if (type == 'sap') {
+          _lastSapResult = null;
+        }
+      });
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Intero import eliminato con successo')),
+        );
+      }
+    }
+  }
+
+  Widget _buildCollisionRecordCard(String title, Map<String, dynamic> rawRecord, String? fileName, String dataType) {
+    final recordId = rawRecord['id'] as int?;
+    final isDeleted = recordId != null && _deletedRecordIds.contains(recordId);
+    
+    final String bolla = rawRecord['bolla']?.toString() ?? '';
+    final String cid = rawRecord['cid']?.toString() ?? '';
+    final String trasferta = rawRecord['numeroTrasferta']?.toString() ?? '';
+    
+    String importoFormatted = '';
+    Color? importoColor;
+
+    if (dataType == 'contabile') {
+      final isNegative = rawRecord['isNegative'] ?? false;
+      final importo = (rawRecord['importo'] as num?)?.toDouble() ?? 0.0;
+      final valuta = rawRecord['valuta'] ?? 'EUR';
+      importoFormatted = '${isNegative ? '-' : ''}${importo.toStringAsFixed(2)} $valuta';
+      importoColor = isNegative ? Colors.red.shade700 : Colors.green.shade700;
+    } else {
+      final importo = (rawRecord['totaleServizioGenerale'] as num?)?.toDouble() ?? 0.0;
+      importoFormatted = '${importo.toStringAsFixed(2)} EUR';
+      importoColor = importo < 0 ? Colors.red.shade700 : Colors.green.shade700;
+    }
+
+    final String data = dataType == 'contabile' ? (rawRecord['dataSpesa']?.toString() ?? '') : (rawRecord['dataBolla']?.toString() ?? '');
+    final String localita = dataType == 'contabile' ? (rawRecord['localita']?.toString() ?? '') : (rawRecord['descrizioneServizio']?.toString() ?? '');
+
+    return Opacity(
+      opacity: isDeleted ? 0.5 : 1.0,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isDeleted ? Colors.grey.shade100 : Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: isDeleted ? Colors.grey.shade300 : Colors.grey.shade200),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.grey.shade500, letterSpacing: 0.5),
+                ),
+                if (recordId != null && !isDeleted)
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline, size: 18, color: Colors.redAccent),
+                    visualDensity: VisualDensity.compact,
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                    onPressed: () => _confirmDeleteRecord(recordId, bolla, dataType),
+                    tooltip: 'Elimina record',
+                  ),
+                if (isDeleted)
+                  const Text(
+                    'ELIMINATO',
+                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: Colors.red),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: SkyTheme.timBlue.withAlpha(8),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                children: [
+                  _buildCollisionDetailRow('BOLLA', bolla, isHighlight: true),
+                  const SizedBox(height: 4),
+                  _buildCollisionDetailRow(
+                    'IMPORTO', 
+                    importoFormatted,
+                    isHighlight: true,
+                    valueColor: importoColor,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 12),
+            _buildCollisionDetailRow('CID', cid),
+            _buildCollisionDetailRow('Trasferta', trasferta),
+            _buildCollisionDetailRow('Data', data),
+            _buildCollisionDetailRow(dataType == 'contabile' ? 'Località' : 'Servizio', localita),
+            if (fileName != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                    color: Colors.blue.shade50,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.attach_file, size: 12, color: SkyTheme.timBlue),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          'File: $fileName',
+                          style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: SkyTheme.timBlue),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _confirmDeleteRecord(int id, String bolla, String dataType) async {
+    final bool? confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Conferma Eliminazione'),
+        content: Text('Sei sicuro di voler eliminare definitivamente il record con bolla $bolla dal database?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('ANNULLA'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.red, foregroundColor: Colors.white),
+            child: const Text('ELIMINA'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      if (dataType == 'contabile') {
+        await ref.read(tracciatoContabilesProvider.notifier).deleteRecord(id);
+      } else {
+        await ref.read(estrattoContoProvider.notifier).deleteRecord(id);
+      }
+      
+      setState(() {
+        _deletedRecordIds.add(id);
+      });
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Record eliminato con successo')),
+        );
+      }
+    }
+  }
+
+  Widget _buildCollisionDetailRow(String label, String value, {bool isHighlight = false, Color? valueColor}) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 2),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label, 
+            style: TextStyle(
+              fontSize: isHighlight ? 12 : 11, 
+              color: isHighlight ? Colors.grey.shade700 : Colors.grey.shade600,
+              fontWeight: isHighlight ? FontWeight.bold : FontWeight.normal,
+            )
+          ),
+          Text(
+            value, 
+            style: TextStyle(
+              fontSize: isHighlight ? 14 : 11, 
+              fontWeight: FontWeight.bold,
+              color: valueColor ?? (isHighlight ? SkyTheme.timBlue : Colors.black),
+            )
+          ),
+        ],
       ),
     );
   }

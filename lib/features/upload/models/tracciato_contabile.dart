@@ -67,7 +67,11 @@ class TracciatoContabile {
     return '$hh:$mm:$ss';
   }
 
-  factory TracciatoContabile.fromString(String line, {String? logHistoryId, int? sourceFileLine}) {
+  factory TracciatoContabile.fromString(
+    String line, {
+    String? logHistoryId,
+    int? sourceFileLine,
+  }) {
     // Pad line to ensure we can reach position 166 without FormatException
     if (line.length < 166) {
       line = line.padRight(166, ' ');
