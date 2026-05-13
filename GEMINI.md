@@ -44,7 +44,7 @@ Implementa sempre i patter UI di material da manuale.
 
 
 ## Liste e tabelle
-sempre responsibe e sempre paginate di default a 100 items.
+sempre responsibe e sempre paginate di default a 50 items.
 Ogni lista deve avere opzioni di filtro rapide e veloci. Devono essere ben visibili e facilmente accessibili.
 
 ## DB

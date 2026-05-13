@@ -47,7 +47,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final selectedTipi = ref.watch(selectedTipiProvider);
     final sortAscending = ref.watch(sortAscendingProvider);
     final currentPage = ref.watch(analysisPageProvider);
-    const pageSize = 100;
+    const pageSize = 50;
 
     if (allRecords.isEmpty) {
       return Center(
@@ -180,8 +180,9 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
         });
 
     final totalPages = (filteredRecords.length / pageSize).ceil();
-    final startIndex = currentPage * pageSize;
-    final endIndex = (startIndex + pageSize) > filteredRecords.length ? filteredRecords.length : (startIndex + pageSize);
+    final safePage = (currentPage >= totalPages && totalPages > 0) ? 0 : currentPage;
+    final startIndex = (safePage * pageSize).clamp(0, filteredRecords.length);
+    final endIndex = (startIndex + pageSize).clamp(0, filteredRecords.length);
     final paginatedRecords = filteredRecords.sublist(startIndex, endIndex);
 
 
@@ -358,6 +359,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                           // BODY SCROLLABILE
                           Expanded(
                             child: SingleChildScrollView(
+                              controller: _scrollController,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
@@ -420,7 +422,9 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                     IconButton(
                       onPressed: currentPage > 0 ? () {
                         ref.read(analysisPageProvider.notifier).state--;
-                        _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                        if (_scrollController.hasClients) {
+                          _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                        }
                       } : null,
                       icon: const Icon(Icons.chevron_left),
                     ),
@@ -433,7 +437,9 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                     IconButton(
                       onPressed: currentPage < totalPages - 1 ? () {
                         ref.read(analysisPageProvider.notifier).state++;
-                        _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                        if (_scrollController.hasClients) {
+                          _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                        }
                       } : null,
                       icon: const Icon(Icons.chevron_right),
                     ),

@@ -253,7 +253,7 @@ Future<List<Map<String, dynamic>>> _parseExcelIsolate(Map<String, dynamic> param
       'codiceTrattamento': val(32),
       'codiceSistemazione': val(33),
       'richiedente': val(34),
-      'cid': val(35),
+      'cid': val(35).isNotEmpty ? val(35).padLeft(8, '0') : '',
       'centroCosto': val(36),
       'numeroTrasferta': val(37),
       'campoStatistico4': val(38),

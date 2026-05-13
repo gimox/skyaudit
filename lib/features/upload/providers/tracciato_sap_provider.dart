@@ -172,7 +172,7 @@ Future<List<Map<String, dynamic>>> _parseSapIsolate(Map<String, dynamic> params)
       }
 
       results.add({
-        'cid': getString(0),
+        'cid': getString(0).isNotEmpty ? getString(0).padLeft(8, '0') : '',
         'nomeDipendente': getString(1),
         'societaCodice': getString(2),
         'societaDescrizione': getString(3),

@@ -82,7 +82,7 @@ class TracciatoContabile {
 
     return TracciatoContabile(
       recordType: line.substring(0, 1),
-      cid: line.substring(1, 9).trim(),
+      cid: line.substring(1, 9).trim().isNotEmpty ? line.substring(1, 9).trim().padLeft(8, '0') : '',
       numeroTrasferta: line.substring(9, 19).trim(),
       progressivo: line.substring(19, 22).trim(),
       societa: line.substring(22, 26).trim(),

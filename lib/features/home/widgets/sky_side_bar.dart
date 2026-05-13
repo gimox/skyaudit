@@ -65,6 +65,16 @@ class SkySideBar extends StatelessWidget {
                       label: Text('Controlli Trasferte'),
                     ),
                     NavigationRailDestination(
+                      icon: Icon(Icons.map_outlined),
+                      selectedIcon: Icon(Icons.map),
+                      label: Text('Dove Viaggi'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.people_outline),
+                      selectedIcon: Icon(Icons.people),
+                      label: Text('Anagrafica'),
+                    ),
+                    NavigationRailDestination(
                       icon: Icon(Icons.history_outlined),
                       selectedIcon: Icon(Icons.history),
                       label: Text('Log History'),
@@ -142,6 +152,16 @@ class SkySideBar extends StatelessWidget {
             icon: Icon(Icons.fact_check_outlined),
             selectedIcon: Icon(Icons.fact_check),
             label: Text('Controlli Trasferte'),
+          ),
+          const NavigationDrawerDestination(
+            icon: Icon(Icons.map_outlined),
+            selectedIcon: Icon(Icons.map),
+            label: Text('Dove Viaggi'),
+          ),
+          const NavigationDrawerDestination(
+            icon: Icon(Icons.people_outline),
+            selectedIcon: Icon(Icons.people),
+            label: Text('Anagrafica'),
           ),
           const Divider(indent: 28, endIndent: 28),
           const Padding(

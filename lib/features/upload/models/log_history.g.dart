@@ -37,18 +37,23 @@ const LogHistorySchema = CollectionSchema(
       name: r'insertedRecords',
       type: IsarType.long,
     ),
-    r'totalRecords': PropertySchema(
+    r'sourceType': PropertySchema(
       id: 4,
+      name: r'sourceType',
+      type: IsarType.string,
+    ),
+    r'totalRecords': PropertySchema(
+      id: 5,
       name: r'totalRecords',
       type: IsarType.long,
     ),
     r'uniqueCode': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'uniqueCode',
       type: IsarType.string,
     ),
     r'updatedRecords': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'updatedRecords',
       type: IsarType.long,
     )
@@ -88,6 +93,12 @@ int _logHistoryEstimateSize(
 ) {
   var bytesCount = offsets.last;
   bytesCount += 3 + object.fileName.length * 3;
+  {
+    final value = object.sourceType;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.uniqueCode.length * 3;
   return bytesCount;
 }
@@ -102,9 +113,10 @@ void _logHistorySerialize(
   writer.writeLong(offsets[1], object.discardedRecords);
   writer.writeString(offsets[2], object.fileName);
   writer.writeLong(offsets[3], object.insertedRecords);
-  writer.writeLong(offsets[4], object.totalRecords);
-  writer.writeString(offsets[5], object.uniqueCode);
-  writer.writeLong(offsets[6], object.updatedRecords);
+  writer.writeString(offsets[4], object.sourceType);
+  writer.writeLong(offsets[5], object.totalRecords);
+  writer.writeString(offsets[6], object.uniqueCode);
+  writer.writeLong(offsets[7], object.updatedRecords);
 }
 
 LogHistory _logHistoryDeserialize(
@@ -118,9 +130,10 @@ LogHistory _logHistoryDeserialize(
     discardedRecords: reader.readLongOrNull(offsets[1]) ?? 0,
     fileName: reader.readString(offsets[2]),
     insertedRecords: reader.readLongOrNull(offsets[3]) ?? 0,
-    totalRecords: reader.readLongOrNull(offsets[4]) ?? 0,
-    uniqueCode: reader.readString(offsets[5]),
-    updatedRecords: reader.readLongOrNull(offsets[6]) ?? 0,
+    sourceType: reader.readStringOrNull(offsets[4]),
+    totalRecords: reader.readLongOrNull(offsets[5]) ?? 0,
+    uniqueCode: reader.readString(offsets[6]),
+    updatedRecords: reader.readLongOrNull(offsets[7]) ?? 0,
   );
   object.id = id;
   return object;
@@ -142,10 +155,12 @@ P _logHistoryDeserializeProp<P>(
     case 3:
       return (reader.readLongOrNull(offset) ?? 0) as P;
     case 4:
-      return (reader.readLongOrNull(offset) ?? 0) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 5:
-      return (reader.readString(offset)) as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 6:
+      return (reader.readString(offset)) as P;
+    case 7:
       return (reader.readLongOrNull(offset) ?? 0) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -696,6 +711,159 @@ extension LogHistoryQueryFilter
   }
 
   QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
+      sourceTypeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'sourceType',
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
+      sourceTypeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'sourceType',
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition> sourceTypeEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sourceType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
+      sourceTypeGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'sourceType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
+      sourceTypeLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'sourceType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition> sourceTypeBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'sourceType',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
+      sourceTypeStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'sourceType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
+      sourceTypeEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'sourceType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
+      sourceTypeContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'sourceType',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition> sourceTypeMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'sourceType',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
+      sourceTypeIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sourceType',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
+      sourceTypeIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'sourceType',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterFilterCondition>
       totalRecordsEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -1001,6 +1169,18 @@ extension LogHistoryQuerySortBy
     });
   }
 
+  QueryBuilder<LogHistory, LogHistory, QAfterSortBy> sortBySourceType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterSortBy> sortBySourceTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceType', Sort.desc);
+    });
+  }
+
   QueryBuilder<LogHistory, LogHistory, QAfterSortBy> sortByTotalRecords() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalRecords', Sort.asc);
@@ -1103,6 +1283,18 @@ extension LogHistoryQuerySortThenBy
     });
   }
 
+  QueryBuilder<LogHistory, LogHistory, QAfterSortBy> thenBySourceType() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceType', Sort.asc);
+    });
+  }
+
+  QueryBuilder<LogHistory, LogHistory, QAfterSortBy> thenBySourceTypeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sourceType', Sort.desc);
+    });
+  }
+
   QueryBuilder<LogHistory, LogHistory, QAfterSortBy> thenByTotalRecords() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totalRecords', Sort.asc);
@@ -1168,6 +1360,13 @@ extension LogHistoryQueryWhereDistinct
     });
   }
 
+  QueryBuilder<LogHistory, LogHistory, QDistinct> distinctBySourceType(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'sourceType', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<LogHistory, LogHistory, QDistinct> distinctByTotalRecords() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'totalRecords');
@@ -1217,6 +1416,12 @@ extension LogHistoryQueryProperty
   QueryBuilder<LogHistory, int, QQueryOperations> insertedRecordsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'insertedRecords');
+    });
+  }
+
+  QueryBuilder<LogHistory, String?, QQueryOperations> sourceTypeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sourceType');
     });
   }
 

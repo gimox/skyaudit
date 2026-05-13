@@ -42,7 +42,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     final endDate = ref.watch(amexEndDateProvider);
     final sortAscending = ref.watch(amexSortAscendingProvider);
     final currentPage = ref.watch(amexPageProvider);
-    const pageSize = 100;
+    const pageSize = 50;
 
     if (allRecords.isEmpty) {
       return Center(
@@ -122,8 +122,9 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
       });
 
     final totalPages = (filteredRecords.length / pageSize).ceil();
-    final startIndex = currentPage * pageSize;
-    final endIndex = (startIndex + pageSize) > filteredRecords.length ? filteredRecords.length : (startIndex + pageSize);
+    final safePage = (currentPage >= totalPages && totalPages > 0) ? 0 : currentPage;
+    final startIndex = (safePage * pageSize).clamp(0, filteredRecords.length);
+    final endIndex = (startIndex + pageSize).clamp(0, filteredRecords.length);
     final paginatedRecords = filteredRecords.sublist(startIndex, endIndex);
 
     return Scaffold(
@@ -280,6 +281,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                           // BODY SCROLLABILE
                           Expanded(
                             child: SingleChildScrollView(
+                              controller: _scrollController,
                               child: ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
@@ -341,7 +343,12 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      onPressed: currentPage > 0 ? () => ref.read(amexPageProvider.notifier).state-- : null,
+                      onPressed: currentPage > 0 ? () {
+                        ref.read(amexPageProvider.notifier).state--;
+                        if (_scrollController.hasClients) {
+                          _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                        }
+                      } : null,
                       icon: const Icon(Icons.chevron_left),
                     ),
                     const SizedBox(width: 8),
@@ -351,7 +358,12 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                     ),
                     const SizedBox(width: 8),
                     IconButton(
-                      onPressed: currentPage < totalPages - 1 ? () => ref.read(amexPageProvider.notifier).state++ : null,
+                      onPressed: currentPage < totalPages - 1 ? () {
+                        ref.read(amexPageProvider.notifier).state++;
+                        if (_scrollController.hasClients) {
+                          _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                        }
+                      } : null,
                       icon: const Icon(Icons.chevron_right),
                     ),
                     Container(

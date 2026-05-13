@@ -11,6 +11,9 @@ import 'package:travel_check/features/upload/providers/tracciato_sap_provider.da
 import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
 import 'package:travel_check/features/upload/providers/estratto_amex_provider.dart';
 
+import 'package:travel_check/features/upload/models/anagrafica.dart';
+import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
+
 class LogHistoryNotifier extends Notifier<List<LogHistory>> {
   @override
   List<LogHistory> build() {
@@ -50,6 +53,12 @@ class LogHistoryNotifier extends Notifier<List<LogHistory>> {
           .filter()
           .logHistoryIdEqualTo(uniqueCode)
           .deleteAll();
+
+      // Delete from Anagrafica (Nota: qui usiamo importBatch che è il corrispondente di logHistoryId)
+      await isar.anagraficas
+          .filter()
+          .importBatchEqualTo(uniqueCode)
+          .deleteAll();
     });
 
     // Invalidate main records provider to refresh the UI
@@ -57,6 +66,7 @@ class LogHistoryNotifier extends Notifier<List<LogHistory>> {
     ref.invalidate(tracciatoSapProvider);
     ref.invalidate(estrattoContoProvider);
     ref.invalidate(estrattoAmexProvider);
+    ref.invalidate(anagraficaProvider);
 
     // Refresh state
     final logs = isar.logHistorys.where().anyId().findAllSync();

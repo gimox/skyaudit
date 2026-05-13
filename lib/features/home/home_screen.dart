@@ -14,6 +14,8 @@ import 'package:travel_check/features/log_history/log_history_view.dart';
 import 'package:travel_check/features/analysis/estratti_conto_view.dart';
 import 'package:travel_check/features/analysis/sap_analysis_view.dart';
 import 'package:travel_check/features/analysis/amex_analysis_view.dart';
+import 'package:travel_check/features/travel_history/travel_history_view.dart';
+import 'package:travel_check/features/anagrafica/anagrafica_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -130,9 +132,15 @@ class _HomeScreenState extends State<HomeScreen> {
       return const ControlsView();
     }
     if (_selectedIndex == 7) {
-      return const LogHistoryView();
+      return const TravelHistoryView();
     }
     if (_selectedIndex == 8) {
+      return const AnagraficaView();
+    }
+    if (_selectedIndex == 9) {
+      return const LogHistoryView();
+    }
+    if (_selectedIndex == 10) {
       return const SettingsView();
     }
 
@@ -183,10 +191,14 @@ class _HomeScreenState extends State<HomeScreen> {
       case 6:
         return Icons.fact_check_outlined;
       case 7:
-        return Icons.history_outlined;
+        return Icons.map_outlined;
       case 8:
-        return Icons.settings_outlined;
+        return Icons.people_outline;
       case 9:
+        return Icons.history_outlined;
+      case 10:
+        return Icons.settings_outlined;
+      case 11:
         return Icons.help_outline;
       default:
         return Icons.home_outlined;
@@ -210,10 +222,14 @@ class _HomeScreenState extends State<HomeScreen> {
       case 6:
         return 'Controlli Trasferte';
       case 7:
-        return 'Log History';
+        return 'Dove Viaggi';
       case 8:
-        return 'Impostazioni';
+        return 'Anagrafica';
       case 9:
+        return 'Log History';
+      case 10:
+        return 'Impostazioni';
+      case 11:
         return 'Supporto';
       default:
         return 'Home';

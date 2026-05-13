@@ -119,7 +119,7 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(Map<String, dynamic> params
     }
 
     results.add({
-      'cid': val(28), // AC (Rif 1)
+      'cid': val(28).isNotEmpty ? val(28).padLeft(8, '0') : '', // AC (Rif 1)
       'numeroTrasferta': val(30), // AE (Rif 3)
       'bolla': bollaCalc,
       'bollaOriginale': rif5Raw,

@@ -17,6 +17,7 @@ import 'package:travel_check/features/settings/models/app_settings.dart';
 import 'package:travel_check/features/upload/models/estratto_conto.dart';
 import 'package:travel_check/features/upload/models/tracciato_sap.dart';
 import 'package:travel_check/features/upload/models/estratto_amex.dart';
+import 'package:travel_check/features/upload/models/anagrafica.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ void main() async {
       EstrattoContoSchema,
       TracciatoSapSchema,
       EstrattoAmexSchema,
+      AnagraficaSchema,
     ],
     directory: dir.path,
     inspector: true, // Assicurati che sia su true

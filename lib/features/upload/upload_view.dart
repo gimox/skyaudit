@@ -14,6 +14,7 @@ import 'package:travel_check/features/upload/providers/estratto_conto_provider.d
 import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
 import 'package:travel_check/features/upload/providers/estratto_amex_provider.dart';
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
+import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 
 class UploadView extends ConsumerStatefulWidget {
   const UploadView({super.key});
@@ -33,14 +34,17 @@ class _UploadViewState extends ConsumerState<UploadView> {
   bool _isProcessingEstratto = false;
   bool _isProcessingSap = false;
   bool _isProcessingAmex = false;
+  bool _isProcessingAnagrafica = false;
 
   XFile? _selectedAmexFile;
+  XFile? _selectedAnagraficaFile;
   bool _isDraggingAmex = false;
-  Map<String, dynamic>? _lastAmexResult;
-
+  bool _isDraggingAnagrafica = false;
   Map<String, dynamic>? _lastContabileResult;
   Map<String, dynamic>? _lastEstrattoResult;
   Map<String, dynamic>? _lastSapResult;
+  Map<String, dynamic>? _lastAmexResult;
+  Map<String, dynamic>? _lastAnagraficaResult;
   final Set<int> _deletedRecordIds = {};
   int _collisionPage = 0;
   int _collisionPageEstratto = 0;
@@ -54,6 +58,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
       extensions = ['xlsx'];
     } else if (type == 'amex') {
       extensions = ['xls'];
+    } else if (type == 'anagrafica') {
+      extensions = ['xlsx'];
     } else {
       extensions = ['xlsx'];
     }
@@ -77,6 +83,9 @@ class _UploadViewState extends ConsumerState<UploadView> {
         } else if (type == 'amex') {
           _selectedAmexFile = XFile(result.files.single.path!);
           _lastAmexResult = null;
+        } else if (type == 'anagrafica') {
+          _selectedAnagraficaFile = XFile(result.files.single.path!);
+          _lastAnagraficaResult = null;
         }
       });
     }
@@ -96,6 +105,9 @@ class _UploadViewState extends ConsumerState<UploadView> {
       } else if (type == 'amex') {
         _selectedAmexFile = null;
         _lastAmexResult = null;
+      } else if (type == 'anagrafica') {
+        _selectedAnagraficaFile = null;
+        _lastAnagraficaResult = null;
       }
     });
   }
@@ -468,6 +480,53 @@ class _UploadViewState extends ConsumerState<UploadView> {
     }
   }
 
+  Future<void> _processAnagraficaData() async {
+    if (_selectedAnagraficaFile == null) return;
+
+    setState(() {
+      _isProcessingAnagrafica = true;
+      _lastAnagraficaResult = null;
+    });
+
+    try {
+      final bool alreadyExists = await _checkDuplicateFile(_selectedAnagraficaFile!);
+      if (!alreadyExists) {
+        if (mounted) setState(() => _isProcessingAnagrafica = false);
+        return;
+      }
+
+      final result = await ref.read(anagraficaProvider.notifier).loadFromFile(_selectedAnagraficaFile!);
+
+      if (mounted) {
+        setState(() {
+          _lastAnagraficaResult = result;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Anagrafica elaborata: ${result['inserted']} inseriti, ${result['updated']} aggiornati, ${result['discarded']} scartati.',
+            ),
+            backgroundColor: Colors.green.shade700,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+        _selectedAnagraficaFile = null;
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Errore durante l\'elaborazione dell\'anagrafica: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isProcessingAnagrafica = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -493,6 +552,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
                           Expanded(child: _buildSapSection()),
                           const SizedBox(width: 24),
                           Expanded(child: _buildAmexSection()),
+                          const SizedBox(width: 24),
+                          Expanded(child: _buildAnagraficaSection()),
                         ],
                     );
                   } else {
@@ -505,12 +566,14 @@ class _UploadViewState extends ConsumerState<UploadView> {
                         _buildSapSection(),
                         const SizedBox(height: 32),
                         _buildAmexSection(),
+                        const SizedBox(height: 32),
+                        _buildAnagraficaSection(),
                       ],
                     );
                   }
                 },
               ),
-              if (_lastContabileResult != null || _lastEstrattoResult != null || _lastSapResult != null || _lastAmexResult != null) ...[
+              if (_lastContabileResult != null || _lastEstrattoResult != null || _lastSapResult != null || _lastAmexResult != null || _lastAnagraficaResult != null) ...[
                 const SizedBox(height: 48),
                 const Divider(),
                 const SizedBox(height: 24),
@@ -554,6 +617,14 @@ class _UploadViewState extends ConsumerState<UploadView> {
                     dataType: 'amex',
                   ),
                 ],
+                if (_lastAnagraficaResult != null) ...[
+                  const SizedBox(height: 24),
+                  _buildDetailedResultCard(
+                    title: 'RISULTATI ANAGRAFICA',
+                    result: _lastAnagraficaResult!,
+                    dataType: 'anagrafica',
+                  ),
+                ],
               ],
             ],
           ),
@@ -568,7 +639,10 @@ class _UploadViewState extends ConsumerState<UploadView> {
     required String dataType,
   }) {
     final bool isContabile = dataType == 'contabile';
+    final bool isAnagrafica = dataType == 'anagrafica';
     final inserted = result['inserted'] as int? ?? 0;
+    final updated = result['updated'] as int? ?? 0;
+    final discarded = result['discarded'] as int? ?? 0;
     final total = result['total'] as int? ?? 0;
     final collisions = result['collisions'] as List<dynamic>? ?? [];
 
@@ -586,7 +660,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
             Row(
               children: [
                 Icon(
-                  isContabile ? Icons.receipt_long : Icons.account_balance_wallet,
+                  isAnagrafica ? Icons.people : (isContabile ? Icons.receipt_long : Icons.account_balance_wallet),
                   color: SkyTheme.timBlue,
                   size: 24,
                 ),
@@ -620,9 +694,15 @@ class _UploadViewState extends ConsumerState<UploadView> {
               ],
             ),
             const SizedBox(height: 24),
-            Row(
+            Wrap(
+              spacing: 24,
+              runSpacing: 16,
               children: [
                 _buildStatItem('Record Inseriti', inserted, Colors.green),
+                if (updated > 0)
+                  _buildStatItem('Record Aggiornati', updated, Colors.blue),
+                if (discarded > 0)
+                  _buildStatItem('Record Scartati', discarded, Colors.red),
                 _buildStatItem('Totale File', total, Colors.grey.shade700),
                 if (collisions.isNotEmpty)
                   _buildStatItem(isContabile ? 'Conflitti Bolla' : 'Conflitti', collisions.length, Colors.orange),
@@ -636,7 +716,9 @@ class _UploadViewState extends ConsumerState<UploadView> {
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Text(
-                'Nota: Tutti i record presenti nel file sono stati importati come nuove voci nel database.',
+                isAnagrafica 
+                  ? 'Nota: I record sono stati elaborati tramite Codice Fiscale. Gli esistenti sono stati aggiornati, i nuovi inseriti.'
+                  : 'Nota: Tutti i record presenti nel file sono stati importati come nuove voci nel database.',
                 style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
               ),
             ),
@@ -864,6 +946,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
           _lastSapResult = null;
         } else if (type == 'amex') {
           _lastAmexResult = null;
+        } else if (type == 'anagrafica') {
+          _lastAnagraficaResult = null;
         }
       });
 
@@ -1057,7 +1141,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
   }
 
   Widget _buildStatItem(String label, int value, Color color) {
-    return Expanded(
+    return SizedBox(
+      width: 130, // Larghezza fissa per allineamento nel Wrap
       child: Column(
         children: [
           Text(
@@ -1070,6 +1155,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
           ),
           Text(
             label.toUpperCase(),
+            textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 10,
               fontWeight: FontWeight.w500,
@@ -1190,24 +1276,57 @@ class _UploadViewState extends ConsumerState<UploadView> {
     );
   }
 
-  Widget _buildSectionHeader(String title, String subtitle) {
+  Widget _buildAnagraficaSection() {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.2,
-            color: SkyTheme.timBlue,
-          ),
+        _buildSectionHeader(
+          'ANAGRAFICA',
+          'File anagrafica dipendenti (.xlsx)',
         ),
-        const SizedBox(height: 4),
-        Text(
-          subtitle,
-          style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+        const SizedBox(height: 24),
+        _buildDropZone(
+          type: 'anagrafica',
+          selectedFile: _selectedAnagraficaFile,
+          isDragging: _isDraggingAnagrafica,
+          allowedExtensions: ['xlsx'],
+        ),
+        const SizedBox(height: 24),
+        _buildActionButton(
+          onPressed: (_selectedAnagraficaFile != null && !_isProcessingAnagrafica)
+              ? _processAnagraficaData
+              : null,
+          label: 'ELABORA ANAGRAFICA',
+          isLoading: _isProcessingAnagrafica,
         ),
       ],
+    );
+  }
+
+  Widget _buildSectionHeader(String title, String subtitle) {
+    return SizedBox(
+      height: 70, // Altezza fissa per allineare le zone di drop
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            title,
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              letterSpacing: 1.1,
+              color: SkyTheme.timBlue,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            subtitle,
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+          ),
+        ],
+      ),
     );
   }
 
@@ -1234,6 +1353,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
               _selectedSapFile = filteredFiles.first;
             } else if (type == 'amex') {
               _selectedAmexFile = filteredFiles.first;
+            } else if (type == 'anagrafica') {
+              _selectedAnagraficaFile = filteredFiles.first;
             }
           });
         } else {
@@ -1257,6 +1378,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
             _isDraggingSap = true;
           } else if (type == 'amex') {
             _isDraggingAmex = true;
+          } else if (type == 'anagrafica') {
+            _isDraggingAnagrafica = true;
           }
         });
       },
@@ -1270,6 +1393,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
             _isDraggingSap = false;
           } else if (type == 'amex') {
             _isDraggingAmex = false;
+          } else if (type == 'anagrafica') {
+            _isDraggingAnagrafica = false;
           }
         });
       },
@@ -1304,6 +1429,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
               if (type == 'estratto' && !_isProcessingEstratto) _pickFile('estratto');
               if (type == 'sap' && !_isProcessingSap) _pickFile('sap');
               if (type == 'amex' && !_isProcessingAmex) _pickFile('amex');
+              if (type == 'anagrafica' && !_isProcessingAnagrafica) _pickFile('anagrafica');
             },
             borderRadius: BorderRadius.circular(16),
             child: Center(
@@ -1312,7 +1438,10 @@ class _UploadViewState extends ConsumerState<UploadView> {
                   : _buildSelectedFileState(
                       selectedFile, 
                       type, 
-                      type == 'contabile' ? _isProcessingContabile : (type == 'estratto' ? _isProcessingEstratto : (type == 'sap' ? _isProcessingSap : _isProcessingAmex))
+                      type == 'contabile' ? _isProcessingContabile : 
+                      (type == 'estratto' ? _isProcessingEstratto : 
+                      (type == 'sap' ? _isProcessingSap : 
+                      (type == 'amex' ? _isProcessingAmex : _isProcessingAnagrafica)))
                     ),
             ),
           ),
