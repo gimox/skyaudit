@@ -1,54 +1,75 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
 import '../dashboard_view.dart';
 
 final dashboardStatsProvider = Provider((ref) {
   final allRecords = ref.watch(tracciatoContabilesProvider);
+  final ecRecords = ref.watch(estrattoContoProvider);
   final selectedYear = ref.watch(dashboardYearProvider);
 
-  // Filtra i record per l'anno selezionato
+  // Filtra i record TC per l'anno selezionato
   final records = allRecords.where((r) {
     final parts = r.dataSpesa.split('/');
     return parts.length == 3 && parts[2] == selectedYear.toString();
   }).toList();
 
-  if (records.isEmpty) {
-    return (totalTickets: 0, totalTrasferte: 0, totalAmount: 0.0);
-  }
+  // Filtra i record EC per l'anno selezionato
+  final filteredEC = ecRecords.where((r) {
+    final parts = r.dataBolla.split('/');
+    return parts.length == 3 && parts[2] == selectedYear.toString();
+  }).toList();
 
   final totalTickets = records.length;
   final totalTrasferte = records.map((r) => r.numeroTrasferta).toSet().length;
 
-  double totalAmount = 0;
+  double totalAmountTC = 0;
   for (final r in records) {
-    totalAmount += r.isNegative ? -r.importo : r.importo;
+    totalAmountTC += r.isNegative ? -r.importo : r.importo;
+  }
+
+  double totalAmountEC = 0;
+  for (final r in filteredEC) {
+    totalAmountEC += r.totaleServizioGenerale + r.totaleFee;
   }
 
   return (
     totalTickets: totalTickets,
     totalTrasferte: totalTrasferte,
-    totalAmount: totalAmount,
+    totalAmountTC: totalAmountTC,
+    totalAmountEC: totalAmountEC,
   );
 });
 
 final dashboardAvailableYearsProvider = Provider((ref) {
-  final records = ref.watch(tracciatoContabilesProvider);
-  final years =
-      records
-          .map((r) {
-            final parts = r.dataSpesa.split('/');
-            return parts.length == 3 ? int.tryParse(parts[2]) : null;
-          })
-          .whereType<int>()
-          .toSet()
-          .toList()
-        ..sort((a, b) => b.compareTo(a));
+  final tcRecords = ref.watch(tracciatoContabilesProvider);
+  final ecRecords = ref.watch(estrattoContoProvider);
 
-  if (!years.contains(DateTime.now().year)) {
-    years.add(DateTime.now().year);
-    years.sort((a, b) => b.compareTo(a));
+  final Set<int> years = {};
+
+  for (final r in tcRecords) {
+    final parts = r.dataSpesa.split('/');
+    if (parts.length == 3) {
+      final y = int.tryParse(parts[2]);
+      if (y != null) years.add(y);
+    }
   }
-  return years;
+
+  for (final r in ecRecords) {
+    final parts = r.dataBolla.split('/');
+    if (parts.length == 3) {
+      final y = int.tryParse(parts[2]);
+      if (y != null) years.add(y);
+    }
+  }
+
+  final sortedYears = years.toList()..sort((a, b) => b.compareTo(a));
+
+  if (!sortedYears.contains(DateTime.now().year)) {
+    sortedYears.add(DateTime.now().year);
+    sortedYears.sort((a, b) => b.compareTo(a));
+  }
+  return sortedYears;
 });
 
 final dashboardFilteredRecordsProvider = Provider((ref) {

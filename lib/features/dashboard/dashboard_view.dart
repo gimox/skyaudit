@@ -104,9 +104,17 @@ class DashboardView extends ConsumerWidget {
                     const SizedBox(height: 16),
                     _buildStatCard(
                       context,
-                      'TOTALE IMPORTI',
-                      '€ ${_formatAmount(stats.totalAmount)}',
+                      'TOTALE IMPORTI TC',
+                      '€ ${_formatAmount(stats.totalAmountTC)}',
                       Icons.euro_symbol,
+                      SkyTheme.timBlue,
+                    ),
+                    const SizedBox(height: 16),
+                    _buildStatCard(
+                      context,
+                      'TOTALE IMPORTI E.C.',
+                      '€ ${_formatAmount(stats.totalAmountEC)}',
+                      Icons.receipt_long,
                       Colors.green.shade700,
                     ),
                   ],
@@ -137,9 +145,19 @@ class DashboardView extends ConsumerWidget {
                     Expanded(
                       child: _buildStatCard(
                         context,
-                        'TOTALE IMPORTI',
-                        '€ ${_formatAmount(stats.totalAmount)}',
+                        'TOTALE IMPORTI TC',
+                        '€ ${_formatAmount(stats.totalAmountTC)}',
                         Icons.euro_symbol,
+                        SkyTheme.timBlue,
+                      ),
+                    ),
+                    const SizedBox(width: 24),
+                    Expanded(
+                      child: _buildStatCard(
+                        context,
+                        'TOTALE IMPORTI E.C.',
+                        '€ ${_formatAmount(stats.totalAmountEC)}',
+                        Icons.receipt_long,
                         Colors.green.shade700,
                       ),
                     ),
