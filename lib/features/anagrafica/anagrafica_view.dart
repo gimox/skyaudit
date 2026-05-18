@@ -138,6 +138,18 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     final selectedResponsabile = ref.watch(selectedAnagResponsabileProvider);
     final selectedGestore = ref.watch(selectedAnagGestoreProvider);
 
+    final activeFiltersCount = [
+      selectedLivelli.isNotEmpty,
+      selectedGrado != null,
+      selectedSolidarieta != null,
+      selectedSocieta != null,
+      selectedComune != null,
+      selectedProvincia != null,
+      selectedPartFull != null,
+      selectedResponsabile != null,
+      selectedGestore != null,
+    ].where((e) => e).length;
+
     // Estrattori valori unici per i filtri
     final livelliList = allRecords.map((e) => e.livello ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
     final gradiList = allRecords.map((e) => e.gradoOccupaz ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
@@ -313,16 +325,70 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                       icon: Icon(sortAscending ? Icons.sort_by_alpha : Icons.sort_by_alpha_outlined),
                       tooltip: 'Ordina per Nominativo',
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: 12),
                     Builder(
-                      builder: (context) => IconButton(
-                        onPressed: () => Scaffold.of(context).openEndDrawer(),
-                        icon: const Icon(Icons.filter_alt_outlined),
-                        tooltip: 'Filtri Avanzati',
+                      builder: (context) => Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          OutlinedButton.icon(
+                            onPressed: () => Scaffold.of(context).openEndDrawer(),
+                            icon: const Icon(Icons.filter_list_rounded),
+                            label: const Text('Filtri'),
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                              side: BorderSide(color: activeFiltersCount > 0 ? SkyTheme.timBlue : Colors.grey.shade300),
+                              foregroundColor: activeFiltersCount > 0 ? SkyTheme.timBlue : Colors.grey.shade700,
+                            ),
+                          ),
+                          if (activeFiltersCount > 0)
+                            Positioned(
+                              top: -8, right: -8,
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: const BoxDecoration(color: SkyTheme.timBlue, shape: BoxShape.circle),
+                                child: Text('$activeFiltersCount', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                   ],
                 ),
+                // ACTIVE FILTER CHIPS
+                if (activeFiltersCount > 0) ...[
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    height: 40,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        if (selectedLivelli.isNotEmpty) 
+                          _buildFilterChip('Livelli: ${selectedLivelli.length}', () => ref.read(selectedAnagLivelliProvider.notifier).state = []),
+                        if (selectedGrado != null) 
+                          _buildFilterChip('Grado: $selectedGrado', () => ref.read(selectedAnagGradoOccupazProvider.notifier).state = null),
+                        if (selectedSolidarieta != null) 
+                          _buildFilterChip('Solidarietà: $selectedSolidarieta', () => ref.read(selectedAnagContrSolidarietaProvider.notifier).state = null),
+                        if (selectedPartFull != null) 
+                          _buildFilterChip('Part/Full-Time: $selectedPartFull', () => ref.read(selectedAnagPartFullTimeProvider.notifier).state = null),
+                        if (selectedSocieta != null) 
+                          _buildFilterChip('Società: $selectedSocieta', () => ref.read(selectedAnagSocietaProvider.notifier).state = null),
+                        if (selectedComune != null) 
+                          _buildFilterChip('Comune: $selectedComune', () => ref.read(selectedAnagSedeComuneProvider.notifier).state = null),
+                        if (selectedProvincia != null) 
+                          _buildFilterChip('Provincia: $selectedProvincia', () => ref.read(selectedAnagProvinciaProvider.notifier).state = null),
+                        if (selectedResponsabile != null) 
+                          _buildFilterChip('Responsabile: $selectedResponsabile', () => ref.read(selectedAnagResponsabileProvider.notifier).state = null),
+                        if (selectedGestore != null) 
+                          _buildFilterChip('Gestore: $selectedGestore', () => ref.read(selectedAnagGestoreProvider.notifier).state = null),
+                        TextButton(
+                          onPressed: () => _resetAllFiltersAnag(ref), 
+                          child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -853,6 +919,20 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
           Expanded(flex: 2, child: Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 13))),
           Expanded(flex: 3, child: Text(value, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13), textAlign: TextAlign.right)),
         ],
+      ),
+    );
+  }
+
+  Widget _buildFilterChip(String label, VoidCallback onDeleted) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: InputChip(
+        label: Text(label, style: const TextStyle(fontSize: 11)),
+        onDeleted: onDeleted,
+        deleteIconColor: Colors.red.shade400,
+        backgroundColor: SkyTheme.timBlue.withAlpha(20),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        side: BorderSide(color: SkyTheme.timBlue.withAlpha(50)),
       ),
     );
   }

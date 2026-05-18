@@ -1,17 +1,19 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:excel/excel.dart' hide Border;
 import 'package:file_picker/file_picker.dart';
 import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
 import 'package:travel_check/features/upload/models/tracciato_sap.dart';
+import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 
 // SAP Filter Providers
 final sapMonthProvider = StateProvider<String?>((ref) => null);
 final sapYearProvider = StateProvider<String?>((ref) => null);
 final sapTrasfertaProvider = StateProvider<String?>((ref) => null);
-final sapSocietaProvider = StateProvider<String?>((ref) => null);
+final sapSocietaProvider = StateProvider<Set<String>>((ref) => {});
 final sapRichiestaProvider = StateProvider<String?>((ref) => null);
 final sapPageProvider = StateProvider<int>((ref) => 0);
 final sapSortAscendingProvider = StateProvider<bool>((ref) => false);
@@ -44,6 +46,8 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     final selectedSocieta = ref.watch(sapSocietaProvider);
     final sortAscending = ref.watch(sapSortAscendingProvider);
     final currentPage = ref.watch(sapPageProvider);
+    final dictionaries = ref.watch(dictionaryProvider);
+    final dictionaryMap = {for (var d in dictionaries) d.code: d.value};
     const pageSize = 50;
 
     if (allRecords.isEmpty) {
@@ -76,7 +80,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     final activeFiltersCount = [
       selectedMonth != null,
       selectedYear != null,
-      selectedSocieta != null,
+      selectedSocieta.isNotEmpty,
       selectedTrasferta != null,
       selectedRichiesta != null,
     ].where((e) => e).length;
@@ -118,7 +122,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
           return false;
         }
       }
-      if (selectedSocieta != null && r.societaCodice != selectedSocieta) {
+      if (selectedSocieta.isNotEmpty && !selectedSocieta.contains(r.societaCodice)) {
         return false;
       }
       if (selectedRichiesta != null && r.cdRichiesta != null && !r.cdRichiesta!.contains(selectedRichiesta)) {
@@ -253,9 +257,21 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
+                        if (selectedTrasferta != null)
+                          _buildFilterChip('Cerca: "$selectedTrasferta"', () {
+                            ref.read(sapTrasfertaProvider.notifier).state = null;
+                            _trasfertaController.clear();
+                          }),
                         if (selectedYear != null) _buildFilterChip('Anno: $selectedYear', () => ref.read(sapYearProvider.notifier).state = null),
                         if (selectedMonth != null) _buildFilterChip('Mese: ${monthNames[selectedMonth]}', () => ref.read(sapMonthProvider.notifier).state = null),
-                        if (selectedSocieta != null) _buildFilterChip('Società: $selectedSocieta', () => ref.read(sapSocietaProvider.notifier).state = null),
+                        ...selectedSocieta.map((soc) {
+                          final socDesc = dictionaryMap[soc];
+                          final label = socDesc != null ? '$soc - $socDesc' : soc;
+                          return _buildFilterChip('Società: $label', () {
+                            final next = Set<String>.from(selectedSocieta)..remove(soc);
+                            ref.read(sapSocietaProvider.notifier).state = next;
+                          });
+                        }),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
                     ),
@@ -284,7 +300,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
-                      width: 1120,
+                      width: 1200,
                       child: Column(
                         children: [
                           // HEADER FISSO
@@ -296,8 +312,8 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                             ),
                             child: Row(
                               children: [
-                                _buildCell('CID', 100, isHeader: true),
-                                _buildCell('TRASFERTA', 120, isHeader: true),
+                                _buildCell('CID', 140, isHeader: true),
+                                _buildCell('TRASFERTA', 160, isHeader: true),
                                 _buildCell('DATA', 120, isHeader: true),
                                 _buildCell('IMPORTO', 140, isHeader: true),
                                 _buildCell('CD RICHIESTA', 150, isHeader: true),
@@ -325,8 +341,8 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                                     ),
                                     child: Row(
                                       children: [
-                                        _buildCell(record.cid, 100, fontWeight: FontWeight.w500),
-                                        _buildCell(record.numeroTrasferta, 120),
+                                        _buildCopyableCell(record.cid, 140, typeLabel: 'CID', fontWeight: FontWeight.w500),
+                                        _buildCopyableCell(record.numeroTrasferta, 160, typeLabel: 'Trasferta'),
                                         _buildCell(record.data, 120),
                                         _buildCell('${record.importo.toStringAsFixed(2)} ${record.valuta}', 140, color: Colors.green.shade800, fontWeight: FontWeight.bold),
                                         _buildCell(record.cdRichiesta ?? '-', 150),
@@ -425,7 +441,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
   void _resetAllFilters(WidgetRef ref) {
     ref.read(sapYearProvider.notifier).state = null;
     ref.read(sapMonthProvider.notifier).state = null;
-    ref.read(sapSocietaProvider.notifier).state = null;
+    ref.read(sapSocietaProvider.notifier).state = {};
     ref.read(sapRichiestaProvider.notifier).state = null;
     ref.read(sapPageProvider.notifier).state = 0;
     _trasfertaController.clear();
@@ -449,6 +465,9 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       '05': 'Maggio', '06': 'Giugno', '07': 'Luglio', '08': 'Agosto',
       '09': 'Settembre', '10': 'Ottobre', '11': 'Novembre', '12': 'Dicembre',
     };
+    final dictionaries = ref.watch(dictionaryProvider);
+    final dictionaryMap = {for (var d in dictionaries) d.code: d.value};
+
     return Drawer(
       width: 350,
       child: Column(
@@ -457,7 +476,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
             padding: const EdgeInsets.fromLTRB(20, 44, 20, 20),
             decoration: const BoxDecoration(
               gradient: LinearGradient(
-                colors: [SkyTheme.timRed, Color(0xFF9E0007)],
+                colors: [SkyTheme.timBlue, Color(0xFF001F60)],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
@@ -491,7 +510,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                       ),
                     ),
                     Text(
-                      'Affina la tua ricerca',
+                      'Filtra il tracciato SAP',
                       style: TextStyle(
                         color: Colors.white70, 
                         fontSize: 10,
@@ -520,7 +539,23 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                 const SizedBox(height: 16),
                 _buildFilterDropdown<String?>('Seleziona Mese', ref.watch(sapMonthProvider), monthNames.keys.toList(), (val) => ref.read(sapMonthProvider.notifier).state = val, icon: Icons.calendar_month, labelMapper: (val) => monthNames[val] ?? val ?? ''),
                 const SizedBox(height: 24),
-                _buildFilterDropdown<String?>('Società', ref.watch(sapSocietaProvider), societa, (val) => ref.read(sapSocietaProvider.notifier).state = val, icon: Icons.business),
+                _buildChipsMultiSelectFilter(
+                  'Società',
+                  ref.watch(sapSocietaProvider),
+                  societa,
+                  (val) {
+                    final current = ref.read(sapSocietaProvider);
+                    final next = Set<String>.from(current);
+                    if (next.contains(val)) {
+                      next.remove(val);
+                    } else {
+                      next.add(val);
+                    }
+                    ref.read(sapSocietaProvider.notifier).state = next;
+                  },
+                  icon: Icons.business,
+                  dictionaryMap: dictionaryMap,
+                ),
               ],
             ),
           ),
@@ -540,6 +575,64 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
   }
 
 
+  Widget _buildChipsMultiSelectFilter(
+    String label,
+    Set<String> selectedValues,
+    List<String> options,
+    Function(String) onToggle, {
+    IconData? icon,
+    Map<String, String>? dictionaryMap,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 18, color: Colors.grey),
+              const SizedBox(width: 8),
+            ],
+            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          ],
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: options.map((option) {
+            final isSelected = selectedValues.contains(option);
+            final desc = dictionaryMap?[option];
+            final optionLabel = desc != null ? '$option - $desc' : option;
+            
+            return FilterChip(
+              label: Text(
+                optionLabel, 
+                style: TextStyle(
+                  fontSize: 12, 
+                  color: isSelected ? Colors.white : Colors.black87,
+                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                )
+              ),
+              selected: isSelected,
+              onSelected: (_) => onToggle(option),
+              selectedColor: SkyTheme.timBlue,
+              checkmarkColor: Colors.white,
+              backgroundColor: Colors.grey.shade100,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(
+                  color: isSelected ? SkyTheme.timBlue : Colors.grey.shade300,
+                  width: 1,
+                ),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
+  }
+
+
   Widget _buildFilterDropdown<T>(String label, T value, List<T> items, Function(T) onChanged, {IconData? icon, String Function(T)? labelMapper}) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -555,6 +648,54 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
           ],
           onChanged: (val) { if (val != null || (null is T)) onChanged(val as T); },
         ),
+      ),
+    );
+  }
+
+  Widget _buildCopyableCell(
+    String text,
+    double width, {
+    required String typeLabel,
+    FontWeight? fontWeight,
+    Color? color,
+  }) {
+    return _buildCell(
+      text,
+      width,
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: fontWeight ?? FontWeight.normal,
+                color: color ?? Colors.black87,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(4),
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: text));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('$typeLabel $text copiato negli appunti'),
+                    duration: const Duration(seconds: 1),
+                    backgroundColor: SkyTheme.timBlue,
+                  ),
+                );
+              },
+              child: const Padding(
+                padding: EdgeInsets.all(4.0),
+                child: Icon(Icons.copy_rounded, size: 14, color: Colors.grey),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

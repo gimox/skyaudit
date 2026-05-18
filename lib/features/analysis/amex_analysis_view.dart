@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:excel/excel.dart' hide Border;
 import 'package:file_picker/file_picker.dart';
@@ -295,9 +296,9 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                     ),
                                     child: Row(
                                       children: [
-                                        _buildCell(record.cid ?? '-', 120, fontWeight: FontWeight.w500),
-                                        _buildCell(record.numeroTrasferta ?? '-', 150),
-                                        _buildCell(record.nomeViaggiatore ?? '-', 200),
+                                        _buildCopyableCell(record.cid ?? '-', 120, typeLabel: 'CID', fontWeight: FontWeight.w500),
+                                        _buildCopyableCell(record.numeroTrasferta ?? '-', 150, typeLabel: 'Trasferta'),
+                                        _buildCopyableCell(record.nomeViaggiatore ?? '-', 200, typeLabel: 'Viaggiatore'),
                                         _buildCell(record.bolla ?? '-', 150),
                                         _buildCell(record.nomeFornitore ?? '-', 250),
                                         _buildCell(record.dataTransazione ?? '-', 120),
@@ -597,6 +598,54 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
           ],
           onChanged: (val) { if (val != null || (null is T)) onChanged(val as T); },
         ),
+      ),
+    );
+  }
+
+  Widget _buildCopyableCell(
+    String text,
+    double width, {
+    required String typeLabel,
+    FontWeight? fontWeight,
+    Color? color,
+  }) {
+    return _buildCell(
+      text,
+      width,
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: fontWeight ?? FontWeight.normal,
+                color: color ?? Colors.black87,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(4),
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: text));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('$typeLabel $text copiato negli appunti'),
+                    duration: const Duration(seconds: 1),
+                    backgroundColor: SkyTheme.timBlue,
+                  ),
+                );
+              },
+              child: const Padding(
+                padding: EdgeInsets.all(4.0),
+                child: Icon(Icons.copy_rounded, size: 14, color: Colors.grey),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

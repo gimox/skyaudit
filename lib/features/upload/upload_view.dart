@@ -15,6 +15,7 @@ import 'package:travel_check/features/upload/providers/tracciato_sap_provider.da
 import 'package:travel_check/features/upload/providers/estratto_amex_provider.dart';
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
+import 'package:travel_check/features/upload/providers/scarti_ec_sap_provider.dart';
 
 class UploadView extends ConsumerStatefulWidget {
   const UploadView({super.key});
@@ -27,24 +28,30 @@ class _UploadViewState extends ConsumerState<UploadView> {
   XFile? _selectedContabileFile;
   XFile? _selectedEstrattoFile;
   XFile? _selectedSapFile;
+  XFile? _selectedAmexFile;
+  XFile? _selectedAnagraficaFile;
+  XFile? _selectedScartiSapFile;
+
   bool _isDraggingContabile = false;
   bool _isDraggingEstratto = false;
   bool _isDraggingSap = false;
+  bool _isDraggingAmex = false;
+  bool _isDraggingAnagrafica = false;
+  bool _isDraggingScartiSap = false;
+
   bool _isProcessingContabile = false;
   bool _isProcessingEstratto = false;
   bool _isProcessingSap = false;
   bool _isProcessingAmex = false;
   bool _isProcessingAnagrafica = false;
+  bool _isProcessingScartiSap = false;
 
-  XFile? _selectedAmexFile;
-  XFile? _selectedAnagraficaFile;
-  bool _isDraggingAmex = false;
-  bool _isDraggingAnagrafica = false;
   Map<String, dynamic>? _lastContabileResult;
   Map<String, dynamic>? _lastEstrattoResult;
   Map<String, dynamic>? _lastSapResult;
   Map<String, dynamic>? _lastAmexResult;
   Map<String, dynamic>? _lastAnagraficaResult;
+  Map<String, dynamic>? _lastScartiSapResult;
   final Set<int> _deletedRecordIds = {};
   int _collisionPage = 0;
   int _collisionPageEstratto = 0;
@@ -86,6 +93,9 @@ class _UploadViewState extends ConsumerState<UploadView> {
         } else if (type == 'anagrafica') {
           _selectedAnagraficaFile = XFile(result.files.single.path!);
           _lastAnagraficaResult = null;
+        } else if (type == 'scartiSap') {
+          _selectedScartiSapFile = XFile(result.files.single.path!);
+          _lastScartiSapResult = null;
         }
       });
     }
@@ -108,6 +118,9 @@ class _UploadViewState extends ConsumerState<UploadView> {
       } else if (type == 'anagrafica') {
         _selectedAnagraficaFile = null;
         _lastAnagraficaResult = null;
+      } else if (type == 'scartiSap') {
+        _selectedScartiSapFile = null;
+        _lastScartiSapResult = null;
       }
     });
   }
@@ -527,6 +540,53 @@ class _UploadViewState extends ConsumerState<UploadView> {
     }
   }
 
+  Future<void> _processScartiSapData() async {
+    if (_selectedScartiSapFile == null) return;
+
+    setState(() {
+      _isProcessingScartiSap = true;
+      _lastScartiSapResult = null;
+    });
+
+    try {
+      final bool alreadyExists = await _checkDuplicateFile(_selectedScartiSapFile!);
+      if (!alreadyExists) {
+        if (mounted) setState(() => _isProcessingScartiSap = false);
+        return;
+      }
+
+      final result = await ref.read(scartiEcSapProvider.notifier).loadFromFile(_selectedScartiSapFile!);
+
+      if (mounted) {
+        setState(() {
+          _lastScartiSapResult = result;
+        });
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Elaborazione Scarti Tracciato completata: ${result['inserted']} inseriti, ${result['discarded']} scartati.',
+            ),
+            backgroundColor: Colors.green.shade700,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+        _selectedScartiSapFile = null;
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Errore durante l\'elaborazione degli scarti del tracciato: $e'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isProcessingScartiSap = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -542,19 +602,30 @@ class _UploadViewState extends ConsumerState<UploadView> {
               LayoutBuilder(
                 builder: (context, constraints) {
                   if (constraints.maxWidth > 800) {
-                    return Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Expanded(child: _buildContabileSection()),
-                          const SizedBox(width: 24),
-                          Expanded(child: _buildEstrattoSection()),
-                          const SizedBox(width: 24),
-                          Expanded(child: _buildSapSection()),
-                          const SizedBox(width: 24),
-                          Expanded(child: _buildAmexSection()),
-                          const SizedBox(width: 24),
-                          Expanded(child: _buildAnagraficaSection()),
-                        ],
+                    return Column(
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: _buildContabileSection()),
+                            const SizedBox(width: 24),
+                            Expanded(child: _buildEstrattoSection()),
+                            const SizedBox(width: 24),
+                            Expanded(child: _buildSapSection()),
+                          ],
+                        ),
+                        const SizedBox(height: 32),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: _buildAmexSection()),
+                            const SizedBox(width: 24),
+                            Expanded(child: _buildAnagraficaSection()),
+                            const SizedBox(width: 24),
+                            Expanded(child: _buildScartiSapSection()),
+                          ],
+                        ),
+                      ],
                     );
                   } else {
                     return Column(
@@ -568,12 +639,14 @@ class _UploadViewState extends ConsumerState<UploadView> {
                         _buildAmexSection(),
                         const SizedBox(height: 32),
                         _buildAnagraficaSection(),
+                        const SizedBox(height: 32),
+                        _buildScartiSapSection(),
                       ],
                     );
                   }
                 },
               ),
-              if (_lastContabileResult != null || _lastEstrattoResult != null || _lastSapResult != null || _lastAmexResult != null || _lastAnagraficaResult != null) ...[
+              if (_lastContabileResult != null || _lastEstrattoResult != null || _lastSapResult != null || _lastAmexResult != null || _lastAnagraficaResult != null || _lastScartiSapResult != null) ...[
                 const SizedBox(height: 48),
                 const Divider(),
                 const SizedBox(height: 24),
@@ -625,6 +698,14 @@ class _UploadViewState extends ConsumerState<UploadView> {
                     dataType: 'anagrafica',
                   ),
                 ],
+                if (_lastScartiSapResult != null) ...[
+                  const SizedBox(height: 24),
+                  _buildDetailedResultCard(
+                    title: 'RISULTATI SCARTI TRACCIATO',
+                    result: _lastScartiSapResult!,
+                    dataType: 'scartiSap',
+                  ),
+                ],
               ],
             ],
           ),
@@ -660,7 +741,13 @@ class _UploadViewState extends ConsumerState<UploadView> {
             Row(
               children: [
                 Icon(
-                  isAnagrafica ? Icons.people : (isContabile ? Icons.receipt_long : Icons.account_balance_wallet),
+                  isAnagrafica 
+                      ? Icons.people 
+                      : (isContabile 
+                          ? Icons.receipt_long 
+                          : (dataType == 'scartiSap' 
+                              ? Icons.warning_amber_outlined 
+                              : Icons.account_balance_wallet)),
                   color: SkyTheme.timBlue,
                   size: 24,
                 ),
@@ -718,7 +805,9 @@ class _UploadViewState extends ConsumerState<UploadView> {
               child: Text(
                 isAnagrafica 
                   ? 'Nota: I record sono stati elaborati tramite Codice Fiscale. Gli esistenti sono stati aggiornati, i nuovi inseriti.'
-                  : 'Nota: Tutti i record presenti nel file sono stati importati come nuove voci nel database.',
+                  : (dataType == 'scartiSap'
+                      ? 'Nota: I record di scarto del tracciato sono stati importati con successo.'
+                      : 'Nota: Tutti i record presenti nel file sono stati importati come nuove voci nel database.'),
                 style: TextStyle(fontSize: 11, color: Colors.grey.shade600, fontStyle: FontStyle.italic),
               ),
             ),
@@ -948,6 +1037,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
           _lastAmexResult = null;
         } else if (type == 'anagrafica') {
           _lastAnagraficaResult = null;
+        } else if (type == 'scartiSap') {
+          _lastScartiSapResult = null;
         }
       });
 
@@ -1355,6 +1446,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
               _selectedAmexFile = filteredFiles.first;
             } else if (type == 'anagrafica') {
               _selectedAnagraficaFile = filteredFiles.first;
+            } else if (type == 'scartiSap') {
+              _selectedScartiSapFile = filteredFiles.first;
             }
           });
         } else {
@@ -1380,6 +1473,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
             _isDraggingAmex = true;
           } else if (type == 'anagrafica') {
             _isDraggingAnagrafica = true;
+          } else if (type == 'scartiSap') {
+            _isDraggingScartiSap = true;
           }
         });
       },
@@ -1395,6 +1490,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
             _isDraggingAmex = false;
           } else if (type == 'anagrafica') {
             _isDraggingAnagrafica = false;
+          } else if (type == 'scartiSap') {
+            _isDraggingScartiSap = false;
           }
         });
       },
@@ -1430,6 +1527,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
               if (type == 'sap' && !_isProcessingSap) _pickFile('sap');
               if (type == 'amex' && !_isProcessingAmex) _pickFile('amex');
               if (type == 'anagrafica' && !_isProcessingAnagrafica) _pickFile('anagrafica');
+              if (type == 'scartiSap' && !_isProcessingScartiSap) _pickFile('scartiSap');
             },
             borderRadius: BorderRadius.circular(16),
             child: Center(
@@ -1441,7 +1539,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
                       type == 'contabile' ? _isProcessingContabile : 
                       (type == 'estratto' ? _isProcessingEstratto : 
                       (type == 'sap' ? _isProcessingSap : 
-                      (type == 'amex' ? _isProcessingAmex : _isProcessingAnagrafica)))
+                      (type == 'amex' ? _isProcessingAmex : 
+                      (type == 'anagrafica' ? _isProcessingAnagrafica : _isProcessingScartiSap))))
                     ),
             ),
           ),
@@ -1547,6 +1646,33 @@ class _UploadViewState extends ConsumerState<UploadView> {
               tooltip: 'Rimuovi file',
             ),
           ),
+      ],
+    );
+  }
+
+  Widget _buildScartiSapSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildSectionHeader(
+          'SCARTI TRACCIATO',
+          'File scarti del tracciato (.xlsx)',
+        ),
+        const SizedBox(height: 24),
+        _buildDropZone(
+          type: 'scartiSap',
+          selectedFile: _selectedScartiSapFile,
+          isDragging: _isDraggingScartiSap,
+          allowedExtensions: ['xlsx'],
+        ),
+        const SizedBox(height: 24),
+        _buildActionButton(
+          onPressed: (_selectedScartiSapFile != null && !_isProcessingScartiSap)
+              ? _processScartiSapData
+              : null,
+          label: 'ELABORA SCARTI TRACCIATO',
+          isLoading: _isProcessingScartiSap,
+        ),
       ],
     );
   }

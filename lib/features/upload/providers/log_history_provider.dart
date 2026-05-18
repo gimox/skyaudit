@@ -13,6 +13,8 @@ import 'package:travel_check/features/upload/providers/estratto_amex_provider.da
 
 import 'package:travel_check/features/upload/models/anagrafica.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
+import 'package:travel_check/features/upload/models/scarti_ec_sap.dart';
+import 'package:travel_check/features/upload/providers/scarti_ec_sap_provider.dart';
 
 class LogHistoryNotifier extends Notifier<List<LogHistory>> {
   @override
@@ -59,6 +61,12 @@ class LogHistoryNotifier extends Notifier<List<LogHistory>> {
           .filter()
           .importBatchEqualTo(uniqueCode)
           .deleteAll();
+
+      // Delete from ScartiEcSap
+      await isar.scartiEcSaps
+          .filter()
+          .logHistoryIdEqualTo(uniqueCode)
+          .deleteAll();
     });
 
     // Invalidate main records provider to refresh the UI
@@ -67,6 +75,7 @@ class LogHistoryNotifier extends Notifier<List<LogHistory>> {
     ref.invalidate(estrattoContoProvider);
     ref.invalidate(estrattoAmexProvider);
     ref.invalidate(anagraficaProvider);
+    ref.invalidate(scartiEcSapProvider);
 
     // Refresh state
     final logs = isar.logHistorys.where().anyId().findAllSync();

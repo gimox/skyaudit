@@ -14,6 +14,8 @@ import 'package:travel_check/features/upload/providers/tracciato_sap_provider.da
 import 'package:travel_check/features/upload/models/tracciato_sap.dart';
 import 'package:travel_check/features/upload/providers/estratto_amex_provider.dart';
 import 'package:travel_check/features/upload/models/estratto_amex.dart';
+import 'package:travel_check/features/upload/providers/scarti_ec_sap_provider.dart';
+import 'package:travel_check/features/upload/models/scarti_ec_sap.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView({super.key});
@@ -57,6 +59,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         await ref.read(tracciatoSapProvider.notifier).clear();
       } else if (collectionName == 'Estratti Amex') {
         await ref.read(estrattoAmexProvider.notifier).clear();
+      } else if (collectionName == 'Scarti EC SAP') {
+        await ref.read(scartiEcSapProvider.notifier).clear();
       }
 
       if (mounted) {
@@ -86,6 +90,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         await isar.estrattoContos.clear();
         await isar.tracciatoSaps.clear();
         await isar.estrattoAmexs.clear();
+        await isar.scartiEcSaps.clear();
       });
       // Aggiorniamo anche lo stato in memoria per le collection caricate
       ref.invalidate(tracciatoContabilesProvider);
@@ -93,6 +98,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       ref.invalidate(estrattoContoProvider);
       ref.invalidate(tracciatoSapProvider);
       ref.invalidate(estrattoAmexProvider);
+      ref.invalidate(scartiEcSapProvider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -323,6 +329,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   'Collection: Estratti Amex',
                   'Elimina tutti i dati caricati dagli estratti American Express',
                   () => _clearCollection('Estratti Amex'),
+                ),
+                _buildCollectionTile(
+                  context,
+                  Icons.warning_amber_outlined,
+                  'Collection: Scarti EC SAP',
+                  'Elimina tutti i dati caricati dagli scarti Estratto Conto SAP',
+                  () => _clearCollection('Scarti EC SAP'),
                 ),
                 const Divider(height: 32),
                 _buildHardResetAction(context),

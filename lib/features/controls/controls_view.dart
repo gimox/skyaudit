@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:excel/excel.dart' as excel_pkg;
 import 'package:file_picker/file_picker.dart';
@@ -551,12 +552,42 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                           runSpacing: 4,
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
-                            Text(
-                              'Trasferta: $numeroTrasferta',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: statusTextColor,
-                              ),
+                            Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  'Trasferta: $numeroTrasferta',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: statusTextColor,
+                                  ),
+                                ),
+                                const SizedBox(width: 6),
+                                Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(4),
+                                    onTap: () {
+                                      Clipboard.setData(ClipboardData(text: numeroTrasferta));
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Trasferta $numeroTrasferta copiata negli appunti'),
+                                          duration: const Duration(seconds: 1),
+                                          backgroundColor: SkyTheme.timBlue,
+                                        ),
+                                      );
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(4.0),
+                                      child: Icon(
+                                        Icons.copy_rounded, 
+                                        size: 14, 
+                                        color: statusTextColor.withAlpha((0.6 * 255).round()),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                             Text(
                               '|  CID: ${_formatCidWithName(firstRecord.cid, anagraficaMap)}',
@@ -691,13 +722,43 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                               ),
                           ],
                         ),
-                        Text(
-                          'Cid prevalente: ${firstRecord.cid}',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: hasCidMismatch ? Colors.red.shade700 : Colors.grey.shade700,
-                            fontWeight: hasCidMismatch ? FontWeight.bold : FontWeight.w500,
-                          ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              'Cid prevalente: ${firstRecord.cid}',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: hasCidMismatch ? Colors.red.shade700 : Colors.grey.shade700,
+                                fontWeight: hasCidMismatch ? FontWeight.bold : FontWeight.w500,
+                              ),
+                            ),
+                            const SizedBox(width: 6),
+                            Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                borderRadius: BorderRadius.circular(4),
+                                onTap: () {
+                                  Clipboard.setData(ClipboardData(text: firstRecord.cid));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Text('CID prevalente ${firstRecord.cid} copiato negli appunti'),
+                                      duration: const Duration(seconds: 1),
+                                      backgroundColor: SkyTheme.timBlue,
+                                    ),
+                                  );
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Icon(
+                                    Icons.copy_rounded, 
+                                    size: 13, 
+                                    color: (hasCidMismatch ? Colors.red.shade700 : Colors.grey.shade700).withAlpha((0.6 * 255).round()),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:excel/excel.dart' hide Border;
 import 'package:file_picker/file_picker.dart';
@@ -329,7 +330,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
-                      width: 1570,
+                      width: 1650,
                       child: Column(
                         children: [
                           // HEADER FISSO
@@ -341,8 +342,8 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                             ),
                             child: Row(
                               children: [
-                                _buildCell('CID', 100, isHeader: true),
-                                _buildCell('TRASFERTA', 120, isHeader: true),
+                                _buildCell('CID', 140, isHeader: true),
+                                _buildCell('TRASFERTA', 160, isHeader: true),
                                 _buildCell('GIUSTIFICATIVO', 250, isHeader: true),
                                 _buildCell('BOLLA', 150, isHeader: true),
                                 _buildCell('SOCIETÀ', 100, isHeader: true),
@@ -373,10 +374,10 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                     ),
                                     child: Row(
                                       children: [
-                                        _buildCell(record.cid, 100, fontWeight: FontWeight.w500),
-                                        _buildCell(record.numeroTrasferta, 120),
+                                        _buildCopyableCell(record.cid, 140, typeLabel: 'CID', fontWeight: FontWeight.w500),
+                                        _buildCopyableCell(record.numeroTrasferta, 160, typeLabel: 'Trasferta'),
                                         _buildCell(dictionaryMap[record.giustificativoSpesa] != null ? '${record.giustificativoSpesa} - ${dictionaryMap[record.giustificativoSpesa]}' : record.giustificativoSpesa, 250, color: dictionaryMap[record.giustificativoSpesa] != null ? SkyTheme.timBlue : null),
-                                        _buildCell(record.numeroBolla, 150),
+                                        _buildCopyableCell(record.numeroBolla, 150, typeLabel: 'Bolla'),
                                         _buildCell(dictionaryMap[record.societa] != null ? '${record.societa} - ${dictionaryMap[record.societa]}' : record.societa, 100, color: dictionaryMap[record.societa] != null ? SkyTheme.timBlue : null),
                                         _buildCell(record.dataSpesa, 120),
                                         _buildCell(record.dataInizio, 120),
@@ -662,6 +663,54 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
           }).toList(),
         ),
       ],
+    );
+  }
+
+  Widget _buildCopyableCell(
+    String text,
+    double width, {
+    required String typeLabel,
+    FontWeight? fontWeight,
+    Color? color,
+  }) {
+    return _buildCell(
+      text,
+      width,
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: fontWeight ?? FontWeight.normal,
+                color: color ?? Colors.black87,
+              ),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(4),
+              onTap: () {
+                Clipboard.setData(ClipboardData(text: text));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('$typeLabel $text copiato negli appunti'),
+                    duration: const Duration(seconds: 1),
+                    backgroundColor: SkyTheme.timBlue,
+                  ),
+                );
+              },
+              child: const Padding(
+                padding: EdgeInsets.all(4.0),
+                child: Icon(Icons.copy_rounded, size: 14, color: Colors.grey),
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

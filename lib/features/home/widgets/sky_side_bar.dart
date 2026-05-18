@@ -50,6 +50,11 @@ class SkySideBar extends StatelessWidget {
                       label: Text('Estratti Conto'),
                     ),
                     NavigationRailDestination(
+                      icon: Icon(Icons.warning_amber_outlined),
+                      selectedIcon: Icon(Icons.warning_amber),
+                      label: Text('Scarti Tracciato'),
+                    ),
+                    NavigationRailDestination(
                       icon: Icon(Icons.credit_card_outlined),
                       selectedIcon: Icon(Icons.credit_card),
                       label: Text('Estratti AMEX'),
@@ -137,6 +142,11 @@ class SkySideBar extends StatelessWidget {
             icon: Icon(Icons.account_balance_wallet_outlined),
             selectedIcon: Icon(Icons.account_balance_wallet),
             label: Text('Estratti Conto'),
+          ),
+          const NavigationDrawerDestination(
+            icon: Icon(Icons.warning_amber_outlined),
+            selectedIcon: Icon(Icons.warning_amber),
+            label: Text('Scarti Tracciato'),
           ),
           const NavigationDrawerDestination(
             icon: Icon(Icons.credit_card_outlined),
