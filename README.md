@@ -246,3 +246,35 @@ flutter pub run build_runner build --delete-conflicting-outputs
 
 flutter run -d macos # o -d windows / chrome
 ```
+
+### 3. Pipeline CI/CD, Rilascio e Aggiornamento Versioni
+
+Il progetto dispone di una pipeline automatizzata tramite GitHub Actions (`.github/workflows/flutter_desktop_release.yml`) che compila gli esecutivi Desktop (DMG per macOS, ZIP per Windows), genera il file di aggiornamento `version.json` con il changelog automatico, e pubblica una release ufficiale su GitHub al push di ogni nuovo tag (es. `v1.0.2`).
+
+#### A. Configurazione dei GitHub Secrets (Repository Secrets)
+Dato che il file `auth_config.dart` contenente gli identificativi di Microsoft Entra ID è escluso dal repository Git tramite `.gitignore`, per permettere alla pipeline di compilare l'app con le chiavi reali è necessario configurare tre variabili segrete.
+
+Vai nel pannello del repository su GitHub: **Settings > Secrets and variables > Actions** e crea tre **Repository secrets**:
+* `AZURE_TENANT_ID`: Il tenant ID della tua applicazione Azure.
+* `AZURE_CLIENT_ID`: Il client ID della tua applicazione Azure.
+* `AZURE_WEB_REDIRECT_URL`: L'URL di redirect configurata per la versione Web (es. `https://tuodominio.it/auth.html`).
+
+Durante l'esecuzione, la pipeline copierà il template `auth_config.sample.dart` creandone la versione `auth_config.dart` e andrà ad iniettare automaticamente i valori prelevati da questi segreti prima di avviare il processo di compilazione di Flutter.
+
+#### B. Procedura per il rilascio di una nuova versione
+1. **Aggiorna la versione locale**:
+   Modifica la riga `version:` nel file `pubspec.yaml` (es. `version: 1.0.3+4`, dove `1.0.3` è il nome della versione e `4` è il build number incrementale).
+2. **Effettua il push su main**:
+   ```bash
+   git add pubspec.yaml
+   git commit -m "chore: bump version to 1.0.3"
+   git push origin main
+   ```
+3. **Crea e pusha il Tag di versione**:
+   Crea il tag git corrispondente alla versione dichiarata nel `pubspec.yaml` (utilizzando il prefisso `v`):
+   ```bash
+   git tag v1.0.3
+   git push origin v1.0.3
+   ```
+La pipeline rileverà il nuovo tag `v*`, compilerà gli applicativi iniettando le chiavi, genererà il changelog leggendo i messaggi dei commit, caricherà il file `version.json` compilato sul branch `main` e pubblicherà la release ufficiale su GitHub.
+
