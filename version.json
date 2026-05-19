@@ -1,0 +1,14 @@
+{
+  "version": "1.0.0",
+  "buildNumber": 1,
+  "mandatory": false,
+  "downloadUrls": {
+    "macos": "https://github.com/gimox/skyaudit/releases/download/v1.0.0/SkyAudit_macOS.dmg",
+    "windows": "https://github.com/gimox/skyaudit/releases/download/v1.0.0/SkyAudit_Windows.exe",
+    "web": ""
+  },
+  "changelog": [
+    "Rilascio iniziale dell'applicazione SkyAudit",
+    "Integrazione del controllo automatico degli aggiornamenti"
+  ]
+}
