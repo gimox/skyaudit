@@ -30,12 +30,14 @@ class SharePointFile {
 class SharePointService {
   static const String graphApiUrl = 'https://graph.microsoft.com/v1.0';
 
-  /// Recupera la lista dei file *.txt all'interno della cartella SharePoint configurata
+  /// Recupera la lista dei file all'interno della cartella SharePoint configurata,
+  /// filtrati eventualmente per le estensioni specificate.
   Future<List<SharePointFile>> listFiles({
     required String accessToken,
     required String siteName,
     required String documentLibrary,
     required String folderPath,
+    List<String>? allowedExtensions,
   }) async {
     // 1. Risolve l'hostname del tenant aziendale (es: telecomitalia.sharepoint.com) con fallback sicuro
     String hostname = 'telecomitalia.sharepoint.com';
@@ -60,6 +62,12 @@ class SharePointService {
 
     final cleanPath = folderPath.isEmpty ? 'tracciati_uvet' : folderPath;
 
+    bool matchesExtensions(String fileName) {
+      if (allowedExtensions == null || allowedExtensions.isEmpty) return true;
+      final lower = fileName.toLowerCase();
+      return allowedExtensions.any((ext) => lower.endsWith(ext.toLowerCase()));
+    }
+
     // 2. Se viene specificato un sito del Team SharePoint (es: "skyaudit")
     if (siteName.isNotEmpty && siteName.toLowerCase() != 'tim audit group') {
       // STEP A: Risolviamo l'ID univoco del sito usando la path-based navigation
@@ -80,7 +88,6 @@ class SharePointService {
       final String siteId = siteData['id'] as String;
       
       // STEP B: Usiamo il siteId per interrogare direttamente la cartella nel Drive predefinito.
-      // Questo bypassa il bug del segmento "root:" causato dall'unione di due URI path-based.
       final url = Uri.parse('$graphApiUrl/sites/$siteId/drive/root:/$cleanPath:/children');
       
       final response = await http.get(
@@ -96,7 +103,7 @@ class SharePointService {
         final List<dynamic> value = data['value'] as List<dynamic>? ?? [];
         return value
             .map((item) => SharePointFile.fromJson(item as Map<String, dynamic>, sitePath: siteId))
-            .where((file) => file.name.toLowerCase().endsWith('.txt'))
+            .where((file) => matchesExtensions(file.name))
             .toList();
       } else {
         throw Exception('Errore elenco file in "$siteName" (Cartella: $cleanPath): ${response.statusCode} - ${response.body}');
@@ -117,7 +124,7 @@ class SharePointService {
         final List<dynamic> value = data['value'] as List<dynamic>? ?? [];
         return value
             .map((item) => SharePointFile.fromJson(item as Map<String, dynamic>))
-            .where((file) => file.name.toLowerCase().endsWith('.txt'))
+            .where((file) => matchesExtensions(file.name))
             .toList();
       } else {
         throw Exception('Errore elenco file OneDrive ($cleanPath): ${response.statusCode} - ${response.body}');
@@ -131,7 +138,6 @@ class SharePointService {
     required String itemId,
     String? sitePath,
   }) async {
-    // sitePath qui contiene il siteId reale (es. telecomitalia.sharepoint.com,fa93...)
     final url = sitePath != null
         ? Uri.parse('$graphApiUrl/sites/$sitePath/drive/items/$itemId/content')
         : Uri.parse('$graphApiUrl/me/drive/items/$itemId/content');
@@ -145,6 +151,30 @@ class SharePointService {
 
     if (response.statusCode == 200) {
       return response.body;
+    } else {
+      throw Exception('Errore di download file da SharePoint: ${response.statusCode} - ${response.body}');
+    }
+  }
+
+  /// Scarica il contenuto in bytes di un file (es: fogli Excel)
+  Future<List<int>> downloadFileBytes({
+    required String accessToken,
+    required String itemId,
+    String? sitePath,
+  }) async {
+    final url = sitePath != null
+        ? Uri.parse('$graphApiUrl/sites/$sitePath/drive/items/$itemId/content')
+        : Uri.parse('$graphApiUrl/me/drive/items/$itemId/content');
+
+    final response = await http.get(
+      url,
+      headers: {
+        'Authorization': 'Bearer $accessToken',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return response.bodyBytes;
     } else {
       throw Exception('Errore di download file da SharePoint: ${response.statusCode} - ${response.body}');
     }

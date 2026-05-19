@@ -13,6 +13,8 @@ PODS:
   - FlutterMacOS (1.0.0)
   - isar_flutter_libs (1.0.0):
     - FlutterMacOS
+  - package_info_plus (0.0.1):
+    - FlutterMacOS
   - screen_retriever_macos (0.0.1):
     - FlutterMacOS
   - url_launcher_macos (0.0.1):
@@ -33,6 +35,7 @@ DEPENDENCIES:
   - flutter_web_auth_2 (from `Flutter/ephemeral/.symlinks/plugins/flutter_web_auth_2/macos`)
   - FlutterMacOS (from `Flutter/ephemeral`)
   - isar_flutter_libs (from `Flutter/ephemeral/.symlinks/plugins/isar_flutter_libs/macos`)
+  - package_info_plus (from `Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos`)
   - screen_retriever_macos (from `Flutter/ephemeral/.symlinks/plugins/screen_retriever_macos/macos`)
   - url_launcher_macos (from `Flutter/ephemeral/.symlinks/plugins/url_launcher_macos/macos`)
   - video_player_avfoundation (from `Flutter/ephemeral/.symlinks/plugins/video_player_avfoundation/darwin`)
@@ -54,6 +57,8 @@ EXTERNAL SOURCES:
     :path: Flutter/ephemeral
   isar_flutter_libs:
     :path: Flutter/ephemeral/.symlinks/plugins/isar_flutter_libs/macos
+  package_info_plus:
+    :path: Flutter/ephemeral/.symlinks/plugins/package_info_plus/macos
   screen_retriever_macos:
     :path: Flutter/ephemeral/.symlinks/plugins/screen_retriever_macos/macos
   url_launcher_macos:
@@ -73,6 +78,7 @@ SPEC CHECKSUMS:
   flutter_web_auth_2: 7fe624ff12ddcb4c19e5dbcd56c9e9ea4899d967
   FlutterMacOS: d0db08ddef1a9af05a5ec4b724367152bb0500b1
   isar_flutter_libs: a65381780401f81ad6bf3f2e7cd0de5698fb98c4
+  package_info_plus: f0052d280d17aa382b932f399edf32507174e870
   screen_retriever_macos: 452e51764a9e1cdb74b3c541238795849f21557f
   url_launcher_macos: f87a979182d112f911de6820aefddaf56ee9fbfd
   video_player_avfoundation: dd410b52df6d2466a42d28550e33e4146928280a

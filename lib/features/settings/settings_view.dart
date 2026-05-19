@@ -19,6 +19,8 @@ import 'package:travel_check/features/upload/models/scarti_ec_sap.dart';
 import 'package:travel_check/features/auth/providers/auth_provider.dart';
 import 'package:travel_check/features/auth/models/auth_state.dart';
 import 'package:travel_check/features/settings/providers/app_settings_provider.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:travel_check/core/services/update_service.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView({super.key});
@@ -31,17 +33,33 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _valueController = TextEditingController();
   final TextEditingController _spSiteController = TextEditingController();
-  final TextEditingController _spFolderController = TextEditingController();
+  final TextEditingController _spFolderController = TextEditingController(); // Tracciato Contabile
   final TextEditingController _spLibraryController = TextEditingController();
+  final TextEditingController _spEstrattiContoController = TextEditingController();
+  final TextEditingController _spTracciatoSapController = TextEditingController();
+  final TextEditingController _spEstrattiAmexController = TextEditingController();
+  final TextEditingController _spAnagraficaController = TextEditingController();
+  final TextEditingController _spScartiTracciatoController = TextEditingController();
+
+  String _appVersion = 'Caricamento...';
+  String _buildNumber = '';
+  bool _isCheckingUpdate = false;
+  String _updateCheckStatus = '';
 
   @override
   void initState() {
     super.initState();
+    _loadAppVersion();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final settings = ref.read(appSettingsProvider);
       _spSiteController.text = settings.sharepointSiteName;
       _spFolderController.text = settings.sharepointFolderPath;
       _spLibraryController.text = settings.sharepointDocumentLibrary;
+      _spEstrattiContoController.text = settings.sharepointEstrattiContoPath;
+      _spTracciatoSapController.text = settings.sharepointTracciatoSapPath;
+      _spEstrattiAmexController.text = settings.sharepointEstrattiAmexPath;
+      _spAnagraficaController.text = settings.sharepointAnagraficaPath;
+      _spScartiTracciatoController.text = settings.sharepointScartiTracciatoPath;
     });
   }
 
@@ -52,6 +70,11 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     _spSiteController.dispose();
     _spFolderController.dispose();
     _spLibraryController.dispose();
+    _spEstrattiContoController.dispose();
+    _spTracciatoSapController.dispose();
+    _spEstrattiAmexController.dispose();
+    _spAnagraficaController.dispose();
+    _spScartiTracciatoController.dispose();
     super.dispose();
   }
 
@@ -373,6 +396,337 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                 _buildHardResetAction(context),
               ],
             ),
+          ),
+
+          const SizedBox(height: 48),
+
+          // Sezione Info Applicativo & Aggiornamenti
+          _buildSectionHeader(
+            context,
+            Icons.info_outline,
+            'Info Applicativo & Aggiornamenti',
+            'Verifica la versione installata e controlla se ci sono nuovi rilasci di SkyAudit.',
+          ),
+          const SizedBox(height: 24),
+          _buildAppUpdateCard(context),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _loadAppVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      if (mounted) {
+        setState(() {
+          _appVersion = packageInfo.version;
+          _buildNumber = packageInfo.buildNumber;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _appVersion = 'Non disponibile';
+        });
+      }
+    }
+  }
+
+  Future<void> _manualCheckForUpdate() async {
+    setState(() {
+      _isCheckingUpdate = true;
+      _updateCheckStatus = 'Controllo dei server in corso...';
+    });
+
+    final info = await UpdateService.checkForUpdate();
+    
+    if (mounted) {
+      setState(() {
+        _isCheckingUpdate = false;
+        if (info != null) {
+          _updateCheckStatus = 'È disponibile una nuova versione: ${info.version}.';
+          _showSettingsUpdateDialog(info);
+        } else {
+          _updateCheckStatus = 'SkyAudit è aggiornato all\'ultima versione.';
+        }
+      });
+    }
+  }
+
+  void _showSettingsUpdateDialog(AppUpdateInfo info) {
+    showDialog(
+      context: context,
+      barrierDismissible: !info.mandatory,
+      builder: (context) {
+        return PopScope(
+          canPop: !info.mandatory,
+          child: Dialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            child: Container(
+              width: 500,
+              padding: const EdgeInsets.all(28),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: SkyTheme.timBlue.withAlpha(25),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.system_update_alt,
+                          color: SkyTheme.timBlue,
+                          size: 28,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Aggiornamento Disponibile',
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: SkyTheme.timBlue,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Nuova versione: ${info.version}',
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey.shade600,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  Text(
+                    'È disponibile una nuova versione di SkyAudit. Si consiglia di procedere all\'aggiornamento per usufruire delle ultime ottimizzazioni e funzionalità.',
+                    style: TextStyle(
+                      fontSize: 14,
+                      height: 1.5,
+                      color: Colors.grey.shade800,
+                    ),
+                  ),
+                  if (info.changelog.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    const Text(
+                      'Novità introdotte:',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.bold,
+                        color: SkyTheme.timBlue,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Container(
+                      constraints: const BoxConstraints(maxHeight: 150),
+                      width: double.infinity,
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade50,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade200),
+                      ),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: info.changelog.map((log) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 3.0),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('• ', style: TextStyle(fontWeight: FontWeight.bold, color: SkyTheme.timRed)),
+                                Expanded(
+                                  child: Text(
+                                    log,
+                                    style: const TextStyle(fontSize: 13, height: 1.4),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )).toList(),
+                        ),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 28),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      if (!info.mandatory)
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: Text(
+                            'Più tardi',
+                            style: TextStyle(color: Colors.grey.shade600),
+                          ),
+                        ),
+                      const SizedBox(width: 12),
+                      ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: SkyTheme.timBlue,
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        ),
+                        onPressed: () async {
+                          final navigator = Navigator.of(context);
+                          final scaffoldMessenger = ScaffoldMessenger.of(context);
+                          try {
+                            await UpdateService.performUpdate(info);
+                            if (!info.mandatory && mounted) {
+                              navigator.pop();
+                            }
+                          } catch (e) {
+                            if (!mounted) return;
+                            scaffoldMessenger.showSnackBar(
+                              SnackBar(
+                                content: Text('Errore nel lancio dell\'aggiornamento: $e'),
+                                backgroundColor: SkyTheme.timRed,
+                              ),
+                            );
+                          }
+                        },
+                        child: const Text('Aggiorna Ora'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildAppUpdateCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(5),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: SkyTheme.timBlue.withAlpha(25),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(
+                  Icons.desktop_windows_outlined,
+                  color: SkyTheme.timBlue,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'SkyAudit Client',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Versione installata: $_appVersion ${_buildNumber.isNotEmpty ? " (Build $_buildNumber)" : ""}',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (_updateCheckStatus.isNotEmpty) ...[
+            const SizedBox(height: 16),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Row(
+                children: [
+                  Icon(
+                    _updateCheckStatus.contains('nuova')
+                        ? Icons.cloud_download
+                        : (_updateCheckStatus.contains('errore') ? Icons.error_outline : Icons.check_circle_outline),
+                    color: _updateCheckStatus.contains('nuova')
+                        ? SkyTheme.timRed
+                        : (_updateCheckStatus.contains('errore') ? Colors.amber.shade700 : Colors.green.shade600),
+                    size: 16,
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      _updateCheckStatus,
+                      style: const TextStyle(fontSize: 13, color: Colors.black87),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: SkyTheme.timBlue,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+            ),
+            onPressed: _isCheckingUpdate ? null : _manualCheckForUpdate,
+            icon: _isCheckingUpdate
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : const Icon(Icons.refresh, size: 18),
+            label: Text(_isCheckingUpdate ? 'Verifica in corso...' : 'Verifica Aggiornamenti'),
           ),
         ],
       ),
@@ -888,29 +1242,67 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             ],
           ),
           const SizedBox(height: 20),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          Row(
             children: [
-              const Text(
-                'Percorso della Cartella dei Tracciati Contabili',
-                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
-              ),
-              const SizedBox(height: 8),
-              TextField(
-                controller: _spFolderController,
-                decoration: InputDecoration(
+              Expanded(
+                child: _buildSharepointFolderField(
+                  label: 'Cartella Tracciati Contabili',
+                  controller: _spFolderController,
                   hintText: 'Es: General/TracciatiContabili',
-                  filled: true,
-                  fillColor: Colors.grey.shade50,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(color: Colors.grey.shade300),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(color: SkyTheme.timBlue, width: 1.5),
-                  ),
-                  prefixIcon: const Icon(Icons.folder_open, size: 20, color: SkyTheme.timBlue),
+                  icon: Icons.folder_open,
+                ),
+              ),
+              const SizedBox(width: 24),
+              Expanded(
+                child: _buildSharepointFolderField(
+                  label: 'Cartella Estratti Conto',
+                  controller: _spEstrattiContoController,
+                  hintText: 'Es: General/EstrattiConto',
+                  icon: Icons.receipt_long_outlined,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: _buildSharepointFolderField(
+                  label: 'Cartella Tracciato SAP',
+                  controller: _spTracciatoSapController,
+                  hintText: 'Es: General/TracciatoSap',
+                  icon: Icons.analytics_outlined,
+                ),
+              ),
+              const SizedBox(width: 24),
+              Expanded(
+                child: _buildSharepointFolderField(
+                  label: 'Cartella Estratti AMEX',
+                  controller: _spEstrattiAmexController,
+                  hintText: 'Es: General/EstrattiAmex',
+                  icon: Icons.credit_card_outlined,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: _buildSharepointFolderField(
+                  label: 'Cartella Anagrafica',
+                  controller: _spAnagraficaController,
+                  hintText: 'Es: General/Anagrafica',
+                  icon: Icons.people_outline,
+                ),
+              ),
+              const SizedBox(width: 24),
+              Expanded(
+                child: _buildSharepointFolderField(
+                  label: 'Cartella Scarti Tracciato',
+                  controller: _spScartiTracciatoController,
+                  hintText: 'Es: General/ScartiTracciato',
+                  icon: Icons.warning_amber_outlined,
                 ),
               ),
             ],
@@ -925,6 +1317,11 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   siteName: _spSiteController.text.trim(),
                   folderPath: _spFolderController.text.trim(),
                   documentLibrary: _spLibraryController.text.trim(),
+                  estrattiContoPath: _spEstrattiContoController.text.trim(),
+                  tracciatoSapPath: _spTracciatoSapController.text.trim(),
+                  estrattiAmexPath: _spEstrattiAmexController.text.trim(),
+                  anagraficaPath: _spAnagraficaController.text.trim(),
+                  scartiTracciatoPath: _spScartiTracciatoController.text.trim(),
                 );
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -958,6 +1355,41 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildSharepointFolderField({
+    required String label,
+    required TextEditingController controller,
+    required String hintText,
+    required IconData icon,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: controller,
+          decoration: InputDecoration(
+            hintText: hintText,
+            filled: true,
+            fillColor: Colors.grey.shade50,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: Colors.grey.shade300),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: SkyTheme.timBlue, width: 1.5),
+            ),
+            prefixIcon: Icon(icon, size: 20, color: SkyTheme.timBlue),
+          ),
+        ),
+      ],
     );
   }
 }
