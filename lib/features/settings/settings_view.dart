@@ -16,6 +16,9 @@ import 'package:travel_check/features/upload/providers/estratto_amex_provider.da
 import 'package:travel_check/features/upload/models/estratto_amex.dart';
 import 'package:travel_check/features/upload/providers/scarti_ec_sap_provider.dart';
 import 'package:travel_check/features/upload/models/scarti_ec_sap.dart';
+import 'package:travel_check/features/auth/providers/auth_provider.dart';
+import 'package:travel_check/features/auth/models/auth_state.dart';
+import 'package:travel_check/features/settings/providers/app_settings_provider.dart';
 
 class SettingsView extends ConsumerStatefulWidget {
   const SettingsView({super.key});
@@ -27,11 +30,28 @@ class SettingsView extends ConsumerStatefulWidget {
 class _SettingsViewState extends ConsumerState<SettingsView> {
   final TextEditingController _codeController = TextEditingController();
   final TextEditingController _valueController = TextEditingController();
+  final TextEditingController _spSiteController = TextEditingController();
+  final TextEditingController _spFolderController = TextEditingController();
+  final TextEditingController _spLibraryController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final settings = ref.read(appSettingsProvider);
+      _spSiteController.text = settings.sharepointSiteName;
+      _spFolderController.text = settings.sharepointFolderPath;
+      _spLibraryController.text = settings.sharepointDocumentLibrary;
+    });
+  }
 
   @override
   void dispose() {
     _codeController.dispose();
     _valueController.dispose();
+    _spSiteController.dispose();
+    _spFolderController.dispose();
+    _spLibraryController.dispose();
     super.dispose();
   }
 
@@ -219,6 +239,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
 
   @override
   Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
     final dictionaries = ref.watch(dictionaryProvider);
     final prepagatoEntries = dictionaries
         .where((e) => e.category == 'giustificativi_prepagati')
@@ -235,8 +256,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const SizedBox.shrink(),
-          const SizedBox(height: 48),
+          _buildAuthStatusCard(context, authState),
+          const SizedBox(height: 32),
 
           // Sezione Dizionari
           _buildSectionHeader(
@@ -269,6 +290,17 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
 
           const SizedBox(height: 48),
 
+          // Sezione Sincronizzazione Remota
+          _buildSectionHeader(
+            context,
+            Icons.cloud_sync_outlined,
+            'Sincronizzazione Remota (SharePoint)',
+            'Configura gli endpoint, il drive e il percorso dei tracciati contabili aziendali su SharePoint.',
+          ),
+          const SizedBox(height: 24),
+          _buildRemoteSyncCard(context),
+
+          const SizedBox(height: 48),
 
           // Sezione Database
           _buildSectionHeader(
@@ -403,8 +435,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   ),
                 ),
                 ElevatedButton.icon(
-                  onPressed: () =>
-                      _showEditDictionaryDialog(category: category),
+                  onPressed: () => _showEditDictionaryDialog(category: category),
                   icon: const Icon(Icons.add, size: 18),
                   label: const Text('Aggiungi'),
                   style: ElevatedButton.styleFrom(
@@ -455,8 +486,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     children: [
                       IconButton(
                         icon: const Icon(Icons.edit_outlined, size: 20),
-                        onPressed: () =>
-                            _showEditDictionaryDialog(entry: entry),
+                        onPressed: () => _showEditDictionaryDialog(entry: entry),
                         color: Colors.blue,
                       ),
                       IconButton(
@@ -550,6 +580,381 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               foregroundColor: Colors.white,
             ),
             onPressed: _clearEntireDatabase,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAuthStatusCard(BuildContext context, AuthState authState) {
+    final status = authState.status;
+    final isConnected = status == AuthStatus.authenticated;
+    final isChecking = status == AuthStatus.checking || status == AuthStatus.authenticating;
+    final isError = status == AuthStatus.error;
+
+    Color borderColor = Colors.grey.shade300;
+    Color iconBgColor = Colors.orange.shade50;
+    Color iconColor = Colors.orange.shade700;
+    IconData iconData = Icons.cloud_off_outlined;
+    String titleText = 'Sincronizzazione Remota Disattivata';
+    String subtitleText = 'Puoi operare localmente, ma la sincronizzazione con i server di backend Azure è disattivata. Accedi per abilitarla.';
+
+    if (isConnected) {
+      borderColor = Colors.green.shade200;
+      iconBgColor = Colors.green.shade50;
+      iconColor = Colors.green.shade700;
+      iconData = Icons.cloud_done_outlined;
+      titleText = 'Sincronizzazione Remota Attiva';
+      subtitleText = 'Collegato con successo tramite Microsoft Entra ID. I tracciati e le verifiche saranno allineati con i server aziendali.';
+    } else if (isChecking) {
+      borderColor = SkyTheme.timBlue.withAlpha(50);
+      iconBgColor = SkyTheme.timBlue.withAlpha(15);
+      iconColor = SkyTheme.timBlue;
+      iconData = Icons.sync;
+      titleText = 'Verifica credenziali in corso...';
+      subtitleText = 'Connessione ai server Microsoft per il riscontro delle credenziali...';
+    } else if (isError) {
+      borderColor = Colors.red.shade200;
+      iconBgColor = Colors.red.shade50;
+      iconColor = Colors.red.shade700;
+      iconData = Icons.error_outline;
+      titleText = 'Errore di Autenticazione';
+      subtitleText = authState.errorMessage ?? 'Si è verificato un errore sconosciuto durante il login.';
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: borderColor,
+          width: 1.5,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(5),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: iconBgColor,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  iconData,
+                  color: iconColor,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      titleText,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitleText,
+                      style: TextStyle(
+                        color: isError ? Colors.red.shade700 : Colors.grey.shade600,
+                        fontSize: 13,
+                        fontWeight: isError ? FontWeight.w500 : FontWeight.normal,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (isConnected) ...[
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Divider(),
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildUserDetailRow('Utente TIM:', authState.userName ?? 'Dipendente TIM'),
+                      const SizedBox(height: 8),
+                      _buildUserDetailRow('Email Aziendale:', authState.userEmail ?? 'utente@tim.it'),
+                      const SizedBox(height: 8),
+                      Row(
+                        children: [
+                          const Text(
+                            'Sincronizzazione Remota: ',
+                            style: TextStyle(
+                              fontSize: 13, 
+                              fontWeight: FontWeight.w500, 
+                              color: Colors.grey
+                            ),
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                            decoration: BoxDecoration(
+                              color: Colors.green.shade50,
+                              borderRadius: BorderRadius.circular(4),
+                              border: Border.all(color: Colors.green.shade200),
+                            ),
+                            child: Text(
+                              'ATTIVA',
+                              style: TextStyle(
+                                color: Colors.green.shade800,
+                                fontSize: 10,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    await ref.read(authProvider.notifier).logout();
+                  },
+                  icon: const Icon(Icons.logout, size: 18),
+                  label: const Text('Disconnetti'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red.shade50,
+                    foregroundColor: Colors.red.shade700,
+                    elevation: 0,
+                    side: BorderSide(color: Colors.red.shade100),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  ),
+                ),
+              ],
+            ),
+          ] else if (!isChecking) ...[
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Divider(),
+            ),
+            Align(
+              alignment: Alignment.centerRight,
+              child: ElevatedButton.icon(
+                onPressed: () async {
+                  await ref.read(authProvider.notifier).login();
+                },
+                icon: const Icon(Icons.login),
+                label: const Text('Accedi con TIM (Entra ID)'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: SkyTheme.timBlue,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserDetailRow(String label, String value) {
+    return Row(
+      children: [
+        Text(
+          '$label ',
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey,
+          ),
+        ),
+        Text(
+          value,
+          style: const TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildRemoteSyncCard(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(8),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'PARAMETRI ENDPOINT SHAREPOINT',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: SkyTheme.timBlue,
+              letterSpacing: 1.0,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Nome Sito SharePoint',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _spSiteController,
+                      decoration: InputDecoration(
+                        hintText: 'Es: TIM Audit Site',
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: SkyTheme.timBlue, width: 1.5),
+                        ),
+                        prefixIcon: const Icon(Icons.web, size: 20, color: SkyTheme.timBlue),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 24),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Document Library (Contenitore)',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _spLibraryController,
+                      decoration: InputDecoration(
+                        hintText: 'Es: Documents',
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: SkyTheme.timBlue, width: 1.5),
+                        ),
+                        prefixIcon: const Icon(Icons.folder_shared, size: 20, color: SkyTheme.timBlue),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'Percorso della Cartella dei Tracciati Contabili',
+                style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+              ),
+              const SizedBox(height: 8),
+              TextField(
+                controller: _spFolderController,
+                decoration: InputDecoration(
+                  hintText: 'Es: General/TracciatiContabili',
+                  filled: true,
+                  fillColor: Colors.grey.shade50,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide(color: Colors.grey.shade300),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(color: SkyTheme.timBlue, width: 1.5),
+                  ),
+                  prefixIcon: const Icon(Icons.folder_open, size: 20, color: SkyTheme.timBlue),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 28),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                await ref.read(appSettingsProvider.notifier).updateSharepointSettings(
+                  siteName: _spSiteController.text.trim(),
+                  folderPath: _spFolderController.text.trim(),
+                  documentLibrary: _spLibraryController.text.trim(),
+                );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: const [
+                          Icon(Icons.check_circle, color: Colors.white),
+                          SizedBox(width: 12),
+                          Text('Impostazioni SharePoint salvate con successo!'),
+                        ],
+                      ),
+                      backgroundColor: Colors.green.shade700,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              },
+              icon: const Icon(Icons.save_outlined),
+              label: const Text(
+                'Salva Impostazioni SharePoint',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: SkyTheme.timBlue,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
           ),
         ],
       ),

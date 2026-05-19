@@ -6,8 +6,13 @@ import 'package:excel/excel.dart' hide Border;
 import 'package:file_picker/file_picker.dart';
 import 'package:travel_check/features/upload/providers/scarti_ec_sap_provider.dart';
 import 'package:travel_check/features/upload/models/scarti_ec_sap.dart';
+import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
+import 'package:travel_check/features/upload/providers/log_history_provider.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
+import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
+
 
 // Filter providers for Scarti EC SAP
 final scSelectedQueryProvider = StateProvider<String?>((ref) => null);
@@ -16,6 +21,12 @@ final scEndDateProvider = StateProvider<DateTime?>((ref) => null);
 final scSelectedSpesaProvider = StateProvider<Set<String>>((ref) => {});
 final scSortAscendingProvider = StateProvider<bool>((ref) => false);
 final scPageProvider = StateProvider<int>((ref) => 0);
+
+enum ScartiIncrocioFilter { all, matched, notMatched }
+final scIncrocioFilterProvider = StateProvider<ScartiIncrocioFilter>((ref) => ScartiIncrocioFilter.all);
+
+enum ScTrasfertaPresenzaFilter { all, present, notPresent }
+final scTrasfertaPresenzaFilterProvider = StateProvider<ScTrasfertaPresenzaFilter>((ref) => ScTrasfertaPresenzaFilter.all);
 
 class ScartiEcView extends ConsumerStatefulWidget {
   const ScartiEcView({super.key});
@@ -44,6 +55,13 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
     final selectedSpese = ref.watch(scSelectedSpesaProvider);
     final sortAscending = ref.watch(scSortAscendingProvider);
     final currentPage = ref.watch(scPageProvider);
+    final incrocioFilter = ref.watch(scIncrocioFilterProvider);
+    final trasfertaFilter = ref.watch(scTrasfertaPresenzaFilterProvider);
+    final contabileRecords = ref.watch(tracciatoContabilesProvider);
+    final contabileTrasferte = contabileRecords
+        .map((tc) => tc.numeroTrasferta.trim())
+        .where((t) => t.isNotEmpty)
+        .toSet();
     const pageSize = 50;
 
     if (allRecords.isEmpty) {
@@ -78,6 +96,8 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
       startDate != null,
       endDate != null,
       selectedSpese.isNotEmpty,
+      incrocioFilter != ScartiIncrocioFilter.all,
+      trasfertaFilter != ScTrasfertaPresenzaFilter.all,
     ].where((e) => e).length;
 
     // Estrai giustificativi di spesa disponibili per il filtro
@@ -87,6 +107,24 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
         .toSet()
         .toList()
       ..sort();
+
+    bool hasMatch(ScartiEcSap rec) {
+      return contabileRecords.any((tc) {
+        final cidMatch = tc.cid.trim().padLeft(8, '0') == rec.cid.trim().padLeft(8, '0');
+        final trasfMatch = tc.numeroTrasferta.trim() == rec.numeroTrasferta.trim();
+        final contabileSignedImporto = (tc.isNegative ? -1.0 : 1.0) * tc.importo;
+        final importoMatch = (contabileSignedImporto - rec.importo).abs() < 0.01;
+        return cidMatch && trasfMatch && importoMatch;
+      });
+    }
+
+    final totalRecords = allRecords.length;
+    final reconciledRecords = allRecords.where(hasMatch).length;
+    final waitingRecords = totalRecords - reconciledRecords;
+
+    final totalAmount = allRecords.fold<double>(0.0, (sum, r) => sum + r.importo.abs());
+    final reconciledAmount = allRecords.where(hasMatch).fold<double>(0.0, (sum, r) => sum + r.importo.abs());
+    final waitingAmount = totalAmount - reconciledAmount;
 
     // Filtra i record
     final filteredRecords = allRecords.where((r) {
@@ -116,6 +154,21 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
       // Filtro Tipo Spesa
       if (selectedSpese.isNotEmpty && !selectedSpese.contains(r.spesa)) return false;
       
+      // Filtro Incrocio
+      if (incrocioFilter == ScartiIncrocioFilter.matched && !hasMatch(r)) {
+        return false;
+      }
+      if (incrocioFilter == ScartiIncrocioFilter.notMatched && hasMatch(r)) {
+        return false;
+      }
+      
+      // Filtro Presenza Trasferta in Tracciato Contabile
+      if (trasfertaFilter != ScTrasfertaPresenzaFilter.all) {
+        final isPresent = contabileTrasferte.contains(r.numeroTrasferta.trim());
+        if (trasfertaFilter == ScTrasfertaPresenzaFilter.present && !isPresent) return false;
+        if (trasfertaFilter == ScTrasfertaPresenzaFilter.notPresent && isPresent) return false;
+      }
+
       return true;
     }).toList()
       ..sort((a, b) {
@@ -246,11 +299,56 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                           final next = Set<String>.from(current)..remove(spesa);
                           ref.read(scSelectedSpesaProvider.notifier).state = next;
                         })),
+                         if (incrocioFilter != ScartiIncrocioFilter.all)
+                          _buildFilterChip(
+                            incrocioFilter == ScartiIncrocioFilter.matched
+                                ? 'Incrocio: Riscontrati'
+                                : 'Incrocio: In attesa',
+                            () => ref.read(scIncrocioFilterProvider.notifier).state = ScartiIncrocioFilter.all,
+                          ),
+                        if (trasfertaFilter != ScTrasfertaPresenzaFilter.all)
+                          _buildFilterChip(
+                            trasfertaFilter == ScTrasfertaPresenzaFilter.present
+                                ? 'Riscontro: Presenti'
+                                : 'Riscontro: Non Presenti',
+                            () => ref.read(scTrasfertaPresenzaFilterProvider.notifier).state = ScTrasfertaPresenzaFilter.all,
+                          ),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
                     ),
                   ),
                 ],
+              ],
+            ),
+          ),
+          // DASHBOARD STATS SUMMARY
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+            child: Row(
+              children: [
+                _buildSummaryCard(
+                  'TOTALE RECORD / IMPORTO',
+                  '$totalRecords / ${_formatAmount(totalAmount)}',
+                  Icons.folder_open_rounded,
+                  SkyTheme.timBlue,
+                  SkyTheme.timBlue.withAlpha(20),
+                ),
+                const SizedBox(width: 16),
+                _buildSummaryCard(
+                  'RISCONTRATI / IMPORTO',
+                  '$reconciledRecords / ${_formatAmount(reconciledAmount)}',
+                  Icons.check_circle_outline,
+                  Colors.green.shade700,
+                  Colors.green.shade50,
+                ),
+                const SizedBox(width: 16),
+                _buildSummaryCard(
+                  'IN ATTESA / IMPORTO',
+                  '$waitingRecords / ${_formatAmount(waitingAmount)}',
+                  Icons.help_outline_rounded,
+                  Colors.orange.shade700,
+                  Colors.orange.shade50,
+                ),
               ],
             ),
           ),
@@ -275,7 +373,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
-                      width: 1200,
+                      width: 1320,
                       child: Column(
                         children: [
                           // INTESTAZIONE TABELLA (HEADER FISSO)
@@ -292,6 +390,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                                 _buildCell('SPESA', 100, isHeader: true),
                                 _buildCell('IMPORTO', 120, isHeader: true),
                                 _buildCell('DIVISA', 80, isHeader: true),
+                                _buildCell('INCROCIO', 120, isHeader: true, alignment: Alignment.center),
                                 _buildCell('STORNO', 100, isHeader: true),
                                 _buildCell('DATA INVIO', 130, isHeader: true),
                                 _buildCell('DESCRIZIONE SCARTO', 280, isHeader: true),
@@ -363,9 +462,12 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                                               Expanded(
                                                 child: Text(
                                                   record.numeroTrasferta,
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontSize: 13,
-                                                    color: Colors.black87,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: contabileTrasferte.contains(record.numeroTrasferta.trim())
+                                                        ? Colors.green.shade800
+                                                        : Colors.red.shade700,
                                                   ),
                                                   overflow: TextOverflow.ellipsis,
                                                 ),
@@ -401,6 +503,43 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                                           color: record.importo < 0 ? Colors.red.shade700 : Colors.green.shade800
                                         ),
                                         _buildCell(record.divisa, 80),
+                                        _buildCell(
+                                          '', 
+                                          120, 
+                                          alignment: Alignment.center,
+                                          child: Builder(
+                                            builder: (context) {
+                                              final matched = hasMatch(record);
+                                              return Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                decoration: BoxDecoration(
+                                                  color: matched ? Colors.green.shade50 : Colors.orange.shade50,
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  border: Border.all(color: matched ? Colors.green.shade200 : Colors.orange.shade200),
+                                                ),
+                                                child: Row(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    Icon(
+                                                      matched ? Icons.check : Icons.close,
+                                                      size: 12,
+                                                      color: matched ? Colors.green.shade700 : Colors.orange.shade700,
+                                                    ),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      matched ? 'Riscontrato' : 'In attesa',
+                                                      style: TextStyle(
+                                                        fontSize: 10,
+                                                        fontWeight: FontWeight.bold,
+                                                        color: matched ? Colors.green.shade800 : Colors.orange.shade800,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }
+                                          ),
+                                        ),
                                         _buildCell(record.storno ?? '-', 100, color: record.storno != null ? Colors.orange.shade800 : null),
                                         _buildCell(record.dataInvio, 130),
                                         _buildCell(record.descrizioneScarto, 280),
@@ -509,6 +648,8 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
     ref.read(scStartDateProvider.notifier).state = null;
     ref.read(scEndDateProvider.notifier).state = null;
     ref.read(scSelectedSpesaProvider.notifier).state = {};
+    ref.read(scIncrocioFilterProvider.notifier).state = ScartiIncrocioFilter.all;
+    ref.read(scTrasfertaPresenzaFilterProvider.notifier).state = ScTrasfertaPresenzaFilter.all;
     ref.read(scPageProvider.notifier).state = 0;
     _searchController.clear();
   }
@@ -627,6 +768,30 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                   },
                   icon: Icons.receipt_long_outlined,
                 ),
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('STATO RISCONTRO / INCROCIO'),
+                const SizedBox(height: 12),
+                _buildChoiceFilter<ScartiIncrocioFilter>(
+                  ref.watch(scIncrocioFilterProvider),
+                  {
+                    ScartiIncrocioFilter.all: 'Tutti',
+                    ScartiIncrocioFilter.matched: 'Riscontrati',
+                    ScartiIncrocioFilter.notMatched: 'In Attesa',
+                  },
+                  (val) => ref.read(scIncrocioFilterProvider.notifier).state = val,
+                ),
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('RISCONTRO TRASFERTA IN CONTABILITÀ'),
+                const SizedBox(height: 12),
+                _buildChoiceFilter<ScTrasfertaPresenzaFilter>(
+                  ref.watch(scTrasfertaPresenzaFilterProvider),
+                  {
+                    ScTrasfertaPresenzaFilter.all: 'Tutte',
+                    ScTrasfertaPresenzaFilter.present: 'Presenti',
+                    ScTrasfertaPresenzaFilter.notPresent: 'Non Presenti',
+                  },
+                  (val) => ref.read(scTrasfertaPresenzaFilterProvider.notifier).state = val,
+                ),
               ],
             ),
           ),
@@ -715,6 +880,123 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
           }).toList(),
         ),
       ],
+    );
+  }
+
+
+
+  Widget _buildSummaryCard(String title, String value, IconData icon, Color color, Color bgLightColor) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade100),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withAlpha(3),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: bgLightColor,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Icon(icon, color: color, size: 24),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    title,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade600,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: color == SkyTheme.timRed ? Colors.black87 : color,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatAmount(double amount) {
+    final isNeg = amount < 0;
+    final absVal = amount.abs();
+    final parts = absVal.toStringAsFixed(2).split('.');
+    final whole = parts[0];
+    final decimals = parts[1];
+    
+    final RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+    final String formattedWhole = whole.replaceAllMapped(reg, (Match match) => '${match[1]}.');
+    
+    return '${isNeg ? "-" : ""}$formattedWhole,$decimals €';
+  }
+
+  Widget _buildChoiceFilter<T>(
+    T selected,
+    Map<T, String> options,
+    Function(T) onChanged,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        children: options.entries.map((entry) {
+          final isSelected = selected == entry.key;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => onChanged(entry.key),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? SkyTheme.timRed : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    entry.value,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? Colors.white : Colors.grey.shade700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
     );
   }
 
@@ -915,6 +1197,34 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
         if (d.category == 'giustificativi_prepagati') d.code: d.value
     };
 
+    final logHistories = ref.read(logHistoryProvider);
+    final logHistoryMap = {
+      for (final log in logHistories) log.uniqueCode: log.fileName,
+    };
+
+    final anagrafiche = ref.read(anagraficaProvider);
+    final anagraficaMap = {
+      for (final a in anagrafiche)
+        if (a.cid != null) a.cid!.trim().padLeft(8, '0'): a.nominativo
+    };
+
+    final contabileRecords = ref.read(tracciatoContabilesProvider);
+    
+    // 1. Incroci perfetti (CID + Trasferta + Importo)
+    final matches = contabileRecords.where((tc) {
+      final cidMatch = tc.cid.trim().padLeft(8, '0') == record.cid.trim().padLeft(8, '0');
+      final trasfMatch = tc.numeroTrasferta.trim() == record.numeroTrasferta.trim();
+      final contabileSignedImporto = (tc.isNegative ? -1.0 : 1.0) * tc.importo;
+      final importoMatch = (contabileSignedImporto - record.importo).abs() < 0.01;
+      return cidMatch && trasfMatch && importoMatch;
+    }).toList();
+
+    // 2. Tutti i riscontri per numero trasferta (anche se con CID o Importo differenti)
+    final allTrasfMatches = contabileRecords.where((tc) {
+      return tc.numeroTrasferta.trim().isNotEmpty && 
+             tc.numeroTrasferta.trim() == record.numeroTrasferta.trim();
+    }).toList();
+
     showDialog(
       context: context,
       builder: (context) {
@@ -1010,6 +1320,16 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                           ),
                           _buildDetailRow('Note Aggiuntive', record.note ?? '-'),
                         ]),
+                        const SizedBox(height: 24),
+                        _buildCrossReferencedSection(
+                          context, 
+                          record,
+                          matches, 
+                          allTrasfMatches, 
+                          prepagatiMap, 
+                          logHistoryMap,
+                          anagraficaMap,
+                        ),
                       ],
                     ),
                   ),
@@ -1038,6 +1358,382 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildCrossReferencedSection(
+    BuildContext context, 
+    ScartiEcSap record,
+    List<TracciatoContabile> matches, 
+    List<TracciatoContabile> allTrasfMatches,
+    Map<String, String> prepagatiMap,
+    Map<String, String> logHistoryMap,
+    Map<String, String?> anagraficaMap,
+  ) {
+    final bool hasMatches = matches.isNotEmpty;
+    final bool hasTrasfMatches = allTrasfMatches.isNotEmpty;
+
+    // Filtra gli incroci perfetti
+    final perfectMatches = allTrasfMatches.where((tc) {
+      return matches.any((m) => m.id == tc.id);
+    }).toList();
+
+    // Filtra gli incroci con discrepanze (importo o CID diversi)
+    final mismatchedMatches = allTrasfMatches.where((tc) {
+      return !matches.any((m) => m.id == tc.id);
+    }).toList();
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(
+          color: hasMatches 
+            ? Colors.green.shade200 
+            : (hasTrasfMatches ? Colors.orange.shade300 : Colors.red.shade200),
+          width: 1.5,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                hasMatches 
+                  ? Icons.check_circle_outline 
+                  : (hasTrasfMatches ? Icons.warning_amber_outlined : Icons.cancel_outlined),
+                color: hasMatches 
+                  ? Colors.green.shade700 
+                  : (hasTrasfMatches ? Colors.orange.shade700 : Colors.red.shade700),
+                size: 20,
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  hasMatches 
+                    ? 'Riscontro Contabile Perfetto (${matches.length})' 
+                    : (hasTrasfMatches 
+                        ? 'Riscontro Trasferta Parziale (${allTrasfMatches.length})' 
+                        : 'Nessun Riscontro in Contabilità'),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: hasMatches 
+                      ? Colors.green.shade800 
+                      : (hasTrasfMatches ? Colors.orange.shade800 : Colors.red.shade800),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            hasMatches
+              ? 'Incrocio avvenuto con successo per CID, Trasferta e Importo.'
+              : (hasTrasfMatches
+                  ? 'Il numero trasferta esiste in contabilità, ma ci sono discrepanze di CID o Importo.'
+                  : 'Nessuna trasferta corrispondente trovata nel Tracciato Contabile.'),
+            style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+          ),
+          
+          if (hasTrasfMatches) ...[
+            const SizedBox(height: 12),
+            const Divider(),
+            
+            if (perfectMatches.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.only(top: 12.0, bottom: 8.0),
+                child: Row(
+                  children: [
+                    Icon(Icons.check_circle_outline, color: Colors.green.shade700, size: 14),
+                    const SizedBox(width: 6),
+                    Text(
+                      'INCROCI PERFETTI',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green.shade800,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ...perfectMatches.map((tc) => _buildContabileMatchCard(
+                    context, 
+                    tc, 
+                    record, 
+                    matches, 
+                    prepagatiMap, 
+                    logHistoryMap, 
+                    anagraficaMap,
+                  )),
+            ],
+
+            if (mismatchedMatches.isNotEmpty) ...[
+              Padding(
+                padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+                child: Row(
+                  children: [
+                    Icon(Icons.warning_amber_outlined, color: Colors.orange.shade800, size: 14),
+                    const SizedBox(width: 6),
+                    Text(
+                      'DISCREPANZE / IMPORTI DIVERSI',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.orange.shade800,
+                        letterSpacing: 1.0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              ...mismatchedMatches.map((tc) => _buildContabileMatchCard(
+                    context, 
+                    tc, 
+                    record, 
+                    matches, 
+                    prepagatiMap, 
+                    logHistoryMap, 
+                    anagraficaMap,
+                  )),
+            ],
+          ] else ...[
+            const SizedBox(height: 12),
+            Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  Icon(Icons.cancel_outlined, color: Colors.red.shade700, size: 18),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      'La trasferta `${record.numeroTrasferta}` è completamente assente dal Tracciato Contabile.',
+                      style: TextStyle(fontSize: 11, color: Colors.red.shade800, height: 1.3),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ]
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContabileMatchCard(
+    BuildContext context,
+    TracciatoContabile tc,
+    ScartiEcSap record,
+    List<TracciatoContabile> matches,
+    Map<String, String> prepagatiMap,
+    Map<String, String> logHistoryMap,
+    Map<String, String?> anagraficaMap,
+  ) {
+    final spesaLabel = prepagatiMap[tc.giustificativoSpesa] != null
+        ? '${tc.giustificativoSpesa} - ${prepagatiMap[tc.giustificativoSpesa]}'
+        : tc.giustificativoSpesa;
+    final fileName = tc.logHistoryId != null ? logHistoryMap[tc.logHistoryId] : null;
+    
+    final isPerfectMatch = matches.any((m) => m.id == tc.id);
+    final isSameCid = tc.cid.trim().padLeft(8, '0') == record.cid.trim().padLeft(8, '0');
+    
+    final tcSignedImporto = (tc.isNegative ? -1.0 : 1.0) * tc.importo;
+    final isSameImporto = (tcSignedImporto - record.importo).abs() < 0.01;
+    
+    final nominativo = anagraficaMap[tc.cid.trim().padLeft(8, '0')] ?? 'Nominativo non trovato';
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: isPerfectMatch ? Colors.green.shade50.withAlpha(120) : Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: isPerfectMatch 
+            ? Colors.green.shade300 
+            : (isSameCid || isSameImporto ? Colors.orange.shade200 : Colors.grey.shade200),
+          width: isPerfectMatch ? 1.5 : 1.0,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Bolla: ${tc.numeroBolla.isEmpty ? "-" : tc.numeroBolla}',
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                  if (tc.numeroBolla.isNotEmpty) ...[
+                    const SizedBox(width: 6),
+                    Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(4),
+                        onTap: () {
+                          Clipboard.setData(ClipboardData(text: tc.numeroBolla));
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text('Numero Bolla ${tc.numeroBolla} copiato negli appunti'),
+                              duration: const Duration(seconds: 1),
+                              backgroundColor: SkyTheme.timBlue,
+                            ),
+                          );
+                        },
+                        child: const Padding(
+                          padding: EdgeInsets.all(4.0),
+                          child: Icon(Icons.copy_rounded, size: 14, color: Colors.grey),
+                        ),
+                      ),
+                    ),
+                  ],
+                  if (isPerfectMatch) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                      decoration: BoxDecoration(
+                        color: Colors.green.shade600,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: const [
+                          Icon(Icons.check, size: 10, color: Colors.white),
+                          SizedBox(width: 2),
+                          Text(
+                            'INCROCIO PERFETTO',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 9,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ],
+              ),
+              Text(
+                '${tc.isNegative ? "-" : ""}${tc.importo.toStringAsFixed(2)} ${tc.valuta}',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                  color: tc.isNegative ? Colors.red.shade700 : Colors.green.shade800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          
+          // Informazioni di confronto (CID e Importo)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(
+                isSameCid ? Icons.check_circle_outline : Icons.warning_amber_outlined,
+                size: 14,
+                color: isSameCid ? Colors.green.shade600 : Colors.orange.shade700,
+              ),
+              const SizedBox(width: 6),
+              Expanded(
+                child: Text(
+                  isSameCid 
+                    ? 'CID: ${tc.cid} ($nominativo) [Coincide]'
+                    : 'CID Diverso: ${tc.cid} ($nominativo)',
+                  style: TextStyle(
+                    fontSize: 11.5, 
+                    fontWeight: isSameCid ? FontWeight.normal : FontWeight.bold,
+                    color: isSameCid ? Colors.grey.shade700 : Colors.orange.shade800
+                  ),
+                ),
+              ),
+            ],
+          ),
+          if (!isSameImporto) ...[
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Icon(
+                  Icons.warning_amber_outlined,
+                  size: 14,
+                  color: Colors.orange.shade700,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  'Importo Diverso (Scarto: ${record.importo.toStringAsFixed(2)} ${record.divisa})',
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.orange.shade800,
+                  ),
+                ),
+              ],
+            ),
+          ],
+
+          const SizedBox(height: 8),
+          Text(
+            'Spesa: $spesaLabel',
+            style: const TextStyle(fontSize: 12),
+          ),
+          const SizedBox(height: 4),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'Località: ${tc.localita}',
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Data: ${tc.dataSpesa}',
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+              ),
+            ],
+          ),
+          if (fileName != null) ...[
+            const SizedBox(height: 8),
+            const Divider(height: 1, thickness: 0.5),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Icon(Icons.insert_drive_file_outlined, size: 12, color: Colors.grey.shade600),
+                const SizedBox(width: 4),
+                Expanded(
+                  child: Text(
+                    'File: $fileName',
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey.shade600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ],
+      ),
     );
   }
 

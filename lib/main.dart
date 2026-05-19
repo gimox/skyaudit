@@ -23,8 +23,28 @@ import 'package:travel_check/features/upload/models/scarti_ec_sap.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Inizializzazione Isar
+  // Inizializzazione Isar con pulizia una tantum per migrazione schema
   final dir = await getApplicationDocumentsDirectory();
+  final resetFile = File('${dir.path}/.isar_reset_v3');
+  if (!resetFile.existsSync()) {
+    final files = [
+      File('${dir.path}/default.isar'),
+      File('${dir.path}/default.isar.lock'),
+    ];
+    for (final f in files) {
+      if (f.existsSync()) {
+        try {
+          f.deleteSync();
+        } catch (e) {
+          debugPrint('Errore rimozione file isar per migrazione: $e');
+        }
+      }
+    }
+    try {
+      resetFile.createSync();
+    } catch (_) {}
+  }
+
   final isar = await Isar.open(
     [
       TracciatoContabileSchema,

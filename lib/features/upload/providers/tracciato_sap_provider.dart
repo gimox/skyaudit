@@ -130,10 +130,28 @@ Future<List<Map<String, dynamic>>> _parseSapIsolate(Map<String, dynamic> params)
         if (index >= row.length) return 0.0;
         final val = row[index]?.value;
         if (val == null) return 0.0;
+        if (val is DoubleCellValue) return val.value;
+        if (val is IntCellValue) return val.value.toDouble();
+
         
-        final stringVal = val.toString().replaceAll(',', '.').trim();
-        return double.tryParse(stringVal) ?? 0.0;
+        String s = val.toString().replaceAll(' ', '').trim();
+        if (s.isEmpty) return 0.0;
+        
+        if (s.contains('.') && s.contains(',')) {
+          final dotIndex = s.indexOf('.');
+          final commaIndex = s.indexOf(',');
+          if (dotIndex < commaIndex) {
+            s = s.replaceAll('.', '').replaceAll(',', '.');
+          } else {
+            s = s.replaceAll(',', '');
+          }
+        } else if (s.contains(',')) {
+          s = s.replaceAll(',', '.');
+        }
+        
+        return double.tryParse(s) ?? 0.0;
       }
+
 
       // Helper to get date safely and normalized to DD/MM/YYYY
       String getDateString(int index) {

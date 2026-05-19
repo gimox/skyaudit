@@ -70,8 +70,25 @@ class TracciatoSap {
       final val = row[index];
       if (val == null) return 0.0;
       if (val is num) return val.toDouble();
-      return double.tryParse(val.toString().replaceAll(',', '.')) ?? 0.0;
+      
+      String s = val.toString().replaceAll(' ', '').trim();
+      if (s.isEmpty) return 0.0;
+      
+      if (s.contains('.') && s.contains(',')) {
+        final dotIndex = s.indexOf('.');
+        final commaIndex = s.indexOf(',');
+        if (dotIndex < commaIndex) {
+          s = s.replaceAll('.', '').replaceAll(',', '.');
+        } else {
+          s = s.replaceAll(',', '');
+        }
+      } else if (s.contains(',')) {
+        s = s.replaceAll(',', '.');
+      }
+      
+      return double.tryParse(s) ?? 0.0;
     }
+
 
     return TracciatoSap(
       cid: getString(0),

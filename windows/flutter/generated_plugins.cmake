@@ -4,10 +4,14 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   desktop_drop
+  desktop_webview_window
+  flutter_secure_storage_windows
   isar_flutter_libs
   screen_retriever_windows
+  url_launcher_windows
   video_player_win
   window_manager
+  window_to_front
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST

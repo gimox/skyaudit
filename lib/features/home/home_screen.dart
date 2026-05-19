@@ -17,6 +17,7 @@ import 'package:travel_check/features/analysis/amex_analysis_view.dart';
 import 'package:travel_check/features/travel_history/travel_history_view.dart';
 import 'package:travel_check/features/anagrafica/anagrafica_view.dart';
 import 'package:travel_check/features/analysis/scarti_ec_view.dart';
+import 'package:travel_check/features/sync_file/sync_file_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -41,7 +42,6 @@ class _HomeScreenState extends State<HomeScreen> {
         (Platform.isMacOS || Platform.isWindows || Platform.isLinux)) {
       await windowManager.setTitleBarStyle(TitleBarStyle.normal);
       await windowManager.setResizable(true);
-      // await windowManager.setAspectRatio(16 / 9);
       await windowManager.setSize(const Size(1400, 720));
       await windowManager.setMinimumSize(const Size(600, 400));
       await windowManager.center();
@@ -54,7 +54,6 @@ class _HomeScreenState extends State<HomeScreen> {
     final bool isMobile = screenWidth < 600;
     final bool isMedium = screenWidth >= 600 && screenWidth < 1000;
 
-    // Se lo schermo è medio, forziamo il collapse se non è già stato fatto
     final bool effectiveCollapsed = isMedium || _isSidebarCollapsed;
 
     return Scaffold(
@@ -115,36 +114,39 @@ class _HomeScreenState extends State<HomeScreen> {
       return const DashboardView();
     }
     if (_selectedIndex == 1) {
-      return const UploadView();
-    }
-    if (_selectedIndex == 2) {
       return const AnalysisView();
     }
-    if (_selectedIndex == 3) {
+    if (_selectedIndex == 2) {
       return const EstrattiContoView();
     }
-    if (_selectedIndex == 4) {
+    if (_selectedIndex == 3) {
       return const ScartiEcView();
     }
-    if (_selectedIndex == 5) {
+    if (_selectedIndex == 4) {
       return const AmexAnalysisView();
     }
-    if (_selectedIndex == 6) {
+    if (_selectedIndex == 5) {
       return const SapAnalysisView();
     }
-    if (_selectedIndex == 7) {
+    if (_selectedIndex == 6) {
       return const ControlsView();
     }
-    if (_selectedIndex == 8) {
+    if (_selectedIndex == 7) {
       return const TravelHistoryView();
     }
-    if (_selectedIndex == 9) {
+    if (_selectedIndex == 8) {
       return const AnagraficaView();
     }
+    if (_selectedIndex == 9) {
+      return const UploadView();
+    }
     if (_selectedIndex == 10) {
-      return const LogHistoryView();
+      return const SyncFileView();
     }
     if (_selectedIndex == 11) {
+      return const LogHistoryView();
+    }
+    if (_selectedIndex == 12) {
       return const SettingsView();
     }
 
@@ -183,28 +185,30 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return Icons.dashboard_outlined;
       case 1:
-        return Icons.file_upload_outlined;
+        return Icons.analytics_outlined;
       case 2:
-        return Icons.analytics_outlined;
-      case 3:
         return Icons.account_balance_wallet_outlined;
-      case 4:
+      case 3:
         return Icons.warning_amber_outlined;
-      case 5:
+      case 4:
         return Icons.credit_card_outlined;
-      case 6:
+      case 5:
         return Icons.analytics_outlined;
-      case 7:
+      case 6:
         return Icons.fact_check_outlined;
-      case 8:
+      case 7:
         return Icons.map_outlined;
-      case 9:
+      case 8:
         return Icons.people_outline;
+      case 9:
+        return Icons.file_upload_outlined;
       case 10:
-        return Icons.history_outlined;
+        return Icons.sync_outlined;
       case 11:
-        return Icons.settings_outlined;
+        return Icons.history_outlined;
       case 12:
+        return Icons.settings_outlined;
+      case 13:
         return Icons.help_outline;
       default:
         return Icons.home_outlined;
@@ -216,28 +220,30 @@ class _HomeScreenState extends State<HomeScreen> {
       case 0:
         return 'Dashboard';
       case 1:
-        return 'Carica File';
-      case 2:
         return 'Tracciato Contabile';
-      case 3:
+      case 2:
         return 'Estratti Conto';
-      case 4:
+      case 3:
         return 'Scarti Tracciato';
-      case 5:
+      case 4:
         return 'Estratti AMEX';
-      case 6:
+      case 5:
         return 'Tracciato SAP';
-      case 7:
+      case 6:
         return 'Controlli Trasferte';
-      case 8:
+      case 7:
         return 'Dove Viaggi';
-      case 9:
+      case 8:
         return 'Anagrafica';
+      case 9:
+        return 'Carica File';
       case 10:
-        return 'Log History';
+        return 'Sync File';
       case 11:
-        return 'Impostazioni';
+        return 'Log History';
       case 12:
+        return 'Impostazioni';
+      case 13:
         return 'Supporto';
       default:
         return 'Home';

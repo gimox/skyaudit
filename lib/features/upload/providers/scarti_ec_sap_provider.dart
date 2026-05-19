@@ -140,15 +140,33 @@ Future<List<Map<String, dynamic>>> _parseScartiIsolate(Map<String, dynamic> para
         return s.padLeft(8, '0');
       }
 
-      // Helper per importi decimali (es. "  163,80" -> 163.8)
+      // Helper per importi decimali (es. "  2.412,00" -> 2412.0)
       double getDouble(int index) {
         if (index >= row.length) return 0.0;
         final val = row[index]?.value;
         if (val == null) return 0.0;
+        if (val is DoubleCellValue) return val.value;
+        if (val is IntCellValue) return val.value.toDouble();
+
         
-        final stringVal = val.toString().replaceAll(' ', '').replaceAll(',', '.').trim();
-        return double.tryParse(stringVal) ?? 0.0;
+        String s = val.toString().replaceAll(' ', '').trim();
+        if (s.isEmpty) return 0.0;
+        
+        if (s.contains('.') && s.contains(',')) {
+          final dotIndex = s.indexOf('.');
+          final commaIndex = s.indexOf(',');
+          if (dotIndex < commaIndex) {
+            s = s.replaceAll('.', '').replaceAll(',', '.');
+          } else {
+            s = s.replaceAll(',', '');
+          }
+        } else if (s.contains(',')) {
+          s = s.replaceAll(',', '.');
+        }
+        
+        return double.tryParse(s) ?? 0.0;
       }
+
 
       // Helper per normalizzare data da dd.MM.yyyy / ISO8601 a dd/MM/yyyy
       String getDateString(int index) {

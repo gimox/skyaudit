@@ -7,6 +7,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
 import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
+import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 
 final _defaultDate = DateTime(DateTime.now().year, DateTime.now().month - 1, 1);
@@ -48,6 +49,11 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final selectedTipi = ref.watch(selectedTipiProvider);
     final sortAscending = ref.watch(sortAscendingProvider);
     final currentPage = ref.watch(analysisPageProvider);
+    final anagrafiche = ref.watch(anagraficaProvider);
+    final anagraficheMap = {
+      for (var a in anagrafiche)
+        if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
+    };
     const pageSize = 50;
 
     if (allRecords.isEmpty) {
@@ -144,11 +150,15 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
 
           if (selectedMonth != null && month != selectedMonth) return false;
           if (selectedYear != null && year != selectedYear) return false;
-          if (selectedTrasferta != null &&
-              !r.numeroTrasferta.toLowerCase().contains(selectedTrasferta.toLowerCase()) &&
-              !r.cid.toLowerCase().contains(selectedTrasferta.toLowerCase()) &&
-              !r.numeroBolla.toLowerCase().contains(selectedTrasferta.toLowerCase())) {
-            return false;
+          if (selectedTrasferta != null) {
+            final query = selectedTrasferta.toLowerCase();
+            final name = anagraficheMap[r.cid.trim()] ?? '';
+            if (!r.numeroTrasferta.toLowerCase().contains(query) &&
+                !r.cid.toLowerCase().contains(query) &&
+                !r.numeroBolla.toLowerCase().contains(query) &&
+                !name.toLowerCase().contains(query)) {
+              return false;
+            }
           }
           if (selectedSocieta != null && r.societa != selectedSocieta) {
             return false;
@@ -294,6 +304,11 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
+                        if (selectedTrasferta != null)
+                          _buildFilterChip('Cerca: "$selectedTrasferta"', () {
+                            ref.read(selectedTrasfertaProvider.notifier).state = null;
+                            _trasfertaController.clear();
+                          }),
                         if (selectedYear != null) _buildFilterChip('Anno: $selectedYear', () => ref.read(selectedYearProvider.notifier).state = null),
                         if (selectedMonth != null) _buildFilterChip('Mese: ${monthNames[selectedMonth]}', () => ref.read(selectedMonthProvider.notifier).state = null),
                         if (selectedSocieta != null) _buildFilterChip('Società: $selectedSocieta', () => ref.read(selectedSocietaProvider.notifier).state = null),
@@ -330,7 +345,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
-                      width: 1650,
+                      width: 1870,
                       child: Column(
                         children: [
                           // HEADER FISSO
@@ -343,7 +358,10 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                             child: Row(
                               children: [
                                 _buildCell('CID', 140, isHeader: true),
+                                _buildCell('NOMINATIVO', 220, isHeader: true),
                                 _buildCell('TRASFERTA', 160, isHeader: true),
+                                _buildCell('IMPORTO', 140, isHeader: true),
+                                _buildCell('SEGNO', 80, isHeader: true),
                                 _buildCell('GIUSTIFICATIVO', 250, isHeader: true),
                                 _buildCell('BOLLA', 150, isHeader: true),
                                 _buildCell('SOCIETÀ', 100, isHeader: true),
@@ -351,8 +369,6 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                 _buildCell('DATA INIZIO', 120, isHeader: true),
                                 _buildCell('DATA FINE', 120, isHeader: true),
                                 _buildCell('LOCALITÀ', 170, isHeader: true),
-                                _buildCell('IMPORTO', 140, isHeader: true),
-                                _buildCell('SEGNO', 80, isHeader: true),
                                 _buildCell('AZIONI', 100, isHeader: true, alignment: Alignment.center),
                               ],
                             ),
@@ -375,7 +391,10 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                     child: Row(
                                       children: [
                                         _buildCopyableCell(record.cid, 140, typeLabel: 'CID', fontWeight: FontWeight.w500),
+                                        _buildCell(anagraficheMap[record.cid.trim()] ?? '', 220, fontWeight: FontWeight.w500),
                                         _buildCopyableCell(record.numeroTrasferta, 160, typeLabel: 'Trasferta'),
+                                        _buildCell('${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}', 140, fontWeight: FontWeight.bold, color: record.isNegative ? Colors.red.shade700 : Colors.green.shade800),
+                                        _buildCell('', 80, child: Icon(record.isNegative ? Icons.remove_circle_outline : Icons.add_circle_outline, color: record.isNegative ? Colors.red.shade300 : Colors.green.shade300, size: 18)),
                                         _buildCell(dictionaryMap[record.giustificativoSpesa] != null ? '${record.giustificativoSpesa} - ${dictionaryMap[record.giustificativoSpesa]}' : record.giustificativoSpesa, 250, color: dictionaryMap[record.giustificativoSpesa] != null ? SkyTheme.timBlue : null),
                                         _buildCopyableCell(record.numeroBolla, 150, typeLabel: 'Bolla'),
                                         _buildCell(dictionaryMap[record.societa] != null ? '${record.societa} - ${dictionaryMap[record.societa]}' : record.societa, 100, color: dictionaryMap[record.societa] != null ? SkyTheme.timBlue : null),
@@ -383,8 +402,6 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                         _buildCell(record.dataInizio, 120),
                                         _buildCell(record.dataFine, 120),
                                         _buildCell(record.localita, 170),
-                                        _buildCell('${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}', 140, color: record.isNegative ? Colors.red.shade700 : Colors.green.shade800),
-                                        _buildCell('', 80, child: Icon(record.isNegative ? Icons.remove_circle_outline : Icons.add_circle_outline, color: record.isNegative ? Colors.red.shade300 : Colors.green.shade300, size: 18)),
                                         _buildCell('', 100, alignment: Alignment.center, child: IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record, dictionaryMap), padding: EdgeInsets.zero, constraints: const BoxConstraints())),
                                       ],
                                     ),
@@ -944,9 +961,16 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
       final sheet = excel['Tracciato'];
       excel.setDefaultSheet('Tracciato');
 
+      final anagrafiche = ref.read(anagraficaProvider);
+      final anagraficheMap = {
+        for (var a in anagrafiche)
+          if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
+      };
+
       // Header
       sheet.appendRow([
         TextCellValue('CID'),
+        TextCellValue('Nominativo'),
         TextCellValue('Trasferta'),
         TextCellValue('Progressivo'),
         TextCellValue('Società'),
@@ -970,6 +994,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
         final amountValue = r.isNegative ? -r.importo : r.importo;
         sheet.appendRow([
           TextCellValue(r.cid),
+          TextCellValue(anagraficheMap[r.cid.trim()] ?? ''),
           TextCellValue(r.numeroTrasferta),
           TextCellValue(r.progressivo),
           TextCellValue(r.societa),

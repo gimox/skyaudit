@@ -6,6 +6,8 @@ import 'package:excel/excel.dart' hide Border;
 import 'package:file_picker/file_picker.dart';
 import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
 import 'package:travel_check/features/upload/models/estratto_conto.dart';
+import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 
 // Filter providers for Estratti Conto
@@ -16,6 +18,9 @@ final ecEndDateProvider = StateProvider<DateTime?>((ref) => null);
 final ecSelectedTipiServizioProvider = StateProvider<Set<String>>((ref) => {});
 final ecSortAscendingProvider = StateProvider<bool>((ref) => false);
 final ecPageProvider = StateProvider<int>((ref) => 0);
+
+enum EcTrasfertaPresenzaFilter { all, present, notPresent }
+final ecTrasfertaPresenzaFilterProvider = StateProvider<EcTrasfertaPresenzaFilter>((ref) => EcTrasfertaPresenzaFilter.all);
 
 class EstrattiContoView extends ConsumerStatefulWidget {
   const EstrattiContoView({super.key});
@@ -38,13 +43,24 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
   @override
   Widget build(BuildContext context) {
     final allRecords = ref.watch(estrattoContoProvider);
+    final contabileRecords = ref.watch(tracciatoContabilesProvider);
+    final contabileTrasferte = contabileRecords
+        .map((tc) => tc.numeroTrasferta.trim())
+        .where((t) => t.isNotEmpty)
+        .toSet();
     final selectedTrasferta = ref.watch(ecSelectedTrasfertaProvider);
     final selectedSocieta = ref.watch(ecSelectedSocietaProvider);
     final startDate = ref.watch(ecStartDateProvider);
     final endDate = ref.watch(ecEndDateProvider);
     final selectedTipi = ref.watch(ecSelectedTipiServizioProvider);
+    final trasfertaFilter = ref.watch(ecTrasfertaPresenzaFilterProvider);
     final sortAscending = ref.watch(ecSortAscendingProvider);
     final currentPage = ref.watch(ecPageProvider);
+    final anagrafiche = ref.watch(anagraficaProvider);
+    final anagraficheMap = {
+      for (var a in anagrafiche)
+        if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
+    };
     const pageSize = 50;
 
     if (allRecords.isEmpty) {
@@ -80,6 +96,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       startDate != null,
       endDate != null,
       selectedTipi.isNotEmpty,
+      trasfertaFilter != EcTrasfertaPresenzaFilter.all,
     ].where((e) => e).length;
 
     // Estrai società disponibili per il filtro
@@ -101,9 +118,11 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     final filteredRecords = allRecords.where((r) {
       if (selectedTrasferta != null) {
         final query = selectedTrasferta.toLowerCase();
+        final name = anagraficheMap[r.cid.trim()] ?? '';
         if (!r.numeroTrasferta.toLowerCase().contains(query) &&
             !r.cid.toLowerCase().contains(query) &&
-            !r.bolla.toLowerCase().contains(query)) {
+            !r.bolla.toLowerCase().contains(query) &&
+            !name.toLowerCase().contains(query)) {
           return false;
         }
       }
@@ -126,6 +145,13 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       // Filtro Tipo Servizio
       if (selectedTipi.isNotEmpty && !selectedTipi.contains(r.tipoServizio)) return false;
       
+      // Filtro Presenza in Tracciato Contabile
+      if (trasfertaFilter != EcTrasfertaPresenzaFilter.all) {
+        final isPresent = contabileTrasferte.contains(r.numeroTrasferta.trim());
+        if (trasfertaFilter == EcTrasfertaPresenzaFilter.present && !isPresent) return false;
+        if (trasfertaFilter == EcTrasfertaPresenzaFilter.notPresent && isPresent) return false;
+      }
+
       return true;
     }).toList()
       ..sort((a, b) {
@@ -248,10 +274,22 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
+                        if (selectedTrasferta != null)
+                          _buildFilterChip('Cerca: "$selectedTrasferta"', () {
+                            ref.read(ecSelectedTrasfertaProvider.notifier).state = null;
+                            _trasfertaController.clear();
+                          }),
                         if (selectedSocieta != null) _buildFilterChip('Società: $selectedSocieta', () => ref.read(ecSelectedSocietaProvider.notifier).state = null),
                         if (startDate != null) _buildFilterChip('Dal: ${startDate.day}/${startDate.month}/${startDate.year}', () => ref.read(ecStartDateProvider.notifier).state = null),
                         if (endDate != null) _buildFilterChip('Al: ${endDate.day}/${endDate.month}/${endDate.year}', () => ref.read(ecEndDateProvider.notifier).state = null),
                         if (selectedTipi.isNotEmpty) _buildFilterChip('Tipi: ${selectedTipi.length}', () => ref.read(ecSelectedTipiServizioProvider.notifier).state = {}),
+                        if (trasfertaFilter != EcTrasfertaPresenzaFilter.all)
+                          _buildFilterChip(
+                            trasfertaFilter == EcTrasfertaPresenzaFilter.present
+                                ? 'Riscontro: Presenti'
+                                : 'Riscontro: Non Presenti',
+                            () => ref.read(ecTrasfertaPresenzaFilterProvider.notifier).state = EcTrasfertaPresenzaFilter.all,
+                          ),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
                     ),
@@ -281,7 +319,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
-                      width: 1300,
+                      width: 1520,
                       child: Column(
                         children: [
                           // HEADER FISSO
@@ -294,13 +332,14 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                             child: Row(
                               children: [
                                 _buildCell('CID', 120, isHeader: true),
+                                _buildCell('NOMINATIVO', 220, isHeader: true),
                                 _buildCell('TRASFERTA', 150, isHeader: true),
+                                _buildCell('IMPORTO', 100, isHeader: true),
                                 _buildCell('TIPO SERVIZIO', 150, isHeader: true),
                                 _buildCell('BOLLA', 150, isHeader: true),
                                 _buildCell('SOCIETÀ', 250, isHeader: true),
                                 _buildCell('DATA BOLLA', 120, isHeader: true),
                                 _buildCell('DATA COMP.', 140, isHeader: true),
-                                _buildCell('TOTALE', 100, isHeader: true),
                                 _buildCell('AZIONI', 120, isHeader: true, alignment: Alignment.center),
                               ],
                             ),
@@ -323,13 +362,22 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                                     child: Row(
                                       children: [
                                         _buildCopyableCell(record.cid, 120, typeLabel: 'CID', fontWeight: FontWeight.w500),
-                                        _buildCopyableCell(record.numeroTrasferta, 150, typeLabel: 'Trasferta'),
+                                        _buildCell(anagraficheMap[record.cid.trim()] ?? '', 220, fontWeight: FontWeight.w500),
+                                        _buildCopyableCell(
+                                          record.numeroTrasferta, 
+                                          150, 
+                                          typeLabel: 'Trasferta',
+                                          fontWeight: FontWeight.bold,
+                                          color: contabileTrasferte.contains(record.numeroTrasferta.trim())
+                                              ? Colors.green.shade800
+                                              : Colors.red.shade700,
+                                        ),
+                                        _buildCell('${record.totaleServizio.toStringAsFixed(2)} €', 100, fontWeight: FontWeight.bold, color: record.totaleServizio < 0 ? Colors.red.shade700 : Colors.green.shade800),
                                         _buildCell(record.tipoServizio, 150),
                                         _buildCopyableCell(record.bolla, 150, typeLabel: 'Bolla'),
                                         _buildCell(record.ragioneSociale, 250),
                                         _buildCell(record.dataBolla, 120),
                                         _buildCell(record.dataCompetenza, 140),
-                                        _buildCell('${record.totaleServizio.toStringAsFixed(2)} €', 100, fontWeight: FontWeight.bold, color: record.totaleServizio < 0 ? Colors.red.shade700 : Colors.green.shade800),
                                         _buildCell('', 120, alignment: Alignment.center, child: Row(mainAxisSize: MainAxisSize.min, children: [
                                           IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
                                           const SizedBox(width: 12),
@@ -423,6 +471,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     ref.read(ecStartDateProvider.notifier).state = null;
     ref.read(ecEndDateProvider.notifier).state = null;
     ref.read(ecSelectedTipiServizioProvider.notifier).state = {};
+    ref.read(ecTrasfertaPresenzaFilterProvider.notifier).state = EcTrasfertaPresenzaFilter.all;
     ref.read(ecPageProvider.notifier).state = 0;
     _trasfertaController.clear();
   }
@@ -542,6 +591,18 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                     ref.read(ecSelectedTipiServizioProvider.notifier).state = next;
                   },
                   icon: Icons.layers_outlined,
+                ),
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('RISCONTRO CONTABILE'),
+                const SizedBox(height: 12),
+                _buildChoiceFilter<EcTrasfertaPresenzaFilter>(
+                  ref.watch(ecTrasfertaPresenzaFilterProvider),
+                  {
+                    EcTrasfertaPresenzaFilter.all: 'Tutte',
+                    EcTrasfertaPresenzaFilter.present: 'Presenti',
+                    EcTrasfertaPresenzaFilter.notPresent: 'Non Presenti',
+                  },
+                  (val) => ref.read(ecTrasfertaPresenzaFilterProvider.notifier).state = val,
                 ),
               ],
             ),
@@ -697,6 +758,49 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
           ],
           onChanged: (val) { if (val != null || (null is T)) onChanged(val as T); },
         ),
+      ),
+    );
+  }
+
+  Widget _buildChoiceFilter<T>(
+    T selected,
+    Map<T, String> options,
+    Function(T) onChanged,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        children: options.entries.map((entry) {
+          final isSelected = selected == entry.key;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => onChanged(entry.key),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? SkyTheme.timRed : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    entry.value,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? Colors.white : Colors.grey.shade700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -998,6 +1102,12 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       final sheet = excel['EstrattiConto'];
       excel.delete('Sheet1');
 
+      final anagrafiche = ref.read(anagraficaProvider);
+      final anagraficheMap = {
+        for (var a in anagrafiche)
+          if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
+      };
+
       sheet.appendRow([
         TextCellValue('ID'),
         TextCellValue('Nr Estratto Conto'),
@@ -1037,6 +1147,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         TextCellValue('Codice Sistemazione'),
         TextCellValue('Richiedente'),
         TextCellValue('CID'),
+        TextCellValue('Nominativo'),
         TextCellValue('Centro Costo'),
         TextCellValue('Numero Trasferta'),
         TextCellValue('Campo Statistico 4'),
@@ -1099,6 +1210,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
           TextCellValue(r.codiceSistemazione),
           TextCellValue(r.richiedente),
           TextCellValue(r.cid),
+          TextCellValue(anagraficheMap[r.cid.trim()] ?? ''),
           TextCellValue(r.centroCosto),
           TextCellValue(r.numeroTrasferta),
           TextCellValue(r.campoStatistico4),

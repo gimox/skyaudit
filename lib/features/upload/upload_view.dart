@@ -16,7 +16,6 @@ import 'package:travel_check/features/upload/providers/estratto_amex_provider.da
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/features/upload/providers/scarti_ec_sap_provider.dart';
-
 class UploadView extends ConsumerStatefulWidget {
   const UploadView({super.key});
 
@@ -763,10 +762,12 @@ class _UploadViewState extends ConsumerState<UploadView> {
                 const Spacer(),
                 if (result['uniqueCode'] != null)
                   TextButton.icon(
-                    onPressed: () => _confirmDeleteFullImport(
-                      result['uniqueCode'], 
-                      dataType
-                    ),
+                    onPressed: () {
+                      _confirmDeleteFullImport(
+                        result['uniqueCode'], 
+                        dataType
+                      );
+                    },
                     icon: const Icon(Icons.history_toggle_off, color: Colors.redAccent, size: 18),
                     label: const Text(
                       'ELIMINA INTERO IMPORT',

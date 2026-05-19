@@ -106,8 +106,25 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(Map<String, dynamic> params
       final cell = row[index];
       if (cell == null) return 0.0;
       if (cell is num) return cell.toDouble();
-      return double.tryParse(cell.toString().replaceAll(',', '.')) ?? 0.0;
+      
+      String s = cell.toString().replaceAll(' ', '').trim();
+      if (s.isEmpty) return 0.0;
+      
+      if (s.contains('.') && s.contains(',')) {
+        final dotIndex = s.indexOf('.');
+        final commaIndex = s.indexOf(',');
+        if (dotIndex < commaIndex) {
+          s = s.replaceAll('.', '').replaceAll(',', '.');
+        } else {
+          s = s.replaceAll(',', '');
+        }
+      } else if (s.contains(',')) {
+        s = s.replaceAll(',', '.');
+      }
+      
+      return double.tryParse(s) ?? 0.0;
     }
+
 
     final rif5Raw = val(32); // AG
     String bollaCalc = rif5Raw;

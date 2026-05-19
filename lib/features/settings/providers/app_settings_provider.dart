@@ -11,16 +11,38 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
 
   Future<void> updateDiscardIdenticalBolla(bool value) async {
     final isar = ref.read(isarProvider);
-    final settings = state;
-    settings.discardIdenticalBolla = value;
+    final newSettings = AppSettings()
+      ..id = 0
+      ..discardIdenticalBolla = value
+      ..sharepointSiteName = state.sharepointSiteName
+      ..sharepointFolderPath = state.sharepointFolderPath
+      ..sharepointDocumentLibrary = state.sharepointDocumentLibrary;
 
     await isar.writeTxn(() async {
-      await isar.appSettings.put(settings);
+      await isar.appSettings.put(newSettings);
     });
 
-    state = settings;
-    // We manually trigger an update if needed, but state assignment should be enough
-    ref.notifyListeners();
+    state = newSettings;
+  }
+
+  Future<void> updateSharepointSettings({
+    required String siteName,
+    required String folderPath,
+    required String documentLibrary,
+  }) async {
+    final isar = ref.read(isarProvider);
+    final newSettings = AppSettings()
+      ..id = 0
+      ..discardIdenticalBolla = state.discardIdenticalBolla
+      ..sharepointSiteName = siteName
+      ..sharepointFolderPath = folderPath
+      ..sharepointDocumentLibrary = documentLibrary;
+
+    await isar.writeTxn(() async {
+      await isar.appSettings.put(newSettings);
+    });
+
+    state = newSettings;
   }
 }
 

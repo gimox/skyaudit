@@ -302,6 +302,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       maxDiff != null,
       matchStatusFilter != null,
       ref.watch(controlsShowOnlyOrphansProvider),
+      searchQuery.isNotEmpty,
     ].where((e) => e).length;
 
     return Scaffold(
@@ -439,6 +440,11 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
+                        if (searchQuery.isNotEmpty)
+                          _buildFilterChip('Cerca: "$searchQuery"', () {
+                            ref.read(controlsSearchProvider.notifier).state = '';
+                            _searchController.clear();
+                          }),
                         if (startDate != null)
                           _buildFilterChip('Dal: ${startDate.day}/${startDate.month}/${startDate.year}', () => ref.read(controlsStartDateProvider.notifier).state = null),
                         if (endDate != null)

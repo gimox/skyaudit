@@ -8,6 +8,8 @@ import 'package:travel_check/features/upload/providers/estratto_amex_provider.da
 import 'package:travel_check/features/upload/models/estratto_amex.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 
+import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+
 // Filter providers for Estratti AMEX
 final amexSelectedSearchProvider = StateProvider<String?>((ref) => null);
 final amexSelectedFornitoreProvider = StateProvider<String?>((ref) => null);
@@ -15,6 +17,9 @@ final amexStartDateProvider = StateProvider<DateTime?>((ref) => null);
 final amexEndDateProvider = StateProvider<DateTime?>((ref) => null);
 final amexSortAscendingProvider = StateProvider<bool>((ref) => false);
 final amexPageProvider = StateProvider<int>((ref) => 0);
+
+enum AmexTrasfertaPresenzaFilter { all, present, notPresent }
+final amexTrasfertaPresenzaFilterProvider = StateProvider<AmexTrasfertaPresenzaFilter>((ref) => AmexTrasfertaPresenzaFilter.all);
 
 class AmexAnalysisView extends ConsumerStatefulWidget {
   const AmexAnalysisView({super.key});
@@ -43,6 +48,12 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     final endDate = ref.watch(amexEndDateProvider);
     final sortAscending = ref.watch(amexSortAscendingProvider);
     final currentPage = ref.watch(amexPageProvider);
+    final trasfertaFilter = ref.watch(amexTrasfertaPresenzaFilterProvider);
+    final contabileRecords = ref.watch(tracciatoContabilesProvider);
+    final contabileTrasferte = contabileRecords
+        .map((tc) => tc.numeroTrasferta.trim())
+        .where((t) => t.isNotEmpty)
+        .toSet();
     const pageSize = 50;
 
     if (allRecords.isEmpty) {
@@ -77,6 +88,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
       selectedFornitore != null,
       startDate != null,
       endDate != null,
+      trasfertaFilter != AmexTrasfertaPresenzaFilter.all,
     ].where((e) => e).length;
 
     // Estrai fornitori disponibili per il filtro
@@ -114,6 +126,13 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         }
       }
       
+      // Filtro Presenza in Tracciato Contabile
+      if (trasfertaFilter != AmexTrasfertaPresenzaFilter.all) {
+        final isPresent = r.numeroTrasferta != null && contabileTrasferte.contains(r.numeroTrasferta!.trim());
+        if (trasfertaFilter == AmexTrasfertaPresenzaFilter.present && !isPresent) return false;
+        if (trasfertaFilter == AmexTrasfertaPresenzaFilter.notPresent && isPresent) return false;
+      }
+
       return true;
     }).toList()
       ..sort((a, b) {
@@ -224,9 +243,21 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                     child: ListView(
                       scrollDirection: Axis.horizontal,
                       children: [
+                        if (searchFilter != null)
+                          _buildFilterChip('Cerca: "$searchFilter"', () {
+                            ref.read(amexSelectedSearchProvider.notifier).state = null;
+                            _searchController.clear();
+                          }),
                         if (selectedFornitore != null) _buildFilterChip('Fornitore: $selectedFornitore', () => ref.read(amexSelectedFornitoreProvider.notifier).state = null),
                         if (startDate != null) _buildFilterChip('Dal: ${startDate.day}/${startDate.month}/${startDate.year}', () => ref.read(amexStartDateProvider.notifier).state = null),
                         if (endDate != null) _buildFilterChip('Al: ${endDate.day}/${endDate.month}/${endDate.year}', () => ref.read(amexEndDateProvider.notifier).state = null),
+                        if (trasfertaFilter != AmexTrasfertaPresenzaFilter.all)
+                          _buildFilterChip(
+                            trasfertaFilter == AmexTrasfertaPresenzaFilter.present
+                                ? 'Riscontro: Presenti'
+                                : 'Riscontro: Non Presenti',
+                            () => ref.read(amexTrasfertaPresenzaFilterProvider.notifier).state = AmexTrasfertaPresenzaFilter.all,
+                          ),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
                     ),
@@ -256,7 +287,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
-                      width: 1400,
+                      width: 1460,
                       child: Column(
                         children: [
                           // HEADER FISSO
@@ -268,13 +299,13 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                             ),
                             child: Row(
                               children: [
-                                _buildCell('CID', 120, isHeader: true),
-                                _buildCell('TRASFERTA', 150, isHeader: true),
+                                _buildCell('CID', 150, isHeader: true),
+                                _buildCell('TRASFERTA', 180, isHeader: true),
+                                _buildCell('IMPORTO', 120, isHeader: true),
                                 _buildCell('VIAGGIATORE', 200, isHeader: true),
                                 _buildCell('BOLLA', 150, isHeader: true),
                                 _buildCell('FORNITORE', 250, isHeader: true),
                                 _buildCell('DATA TRANS.', 120, isHeader: true),
-                                _buildCell('IMPORTO', 120, isHeader: true),
                                 _buildCell('AZIONI', 120, isHeader: true, alignment: Alignment.center),
                               ],
                             ),
@@ -296,13 +327,21 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                     ),
                                     child: Row(
                                       children: [
-                                        _buildCopyableCell(record.cid ?? '-', 120, typeLabel: 'CID', fontWeight: FontWeight.w500),
-                                        _buildCopyableCell(record.numeroTrasferta ?? '-', 150, typeLabel: 'Trasferta'),
+                                        _buildCopyableCell(record.cid ?? '-', 150, typeLabel: 'CID', fontWeight: FontWeight.w500),
+                                        _buildCopyableCell(
+                                          record.numeroTrasferta ?? '-',
+                                          180,
+                                          typeLabel: 'Trasferta',
+                                          fontWeight: FontWeight.bold,
+                                          color: record.numeroTrasferta != null && contabileTrasferte.contains(record.numeroTrasferta!.trim())
+                                              ? Colors.green.shade800
+                                              : Colors.red.shade700,
+                                        ),
+                                        _buildCell('${record.importoLordo?.toStringAsFixed(2) ?? '0.00'} €', 120, fontWeight: FontWeight.bold, color: (record.importoLordo ?? 0) < 0 ? Colors.red.shade700 : Colors.green.shade800),
                                         _buildCopyableCell(record.nomeViaggiatore ?? '-', 200, typeLabel: 'Viaggiatore'),
                                         _buildCell(record.bolla ?? '-', 150),
                                         _buildCell(record.nomeFornitore ?? '-', 250),
                                         _buildCell(record.dataTransazione ?? '-', 120),
-                                        _buildCell('${record.importoLordo?.toStringAsFixed(2) ?? '0.00'} €', 120, fontWeight: FontWeight.bold, color: (record.importoLordo ?? 0) < 0 ? Colors.red.shade700 : Colors.green.shade800),
                                         _buildCell('', 120, alignment: Alignment.center, child: Row(mainAxisSize: MainAxisSize.min, children: [
                                           IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
                                           const SizedBox(width: 12),
@@ -395,6 +434,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     ref.read(amexSelectedFornitoreProvider.notifier).state = null;
     ref.read(amexStartDateProvider.notifier).state = null;
     ref.read(amexEndDateProvider.notifier).state = null;
+    ref.read(amexTrasfertaPresenzaFilterProvider.notifier).state = AmexTrasfertaPresenzaFilter.all;
     ref.read(amexPageProvider.notifier).state = 0;
     _searchController.clear();
   }
@@ -498,6 +538,18 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                 _buildDrawerSectionTitle('FORNITORE'),
                 const SizedBox(height: 12),
                 _buildFilterDropdown<String?>('Fornitore', ref.watch(amexSelectedFornitoreProvider), fornitori, (val) => ref.read(amexSelectedFornitoreProvider.notifier).state = val, icon: Icons.store),
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('RISCONTRO CONTABILE'),
+                const SizedBox(height: 12),
+                _buildChoiceFilter<AmexTrasfertaPresenzaFilter>(
+                  ref.watch(amexTrasfertaPresenzaFilterProvider),
+                  {
+                    AmexTrasfertaPresenzaFilter.all: 'Tutte',
+                    AmexTrasfertaPresenzaFilter.present: 'Presenti',
+                    AmexTrasfertaPresenzaFilter.notPresent: 'Non Presenti',
+                  },
+                  (val) => ref.read(amexTrasfertaPresenzaFilterProvider.notifier).state = val,
+                ),
               ],
             ),
           ),
@@ -512,6 +564,49 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildChoiceFilter<T>(
+    T selected,
+    Map<T, String> options,
+    Function(T) onChanged,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        children: options.entries.map((entry) {
+          final isSelected = selected == entry.key;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => onChanged(entry.key),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? SkyTheme.timRed : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    entry.value,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? Colors.white : Colors.grey.shade700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

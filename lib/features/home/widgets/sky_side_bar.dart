@@ -35,11 +35,6 @@ class SkySideBar extends StatelessWidget {
                       label: Text('Dashboard'),
                     ),
                     NavigationRailDestination(
-                      icon: Icon(Icons.file_upload_outlined),
-                      selectedIcon: Icon(Icons.file_upload),
-                      label: Text('Carica File'),
-                    ),
-                    NavigationRailDestination(
                       icon: Icon(Icons.analytics_outlined),
                       selectedIcon: Icon(Icons.analytics),
                       label: Text('Tracciato Contabile'),
@@ -78,6 +73,16 @@ class SkySideBar extends StatelessWidget {
                       icon: Icon(Icons.people_outline),
                       selectedIcon: Icon(Icons.people),
                       label: Text('Anagrafica'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.file_upload_outlined),
+                      selectedIcon: Icon(Icons.file_upload),
+                      label: Text('Carica File'),
+                    ),
+                    NavigationRailDestination(
+                      icon: Icon(Icons.sync_outlined),
+                      selectedIcon: Icon(Icons.sync),
+                      label: Text('Sync File'),
                     ),
                     NavigationRailDestination(
                       icon: Icon(Icons.history_outlined),
@@ -127,11 +132,6 @@ class SkySideBar extends StatelessWidget {
             icon: Icon(Icons.dashboard_outlined),
             selectedIcon: Icon(Icons.dashboard),
             label: Text('Dashboard'),
-          ),
-          const NavigationDrawerDestination(
-            icon: Icon(Icons.file_upload_outlined),
-            selectedIcon: Icon(Icons.file_upload),
-            label: Text('Carica File'),
           ),
           const NavigationDrawerDestination(
             icon: Icon(Icons.analytics_outlined),
@@ -185,6 +185,16 @@ class SkySideBar extends StatelessWidget {
                 letterSpacing: 1.5,
               ),
             ),
+          ),
+          const NavigationDrawerDestination(
+            icon: Icon(Icons.file_upload_outlined),
+            selectedIcon: Icon(Icons.file_upload),
+            label: Text('Carica File'),
+          ),
+          const NavigationDrawerDestination(
+            icon: Icon(Icons.sync_outlined),
+            selectedIcon: Icon(Icons.sync),
+            label: Text('Sync File'),
           ),
           const NavigationDrawerDestination(
             icon: Icon(Icons.history_outlined),

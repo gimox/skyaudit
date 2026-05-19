@@ -9,6 +9,8 @@ import 'package:travel_check/features/upload/models/tracciato_sap.dart';
 import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 
+import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+
 // SAP Filter Providers
 final sapMonthProvider = StateProvider<String?>((ref) => null);
 final sapYearProvider = StateProvider<String?>((ref) => null);
@@ -17,6 +19,9 @@ final sapSocietaProvider = StateProvider<Set<String>>((ref) => {});
 final sapRichiestaProvider = StateProvider<String?>((ref) => null);
 final sapPageProvider = StateProvider<int>((ref) => 0);
 final sapSortAscendingProvider = StateProvider<bool>((ref) => false);
+
+enum SapTrasfertaPresenzaFilter { all, present, notPresent }
+final sapTrasfertaPresenzaFilterProvider = StateProvider<SapTrasfertaPresenzaFilter>((ref) => SapTrasfertaPresenzaFilter.all);
 
 class SapAnalysisView extends ConsumerStatefulWidget {
   const SapAnalysisView({super.key});
@@ -48,6 +53,12 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     final currentPage = ref.watch(sapPageProvider);
     final dictionaries = ref.watch(dictionaryProvider);
     final dictionaryMap = {for (var d in dictionaries) d.code: d.value};
+    final trasfertaFilter = ref.watch(sapTrasfertaPresenzaFilterProvider);
+    final contabileRecords = ref.watch(tracciatoContabilesProvider);
+    final contabileTrasferte = contabileRecords
+        .map((tc) => tc.numeroTrasferta.trim())
+        .where((t) => t.isNotEmpty)
+        .toSet();
     const pageSize = 50;
 
     if (allRecords.isEmpty) {
@@ -83,6 +94,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       selectedSocieta.isNotEmpty,
       selectedTrasferta != null,
       selectedRichiesta != null,
+      trasfertaFilter != SapTrasfertaPresenzaFilter.all,
     ].where((e) => e).length;
 
     // Estrai anni disponibili (formato data SAP potrebbe variare, assumiamo DD.MM.YYYY o simile)
@@ -127,6 +139,13 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       }
       if (selectedRichiesta != null && r.cdRichiesta != null && !r.cdRichiesta!.contains(selectedRichiesta)) {
         return false;
+      }
+
+      // Filtro Presenza in Tracciato Contabile
+      if (trasfertaFilter != SapTrasfertaPresenzaFilter.all) {
+        final isPresent = contabileTrasferte.contains(r.numeroTrasferta.trim());
+        if (trasfertaFilter == SapTrasfertaPresenzaFilter.present && !isPresent) return false;
+        if (trasfertaFilter == SapTrasfertaPresenzaFilter.notPresent && isPresent) return false;
       }
 
       return true;
@@ -272,6 +291,13 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                             ref.read(sapSocietaProvider.notifier).state = next;
                           });
                         }),
+                        if (trasfertaFilter != SapTrasfertaPresenzaFilter.all)
+                          _buildFilterChip(
+                            trasfertaFilter == SapTrasfertaPresenzaFilter.present
+                                ? 'Riscontro: Presenti'
+                                : 'Riscontro: Non Presenti',
+                            () => ref.read(sapTrasfertaPresenzaFilterProvider.notifier).state = SapTrasfertaPresenzaFilter.all,
+                          ),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
                     ),
@@ -342,7 +368,15 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                                     child: Row(
                                       children: [
                                         _buildCopyableCell(record.cid, 140, typeLabel: 'CID', fontWeight: FontWeight.w500),
-                                        _buildCopyableCell(record.numeroTrasferta, 160, typeLabel: 'Trasferta'),
+                                        _buildCopyableCell(
+                                          record.numeroTrasferta,
+                                          160,
+                                          typeLabel: 'Trasferta',
+                                          fontWeight: FontWeight.bold,
+                                          color: contabileTrasferte.contains(record.numeroTrasferta.trim())
+                                              ? Colors.green.shade800
+                                              : Colors.red.shade700,
+                                        ),
                                         _buildCell(record.data, 120),
                                         _buildCell('${record.importo.toStringAsFixed(2)} ${record.valuta}', 140, color: Colors.green.shade800, fontWeight: FontWeight.bold),
                                         _buildCell(record.cdRichiesta ?? '-', 150),
@@ -443,8 +477,52 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     ref.read(sapMonthProvider.notifier).state = null;
     ref.read(sapSocietaProvider.notifier).state = {};
     ref.read(sapRichiestaProvider.notifier).state = null;
+    ref.read(sapTrasfertaPresenzaFilterProvider.notifier).state = SapTrasfertaPresenzaFilter.all;
     ref.read(sapPageProvider.notifier).state = 0;
     _trasfertaController.clear();
+  }
+
+  Widget _buildChoiceFilter<T>(
+    T selected,
+    Map<T, String> options,
+    Function(T) onChanged,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        children: options.entries.map((entry) {
+          final isSelected = selected == entry.key;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => onChanged(entry.key),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? SkyTheme.timRed : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    entry.value,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? Colors.white : Colors.grey.shade700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
   }
 
   Widget _buildFilterChip(String label, VoidCallback onDeleted) {
@@ -555,6 +633,24 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                   },
                   icon: Icons.business,
                   dictionaryMap: dictionaryMap,
+                ),
+                const SizedBox(height: 24),
+                const Row(
+                  children: [
+                    Icon(Icons.rule, size: 18, color: Colors.grey),
+                    SizedBox(width: 8),
+                    Text('Riscontro Contabile', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _buildChoiceFilter<SapTrasfertaPresenzaFilter>(
+                  ref.watch(sapTrasfertaPresenzaFilterProvider),
+                  {
+                    SapTrasfertaPresenzaFilter.all: 'Tutte',
+                    SapTrasfertaPresenzaFilter.present: 'Presenti',
+                    SapTrasfertaPresenzaFilter.notPresent: 'Non Presenti',
+                  },
+                  (val) => ref.read(sapTrasfertaPresenzaFilterProvider.notifier).state = val,
                 ),
               ],
             ),

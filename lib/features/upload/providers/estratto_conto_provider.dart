@@ -200,11 +200,31 @@ Future<List<Map<String, dynamic>>> _parseExcelIsolate(Map<String, dynamic> param
       final v = cell.value;
       if (v is DoubleCellValue) return v.value;
       if (v is IntCellValue) return v.value.toDouble();
+      
+      String s;
       if (v is TextCellValue) {
-        return double.tryParse(v.value.toString().replaceAll(',', '.')) ?? 0.0;
+        s = v.value.toString().replaceAll(' ', '').trim();
+      } else {
+        s = v.toString().replaceAll(' ', '').trim();
       }
-      return double.tryParse(v.toString().replaceAll(',', '.')) ?? 0.0;
+      
+      if (s.isEmpty) return 0.0;
+      
+      if (s.contains('.') && s.contains(',')) {
+        final dotIndex = s.indexOf('.');
+        final commaIndex = s.indexOf(',');
+        if (dotIndex < commaIndex) {
+          s = s.replaceAll('.', '').replaceAll(',', '.');
+        } else {
+          s = s.replaceAll(',', '');
+        }
+      } else if (s.contains(',')) {
+        s = s.replaceAll(',', '.');
+      }
+      
+      return double.tryParse(s) ?? 0.0;
     }
+
 
     final nrBollaRaw = val(1);
     String bollaCalc = '';
