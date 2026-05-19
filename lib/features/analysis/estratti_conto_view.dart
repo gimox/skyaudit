@@ -319,7 +319,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
-                      width: 1520,
+                      width: 1600,
                       child: Column(
                         children: [
                           // HEADER FISSO
@@ -331,7 +331,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                             ),
                             child: Row(
                               children: [
-                                _buildCell('CID', 120, isHeader: true),
+                                _buildCell('CID', 200, isHeader: true),
                                 _buildCell('NOMINATIVO', 220, isHeader: true),
                                 _buildCell('TRASFERTA', 150, isHeader: true),
                                 _buildCell('IMPORTO', 100, isHeader: true),
@@ -361,7 +361,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                                     ),
                                     child: Row(
                                       children: [
-                                        _buildCopyableCell(record.cid, 120, typeLabel: 'CID', fontWeight: FontWeight.w500),
+                                        _buildCopyableCell(record.cid, 200, typeLabel: 'CID', fontWeight: FontWeight.w500),
                                         _buildCell(anagraficheMap[record.cid.trim()] ?? '', 220, fontWeight: FontWeight.w500),
                                         _buildCopyableCell(
                                           record.numeroTrasferta, 

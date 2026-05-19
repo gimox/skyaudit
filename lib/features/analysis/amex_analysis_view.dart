@@ -287,7 +287,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
-                      width: 1460,
+                      width: 1510,
                       child: Column(
                         children: [
                           // HEADER FISSO
@@ -299,7 +299,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                             ),
                             child: Row(
                               children: [
-                                _buildCell('CID', 150, isHeader: true),
+                                _buildCell('CID', 200, isHeader: true),
                                 _buildCell('TRASFERTA', 180, isHeader: true),
                                 _buildCell('IMPORTO', 120, isHeader: true),
                                 _buildCell('VIAGGIATORE', 200, isHeader: true),
@@ -327,7 +327,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                     ),
                                     child: Row(
                                       children: [
-                                        _buildCopyableCell(record.cid ?? '-', 150, typeLabel: 'CID', fontWeight: FontWeight.w500),
+                                        _buildCopyableCell(record.cid ?? '-', 200, typeLabel: 'CID', fontWeight: FontWeight.w500),
                                         _buildCopyableCell(
                                           record.numeroTrasferta ?? '-',
                                           180,
