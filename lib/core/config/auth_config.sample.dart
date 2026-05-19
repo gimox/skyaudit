@@ -5,12 +5,12 @@ class AuthConfig {
   // Configured via compile-time environment variables or using standard placeholders.
   static const String tenantId = String.fromEnvironment(
     'AZURE_TENANT_ID',
-    defaultValue: '6815f468-021c-48f2-a6b2-d65c8e979dfb',
+    defaultValue: 'YOUR_TENANT_ID',
   );
 
   static const String clientId = String.fromEnvironment(
     'AZURE_CLIENT_ID',
-    defaultValue: '65fc07e0-4660-43f7-ad45-36ac594a5405',
+    defaultValue: 'YOUR_CLIENT_ID',
   );
 
   static String get authorizationEndpoint =>
@@ -39,7 +39,7 @@ class AuthConfig {
   // Web configuration (Single-page app redirect callback page)
   static const String webRedirectUrl = String.fromEnvironment(
     'AZURE_WEB_REDIRECT_URL',
-    defaultValue: 'http://localhost:5000/auth.html',
+    defaultValue: 'YOUR_WEB_REDIRECT_URL',
   );
 
   // Scopes requested (offline_access is critical to retrieve the refresh_token for session persistence)
