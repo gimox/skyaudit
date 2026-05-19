@@ -26,6 +26,13 @@ jobs:
           channel: 'stable'
           cache: true
 
+      - name: Configure auth_config.dart
+        run: |
+          cp lib/core/config/auth_config.sample.dart lib/core/config/auth_config.dart
+          sed -i '' 's|YOUR_TENANT_ID|${{ secrets.AZURE_TENANT_ID }}|g' lib/core/config/auth_config.dart
+          sed -i '' 's|YOUR_CLIENT_ID|${{ secrets.AZURE_CLIENT_ID }}|g' lib/core/config/auth_config.dart
+          sed -i '' 's|YOUR_WEB_REDIRECT_URL|${{ secrets.AZURE_WEB_REDIRECT_URL }}|g' lib/core/config/auth_config.dart
+
       - name: Install dependencies
         run: flutter pub get
 
@@ -59,6 +66,16 @@ jobs:
         with:
           channel: 'stable'
           cache: true
+
+      - name: Configure auth_config.dart
+        shell: pwsh
+        run: |
+          Copy-Item lib/core/config/auth_config.sample.dart lib/core/config/auth_config.dart
+          (Get-Content lib/core/config/auth_config.dart) `
+            -replace 'YOUR_TENANT_ID', '${{ secrets.AZURE_TENANT_ID }}' `
+            -replace 'YOUR_CLIENT_ID', '${{ secrets.AZURE_CLIENT_ID }}' `
+            -replace 'YOUR_WEB_REDIRECT_URL', '${{ secrets.AZURE_WEB_REDIRECT_URL }}' | `
+            Set-Content lib/core/config/auth_config.dart
 
       - name: Install dependencies
         run: flutter pub get
