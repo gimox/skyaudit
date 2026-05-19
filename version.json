@@ -1,15 +1,16 @@
 {
-  "version": "1.0.1",
-  "buildNumber": 2,
+  "version": "1.0.2",
+  "buildNumber": 3,
   "mandatory": false,
   "downloadUrls": {
-    "macos": "https://github.com/gimox/skyaudit/releases/download/v1.0.1/SkyAudit_macOS.dmg",
-    "windows": "https://github.com/gimox/skyaudit/releases/download/v1.0.1/SkyAudit_Windows.exe",
+    "macos": "https://github.com/gimox/skyaudit/releases/download/v1.0.2/SkyAudit_macOS.dmg",
+    "windows": "https://github.com/gimox/skyaudit/releases/download/v1.0.2/SkyAudit_Windows.zip",
     "web": ""
   },
   "changelog": [
-    "Integrazione autenticazione aziendale Microsoft Entra ID (SSO)",
-    "Sincronizzazione cloud SharePoint con logica delta ed aggiornamento anagrafiche",
-    "Perfezionamenti grafici per schermi responsive e pulsante accedi"
+    "fixing build",
+    "minor fix",
+    "fixing bugs",
+    "working remote sync"
   ]
 }
