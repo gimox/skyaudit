@@ -43,20 +43,34 @@ class AppUpdateInfo {
   }
 }
 
+class UpdateCheckResult {
+  final AppUpdateInfo? info;
+  final bool isSuccess;
+  final String? errorMessage;
+
+  UpdateCheckResult({
+    this.info,
+    required this.isSuccess,
+    this.errorMessage,
+  });
+}
+
 class UpdateService {
   static const String manifestUrl = 'https://raw.githubusercontent.com/gimox/skyaudit/main/version.json';
 
   /// Controlla se è disponibile un aggiornamento.
-  /// Ritorna [AppUpdateInfo] se è presente un aggiornamento, altrimenti [null].
-  static Future<AppUpdateInfo?> checkForUpdate() async {
+  /// Ritorna un [UpdateCheckResult] con l'esito del controllo.
+  static Future<UpdateCheckResult> checkForUpdate() async {
     try {
       final response = await http.get(Uri.parse(manifestUrl)).timeout(
         const Duration(seconds: 5),
       );
 
       if (response.statusCode != 200) {
-        debugPrint('UpdateService: Richiesta manifest fallita con codice ${response.statusCode}');
-        return null;
+        return UpdateCheckResult(
+          isSuccess: false,
+          errorMessage: 'Server HTTP ${response.statusCode}',
+        );
       }
 
       final Map<String, dynamic> data = json.decode(response.body);
@@ -72,12 +86,15 @@ class UpdateService {
                             (remoteInfo.buildNumber > localBuild);
 
       if (hasNewerVersion || hasNewerBuild) {
-        return remoteInfo;
+        return UpdateCheckResult(isSuccess: true, info: remoteInfo);
       }
+      return UpdateCheckResult(isSuccess: true, info: null);
     } catch (e) {
-      debugPrint('UpdateService: Errore durante il controllo aggiornamenti: $e');
+      return UpdateCheckResult(
+        isSuccess: false,
+        errorMessage: 'Connessione fallita: $e',
+      );
     }
-    return null;
   }
 
   /// Confronta due stringhe di versione semantica (es. 1.0.0 e 1.1.0)

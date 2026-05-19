@@ -438,14 +438,16 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       _updateCheckStatus = 'Controllo dei server in corso...';
     });
 
-    final info = await UpdateService.checkForUpdate();
+    final result = await UpdateService.checkForUpdate();
     
     if (mounted) {
       setState(() {
         _isCheckingUpdate = false;
-        if (info != null) {
-          _updateCheckStatus = 'È disponibile una nuova versione: ${info.version}.';
-          _showSettingsUpdateDialog(info);
+        if (!result.isSuccess) {
+          _updateCheckStatus = 'Verifica fallita: ${result.errorMessage}.';
+        } else if (result.info != null) {
+          _updateCheckStatus = 'È disponibile una nuova versione: ${result.info!.version}.';
+          _showSettingsUpdateDialog(result.info!);
         } else {
           _updateCheckStatus = 'SkyAudit è aggiornato all\'ultima versione.';
         }

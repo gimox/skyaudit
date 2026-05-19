@@ -69,6 +69,32 @@ class SkyTopBar extends ConsumerWidget implements PreferredSizeWidget {
     final isConnected = authState.isAuthenticated;
     final userName = authState.userName;
 
+    if (!isConnected) {
+      return OutlinedButton.icon(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: Colors.white,
+          side: const BorderSide(color: Colors.white, width: 1.2),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        onPressed: () async {
+          await ref.read(authProvider.notifier).login();
+        },
+        icon: const Icon(Icons.login, size: 18, color: Colors.white),
+        label: const Text(
+          'ACCEDI',
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 1.1,
+            fontSize: 13,
+          ),
+        ),
+      );
+    }
+
     return PopupMenuButton<int>(
       tooltip: 'Profilo Utente',
       offset: const Offset(0, 45),
@@ -77,22 +103,20 @@ class SkyTopBar extends ConsumerWidget implements PreferredSizeWidget {
         side: BorderSide(color: Colors.grey.shade200),
       ),
       elevation: 6,
-      color: Colors.white.withOpacity(0.98),
+      color: Colors.white,
       child: Container(
         margin: const EdgeInsets.symmetric(horizontal: 8),
         decoration: BoxDecoration(
           shape: BoxShape.circle,
           border: Border.all(
-            color: isConnected ? SkyTheme.timBlue.withOpacity(0.3) : Colors.grey.shade300,
+            color: SkyTheme.timBlue.withAlpha(76),
             width: 1.5,
           ),
         ),
         child: _buildAvatarWidget(avatarPath, userName, size: 32),
       ),
       onSelected: (value) async {
-        if (value == 1) {
-          await ref.read(authProvider.notifier).login();
-        } else if (value == 2) {
+        if (value == 2) {
           await ref.read(authProvider.notifier).logout();
         }
       },
@@ -113,7 +137,7 @@ class SkyTopBar extends ConsumerWidget implements PreferredSizeWidget {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          userName ?? 'Modalità Locale',
+                          userName ?? 'Utente',
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: SkyTheme.timBlue,
@@ -122,7 +146,7 @@ class SkyTopBar extends ConsumerWidget implements PreferredSizeWidget {
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          isConnected ? (authState.userEmail ?? '') : 'Nessun account sincronizzato',
+                          authState.userEmail ?? '',
                           style: TextStyle(
                             color: Colors.grey.shade600,
                             fontSize: 12,
@@ -138,45 +162,22 @@ class SkyTopBar extends ConsumerWidget implements PreferredSizeWidget {
             ],
           ),
         ),
-        if (!isConnected)
-          const PopupMenuItem<int>(
-            value: 1,
-            child: Row(
-              children: [
-                Icon(Icons.login, size: 16, color: SkyTheme.timBlue),
-                SizedBox(width: 8),
-                Text(
-                  'Accedi con TIM (Entra ID)',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: SkyTheme.timBlue,
-                  ),
+        const PopupMenuItem<int>(
+          value: 2,
+          child: Row(
+            children: [
+              Icon(Icons.logout, size: 16, color: SkyTheme.timRed),
+              SizedBox(width: 8),
+              Text(
+                'Disconnetti',
+                style: TextStyle(
+                  color: SkyTheme.timRed,
+                  fontWeight: FontWeight.w600,
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
-        if (isConnected) ...[
-          const PopupMenuItem<int>(
-            enabled: false,
-            child: Divider(),
-          ),
-          const PopupMenuItem<int>(
-            value: 2,
-            child: Row(
-              children: [
-                Icon(Icons.logout, size: 16, color: SkyTheme.timRed),
-                SizedBox(width: 8),
-                Text(
-                  'Disconnetti',
-                  style: TextStyle(
-                    color: SkyTheme.timRed,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ],
     );
   }

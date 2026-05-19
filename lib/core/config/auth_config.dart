@@ -49,5 +49,7 @@ class AuthConfig {
     'email',
     'offline_access',
     'User.Read',
+    'Sites.Read.All',
+    'Files.Read.All',
   ];
 }
