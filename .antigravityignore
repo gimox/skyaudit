@@ -1,0 +1,61 @@
+# ==========================================
+# AntigravityIgnore - Flutter & Dart Optimized
+# ==========================================
+
+# --- Flutter / Dart Build & Cache (I più pesanti per i token) ---
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+build/
+
+# --- Generatori di Codice (Se usi build_runner, Freezed, Riverpod, ecc.) ---
+# Nota: Gli agenti devono leggere il codice sorgente scritto da te, non i file .g.dart o .freezed.dart compilati.
+*.g.dart
+*.freezed.dart
+*.mocks.dart
+*.gr.dart
+*.generated.dart
+
+# --- Dipendenze e Pacchetti Web ---
+# Impedisce all'AI di indicizzare librerie Javascript o moduli esterni
+node_modules/
+.pub-cache/
+.pub/
+
+# --- Asset, Risorse e File Binari ---
+# Le immagini, i font e i video consumano token di contesto massicci se l'AI tenta di analizzarli come testo.
+assets/
+images/
+fonts/
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.svg
+*.webp
+*.mp4
+*.mp3
+*.ttf
+*.otf
+
+# --- IDE e OS Metadata ---
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+
+# --- Log, Crash Report e Test Coverage ---
+*.log
+doc/api/
+coverage/
+.analytics/
+
+# --- Configura e Credenziali Locali ---
+# Protegge anche i tuoi dati sensibili dall'essere inviati al contesto dei token
+.env
+.env.*
+*.secret
+ios/Flutter/Generated.xcconfig
+android/local.properties

@@ -1,95 +1,76 @@
 import 'dart:io';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cross_file/cross_file.dart';
-import 'package:isar/isar.dart';
 import 'package:excel/excel.dart';
-import 'package:travel_check/core/db/isar_provider.dart';
-import '../models/estratto_amex.dart';
-import '../models/log_history.dart';
-import 'log_history_provider.dart';
 
-class EstrattoAmexNotifier extends Notifier<List<EstrattoAmex>> {
-  @override
-  List<EstrattoAmex> build() {
-    final isar = ref.watch(isarProvider);
-    return isar.estrattoAmexs.where().anyId().findAllSync();
+void main() async {
+  print('=== STARTING AMEX DYNAMIC IMPORT VERIFICATION ===');
+  
+  final file1 = File('data_mock/EC - AMEX Gruppo/amex Gruppo/2026_03_26_OS-5001-001_STATEMENT_860896414 - SPARKLE.xlsx');
+  final file2 = File('data_mock/EC - AMEX TIM/amex TIM/DICEMBRE AMEX.xlsx');
+
+  if (!file1.existsSync()) {
+    print('Error: file1 does not exist at ${file1.path}');
+    return;
+  }
+  if (!file2.existsSync()) {
+    print('Error: file2 does not exist at ${file2.path}');
+    return;
   }
 
-  Future<Map<String, dynamic>> loadFromFile(XFile file) async {
-    final isar = ref.read(isarProvider);
-    final uniqueCode = DateTime.now().millisecondsSinceEpoch.toString();
-
-    // Parsing pesante in isolate
-    final List<Map<String, dynamic>> parsedData = await compute(
-      _parseAmexIsolate,
-      {'filePath': file.path, 'uniqueCode': uniqueCode},
-    );
-
-    final List<EstrattoAmex> newRecords = parsedData
-        .map((map) => EstrattoAmex.fromMap(map))
-        .toList();
-
-    if (newRecords.isEmpty) {
-      throw Exception('Nessun dato trovato nel file AMEX.');
+  print('\n--- Testing File 1: ${file1.path} ---');
+  final results1 = parseAmex(file1.path);
+  print('Parsed ${results1.length} records.');
+  
+  int nonEcid1 = 0;
+  for (var r in results1) {
+    if (r['cid'].isNotEmpty) {
+      nonEcid1++;
     }
-
-    await isar.writeTxn(() async {
-      await isar.estrattoAmexs.putAll(newRecords);
-
-      final log = LogHistory(
-        fileName: file.name,
-        date: DateTime.now(),
-        uniqueCode: uniqueCode,
-        totalRecords: newRecords.length,
-        insertedRecords: newRecords.length,
-        updatedRecords: 0,
-        discardedRecords: 0,
-        sourceType: 'Estratto AMEX',
-      );
-      await isar.logHistorys.put(log);
-    });
-
-    final allRecords = await isar.estrattoAmexs.where().anyId().findAll();
-    state = allRecords;
-    ref.invalidate(logHistoryProvider);
-
-    return {
-      'inserted': newRecords.length,
-      'updated': 0,
-      'duplicates': 0,
-      'total': newRecords.length,
-      'uniqueCode': uniqueCode,
-      'collisions': [], // Per ora vuoto, implementabile se necessario
-    };
+  }
+  print('Records with non-empty CID: $nonEcid1');
+  
+  print('\nFirst 5 Records:');
+  for (int i = 0; i < 5 && i < results1.length; i++) {
+    final r = results1[i];
+    print('Record $i:');
+    print('  CID: "${r['cid']}"');
+    print('  Numero Trasferta: "${r['numeroTrasferta']}"');
+    print('  Bolla: "${r['bolla']}"');
+    print('  Importo Lordo: ${r['importoLordo']}');
+    print('  Nome Viaggiatore: "${r['nomeViaggiatore']}"');
   }
 
-  Future<void> clear() async {
-    final isar = ref.read(isarProvider);
-    await isar.writeTxn(() => isar.estrattoAmexs.clear());
-    state = [];
+  print('\n--- Testing File 2: ${file2.path} ---');
+  final results2 = parseAmex(file2.path);
+  print('Parsed ${results2.length} records.');
+  
+  int nonEcid2 = 0;
+  for (var r in results2) {
+    if (r['cid'].isNotEmpty) {
+      nonEcid2++;
+    }
+  }
+  print('Records with non-empty CID: $nonEcid2');
+
+  print('\nFirst 5 Records:');
+  for (int i = 0; i < 5 && i < results2.length; i++) {
+    final r = results2[i];
+    print('Record $i:');
+    print('  CID: "${r['cid']}"');
+    print('  Numero Trasferta: "${r['numeroTrasferta']}"');
+    print('  Bolla: "${r['bolla']}"');
+    print('  Importo Lordo: ${r['importoLordo']}');
+    print('  Nome Viaggiatore: "${r['nomeViaggiatore']}"');
   }
 
-  Future<void> deleteRecord(Id id) async {
-    final isar = ref.read(isarProvider);
-    await isar.writeTxn(() => isar.estrattoAmexs.delete(id));
-    final allRecords = await isar.estrattoAmexs.where().anyId().findAll();
-    state = allRecords;
-  }
+  print('\n=== VERIFICATION COMPLETED ===');
 }
 
-Future<List<Map<String, dynamic>>> _parseAmexIsolate(
-  Map<String, dynamic> params,
-) async {
-  final String filePath = params['filePath'];
-  final String uniqueCode = params['uniqueCode'];
-
+List<Map<String, dynamic>> parseAmex(String filePath) {
   final bytes = File(filePath).readAsBytesSync();
   final excel = Excel.decodeBytes(bytes);
 
   if (excel.tables.isEmpty) return [];
 
-  // Usiamo il primo foglio come da file AMEX
   final sheetName = excel.tables.keys.first;
   final sheet = excel.tables[sheetName]!;
   final List<Map<String, dynamic>> results = [];
@@ -102,8 +83,7 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
 
   String normalize(String val) {
     return val.toLowerCase()
-        .replaceAll(RegExp(r'<[^>]*>'), '') // Rimuove tag HTML come <br/>
-        .replaceAll(RegExp(r'[.\-\s/_°]+'), '') // Rimuove spazi, punteggiatura e gradi/simboli speciali
+        .replaceAll(RegExp(r'[.\-\s/_]+'), '')
         .replaceAll('à', 'a')
         .replaceAll('è', 'e')
         .replaceAll('é', 'e')
@@ -114,18 +94,18 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
   }
 
   final Map<String, List<String>> fieldToHeaders = {
-    'numeroConto': ['numeroconto', 'conto', 'numerodiconto'],
+    'numeroConto': ['numeroconto', 'conto'],
     'conto': ['conto'],
-    'identificativoEstrattoConto': ['numerodirifestrattoconto', 'numerorifestrattoconto', 'numerodiriferimentoestrattoconto', 'rifestrattoconto', 'identificativoestrattoconto', 'nidentificativoestrattoconto', 'noidentificativoestrattoconto'],
+    'identificativoEstrattoConto': ['numerodirifestrattoconto', 'rifestrattoconto', 'identificativoestrattoconto'],
     'dataEstrattoConto': ['dataestrattoconto'],
     'idTransazione': ['idtransazione', 'identificativotransazione'],
     'dataTransazione': ['datatransazione', 'dataprocessazione', 'datadiprocessazione'],
-    'dataScadenzaPagamento': ['datascadenzapagamento', 'datascadenza', 'datadiscadenzadelpagamento'],
+    'dataScadenzaPagamento': ['datascadenzapagamento', 'datascadenza'],
     'dataProcessazione': ['dataprocessazione', 'datadiprocessazione'],
     'stato': ['stato'],
     'contestata': ['contestata', 'codicecontestazione'],
     'numeroBollaFattura': ['numerobollafattura', 'numerobolla', 'numerofattura', 'nrbollafattura'],
-    'fatturaAgenziaViaggio': ['fatturaagenziaviaggio', 'fatturaagenzia', 'fattura', 'fatturadellaagenziadiviaggio', 'fatturaagenziadiviaggio'],
+    'fatturaAgenziaViaggio': ['fatturaagenziaviaggio', 'fatturaagenzia', 'fattura'],
     'indicator': ['indicator', 'indicatore'],
     'nomeViaggiatore': ['nomeviaggiatore', 'viaggiatore'],
     'aeroportoDestinazione': ['aeroportodestinazione', 'aeroportodidestinazione', 'destinazione'],
@@ -138,7 +118,7 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
     'totaleImportoTasse': ['totaleimportotasse', 'tasse', 'tassaaeroportuale'],
     'valuta': ['valuta', 'valutatransazione'],
     'riferimentoEstrattoConto': ['riferimentoestrattoconto', 'rifestrattoconto'],
-    'rifPagamentoEstrattoConto': ['rifpagamentoestrattoconto', 'nriferimentopagamentoestrattoconto', 'noriferimentopagamentoestrattoconto'],
+    'rifPagamentoEstrattoConto': ['rifpagamentoestrattoconto'],
     'debitCreditCode': ['debitcreditcode', 'indicatoredebitocreditodrcr', 'indicatoredebitocredito', 'drcr'],
     'agenziaViaggi': ['agenziaviaggi', 'agenziadiviaggi'],
     'ufficioViaggi': ['ufficioviaggi', 'ufficiodiviaggi'],
@@ -162,7 +142,7 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
     'rifEstrattoContoCarta': ['rifestrattocontocarta'],
     'codiceVettore': ['codicevettore'],
     'codiceSettore': ['codicesettore'],
-    'inizialiPasseggero': ['inizialipasseggero', 'inizialiviaggiatore', 'inizialiviaggiatorei', 'inizialipasseggeroi'],
+    'inizialiPasseggero': ['inizialipasseggero', 'inizialiviaggiatore', 'inizialiviaggiatorei'],
     'numeroContoSE': ['numerocontose', 'numerodicontose'],
     'cittaSE': ['cittase'],
     'codiceSettoreSE': ['codicesettorese'],
@@ -172,11 +152,11 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
     'nomeFornitore': ['nomefornitore', 'fornitore'],
     'idRegione': ['idregione', 'regione'],
     'statoRichiesta': ['statorichiesta'],
-    'dataAperturaRichiesta': ['dataaperturarichiesta', 'datadiaperturadellarichiesta', 'datadiaperturedellarichiesta'],
-    'dataChiusuraRichiesta': ['datachiusurarichiesta', 'datadichiusuradellarichiesta', 'datadichiususradellarichiesta'],
+    'dataAperturaRichiesta': ['dataaperturarichiesta', 'datadiaperturadellarichiesta'],
+    'dataChiusuraRichiesta': ['datachiusurarichiesta', 'datadichiusuradellarichiesta'],
     'inoltrare': ['inoltrare'],
     'vettore': ['vettore'],
-    'classeViaggio': ['classeviaggio', 'classediviaggio'],
+    'classeViaggio': ['classeviaggio'],
     'ordine': ['ordine'],
   };
 
@@ -201,7 +181,6 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
     }
   }
 
-  // Saltiamo la prima riga (intestazione)
   int rowIndex = 0;
   for (final row in sheet.rows) {
     rowIndex++;
@@ -259,7 +238,6 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
     final rif5Raw = val(getIndex('rif5', 36)); // AK (Rif 5)
     String bollaCalc = rif5Raw;
 
-    // Logica bolla: se in terza posizione c'è '/', trasforma. Altrimenti lascia com'è.
     if (rif5Raw.length >= 3 && rif5Raw[2] == '/') {
       bollaCalc = '${rif5Raw.substring(0, 2)}0${rif5Raw.substring(3)}';
       bollaCalc = bollaCalc.padRight(12, '0');
@@ -334,15 +312,9 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
       'vettore': val(getIndex('vettore', 65)), // BN
       'classeViaggio': val(getIndex('classeViaggio', 66)), // BO
       'ordine': val(getIndex('ordine', 67)), // BP
-      'logHistoryId': uniqueCode,
+      'logHistoryId': 'test',
       'sourceFileLine': rowIndex,
     });
   }
-
   return results;
 }
-
-final estrattoAmexProvider =
-    NotifierProvider<EstrattoAmexNotifier, List<EstrattoAmex>>(() {
-      return EstrattoAmexNotifier();
-    });
