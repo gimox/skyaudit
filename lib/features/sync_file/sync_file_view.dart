@@ -458,7 +458,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
       folderInfo = settings.sharepointTracciatoSapPath.isEmpty ? 'tracciato_sap' : settings.sharepointTracciatoSapPath;
     } else if (syncState.selectedSyncType == 'amex') {
       titleText = 'Estratti AMEX';
-      descText = 'Sincronizza i file degli estratti AMEX (*.xls) da SharePoint.';
+      descText = 'Sincronizza i file degli estratti AMEX (*.xlsx) da SharePoint.';
       folderInfo = settings.sharepointEstrattiAmexPath.isEmpty ? 'estratti_amex' : settings.sharepointEstrattiAmexPath;
     } else if (syncState.selectedSyncType == 'anagrafica') {
       titleText = 'Anagrafica';
