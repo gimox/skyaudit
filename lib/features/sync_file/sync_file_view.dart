@@ -1,24 +1,12 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
-import 'package:cross_file/cross_file.dart';
 import '../../core/theme/app_theme.dart';
-import '../../core/db/isar_provider.dart';
-import '../upload/providers/tracciato_contabile_provider.dart';
-import '../upload/providers/estratto_conto_provider.dart';
-import '../upload/providers/tracciato_sap_provider.dart';
-import '../upload/providers/estratto_amex_provider.dart';
-import '../upload/providers/anagrafica_provider.dart';
-import '../upload/providers/scarti_ec_sap_provider.dart';
-import '../upload/providers/log_history_provider.dart';
-import '../upload/models/tracciato_contabile.dart';
-import '../upload/models/log_history.dart';
 import '../auth/providers/auth_provider.dart';
 import '../settings/providers/app_settings_provider.dart';
-import '../settings/models/app_settings.dart';
 import 'services/sharepoint_service.dart';
+import 'providers/sync_provider.dart';
+import 'models/sync_state.dart';
 
 class SyncFileView extends ConsumerStatefulWidget {
   const SyncFileView({super.key});
@@ -28,24 +16,7 @@ class SyncFileView extends ConsumerStatefulWidget {
 }
 
 class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerProviderStateMixin {
-  String _selectedSyncType = 'contabile';
-  bool _clearBeforeSync = false;
-  bool _isSyncing = false;
-  double _syncProgress = 0.0;
-  String _syncStep = '';
-  List<String> _syncLogs = [];
   late AnimationController _pulseController;
-  final SharePointService _sharePointService = SharePointService();
-
-  // State variables for Smart Sync Dashboard
-  bool _showAdvancedConsole = false;
-  int _totalFilesFound = 0;
-  int _processedFilesCount = 0;
-  int _totalRecordsImported = 0;
-  String _currentFile = '';
-  String _currentFileStatus = '';
-  int _currentFileRecords = 0;
-  List<Map<String, dynamic>> _syncQueue = [];
 
   @override
   void initState() {
@@ -54,6 +25,11 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
       vsync: this,
       duration: const Duration(seconds: 2),
     );
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && ref.read(syncProvider).isSyncing) {
+        _pulseController.repeat(reverse: true);
+      }
+    });
   }
 
   @override
@@ -62,384 +38,12 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
     super.dispose();
   }
 
-  void _log(String message) {
-    setState(() {
-      _syncLogs.insert(0, '[${DateTime.now().toIso8601String().substring(11, 19)}] $message');
-    });
-  }
-
-  Future<int> _syncFileItem(
-    String syncType,
-    SharePointFile file,
-    String token,
-    AppSettings settings,
-    Isar isar,
-  ) async {
-    String syncName = '';
-    String sourceType = '';
-
-    if (syncType == 'contabile') {
-      syncName = 'Tracciati Contabili';
-      sourceType = 'Tracciato Contabile';
-    } else if (syncType == 'conto') {
-      syncName = 'Estratti Conto';
-      sourceType = 'Estratto Conto';
-    } else if (syncType == 'sap') {
-      syncName = 'Tracciato SAP';
-      sourceType = 'Tracciato SAP';
-    } else if (syncType == 'amex') {
-      syncName = 'Estratti AMEX';
-      sourceType = 'Estratto AMEX';
-    } else if (syncType == 'anagrafica') {
-      syncName = 'Anagrafica';
-      sourceType = 'Anagrafica';
-    } else if (syncType == 'scarti') {
-      syncName = 'Scarti Tracciato';
-      sourceType = 'Scarti EC SAP';
-    }
-
-    _log('[$syncName] Inizio elaborazione file: ${file.name}...');
-    setState(() {
-      _currentFile = file.name;
-      _currentFileStatus = 'Scaricamento...';
-      _currentFileRecords = 0;
-    });
-
-    int importedRecords = 0;
-
-    if (syncType == 'contabile') {
-      final fileContent = await _sharePointService.downloadFile(
-        accessToken: token,
-        itemId: file.id,
-        sitePath: file.sitePath,
-      );
-
-      setState(() {
-        _currentFileStatus = 'Analisi e Inserimento...';
-      });
-
-      _log('[$syncName] Download completato. Esecuzione del parsing del tracciato...');
-      final lines = fileContent.split('\n');
-      
-      if (lines.length < 3) {
-        _log('[$syncName] Avviso: Il file ${file.name} è vuoto o non conforme.');
-        return 0;
-      }
-
-      final uniqueCode = '${DateTime.now().millisecondsSinceEpoch}_${syncType}_${file.id.hashCode}';
-      final List<TracciatoContabile> parsedRecords = [];
-
-      for (int lineIndex = 1; lineIndex < lines.length - 1; lineIndex++) {
-        final line = lines[lineIndex];
-        if (line.trim().isNotEmpty) {
-          try {
-            final record = TracciatoContabile.fromString(
-              line,
-              logHistoryId: uniqueCode,
-              sourceFileLine: lineIndex + 1,
-            );
-            parsedRecords.add(record);
-          } catch (err) {
-            _log('[$syncName] Errore parsing riga ${lineIndex + 1} nel file ${file.name}: $err');
-          }
-        }
-      }
-
-      if (parsedRecords.isNotEmpty) {
-        await isar.writeTxn(() async {
-          await isar.tracciatoContabiles.putAll(parsedRecords);
-          
-          final logHistoryEntry = LogHistory(
-            fileName: file.name,
-            date: DateTime.now(),
-            uniqueCode: uniqueCode,
-            totalRecords: parsedRecords.length + 2,
-            insertedRecords: parsedRecords.length,
-            sourceType: 'Tracciato Contabile',
-          );
-          await isar.logHistorys.put(logHistoryEntry);
-        });
-
-        importedRecords = parsedRecords.length;
-        setState(() {
-          _currentFileRecords = importedRecords;
-        });
-        _log('[$syncName] File ${file.name} salvato nel DB: $importedRecords record importati.');
-      }
-    } else {
-      // File Excel (binari)
-      final bytes = await _sharePointService.downloadFileBytes(
-        accessToken: token,
-        itemId: file.id,
-        sitePath: file.sitePath,
-      );
-
-      setState(() {
-        _currentFileStatus = 'Analisi ed Elaborazione Excel...';
-      });
-
-      _log('[$syncName] Download completato. Esecuzione del parsing...');
-      final tempDir = Directory.systemTemp;
-      final tempFile = File('${tempDir.path}/${file.name}');
-      await tempFile.writeAsBytes(bytes);
-      final xFile = XFile(tempFile.path);
-
-      Map<String, dynamic> result = {};
-      try {
-        if (syncType == 'conto') {
-          result = await ref.read(estrattoContoProvider.notifier).loadFromFile(xFile);
-        } else if (syncType == 'sap') {
-          result = await ref.read(tracciatoSapProvider.notifier).loadFromFile(xFile);
-        } else if (syncType == 'amex') {
-          result = await ref.read(estrattoAmexProvider.notifier).loadFromFile(xFile);
-        } else if (syncType == 'anagrafica') {
-          _log('[$syncName] Modalità anagrafica: svuotamento dei record precedenti dal database...');
-          await ref.read(anagraficaProvider.notifier).clear();
-          await isar.writeTxn(() async {
-            await isar.logHistorys.filter().sourceTypeEqualTo('Anagrafica').deleteAll();
-          });
-          result = await ref.read(anagraficaProvider.notifier).loadFromFile(xFile);
-        } else if (syncType == 'scarti') {
-          result = await ref.read(scartiEcSapProvider.notifier).loadFromFile(xFile);
-        }
-
-        importedRecords = result['inserted'] as int? ?? 0;
-        setState(() {
-          _currentFileRecords = importedRecords;
-        });
-        _log('[$syncName] File ${file.name} salvato nel DB: $importedRecords record importati.');
-      } catch (e) {
-        _log('[$syncName] Errore durante l\'importazione del file ${file.name}: $e');
-        rethrow;
-      } finally {
-        if (await tempFile.exists()) {
-          await tempFile.delete();
-        }
-      }
-    }
-
-    return importedRecords;
-  }
-
   Future<void> _startSynchronization() async {
-    // 1. Verifica autenticazione
-    final authState = ref.read(authProvider);
-    if (!authState.isAuthenticated) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Row(
-            children: [
-              Icon(Icons.warning_amber_rounded, color: Colors.white),
-              SizedBox(width: 12),
-              Expanded(child: Text('Autenticazione richiesta. Effettua prima il login Microsoft Entra ID in alto a destra.')),
-            ],
-          ),
-          backgroundColor: SkyTheme.timRed,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-      return;
-    }
-
-    setState(() {
-      _isSyncing = true;
-      _syncProgress = 0.0;
-      _syncStep = 'Connessione sicura a SharePoint in corso...';
-      _syncLogs = [];
-      _syncQueue = [];
-      _totalFilesFound = 0;
-      _processedFilesCount = 0;
-      _totalRecordsImported = 0;
-      _currentFile = '';
-      _currentFileStatus = '';
-      _currentFileRecords = 0;
-    });
-    _pulseController.repeat(reverse: true);
-
     try {
-      _log('Richiesta token di sicurezza valido da Entra ID...');
-      final token = await ref.read(authProvider.notifier).getValidAccessToken();
-      
-      if (token == null) {
-        throw Exception('Impossibile ottenere un token di sicurezza valido. Effettua nuovamente il login.');
-      }
-
-      final settings = ref.read(appSettingsProvider);
-      final isar = ref.read(isarProvider);
-
-      List<String> typesToSync = [];
-      if (_selectedSyncType == 'all') {
-        typesToSync = ['contabile', 'conto', 'sap', 'amex', 'scarti', 'anagrafica'];
-      } else {
-        typesToSync = [_selectedSyncType];
-      }
-
-      // Svuota i database per i tipi selezionati se richiesto
-      if (_clearBeforeSync) {
-        for (final type in typesToSync) {
-          _log('Svuotamento della categoria $type in corso...');
-          setState(() {
-            _syncStep = 'Pulizia database per ${type.toUpperCase()}...';
-          });
-          
-          String sourceType = '';
-          if (type == 'contabile') {
-            await ref.read(tracciatoContabilesProvider.notifier).clear();
-            sourceType = 'Tracciato Contabile';
-          } else if (type == 'conto') {
-            await ref.read(estrattoContoProvider.notifier).clear();
-            sourceType = 'Estratto Conto';
-          } else if (type == 'sap') {
-            await ref.read(tracciatoSapProvider.notifier).clear();
-            sourceType = 'Tracciato SAP';
-          } else if (type == 'amex') {
-            await ref.read(estrattoAmexProvider.notifier).clear();
-            sourceType = 'Estratto AMEX';
-          } else if (type == 'anagrafica') {
-            await ref.read(anagraficaProvider.notifier).clear();
-            sourceType = 'Anagrafica';
-          } else if (type == 'scarti') {
-            await ref.read(scartiEcSapProvider.notifier).clear();
-            sourceType = 'Scarti EC SAP';
-          }
-          
-          await isar.writeTxn(() async {
-            await isar.logHistorys.filter()
-                .sourceTypeEqualTo(sourceType)
-                .or()
-                .sourceTypeEqualTo(sourceType == 'Tracciato Contabile' ? 'contabile' : sourceType)
-                .deleteAll();
-          });
-        }
-        
-        ref.invalidate(tracciatoContabilesProvider);
-        ref.invalidate(estrattoContoProvider);
-        ref.invalidate(tracciatoSapProvider);
-        ref.invalidate(estrattoAmexProvider);
-        ref.invalidate(anagraficaProvider);
-        ref.invalidate(scartiEcSapProvider);
-        ref.invalidate(logHistoryProvider);
-        
-        _log('Database locale e cronologia per i tipi selezionati puliti con successo.');
-      }
-
-      setState(() {
-        _syncStep = 'Ricerca dei file su SharePoint...';
-      });
-
-      // 1. Listing dei file su SharePoint
-      for (final type in typesToSync) {
-        String folderPath = '';
-        List<String> allowedExtensions = [];
-        String syncName = '';
-        String sourceType = '';
-
-        if (type == 'contabile') {
-          folderPath = settings.sharepointFolderPath.isEmpty ? 'tracciati_uvet' : settings.sharepointFolderPath;
-          allowedExtensions = ['.txt'];
-          syncName = 'Tracciati Contabili';
-          sourceType = 'Tracciato Contabile';
-        } else if (type == 'conto') {
-          folderPath = settings.sharepointEstrattiContoPath.isEmpty ? 'estratti_conto' : settings.sharepointEstrattiContoPath;
-          allowedExtensions = ['.xlsx', '.xls'];
-          syncName = 'Estratti Conto';
-          sourceType = 'Estratto Conto';
-        } else if (type == 'sap') {
-          folderPath = settings.sharepointTracciatoSapPath.isEmpty ? 'tracciato_sap' : settings.sharepointTracciatoSapPath;
-          allowedExtensions = ['.xlsx'];
-          syncName = 'Tracciato SAP';
-          sourceType = 'Tracciato SAP';
-        } else if (type == 'amex') {
-          folderPath = settings.sharepointEstrattiAmexPath.isEmpty ? 'estratti_amex' : settings.sharepointEstrattiAmexPath;
-          allowedExtensions = ['.xls'];
-          syncName = 'Estratti AMEX';
-          sourceType = 'Estratto AMEX';
-        } else if (type == 'anagrafica') {
-          folderPath = settings.sharepointAnagraficaPath.isEmpty ? 'anagrafica' : settings.sharepointAnagraficaPath;
-          allowedExtensions = ['.xlsx'];
-          syncName = 'Anagrafica';
-          sourceType = 'Anagrafica';
-        } else if (type == 'scarti') {
-          folderPath = settings.sharepointScartiTracciatoPath.isEmpty ? 'scarti_tracciato' : settings.sharepointScartiTracciatoPath;
-          allowedExtensions = ['.xlsx'];
-          syncName = 'Scarti Tracciato';
-          sourceType = 'Scarti EC SAP';
-        }
-
-        _log('[$syncName] Ricerca dei file in corso in "/$folderPath"...');
-        
-        final sharepointFiles = await _sharePointService.listFiles(
-          accessToken: token,
-          siteName: settings.sharepointSiteName,
-          documentLibrary: settings.sharepointDocumentLibrary,
-          folderPath: folderPath,
-          allowedExtensions: allowedExtensions,
-        );
-
-        _log('[$syncName] Rilevati ${sharepointFiles.length} file su SharePoint.');
-
-        // Filtro delta logic
-        final existingLogs = await isar.logHistorys.filter()
-            .sourceTypeEqualTo(sourceType)
-            .or()
-            .sourceTypeEqualTo(sourceType == 'Tracciato Contabile' ? 'contabile' : sourceType)
-            .findAll();
-
-        List<SharePointFile> filesToQueue = sharepointFiles;
-        if (type == 'anagrafica' && sharepointFiles.isNotEmpty) {
-          // Ordina per data di ultima modifica decrescente (il più recente per primo)
-          sharepointFiles.sort((a, b) => b.lastModified.compareTo(a.lastModified));
-          filesToQueue = [sharepointFiles.first];
-          _log('[$syncName] Modalità anagrafica: selezionato il file più recente: ${sharepointFiles.first.name} (${sharepointFiles.first.lastModified.toLocal()})');
-        }
-
-        for (final file in filesToQueue) {
-          final fileLogs = existingLogs.where((log) => log.fileName == file.name).toList();
-          
-          bool isAlreadyImported = false;
-          int importedRecordsCount = 0;
-          
-          if (fileLogs.isNotEmpty && !_clearBeforeSync) {
-            fileLogs.sort((a, b) => b.date.compareTo(a.date));
-            final lastLog = fileLogs.first;
-            
-            // Il file è considerato già importato solo se non è stato modificato su SharePoint
-            // dopo la sua ultima importazione locale (+5 secondi di tolleranza)
-            if (!file.lastModified.isAfter(lastLog.date.add(const Duration(seconds: 5)))) {
-              isAlreadyImported = true;
-              importedRecordsCount = lastLog.insertedRecords;
-            }
-          }
-          
-          _syncQueue.add({
-            'file': file,
-            'syncType': type,
-            'syncName': syncName,
-            'sourceType': sourceType,
-            'status': isAlreadyImported ? 'completed' : 'pending',
-            'records': isAlreadyImported ? importedRecordsCount : 0,
-            'isDeltaSkipped': isAlreadyImported,
-          });
-        }
-      }
-
-      // Filtriamo solo i file da importare per i totali
-      final activeQueue = _syncQueue.where((item) => item['status'] == 'pending').toList();
-      setState(() {
-        _totalFilesFound = activeQueue.length;
-      });
-
-      _log('Totale file da elaborare: $_totalFilesFound.');
-
-      if (_totalFilesFound == 0) {
-        setState(() {
-          _syncProgress = 1.0;
-          _syncStep = 'Sincronizzazione completata: nessun nuovo file trovato.';
-          _isSyncing = false;
-        });
-        _pulseController.stop();
-        
-        if (mounted) {
+      await ref.read(syncProvider.notifier).startSynchronization();
+      if (mounted) {
+        final syncState = ref.read(syncProvider);
+        if (syncState.totalFilesFound == 0) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: const Row(
@@ -453,100 +57,38 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
               behavior: SnackBarBehavior.floating,
             ),
           );
-        }
-        return;
-      }
-
-      // 2. Loop di importazione dei file attivi
-      for (int i = 0; i < _syncQueue.length; i++) {
-        final item = _syncQueue[i];
-        if (item['status'] == 'completed') continue;
-
-        final file = item['file'] as SharePointFile;
-        final syncType = item['syncType'] as String;
-
-        setState(() {
-          item['status'] = 'syncing';
-          _syncStep = 'Elaborazione file ${_processedFilesCount + 1} di $_totalFilesFound...';
-          _syncProgress = _processedFilesCount / _totalFilesFound;
-        });
-
-        try {
-          final imported = await _syncFileItem(syncType, file, token, settings, isar);
-          
-          setState(() {
-            item['status'] = 'completed';
-            item['records'] = imported;
-            _totalRecordsImported += imported;
-            _processedFilesCount++;
-            _syncProgress = _processedFilesCount / _totalFilesFound;
-          });
-        } catch (e) {
-          setState(() {
-            item['status'] = 'error';
-            item['errorMessage'] = e.toString();
-          });
-          _log('Errore durante l\'importazione di ${file.name}: $e');
-          setState(() {
-            _processedFilesCount++;
-            _syncProgress = _processedFilesCount / _totalFilesFound;
-          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 12),
+                  Text('Sincronizzazione riuscita! Importati ${syncState.totalRecordsImported} record.'),
+                ],
+              ),
+              backgroundColor: Colors.green.shade700,
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
         }
       }
-
-      ref.invalidate(tracciatoContabilesProvider);
-      ref.invalidate(estrattoContoProvider);
-      ref.invalidate(tracciatoSapProvider);
-      ref.invalidate(estrattoAmexProvider);
-      ref.invalidate(anagraficaProvider);
-      ref.invalidate(scartiEcSapProvider);
-      ref.invalidate(logHistoryProvider);
-
-      setState(() {
-        _syncProgress = 1.0;
-        _syncStep = 'Sincronizzazione completata!';
-        _isSyncing = false;
-      });
-      _pulseController.stop();
-      _log('Sincronizzazione conclusa con successo. Importati $_totalRecordsImported record in totale.');
-
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.check_circle, color: Colors.white),
-              const SizedBox(width: 12),
-              Text('Sincronizzazione riuscita! Importati $_totalRecordsImported record.'),
-            ],
-          ),
-          backgroundColor: Colors.green.shade700,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
-
     } catch (e) {
-      if (!mounted) return;
-      setState(() {
-        _isSyncing = false;
-        _syncStep = 'Errore durante la sincronizzazione: $e';
-      });
-      _pulseController.stop();
-      _log('ERRORE CRITICO: $e');
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.error_outline, color: Colors.white),
-              const SizedBox(width: 12),
-              Expanded(child: Text('Errore durante la sincronizzazione: $e')),
-            ],
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error_outline, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(child: Text('Errore durante la sincronizzazione: $e')),
+              ],
+            ),
+            backgroundColor: SkyTheme.timRed,
+            behavior: SnackBarBehavior.floating,
           ),
-          backgroundColor: SkyTheme.timRed,
-          behavior: SnackBarBehavior.floating,
-        ),
-      );
+        );
+      }
     }
   }
 
@@ -591,9 +133,9 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
     );
   }
 
-  Widget _buildSmartProgressDashboard() {
-    final hasFailed = _syncStep.contains('Errore') || _syncStep.contains('fallita');
-    final isCompleted = _syncProgress == 1.0 && !_isSyncing;
+  Widget _buildSmartProgressDashboard(SyncState syncState) {
+    final hasFailed = syncState.syncStep.contains('Errore') || syncState.syncStep.contains('fallita');
+    final isCompleted = syncState.syncProgress == 1.0 && !syncState.isSyncing;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -619,7 +161,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                 ),
               ),
               Text(
-                '${(_syncProgress * 100).toInt()}%',
+                '${(syncState.syncProgress * 100).toInt()}%',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,
@@ -630,7 +172,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
           ),
           const SizedBox(height: 8),
           LinearProgressIndicator(
-            value: _syncProgress,
+            value: syncState.syncProgress,
             backgroundColor: Colors.grey.shade200,
             color: isCompleted ? Colors.green.shade600 : (hasFailed ? SkyTheme.timRed : SkyTheme.timBlue),
             minHeight: 6,
@@ -638,7 +180,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
           ),
           const SizedBox(height: 12),
           Text(
-            _syncStep,
+            syncState.syncStep,
             style: TextStyle(
               fontSize: 12,
               color: hasFailed ? SkyTheme.timRed : Colors.grey.shade700,
@@ -652,7 +194,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
               Expanded(
                 child: _buildStatItem(
                   'Record Importati',
-                  '$_totalRecordsImported',
+                  '${syncState.totalRecordsImported}',
                   Icons.save_outlined,
                   Colors.green.shade700,
                 ),
@@ -661,7 +203,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
               Expanded(
                 child: _buildStatItem(
                   'File Elaborati',
-                  '$_processedFilesCount / $_totalFilesFound',
+                  '${syncState.processedFilesCount} / ${syncState.totalFilesFound}',
                   Icons.folder_shared_outlined,
                   SkyTheme.timBlue,
                 ),
@@ -669,7 +211,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
             ],
           ),
 
-          if (_isSyncing && _currentFile.isNotEmpty) ...[
+          if (syncState.isSyncing && syncState.currentFile.isNotEmpty) ...[
             const SizedBox(height: 20),
             Container(
               padding: const EdgeInsets.all(14),
@@ -694,7 +236,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          _currentFile,
+                          syncState.currentFile,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
@@ -705,7 +247,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                         ),
                         const SizedBox(height: 2),
                         Text(
-                          'Stato: $_currentFileStatus | Inseriti: $_currentFileRecords record',
+                          'Stato: ${syncState.currentFileStatus} | Inseriti: ${syncState.currentFileRecords} record',
                           style: TextStyle(
                             fontSize: 11,
                             color: Colors.grey.shade600,
@@ -719,7 +261,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
             ),
           ],
 
-          if (_syncQueue.isNotEmpty) ...[
+          if (syncState.syncQueue.isNotEmpty) ...[
             const SizedBox(height: 20),
             Theme(
               data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
@@ -727,7 +269,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                 tilePadding: EdgeInsets.zero,
                 iconColor: SkyTheme.timBlue,
                 title: Text(
-                  'Elenco dettagliato file (${_syncQueue.length})',
+                  'Elenco dettagliato file (${syncState.syncQueue.length})',
                   style: const TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
@@ -740,9 +282,9 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: const BouncingScrollPhysics(),
-                      itemCount: _syncQueue.length,
+                      itemCount: syncState.syncQueue.length,
                       itemBuilder: (context, idx) {
-                        final item = _syncQueue[idx];
+                        final item = syncState.syncQueue[idx];
                         final name = (item['file'] as SharePointFile).name;
                         final status = item['status'] as String;
                         final recs = item['records'] as int;
@@ -808,7 +350,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
     );
   }
 
-  Widget _buildClearDbOption() {
+  Widget _buildClearDbOption(SyncState syncState) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey.shade50,
@@ -828,34 +370,32 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
           'Svuota tutti i record locali della tabella configurata nel DB prima di scaricare l\'intero archivio SharePoint.',
           style: TextStyle(fontSize: 11),
         ),
-        value: _clearBeforeSync,
-        onChanged: _isSyncing
+        value: syncState.clearBeforeSync,
+        onChanged: syncState.isSyncing
             ? null
             : (val) {
-                setState(() {
-                  _clearBeforeSync = val;
-                });
+                ref.read(syncProvider.notifier).setClearBeforeSync(val);
               },
       ),
     );
   }
 
-  Widget _buildSyncButton() {
+  Widget _buildSyncButton(SyncState syncState) {
     String buttonLabel = '';
 
-    if (_selectedSyncType == 'all') {
+    if (syncState.selectedSyncType == 'all') {
       buttonLabel = 'Sincronizza Tutto';
-    } else if (_selectedSyncType == 'contabile') {
+    } else if (syncState.selectedSyncType == 'contabile') {
       buttonLabel = 'Sincronizza Tracciati Contabili';
-    } else if (_selectedSyncType == 'conto') {
+    } else if (syncState.selectedSyncType == 'conto') {
       buttonLabel = 'Sincronizza Estratti Conto';
-    } else if (_selectedSyncType == 'sap') {
+    } else if (syncState.selectedSyncType == 'sap') {
       buttonLabel = 'Sincronizza SAP';
-    } else if (_selectedSyncType == 'amex') {
+    } else if (syncState.selectedSyncType == 'amex') {
       buttonLabel = 'Sincronizza AMEX';
-    } else if (_selectedSyncType == 'anagrafica') {
+    } else if (syncState.selectedSyncType == 'anagrafica') {
       buttonLabel = 'Sincronizza Anagrafica';
-    } else if (_selectedSyncType == 'scarti') {
+    } else if (syncState.selectedSyncType == 'scarti') {
       buttonLabel = 'Sincronizza Scarti';
     }
 
@@ -863,8 +403,8 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
       width: double.infinity,
       height: 52,
       child: ElevatedButton.icon(
-        onPressed: _isSyncing ? null : _startSynchronization,
-        icon: _isSyncing
+        onPressed: syncState.isSyncing ? null : _startSynchronization,
+        icon: syncState.isSyncing
             ? const SizedBox(
                 width: 20,
                 height: 20,
@@ -875,7 +415,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
               )
             : const Icon(Icons.cloud_sync),
         label: Text(
-          _isSyncing ? 'Sincronizzazione in Corso...' : buttonLabel,
+          syncState.isSyncing ? 'Sincronizzazione in Corso...' : buttonLabel,
           style: const TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
@@ -884,7 +424,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
         style: ElevatedButton.styleFrom(
           backgroundColor: SkyTheme.timBlue,
           foregroundColor: Colors.white,
-          elevation: _isSyncing ? 0 : 2,
+          elevation: syncState.isSyncing ? 0 : 2,
           shadowColor: SkyTheme.timBlue.withAlpha(80),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
@@ -894,37 +434,37 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
     );
   }
 
-  Widget _buildDashboardHeader() {
+  Widget _buildDashboardHeader(SyncState syncState) {
     final settings = ref.read(appSettingsProvider);
     String titleText = '';
     String descText = '';
     String folderInfo = '';
 
-    if (_selectedSyncType == 'all') {
+    if (syncState.selectedSyncType == 'all') {
       titleText = 'Sincronizzazione Completa';
       descText = 'Sincronizza in sequenza tutte le categorie configurate (Contabili, Estratti Conto, SAP, AMEX, Scarti, Anagrafica) da SharePoint.';
       folderInfo = 'Tutte le cartelle configurate';
-    } else if (_selectedSyncType == 'contabile') {
+    } else if (syncState.selectedSyncType == 'contabile') {
       titleText = 'Tracciati Contabili';
       descText = 'Sincronizza i file di tracciato contabile (*.txt) da SharePoint.';
       folderInfo = settings.sharepointFolderPath.isEmpty ? 'tracciati_uvet' : settings.sharepointFolderPath;
-    } else if (_selectedSyncType == 'conto') {
+    } else if (syncState.selectedSyncType == 'conto') {
       titleText = 'Estratti Conto';
       descText = 'Sincronizza i file di estratto conto bancario (*.xlsx, *.xls) da SharePoint.';
       folderInfo = settings.sharepointEstrattiContoPath.isEmpty ? 'estratti_conto' : settings.sharepointEstrattiContoPath;
-    } else if (_selectedSyncType == 'sap') {
+    } else if (syncState.selectedSyncType == 'sap') {
       titleText = 'Tracciato SAP';
       descText = 'Sincronizza i file del tracciato SAP (*.xlsx) da SharePoint.';
       folderInfo = settings.sharepointTracciatoSapPath.isEmpty ? 'tracciato_sap' : settings.sharepointTracciatoSapPath;
-    } else if (_selectedSyncType == 'amex') {
+    } else if (syncState.selectedSyncType == 'amex') {
       titleText = 'Estratti AMEX';
       descText = 'Sincronizza i file degli estratti AMEX (*.xls) da SharePoint.';
       folderInfo = settings.sharepointEstrattiAmexPath.isEmpty ? 'estratti_amex' : settings.sharepointEstrattiAmexPath;
-    } else if (_selectedSyncType == 'anagrafica') {
+    } else if (syncState.selectedSyncType == 'anagrafica') {
       titleText = 'Anagrafica';
       descText = 'Sincronizza i file dell\'anagrafica dipendenti (*.xlsx) da SharePoint.';
       folderInfo = settings.sharepointAnagraficaPath.isEmpty ? 'anagrafica' : settings.sharepointAnagraficaPath;
-    } else if (_selectedSyncType == 'scarti') {
+    } else if (syncState.selectedSyncType == 'scarti') {
       titleText = 'Scarti Tracciato';
       descText = 'Sincronizza i file degli scarti del tracciato (*.xlsx) da SharePoint.';
       folderInfo = settings.sharepointScartiTracciatoPath.isEmpty ? 'scarti_tracciato' : settings.sharepointScartiTracciatoPath;
@@ -947,7 +487,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
-                    _isSyncing ? Icons.sync : (_selectedSyncType == 'all' ? Icons.all_inclusive : Icons.cloud_download),
+                    syncState.isSyncing ? Icons.sync : (syncState.selectedSyncType == 'all' ? Icons.all_inclusive : Icons.cloud_download),
                     size: 26,
                     color: SkyTheme.timBlue,
                   ),
@@ -1009,7 +549,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
     );
   }
 
-  Widget _buildMainDashboardCard(BuildContext context) {
+  Widget _buildMainDashboardCard(BuildContext context, SyncState syncState) {
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
@@ -1029,20 +569,20 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            _buildDashboardHeader(),
+            _buildDashboardHeader(syncState),
             const SizedBox(height: 24),
             
-            if (_isSyncing || _totalFilesFound > 0) ...[
-              _buildSmartProgressDashboard(),
+            if (syncState.isSyncing || syncState.totalFilesFound > 0) ...[
+              _buildSmartProgressDashboard(syncState),
               const SizedBox(height: 24),
             ],
 
-            if (!_isSyncing && _selectedSyncType != 'anagrafica') ...[
-              _buildClearDbOption(),
+            if (!syncState.isSyncing && syncState.selectedSyncType != 'anagrafica') ...[
+              _buildClearDbOption(syncState),
               const SizedBox(height: 24),
             ],
 
-            _buildSyncButton(),
+            _buildSyncButton(syncState),
           ],
         ),
       ),
@@ -1156,6 +696,20 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
       );
     }
 
+    final syncState = ref.watch(syncProvider);
+
+    // Listen to isSyncing change to trigger/stop pulse controller
+    ref.listen<bool>(
+      syncProvider.select((s) => s.isSyncing),
+      (previous, next) {
+        if (next) {
+          _pulseController.repeat(reverse: true);
+        } else {
+          _pulseController.stop();
+        }
+      },
+    );
+
     final rightPanelContent = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -1168,7 +722,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                   width: 8,
                   height: 8,
                   decoration: BoxDecoration(
-                    color: _isSyncing ? Colors.green : Colors.grey,
+                    color: syncState.isSyncing ? Colors.green : Colors.grey,
                     shape: BoxShape.circle,
                   ),
                 ),
@@ -1184,14 +738,14 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                 ),
               ],
             ),
-            if (_syncLogs.isNotEmpty)
+            if (syncState.syncLogs.isNotEmpty)
               IconButton(
                 constraints: const BoxConstraints(),
                 padding: EdgeInsets.zero,
                 icon: const Icon(Icons.copy, color: Colors.grey, size: 16),
                 tooltip: 'Copia tutti i log',
                 onPressed: () {
-                  Clipboard.setData(ClipboardData(text: _syncLogs.join('\n')));
+                  Clipboard.setData(ClipboardData(text: syncState.syncLogs.join('\n')));
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
                       content: Row(
@@ -1212,7 +766,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
         ),
         const Divider(color: Colors.grey, height: 20, thickness: 0.3),
         Expanded(
-          child: _syncLogs.isEmpty
+          child: syncState.syncLogs.isEmpty
             ? const Center(
                 child: Text(
                   'In attesa di avviare il processo...',
@@ -1221,9 +775,9 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
               )
             : ListView.builder(
                 physics: const BouncingScrollPhysics(),
-                itemCount: _syncLogs.length,
+                itemCount: syncState.syncLogs.length,
                 itemBuilder: (context, index) {
-                  final log = _syncLogs[index];
+                  final log = syncState.syncLogs[index];
                   final isError = log.contains('ERRORE') || log.contains('CRITICO');
                   return Padding(
                     padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -1281,15 +835,13 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                           ),
                         ),
                         onPressed: () {
-                          setState(() {
-                            _showAdvancedConsole = !_showAdvancedConsole;
-                          });
+                          ref.read(syncProvider.notifier).toggleAdvancedConsole();
                         },
                         icon: Icon(
-                          _showAdvancedConsole ? Icons.terminal : Icons.terminal_outlined,
+                          syncState.showAdvancedConsole ? Icons.terminal : Icons.terminal_outlined,
                           size: 16,
                         ),
-                        label: Text(_showAdvancedConsole ? 'Nascondi Console' : 'Mostra Console'),
+                        label: Text(syncState.showAdvancedConsole ? 'Nascondi Console' : 'Mostra Console'),
                       ),
                     ],
                   )
@@ -1331,16 +883,14 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                         ),
                         onPressed: () {
-                          setState(() {
-                            _showAdvancedConsole = !_showAdvancedConsole;
-                          });
+                          ref.read(syncProvider.notifier).toggleAdvancedConsole();
                         },
                         icon: Icon(
-                          _showAdvancedConsole ? Icons.terminal : Icons.terminal_outlined,
+                          syncState.showAdvancedConsole ? Icons.terminal : Icons.terminal_outlined,
                           size: 18,
                         ),
                         label: Text(
-                          _showAdvancedConsole ? 'Nascondi Console' : 'Mostra Console',
+                          syncState.showAdvancedConsole ? 'Nascondi Console' : 'Mostra Console',
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                       ),
@@ -1366,13 +916,11 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                   ButtonSegment(value: 'scarti', label: Text('Scarti'), icon: Icon(Icons.warning_amber)),
                   ButtonSegment(value: 'anagrafica', label: Text('Anagrafica'), icon: Icon(Icons.people)),
                 ],
-                selected: {_selectedSyncType},
-                onSelectionChanged: _isSyncing
+                selected: {syncState.selectedSyncType},
+                onSelectionChanged: syncState.isSyncing
                     ? null
                     : (val) {
-                        setState(() {
-                          _selectedSyncType = val.first;
-                        });
+                        ref.read(syncProvider.notifier).setSelectedSyncType(val.first);
                       },
               ),
             ),
@@ -1381,7 +929,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final showConsole = _showAdvancedConsole;
+                final showConsole = syncState.showAdvancedConsole;
                 final isWide = constraints.maxWidth > 850;
 
                 if (showConsole && isWide) {
@@ -1390,7 +938,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                     children: [
                       Expanded(
                         flex: 6,
-                        child: _buildMainDashboardCard(context),
+                        child: _buildMainDashboardCard(context, syncState),
                       ),
                       const SizedBox(width: 24),
                       Expanded(
@@ -1405,7 +953,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _buildMainDashboardCard(context),
+                        _buildMainDashboardCard(context, syncState),
                         const SizedBox(height: 24),
                         _buildConsoleCard(context, rightPanelContent, height: 350),
                       ],
@@ -1416,13 +964,13 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                     return Center(
                       child: Container(
                         constraints: const BoxConstraints(maxWidth: 800),
-                        child: _buildMainDashboardCard(context),
+                        child: _buildMainDashboardCard(context, syncState),
                       ),
                     );
                   } else {
                     return SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
-                      child: _buildMainDashboardCard(context),
+                      child: _buildMainDashboardCard(context, syncState),
                     );
                   }
                 }

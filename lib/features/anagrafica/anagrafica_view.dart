@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
@@ -455,14 +456,129 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                                     ),
                                     child: Row(
                                       children: [
-                                        _buildCell(record.cid ?? '-', 100, fontWeight: FontWeight.w500),
-                                        _buildCell(record.matricolaAziendaleUID ?? '-', 140),
+                                        _buildCell(
+                                          record.cid ?? '-',
+                                          100,
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  record.cid ?? '-',
+                                                  style: const TextStyle(
+                                                    fontSize: 13,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: Colors.black87,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              if (record.cid != null && record.cid!.isNotEmpty && record.cid != '-')
+                                                Material(
+                                                  color: Colors.transparent,
+                                                  child: InkWell(
+                                                    borderRadius: BorderRadius.circular(4),
+                                                    onTap: () {
+                                                      Clipboard.setData(ClipboardData(text: record.cid!));
+                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                        SnackBar(
+                                                          content: Text('CID ${record.cid} copiato negli appunti'),
+                                                          duration: const Duration(seconds: 1),
+                                                          backgroundColor: SkyTheme.timBlue,
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: const Padding(
+                                                      padding: EdgeInsets.all(4.0),
+                                                      child: Icon(Icons.copy_rounded, size: 14, color: Colors.grey),
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
+                                        _buildCell(
+                                          record.matricolaAziendaleUID ?? '-',
+                                          140,
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  record.matricolaAziendaleUID ?? '-',
+                                                  style: const TextStyle(
+                                                    fontSize: 13,
+                                                    color: Colors.black87,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              if (record.matricolaAziendaleUID != null && record.matricolaAziendaleUID!.isNotEmpty && record.matricolaAziendaleUID != '-')
+                                                Material(
+                                                  color: Colors.transparent,
+                                                  child: InkWell(
+                                                    borderRadius: BorderRadius.circular(4),
+                                                    onTap: () {
+                                                      Clipboard.setData(ClipboardData(text: record.matricolaAziendaleUID!));
+                                                      ScaffoldMessenger.of(context).showSnackBar(
+                                                        SnackBar(
+                                                          content: Text('UID ${record.matricolaAziendaleUID} copiato negli appunti'),
+                                                          duration: const Duration(seconds: 1),
+                                                          backgroundColor: SkyTheme.timBlue,
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: const Padding(
+                                                      padding: EdgeInsets.all(4.0),
+                                                      child: Icon(Icons.copy_rounded, size: 14, color: Colors.grey),
+                                                    ),
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        ),
                                         _buildCell(record.nominativo ?? '-', 250, color: SkyTheme.timBlue, fontWeight: FontWeight.bold),
                                         _buildCell(record.unitaOrg3Des ?? '-', 250),
                                         _buildCell(record.regione ?? '-', 150),
                                         _buildCell(record.sedeComune ?? '-', 150),
                                         _buildCell(record.mansione ?? '-', 250),
-                                        _buildCell(record.indirizzoMail ?? '-', 210),
+                                          _buildCell(
+                                            record.indirizzoMail ?? '-',
+                                            210,
+                                            child: Row(
+                                              children: [
+                                                Expanded(
+                                                  child: Text(
+                                                    record.indirizzoMail ?? '-',
+                                                    style: const TextStyle(
+                                                      fontSize: 13,
+                                                      color: Colors.black87,
+                                                    ),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                if (record.indirizzoMail != null && record.indirizzoMail!.isNotEmpty && record.indirizzoMail != '-')
+                                                  Material(
+                                                    color: Colors.transparent,
+                                                    child: InkWell(
+                                                      borderRadius: BorderRadius.circular(4),
+                                                      onTap: () {
+                                                        Clipboard.setData(ClipboardData(text: record.indirizzoMail!));
+                                                        ScaffoldMessenger.of(context).showSnackBar(
+                                                          SnackBar(
+                                                            content: Text('Email ${record.indirizzoMail} copiata negli appunti'),
+                                                            duration: const Duration(seconds: 1),
+                                                            backgroundColor: SkyTheme.timBlue,
+                                                          ),
+                                                        );
+                                                      },
+                                                      child: const Padding(
+                                                        padding: EdgeInsets.all(4.0),
+                                                        child: Icon(Icons.copy_rounded, size: 14, color: Colors.grey),
+                                                      ),
+                                                    ),
+                                                  ),
+                                              ],
+                                            ),
+                                          ),
                                         _buildCell('', 100, alignment: Alignment.center, child: IconButton(
                                           icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20),
                                           onPressed: () => _showAnagraficaDetails(context, record),
@@ -614,8 +730,8 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                         ]),
                         const SizedBox(height: 24),
                         _buildDetailSection('Rapporto di Lavoro', Icons.work_outline, Colors.orange, [
-                          _buildDetailRow('CID', record.cid ?? '-'),
-                          _buildDetailRow('Matricola', record.matricolaAziendaleUID ?? '-'),
+                          _buildDetailRow('CID', record.cid ?? '-', context: context, copyValue: record.cid),
+                          _buildDetailRow('Matricola', record.matricolaAziendaleUID ?? '-', context: context, copyValue: record.matricolaAziendaleUID),
                           _buildDetailRow('Data Assunzione', _formatDate(record.dataAssunzione)),
                           _buildDetailRow('Data Assunzione Gruppo', _formatDate(record.dataAssunzioneGruppo)),
                           _buildDetailRow('Anzianità di servizio', _calculateSeniority(record.dataAssunzioneGruppo)),
@@ -641,7 +757,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                         ]),
                         const SizedBox(height: 24),
                         _buildDetailSection('Contatti e Sede', Icons.location_on_outlined, Colors.green, [
-                          _buildDetailRow('Email', record.indirizzoMail ?? '-'),
+                          _buildDetailRow('Email', record.indirizzoMail ?? '-', context: context, copyValue: record.indirizzoMail),
                           _buildDetailRow('Sede Comune', record.sedeComune ?? '-'),
                           _buildDetailRow('Sede Indirizzo', record.sedeIndirizzo ?? '-'),
                           _buildDetailRow('Regione', record.regione ?? '-'),
@@ -911,13 +1027,51 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value) {
+  Widget _buildDetailRow(String label, String value, {BuildContext? context, String? copyValue}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
           Expanded(flex: 2, child: Text(label, style: TextStyle(color: Colors.grey.shade600, fontSize: 13))),
-          Expanded(flex: 3, child: Text(value, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13), textAlign: TextAlign.right)),
+          Expanded(
+            flex: 3,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: Text(
+                    value,
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                    textAlign: TextAlign.right,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                if (copyValue != null && value != '-' && value.isNotEmpty && context != null) ...[
+                  const SizedBox(width: 6),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(4),
+                      onTap: () {
+                        Clipboard.setData(ClipboardData(text: copyValue));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('$label ($copyValue) copiato negli appunti'),
+                            duration: const Duration(seconds: 1),
+                            backgroundColor: SkyTheme.timBlue,
+                          ),
+                        );
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Icon(Icons.copy_rounded, size: 14, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ],
       ),
     );

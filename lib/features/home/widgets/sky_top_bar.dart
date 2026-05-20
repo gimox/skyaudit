@@ -5,6 +5,7 @@ import '../../../core/theme/app_theme.dart';
 import '../../auth/models/auth_state.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/providers/user_avatar_provider.dart';
+import 'sky_sync_icon.dart';
 
 class SkyTopBar extends ConsumerWidget implements PreferredSizeWidget {
   final String title;
@@ -43,8 +44,10 @@ class SkyTopBar extends ConsumerWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
+        const SkySyncIcon(),
+        const SizedBox(width: 8),
         _buildUserActions(context, ref, authState, avatarPath),
-        const SizedBox(width: 12),
+        const SizedBox(width: 16),
       ],
       elevation: 0,
       centerTitle: false,
