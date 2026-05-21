@@ -96,6 +96,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     final allAnagrafica = ref.watch(anagraficaProvider);
     final anagraficaMap = {for (var a in allAnagrafica) (a.cid ?? '').trim(): (a.nominativo ?? '').trim()};
 
+    final isCompactList = MediaQuery.of(context).size.width < 1100;
+
     final searchQuery = ref.watch(controlsSearchProvider);
     final selectedSocieta = ref.watch(controlsSocietaProvider);
     final selectedTipo = ref.watch(controlsTipoDipendenteProvider);
@@ -326,174 +328,200 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       body: Column(
         children: [
           // HEADER SEMPLIFICATO E MODERNO
-          Container(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(12),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isCompact = constraints.maxWidth < 1100;
+              final isVeryCompact = constraints.maxWidth < 700;
+              final isUltraCompact = constraints.maxWidth < 500;
+              return Container(
+                padding: EdgeInsets.fromLTRB(
+                  isUltraCompact ? 4 : (isVeryCompact ? 8 : (isCompact ? 16 : 24)),
+                  isUltraCompact ? 4 : (isVeryCompact ? 6 : (isCompact ? 12 : 24)),
+                  isUltraCompact ? 4 : (isVeryCompact ? 8 : (isCompact ? 16 : 24)),
+                  isUltraCompact ? 4 : (isVeryCompact ? 6 : (isCompact ? 12 : 16)),
                 ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const SizedBox.shrink(),
-                const SizedBox(height: 20),
-                // TOTALI SU RIGA DEDICATA
-                Wrap(
-                  spacing: 32,
-                  runSpacing: 12,
-                  alignment: WrapAlignment.start,
-                  children: [
-                    _buildGlobalTotal('TRACCIATO', globalTracciato, SkyTheme.timBlue),
-                    _buildGlobalTotal('E.C.', globalEC, Colors.purple.shade700),
-                    _buildGlobalTotal('SAP', globalSap, Colors.green.shade700),
-                    _buildGlobalTotal('AMEX', globalAmex, Colors.orange.shade800),
-                    _buildGlobalTotal('DISCREPANZA E.C.', globalTracciato - globalEC, Colors.red.shade700),
-                    _buildGlobalTotal('DISCREPANZA SAP', globalTracciato - globalSap, Colors.red.shade700),
-                    _buildGlobalTotal('DISCREPANZA AMEX', globalTracciato - globalAmex, Colors.red.shade700),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(12),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 24),
-                // BARRA AZIONI E RICERCA
-                Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: Container(
-                        height: 48,
-                        padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade200),
-                        ),
-                        child: Row(
-                          children: [
-                            const Icon(Icons.search, color: Colors.grey, size: 20),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: TextField(
-                                controller: _searchController,
-                                decoration: const InputDecoration(
-                                  hintText: 'Cerca per trasferta, cid, località...',
-                                  border: InputBorder.none,
-                                  isDense: true,
+                    const SizedBox.shrink(),
+                    SizedBox(height: isUltraCompact ? 4 : (isCompact ? 8 : 20)),
+                    // TOTALI SU RIGA DEDICATA
+                    Wrap(
+                      spacing: isUltraCompact ? 4 : (isVeryCompact ? 6 : (isCompact ? 10 : 32)),
+                      runSpacing: isUltraCompact ? 2 : (isVeryCompact ? 4 : (isCompact ? 8 : 12)),
+                      alignment: WrapAlignment.start,
+                      children: [
+                        _buildGlobalTotal('TRACCIATO', globalTracciato, SkyTheme.timBlue, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                        _buildGlobalTotal('E.C.', globalEC, Colors.purple.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                        _buildGlobalTotal('SAP', globalSap, Colors.green.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                        _buildGlobalTotal('AMEX', globalAmex, Colors.orange.shade800, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                        _buildGlobalTotal('DISCREPANZA E.C.', globalTracciato - globalEC, Colors.red.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                        _buildGlobalTotal('DISCREPANZA SAP', globalTracciato - globalSap, Colors.red.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                        _buildGlobalTotal('DISCREPANZA AMEX', globalTracciato - globalAmex, Colors.red.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                      ],
+                    ),
+                    SizedBox(height: isUltraCompact ? 6 : (isVeryCompact ? 6 : (isCompact ? 12 : 24))),
+                    // BARRA AZIONI E RICERCA
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: isUltraCompact ? 36 : (isVeryCompact ? 42 : 48),
+                            padding: EdgeInsets.symmetric(horizontal: isUltraCompact ? 8 : 16),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade100,
+                              borderRadius: BorderRadius.circular(isUltraCompact ? 8 : 12),
+                              border: Border.all(color: Colors.grey.shade200),
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(Icons.search, color: Colors.grey, size: isUltraCompact ? 16 : 20),
+                                SizedBox(width: isUltraCompact ? 6 : 12),
+                                Expanded(
+                                  child: TextField(
+                                    controller: _searchController,
+                                    decoration: const InputDecoration(
+                                      hintText: 'Cerca per trasferta, cid, località...',
+                                      border: InputBorder.none,
+                                      isDense: true,
+                                    ),
+                                    style: TextStyle(fontSize: isUltraCompact ? 12 : 14),
+                                    onChanged: (value) => ref.read(controlsSearchProvider.notifier).state = value,
+                                  ),
                                 ),
-                                style: const TextStyle(fontSize: 14),
-                                onChanged: (value) => ref.read(controlsSearchProvider.notifier).state = value,
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: isUltraCompact ? 6 : 12),
+                        // BOTTONE FILTRI AVANZATI
+                        Builder(
+                          builder: (context) => Stack(
+                            clipBehavior: Clip.none,
+                            children: [
+                              OutlinedButton.icon(
+                                onPressed: () => Scaffold.of(context).openEndDrawer(),
+                                icon: Icon(Icons.filter_list_rounded, size: isUltraCompact ? 14 : 18),
+                                label: Text('Filtri', style: TextStyle(fontSize: isUltraCompact ? 11 : (isVeryCompact ? 12 : 14))),
+                                style: OutlinedButton.styleFrom(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: isUltraCompact ? 10 : (isVeryCompact ? 14 : 20),
+                                    vertical: isUltraCompact ? 8 : (isVeryCompact ? 10 : 14),
+                                  ),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isUltraCompact ? 8 : 12)),
+                                  side: BorderSide(color: activeFiltersCount > 0 ? SkyTheme.timBlue : Colors.grey.shade300),
+                                  foregroundColor: activeFiltersCount > 0 ? SkyTheme.timBlue : Colors.grey.shade700,
+                                ),
                               ),
+                              if (activeFiltersCount > 0)
+                                Positioned(
+                                  top: isUltraCompact ? -4 : -8,
+                                  right: isUltraCompact ? -4 : -8,
+                                  child: Container(
+                                    padding: EdgeInsets.all(isUltraCompact ? 4 : 6),
+                                    decoration: const BoxDecoration(
+                                      color: SkyTheme.timBlue,
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Text(
+                                      '$activeFiltersCount',
+                                      style: TextStyle(color: Colors.white, fontSize: isUltraCompact ? 8 : 10, fontWeight: FontWeight.bold),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    // CHIPS FILTRI ATTIVI
+                    if (activeFiltersCount > 0) ...[
+                      SizedBox(height: isUltraCompact ? 4 : 12),
+                      SizedBox(
+                        height: isUltraCompact ? 30 : 40,
+                        child: ListView(
+                          scrollDirection: Axis.horizontal,
+                          children: [
+                            if (searchQuery.isNotEmpty)
+                              _buildFilterChip('Cerca: "$searchQuery"', () {
+                                ref.read(controlsSearchProvider.notifier).state = '';
+                                _searchController.clear();
+                              }),
+                            if (startDate != null)
+                              _buildFilterChip('Dal: ${startDate.day}/${startDate.month}/${startDate.year}', () => ref.read(controlsStartDateProvider.notifier).state = null),
+                            if (endDate != null)
+                              _buildFilterChip('Al: ${endDate.day}/${endDate.month}/${endDate.year}', () => ref.read(controlsEndDateProvider.notifier).state = null),
+                            if (selectedSocieta.isNotEmpty)
+                              _buildFilterChip('${selectedSocieta.length} Società', () => ref.read(controlsSocietaProvider.notifier).state = {}),
+                            if (minDiff != null || maxDiff != null)
+                              _buildFilterChip('Range Diff.', () {
+                                _minDiffController.clear();
+                                _maxDiffController.clear();
+                                ref.read(controlsMinDiffProvider.notifier).state = null;
+                                ref.read(controlsMaxDiffProvider.notifier).state = null;
+                              }),
+                            if (selectedTipo.isNotEmpty)
+                              _buildFilterChip('${selectedTipo.length} Tipi', () => ref.read(controlsTipoDipendenteProvider.notifier).state = {}),
+                            if (matchStatusFilter != null)
+                              _buildFilterChip(
+                                matchStatusFilter == 'match_all' ? 'Tutto Quadrato' : 
+                                matchStatusFilter == 'match_ec_sap' ? 'EC + SAP' :
+                                matchStatusFilter == 'match_ec' ? 'Quadratura EC' :
+                                matchStatusFilter == 'diff_any' ? 'Qualsiasi Discrepanza' :
+                                matchStatusFilter == 'diff_ec' ? 'Discrepanza E.C.' : 
+                                matchStatusFilter == 'diff_sap' ? 'Discrepanza SAP' : 'Discrepanza AMEX', 
+                                () => ref.read(controlsMatchStatusProvider.notifier).state = null
+                              ),
+                            if (ref.watch(controlsShowOnlyOrphansProvider))
+                              _buildFilterChip('Solo Orfani', () => ref.read(controlsShowOnlyOrphansProvider.notifier).state = false),
+                            
+                            if (ref.watch(controlsCidMismatchProvider))
+                              _buildFilterChip('CID Differenti', () => ref.read(controlsCidMismatchProvider.notifier).state = false),
+                            
+                            TextButton(
+                              onPressed: () => _resetAllFilters(ref),
+                              child: Text('Reset tutto', style: TextStyle(fontSize: isUltraCompact ? 10 : 12, color: Colors.red)),
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    const SizedBox(width: 12),
-                    // BOTTONE FILTRI AVANZATI
-                    Builder(
-                      builder: (context) => Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          OutlinedButton.icon(
-                            onPressed: () => Scaffold.of(context).openEndDrawer(),
-                            icon: const Icon(Icons.filter_list_rounded),
-                            label: const Text('Filtri'),
-                            style: OutlinedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
-                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                              side: BorderSide(color: activeFiltersCount > 0 ? SkyTheme.timBlue : Colors.grey.shade300),
-                              foregroundColor: activeFiltersCount > 0 ? SkyTheme.timBlue : Colors.grey.shade700,
-                            ),
-                          ),
-                          if (activeFiltersCount > 0)
-                            Positioned(
-                              top: -8,
-                              right: -8,
-                              child: Container(
-                                padding: const EdgeInsets.all(6),
-                                decoration: const BoxDecoration(
-                                  color: SkyTheme.timBlue,
-                                  shape: BoxShape.circle,
-                                ),
-                                child: Text(
-                                  '$activeFiltersCount',
-                                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    // ESPORTA EXCEL
-
+                    ],
                   ],
                 ),
-                // CHIPS FILTRI ATTIVI
-                if (activeFiltersCount > 0) ...[
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    height: 40,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        if (searchQuery.isNotEmpty)
-                          _buildFilterChip('Cerca: "$searchQuery"', () {
-                            ref.read(controlsSearchProvider.notifier).state = '';
-                            _searchController.clear();
-                          }),
-                        if (startDate != null)
-                          _buildFilterChip('Dal: ${startDate.day}/${startDate.month}/${startDate.year}', () => ref.read(controlsStartDateProvider.notifier).state = null),
-                        if (endDate != null)
-                          _buildFilterChip('Al: ${endDate.day}/${endDate.month}/${endDate.year}', () => ref.read(controlsEndDateProvider.notifier).state = null),
-                        if (selectedSocieta.isNotEmpty)
-                          _buildFilterChip('${selectedSocieta.length} Società', () => ref.read(controlsSocietaProvider.notifier).state = {}),
-                        if (minDiff != null || maxDiff != null)
-                          _buildFilterChip('Range Diff.', () {
-                            _minDiffController.clear();
-                            _maxDiffController.clear();
-                            ref.read(controlsMinDiffProvider.notifier).state = null;
-                            ref.read(controlsMaxDiffProvider.notifier).state = null;
-                          }),
-                        if (selectedTipo.isNotEmpty)
-                          _buildFilterChip('${selectedTipo.length} Tipi', () => ref.read(controlsTipoDipendenteProvider.notifier).state = {}),
-                        if (matchStatusFilter != null)
-                          _buildFilterChip(
-                            matchStatusFilter == 'match_all' ? 'Tutto Quadrato' : 
-                            matchStatusFilter == 'match_ec_sap' ? 'EC + SAP' :
-                            matchStatusFilter == 'match_ec' ? 'Quadratura EC' :
-                            matchStatusFilter == 'diff_any' ? 'Qualsiasi Discrepanza' :
-                            matchStatusFilter == 'diff_ec' ? 'Discrepanza E.C.' : 
-                            matchStatusFilter == 'diff_sap' ? 'Discrepanza SAP' : 'Discrepanza AMEX', 
-                            () => ref.read(controlsMatchStatusProvider.notifier).state = null
-                          ),
-                        if (ref.watch(controlsShowOnlyOrphansProvider))
-                          _buildFilterChip('Solo Orfani', () => ref.read(controlsShowOnlyOrphansProvider.notifier).state = false),
-                        
-                        if (ref.watch(controlsCidMismatchProvider))
-                          _buildFilterChip('CID Differenti', () => ref.read(controlsCidMismatchProvider.notifier).state = false),
-                        
-                        TextButton(
-                          onPressed: () => _resetAllFilters(ref),
-                          child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ],
-            ),
+              );
+            },
           ),
 
-          const SizedBox(height: 24),
+          SizedBox(height: MediaQuery.of(context).size.width < 700 ? 8 : 24),
           Expanded(
             child: ListView.builder(
               controller: _scrollController,
               itemCount: paginatedTrasferte.length,
               itemBuilder: (context, index) {
+                final double screenWidth = MediaQuery.of(context).size.width;
+                final bool isVeryCompact = screenWidth < 700;
+                final bool isUltraCompact = screenWidth < 500;
+                final badgePadding = EdgeInsets.symmetric(
+                  horizontal: isUltraCompact ? 2.0 : (isVeryCompact ? 4.0 : (isCompactList ? 6.0 : 8.0)),
+                  vertical: isUltraCompact ? 0.5 : (isVeryCompact ? 0.5 : (isCompactList ? 1.0 : 2.0)),
+                );
+                final badgeIconSize = isUltraCompact ? 7.0 : (isVeryCompact ? 8.0 : (isCompactList ? 10.0 : 12.0));
+                final badgeFontSize = isUltraCompact ? 7.0 : (isVeryCompact ? 8.0 : (isCompactList ? 9.0 : 10.0));
+
+                final double trailingWidth = isUltraCompact ? 85.0 : (isVeryCompact ? 100.0 : (isCompactList ? 130.0 : 160.0));
+                final double horizontalPadding = isUltraCompact ? 2.0 : (isVeryCompact ? 4.0 : (isCompactList ? 10.0 : 16.0));
+                final double recordVerticalPadding = isUltraCompact ? 1.5 : (isVeryCompact ? 2.0 : (isCompactList ? 6.0 : 12.0));
+
                 final numeroTrasferta = paginatedTrasferte[index];
                 final recordsTrasferta = groupedRecords[numeroTrasferta]!;
                 final firstRecord = recordsTrasferta.first;
@@ -534,11 +562,15 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 final statusBorderColor = isMatching ? Colors.purple.shade200 : Colors.red.shade200;
 
                 return Card(
-                  margin: const EdgeInsets.only(bottom: 24, left: 8, right: 8),
+                  margin: EdgeInsets.only(
+                    bottom: isUltraCompact ? 4 : (isVeryCompact ? 6 : (isCompactList ? 12 : 24)),
+                    left: isUltraCompact ? 2 : (isVeryCompact ? 4 : (isCompactList ? 4 : 8)),
+                    right: isUltraCompact ? 2 : (isVeryCompact ? 4 : (isCompactList ? 4 : 8)),
+                  ),
                   elevation: 2,
                   clipBehavior: Clip.antiAlias,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(isVeryCompact ? 8 : 12),
                     side: BorderSide(color: statusBorderColor),
                   ),
                   child: ExpansionTile(
@@ -550,12 +582,19 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                     backgroundColor: Colors.white,
                     shape: const Border(),
                     collapsedShape: const Border(),
+                    tilePadding: isUltraCompact
+                        ? const EdgeInsets.symmetric(horizontal: 4, vertical: 0)
+                        : (isVeryCompact
+                            ? const EdgeInsets.symmetric(horizontal: 6, vertical: 0)
+                            : (isCompactList 
+                                ? const EdgeInsets.symmetric(horizontal: 12, vertical: 4) 
+                                : const EdgeInsets.symmetric(horizontal: 16, vertical: 8))),
                     title: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Wrap(
-                          spacing: 12,
-                          runSpacing: 4,
+                          spacing: isUltraCompact ? 3 : (isVeryCompact ? 6 : (isCompactList ? 8 : 12)),
+                          runSpacing: isUltraCompact ? 1 : (isVeryCompact ? 2 : (isCompactList ? 4 : 4)),
                           crossAxisAlignment: WrapCrossAlignment.center,
                           children: [
                             Row(
@@ -565,6 +604,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                   'Trasferta: $numeroTrasferta',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
+                                    fontSize: isUltraCompact ? 9 : (isVeryCompact ? 11 : (isCompactList ? 13 : 14)),
                                     color: statusTextColor,
                                   ),
                                 ),
@@ -587,7 +627,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                       padding: const EdgeInsets.all(4.0),
                                       child: Icon(
                                         Icons.copy_rounded, 
-                                        size: 14, 
+                                        size: isUltraCompact ? 8 : (isVeryCompact ? 10 : (isCompactList ? 12 : 14)), 
                                         color: statusTextColor.withAlpha((0.6 * 255).round()),
                                       ),
                                     ),
@@ -598,14 +638,14 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             Text(
                               '|  CID: ${_formatCidWithName(firstRecord.cid, anagraficaMap)}',
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: isUltraCompact ? 8.5 : (isVeryCompact ? 10 : (isCompactList ? 11 : 13)),
                                 fontWeight: FontWeight.w500,
                                 color: statusTextColor.withAlpha((0.8 * 255).round()),
                               ),
                             ),
                             // BADGE E.C. (Viola/Rosso)
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                              padding: badgePadding,
                               decoration: BoxDecoration(
                                 color: isMatching ? Colors.purple.shade50 : Colors.red.shade100,
                                 borderRadius: BorderRadius.circular(12),
@@ -615,14 +655,16 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                 children: [
                                   Icon(
                                     isMatching ? Icons.check_circle : Icons.warning,
-                                    size: 12,
+                                    size: badgeIconSize,
                                     color: statusTextColor,
                                   ),
                                   const SizedBox(width: 4),
                                   Text(
-                                    isMatching ? 'E.C. QUADRATA' : 'E.C. DISCREPANZA: ${(totaleTrasferta - totaleEC).toStringAsFixed(2)} €',
+                                    isUltraCompact
+                                        ? (isMatching ? 'EC OK' : 'EC DIFF: ${(totaleTrasferta - totaleEC).toStringAsFixed(2)}€')
+                                        : (isMatching ? 'E.C. QUADRATA' : 'E.C. DISCREPANZA: ${(totaleTrasferta - totaleEC).toStringAsFixed(2)} €'),
                                     style: TextStyle(
-                                      fontSize: 10,
+                                      fontSize: badgeFontSize,
                                       fontWeight: FontWeight.bold,
                                       color: statusTextColor,
                                     ),
@@ -638,7 +680,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                 final sapBg = isSapMatching ? Colors.green.shade50 : Colors.orange.shade50;
                                 
                                 return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  padding: badgePadding,
                                   decoration: BoxDecoration(
                                     color: sapBg,
                                     borderRadius: BorderRadius.circular(12),
@@ -649,14 +691,16 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                     children: [
                                       Icon(
                                         isSapMatching ? Icons.analytics_outlined : Icons.warning_amber_rounded,
-                                        size: 12,
+                                        size: badgeIconSize,
                                         color: sapColor,
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        isSapMatching ? 'SAP QUADRATA' : 'SAP DISCREPANZA: ${(totaleTrasferta - totaleSap).toStringAsFixed(2)} €',
+                                        isUltraCompact
+                                            ? (isSapMatching ? 'SAP OK' : 'SAP: ${(totaleTrasferta - totaleSap).toStringAsFixed(2)}€')
+                                            : (isSapMatching ? 'SAP QUADRATA' : 'SAP DISCREPANZA: ${(totaleTrasferta - totaleSap).toStringAsFixed(2)} €'),
                                         style: TextStyle(
-                                          fontSize: 10,
+                                          fontSize: badgeFontSize,
                                           fontWeight: FontWeight.bold,
                                           color: sapColor,
                                         ),
@@ -674,7 +718,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                 final amexBg = isAmexMatching ? Colors.orange.shade50 : Colors.red.shade50;
                                 
                                 return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                  padding: badgePadding,
                                   decoration: BoxDecoration(
                                     color: amexBg,
                                     borderRadius: BorderRadius.circular(12),
@@ -685,14 +729,16 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                     children: [
                                       Icon(
                                         isAmexMatching ? Icons.credit_card_outlined : Icons.warning_amber_rounded,
-                                        size: 12,
+                                        size: badgeIconSize,
                                         color: amexColor,
                                       ),
                                       const SizedBox(width: 4),
                                       Text(
-                                        isAmexMatching ? 'AMEX QUADRATA' : 'AMEX DISCREPANZA: ${(totaleTrasferta - totaleAmex).toStringAsFixed(2)} €',
+                                        isUltraCompact
+                                            ? (isAmexMatching ? 'AMEX OK' : 'AMEX: ${(totaleTrasferta - totaleAmex).toStringAsFixed(2)}€')
+                                            : (isAmexMatching ? 'AMEX QUADRATA' : 'AMEX DISCREPANZA: ${(totaleTrasferta - totaleAmex).toStringAsFixed(2)} €'),
                                         style: TextStyle(
-                                          fontSize: 10,
+                                          fontSize: badgeFontSize,
                                           fontWeight: FontWeight.bold,
                                           color: amexColor,
                                         ),
@@ -705,20 +751,20 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             // BADGE CID DIFFERENTI (Rosso Intenso)
                             if (hasCidMismatch)
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                padding: badgePadding,
                                 decoration: BoxDecoration(
                                   color: Colors.red.shade900,
                                   borderRadius: BorderRadius.circular(12),
                                 ),
-                                child: const Row(
+                                child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
-                                    Icon(Icons.person_off_outlined, size: 12, color: Colors.white),
-                                    SizedBox(width: 4),
+                                    Icon(Icons.person_off_outlined, size: badgeIconSize, color: Colors.white),
+                                    const SizedBox(width: 4),
                                     Text(
-                                      'CID DIFFERENTI',
+                                      isUltraCompact ? 'CID DIFF' : 'CID DIFFERENTI',
                                       style: TextStyle(
-                                        fontSize: 10,
+                                        fontSize: badgeFontSize,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.white,
                                       ),
@@ -734,7 +780,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             Text(
                               'Cid prevalente: ${firstRecord.cid}',
                               style: TextStyle(
-                                fontSize: 12,
+                                fontSize: isUltraCompact ? 8.5 : (isVeryCompact ? 10 : (isCompactList ? 11 : 12)),
                                 color: hasCidMismatch ? Colors.red.shade700 : Colors.grey.shade700,
                                 fontWeight: hasCidMismatch ? FontWeight.bold : FontWeight.w500,
                               ),
@@ -758,7 +804,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                   padding: const EdgeInsets.all(4.0),
                                   child: Icon(
                                     Icons.copy_rounded, 
-                                    size: 13, 
+                                    size: isUltraCompact ? 8.5 : (isVeryCompact ? 10 : (isCompactList ? 11 : 13)), 
                                     color: (hasCidMismatch ? Colors.red.shade700 : Colors.grey.shade700).withAlpha((0.6 * 255).round()),
                                   ),
                                 ),
@@ -769,12 +815,18 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                       ],
                     ),
                     subtitle: Text(
-                      '${recordsTrasferta.length} record • Dal ${firstRecord.dataInizio} al ${firstRecord.dataFine} • Società: ${firstRecord.societa}${dictionaryMap[firstRecord.societa] != null ? " (${dictionaryMap[firstRecord.societa]})" : ""} • Tipo: ${firstRecord.tipoDipendente}${dictionaryMap[firstRecord.tipoDipendente] != null ? " (${dictionaryMap[firstRecord.tipoDipendente]})" : ""}',
+                      isUltraCompact
+                          ? '${recordsTrasferta.length} rec • ${firstRecord.dataInizio} - ${firstRecord.dataFine} • Soc: ${firstRecord.societa} • Tipo: ${firstRecord.tipoDipendente}'
+                          : '${recordsTrasferta.length} record • Dal ${firstRecord.dataInizio} al ${firstRecord.dataFine} • Società: ${firstRecord.societa}${dictionaryMap[firstRecord.societa] != null ? " (${dictionaryMap[firstRecord.societa]})" : ""} • Tipo: ${firstRecord.tipoDipendente}${dictionaryMap[firstRecord.tipoDipendente] != null ? " (${dictionaryMap[firstRecord.tipoDipendente]})" : ""}',
+                      style: TextStyle(fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 11 : 12))),
                     ),
-                    leading: Icon(
-                      Icons.flight_takeoff,
-                      color: statusTextColor,
-                    ),
+                    leading: isUltraCompact
+                        ? null
+                        : Icon(
+                            Icons.flight_takeoff,
+                            color: statusTextColor,
+                            size: isVeryCompact ? 14 : (isCompactList ? 20 : 24),
+                          ),
                     children: [
                       ...recordsTrasferta.expand<Widget>((record) {
                         final matchingEC = allEstrattiConto.where(
@@ -782,20 +834,15 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                         ).toList();
                         final hasMatch = matchingEC.isNotEmpty;
 
-                        // Costanti per l'allineamento
-                        const double trailingWidth = 160.0;
-                        const double horizontalPadding = 16.0;
-
-                        return [
-                          // RIGA TRACCIATO CONTABILE
+                              // RIGA TRACCIATO CONTABILE
                           Container(
-                            padding: const EdgeInsets.symmetric(
+                            padding: EdgeInsets.symmetric(
                               horizontal: horizontalPadding,
-                              vertical: 12,
+                              vertical: recordVerticalPadding,
                             ),
                             decoration: BoxDecoration(
                               border: Border(
-                                left: BorderSide(color: SkyTheme.timBlue, width: 4),
+                                left: BorderSide(color: SkyTheme.timBlue, width: isUltraCompact ? 1.5 : (isVeryCompact ? 2 : (isCompactList ? 3 : 4))),
                               ),
                             ),
                             child: Row(
@@ -806,21 +853,27 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                     children: [
                                       Text(
                                         record.localita.isEmpty ? 'Località non specificata' : record.localita,
-                                        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: isUltraCompact ? 9 : (isVeryCompact ? 11 : (isCompactList ? 12 : 14)),
+                                        ),
                                       ),
                                       const SizedBox(height: 2),
                                       Text(
                                         'CID: ${_formatCidWithName(record.cid, anagraficaMap)}',
                                         style: TextStyle(
-                                          fontSize: 10, 
+                                          fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
                                           color: (hasCidMismatch && record.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade600,
                                           fontWeight: (hasCidMismatch && record.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
                                         ),
                                       ),
-                                      const SizedBox(width: 8),
+                                      const SizedBox(height: 1),
                                       Text(
                                         'Bolla: ${record.numeroBolla} • ${record.giustificativoSpesa}${dictionaryMap[record.giustificativoSpesa] != null ? " (${dictionaryMap[record.giustificativoSpesa]})" : ""}',
-                                        style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                                        style: TextStyle(
+                                          fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
+                                          color: Colors.grey.shade600,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -834,17 +887,17 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                         '${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          fontSize: 14,
+                                          fontSize: isUltraCompact ? 9 : (isVeryCompact ? 10 : (isCompactList ? 12 : 14)),
                                           color: record.isNegative ? Colors.red.shade700 : Colors.green.shade800,
                                         ),
                                       ),
-                                      const SizedBox(width: 8),
+                                      SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
                                       IconButton(
-                                        icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20),
+                                        icon: Icon(Icons.visibility_outlined, color: Colors.blue, size: isUltraCompact ? 12 : (isVeryCompact ? 14 : (isCompactList ? 18 : 20))),
                                         onPressed: () => _showRecordDetails(context, record),
                                         tooltip: 'Dettaglio Tracciato',
                                         constraints: const BoxConstraints(),
-                                        padding: const EdgeInsets.all(8),
+                                        padding: EdgeInsets.all(isUltraCompact ? 1 : (isVeryCompact ? 2 : 8)),
                                       ),
                                     ],
                                   ),
@@ -855,52 +908,63 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                           // RIGA ESTRATTO CONTO (se presente)
                           if (hasMatch)
                             Container(
-                              margin: const EdgeInsets.only(left: 20, bottom: 8, right: 0),
-                              padding: const EdgeInsets.symmetric(
+                              margin: EdgeInsets.only(
+                                left: isUltraCompact ? 2 : (isVeryCompact ? 4 : (isCompactList ? 12 : 20)),
+                                bottom: isUltraCompact ? 1 : (isVeryCompact ? 1 : (isCompactList ? 4 : 8)),
+                                right: 0,
+                              ),
+                              padding: EdgeInsets.symmetric(
                                 horizontal: horizontalPadding,
-                                vertical: 8,
+                                vertical: recordVerticalPadding,
                               ),
                               decoration: BoxDecoration(
                                 color: Colors.purple.shade50.withAlpha(100),
                                 borderRadius: const BorderRadius.only(
-                                  bottomLeft: Radius.circular(12),
-                                  bottomRight: Radius.circular(12),
+                                  bottomLeft: Radius.circular(8),
+                                  bottomRight: Radius.circular(8),
                                 ),
                               ),
                               child: Row(
                                 children: [
-                                  Icon(Icons.account_balance_wallet_outlined, size: 16, color: Colors.purple.shade700),
-                                  const SizedBox(width: 8),
+                                  Icon(Icons.account_balance_wallet_outlined, size: isUltraCompact ? 8 : (isVeryCompact ? 10 : (isCompactList ? 14 : 16)), color: Colors.purple.shade700),
+                                  SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
                                   Text(
                                     'EC',
                                     style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       color: Colors.purple.shade700,
-                                      fontSize: 12,
+                                      fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 11 : 12)),
                                     ),
                                   ),
-                                  const SizedBox(width: 12),
+                                  SizedBox(width: isUltraCompact ? 3 : (isVeryCompact ? 6 : 12)),
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           matchingEC.first.descrizioneServizio,
-                                          style: TextStyle(fontSize: 12, color: Colors.grey.shade700, fontWeight: FontWeight.w500),
+                                          style: TextStyle(
+                                            fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 11 : 12)), 
+                                            color: Colors.grey.shade700, 
+                                            fontWeight: FontWeight.w500,
+                                          ),
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         Text(
                                           'CID: ${_formatCidWithName(matchingEC.first.cid, anagraficaMap)}',
                                           style: TextStyle(
-                                            fontSize: 10, 
+                                            fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
                                             color: (hasCidMismatch && matchingEC.first.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade500,
                                             fontWeight: (hasCidMismatch && matchingEC.first.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
                                           ),
                                         ),
-                                        const SizedBox(width: 8),
+                                        const SizedBox(height: 1),
                                         Text(
                                           'Bolla: ${matchingEC.first.bolla}',
-                                          style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                                          style: TextStyle(
+                                            fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
+                                            color: Colors.grey.shade500,
+                                          ),
                                         ),
                                       ],
                                     ),
@@ -922,18 +986,18 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 color: isIdentical ? Colors.green.shade800 : Colors.red.shade700,
-                                                fontSize: 13,
+                                                fontSize: isUltraCompact ? 9 : (isVeryCompact ? 10 : (isCompactList ? 11 : 13)),
                                               ),
                                             );
                                           },
                                         ),
-                                        const SizedBox(width: 8),
+                                        SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
                                         IconButton(
-                                          icon: const Icon(Icons.receipt_long_outlined, color: Colors.purple, size: 18),
+                                          icon: Icon(Icons.receipt_long_outlined, color: Colors.purple, size: isUltraCompact ? 10 : (isVeryCompact ? 12 : (isCompactList ? 16 : 18))),
                                           onPressed: () => _showECRecordDetails(context, matchingEC.first),
                                           tooltip: 'Dettaglio Estratto Conto',
                                           constraints: const BoxConstraints(),
-                                          padding: const EdgeInsets.all(8),
+                                          padding: EdgeInsets.all(isUltraCompact ? 1 : (isVeryCompact ? 2 : 8)),
                                         ),
                                       ],
                                     ),
@@ -943,65 +1007,86 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             )
                           else
                             Container(
-                              margin: const EdgeInsets.only(left: 20, bottom: 8),
-                              padding: const EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 4),
+                              margin: EdgeInsets.only(
+                                  left: isUltraCompact ? 2 : (isVeryCompact ? 4 : (isCompactList ? 12 : 20)),
+                                  bottom: isUltraCompact ? 1 : (isVeryCompact ? 1 : (isCompactList ? 4 : 8)),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: horizontalPadding,
+                                vertical: recordVerticalPadding,
+                              ),
                               child: Row(
                                 children: [
-                                  Icon(Icons.warning_amber_rounded, size: 14, color: Colors.red.shade300),
-                                  const SizedBox(width: 8),
+                                  Icon(Icons.warning_amber_rounded, size: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 12 : 14)), color: Colors.red.shade300),
+                                  SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
                                   Text(
                                     'Nessuna corrispondenza in Estratto Conto',
-                                    style: TextStyle(fontSize: 11, color: Colors.red.shade300, fontStyle: FontStyle.italic),
+                                    style: TextStyle(
+                                      fontSize: isUltraCompact ? 7.5 : (isVeryCompact ? 8 : (isCompactList ? 10 : 11)), 
+                                      color: Colors.red.shade300, 
+                                      fontStyle: FontStyle.italic,
+                                    ),
                                   ),
                                 ],
                               ),
                             ),
                           // RIGA AMEX (se presente per bolla)
                           ...allAmexRecords.where((ame) => ame.numeroTrasferta == numeroTrasferta && ame.bolla == record.numeroBolla).map((matchingAmex) => Container(
-                            margin: const EdgeInsets.only(left: 20, bottom: 8, right: 0),
-                            padding: const EdgeInsets.symmetric(
+                            margin: EdgeInsets.only(
+                              left: isUltraCompact ? 2 : (isVeryCompact ? 4 : (isCompactList ? 12 : 20)),
+                              bottom: isUltraCompact ? 1 : (isVeryCompact ? 1 : (isCompactList ? 4 : 8)),
+                              right: 0,
+                            ),
+                            padding: EdgeInsets.symmetric(
                               horizontal: horizontalPadding,
-                              vertical: 8,
+                              vertical: recordVerticalPadding,
                             ),
                             decoration: BoxDecoration(
                               color: Colors.orange.shade50.withAlpha(100),
-                              borderRadius: const BorderRadius.all(Radius.circular(12)),
+                              borderRadius: const BorderRadius.all(Radius.circular(8)),
                               border: Border.all(color: Colors.orange.shade100.withAlpha(100)),
                             ),
                             child: Row(
                               children: [
-                                Icon(Icons.credit_card_outlined, size: 16, color: Colors.orange.shade700),
-                                const SizedBox(width: 8),
+                                Icon(Icons.credit_card_outlined, size: isUltraCompact ? 8 : (isVeryCompact ? 10 : (isCompactList ? 14 : 16)), color: Colors.orange.shade700),
+                                SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
                                 Text(
                                   'AMEX',
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: Colors.orange.shade700,
-                                    fontSize: 12,
+                                    fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 11 : 12)),
                                   ),
                                 ),
-                                const SizedBox(width: 12),
+                                SizedBox(width: isUltraCompact ? 3 : (isVeryCompact ? 6 : 12)),
                                 Expanded(
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text(
                                         matchingAmex.nomeEsercizio ?? matchingAmex.nomeFornitore ?? 'Esercizio non specificato',
-                                        style: TextStyle(fontSize: 12, color: Colors.grey.shade700, fontWeight: FontWeight.w500),
+                                        style: TextStyle(
+                                          fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 11 : 12)), 
+                                          color: Colors.grey.shade700, 
+                                          fontWeight: FontWeight.w500,
+                                        ),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       Text(
                                         'CID: ${_formatCidWithName(matchingAmex.cid ?? "", anagraficaMap)} • Data: ${matchingAmex.dataTransazione ?? "-"}',
                                         style: TextStyle(
-                                          fontSize: 10, 
+                                          fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
                                           color: (hasCidMismatch && matchingAmex.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade500,
                                           fontWeight: (hasCidMismatch && matchingAmex.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
                                         ),
                                       ),
-                                      const SizedBox(height: 2),
+                                      const SizedBox(height: 1),
                                       Text(
                                         'Bolla: ${matchingAmex.bolla ?? "-"}',
-                                        style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                                        style: TextStyle(
+                                          fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
+                                          color: Colors.grey.shade500,
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -1022,20 +1107,25 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: isIdentical ? Colors.green.shade800 : Colors.red.shade700,
-                                              fontSize: 13,
+                                              fontSize: isUltraCompact ? 9 : (isVeryCompact ? 10 : (isCompactList ? 11 : 13)),
                                             ),
                                           );
                                         },
                                       ),
-                                      const SizedBox(width: 8),
+                                      SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
                                       IconButton(
-                                        icon: const Icon(Icons.credit_card_outlined, color: Colors.orange, size: 18),
+                                        icon: Icon(Icons.credit_card_outlined, color: Colors.orange, size: isUltraCompact ? 10 : (isVeryCompact ? 12 : (isCompactList ? 16 : 18))),
                                         onPressed: () => _showAmexRecordDetails(context, matchingAmex),
                                         tooltip: 'Dettaglio AMEX',
                                         constraints: const BoxConstraints(),
-                                        padding: const EdgeInsets.all(8),
+                                        padding: EdgeInsets.all(isUltraCompact ? 1 : (isVeryCompact ? 2 : 8)),
                                       ),
                                     ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )),                                    ],
                                   ),
                                 ),
                               ],
@@ -1053,16 +1143,16 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(16, 24, 16, 8),
+                                padding: EdgeInsets.fromLTRB(isVeryCompact ? 12 : 16, isVeryCompact ? 4 : (isCompactList ? 12 : 24), isVeryCompact ? 12 : 16, isVeryCompact ? 1 : (isCompactList ? 4 : 8)),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.analytics_outlined, size: 16, color: Colors.green.shade800),
-                                    const SizedBox(width: 8),
+                                    Icon(Icons.analytics_outlined, size: isVeryCompact ? 10 : (isCompactList ? 14 : 16), color: Colors.green.shade800),
+                                    SizedBox(width: isVeryCompact ? 4 : 8),
                                     Text(
                                       'Record Tracciato SAP',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 12,
+                                        fontSize: isVeryCompact ? 9 : (isCompactList ? 11 : 12),
                                         color: Colors.green.shade800,
                                       ),
                                     ),
@@ -1070,53 +1160,60 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                 ),
                               ),
                               ...sapForTrasferta.map((sap) => Container(
-                                margin: const EdgeInsets.only(left: 20, bottom: 8, right: 8),
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                margin: EdgeInsets.only(
+                                  left: isVeryCompact ? 4 : (isCompactList ? 12 : 20),
+                                  bottom: isVeryCompact ? 1 : (isCompactList ? 4 : 8),
+                                  right: isVeryCompact ? 2 : 8,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: horizontalPadding,
+                                  vertical: isVeryCompact ? 2 : (isCompactList ? 6 : 10),
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.green.shade50.withAlpha(150),
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(8),
                                   border: Border.all(color: Colors.green.shade100),
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.description_outlined, size: 16, color: Colors.green.shade700),
-                                    const SizedBox(width: 8),
+                                    Icon(Icons.description_outlined, size: isVeryCompact ? 10 : (isCompactList ? 14 : 16), color: Colors.green.shade700),
+                                    SizedBox(width: isVeryCompact ? 4 : 8),
                                     Text(
                                       'SAP',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.green.shade700,
-                                        fontSize: 12,
+                                        fontSize: isVeryCompact ? 9 : (isCompactList ? 11 : 12),
                                       ),
                                     ),
-                                    const SizedBox(width: 12),
+                                    SizedBox(width: isVeryCompact ? 6 : 12),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             sap.tipoSpesaDescrizione,
-                                            style: TextStyle(fontSize: 12, color: Colors.grey.shade800, fontWeight: FontWeight.w500),
+                                            style: TextStyle(fontSize: isVeryCompact ? 9 : (isCompactList ? 11 : 12), color: Colors.grey.shade800, fontWeight: FontWeight.w500),
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           Text(
                                             'CID: ${_formatCidWithName(sap.cid, anagraficaMap)}',
                                             style: TextStyle(
-                                              fontSize: 10, 
+                                              fontSize: isVeryCompact ? 8 : (isCompactList ? 9 : 10), 
                                               color: (hasCidMismatch && sap.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade600,
                                               fontWeight: (hasCidMismatch && sap.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
                                             ),
                                           ),
-                                          const SizedBox(width: 8),
+                                          const SizedBox(height: 1),
                                           Text(
                                             'Data: ${sap.data} • Stato: ${sap.codiceStato ?? "-"}',
-                                            style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                                            style: TextStyle(fontSize: isVeryCompact ? 8 : (isCompactList ? 9 : 10), color: Colors.grey.shade600),
                                           ),
                                         ],
                                       ),
                                     ),
                                     SizedBox(
-                                      width: 160,
+                                      width: trailingWidth,
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
@@ -1125,16 +1222,16 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.green.shade800,
-                                              fontSize: 13,
+                                              fontSize: isVeryCompact ? 10 : (isCompactList ? 11 : 13),
                                             ),
                                           ),
-                                          const SizedBox(width: 8),
+                                          SizedBox(width: isVeryCompact ? 4 : 8),
                                           IconButton(
-                                            icon: const Icon(Icons.analytics_outlined, color: Colors.green, size: 18),
+                                            icon: Icon(Icons.analytics_outlined, color: Colors.green, size: isVeryCompact ? 12 : (isCompactList ? 16 : 18)),
                                             onPressed: () => _showSapRecordDetails(context, sap),
                                             tooltip: 'Dettaglio SAP',
                                             constraints: const BoxConstraints(),
-                                            padding: const EdgeInsets.all(8),
+                                            padding: EdgeInsets.all(isVeryCompact ? 2 : 8),
                                           ),
                                         ],
                                       ),
@@ -1160,16 +1257,16 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                                padding: EdgeInsets.fromLTRB(isVeryCompact ? 12 : 16, isVeryCompact ? 4 : (isCompactList ? 10 : 16), isVeryCompact ? 12 : 16, isVeryCompact ? 1 : (isCompactList ? 4 : 8)),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.credit_card_outlined, size: 16, color: Colors.orange.shade800),
-                                    const SizedBox(width: 8),
+                                    Icon(Icons.credit_card_outlined, size: isVeryCompact ? 10 : (isCompactList ? 14 : 16), color: Colors.orange.shade800),
+                                    SizedBox(width: isVeryCompact ? 4 : 8),
                                     Text(
                                       'Record Estratto AMEX',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 12,
+                                        fontSize: isVeryCompact ? 9 : (isCompactList ? 11 : 12),
                                         color: Colors.orange.shade800,
                                       ),
                                     ),
@@ -1177,53 +1274,60 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                 ),
                               ),
                               ...amexForTrasferta.map((amex) => Container(
-                                margin: const EdgeInsets.only(left: 20, bottom: 8, right: 8),
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                margin: EdgeInsets.only(
+                                  left: isVeryCompact ? 4 : (isCompactList ? 12 : 20),
+                                  bottom: isVeryCompact ? 1 : (isCompactList ? 4 : 8),
+                                  right: isVeryCompact ? 2 : 8,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: horizontalPadding,
+                                  vertical: isVeryCompact ? 2 : (isCompactList ? 6 : 10),
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.orange.shade50.withAlpha(150),
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(8),
                                   border: Border.all(color: Colors.orange.shade100),
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.payment_outlined, size: 16, color: Colors.orange.shade700),
-                                    const SizedBox(width: 8),
+                                    Icon(Icons.payment_outlined, size: isVeryCompact ? 10 : (isCompactList ? 14 : 16), color: Colors.orange.shade700),
+                                    SizedBox(width: isVeryCompact ? 4 : 8),
                                     Text(
                                       'AMEX',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.orange.shade700,
-                                        fontSize: 12,
+                                        fontSize: isVeryCompact ? 9 : (isCompactList ? 11 : 12),
                                       ),
                                     ),
-                                    const SizedBox(width: 12),
+                                    SizedBox(width: isVeryCompact ? 6 : 12),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             amex.nomeEsercizio ?? amex.nomeFornitore ?? 'Esercizio non specificato',
-                                            style: TextStyle(fontSize: 12, color: Colors.grey.shade800, fontWeight: FontWeight.w500),
+                                            style: TextStyle(fontSize: isVeryCompact ? 9 : (isCompactList ? 11 : 12), color: Colors.grey.shade800, fontWeight: FontWeight.w500),
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           Text(
                                             'CID: ${_formatCidWithName(amex.cid ?? "", anagraficaMap)} • Bolla: ${amex.bolla ?? "-"}',
                                             style: TextStyle(
-                                              fontSize: 10, 
+                                              fontSize: isVeryCompact ? 8 : (isCompactList ? 9 : 10), 
                                               color: (hasCidMismatch && amex.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade600,
                                               fontWeight: (hasCidMismatch && amex.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
                                             ),
                                           ),
-                                          const SizedBox(height: 2),
+                                          const SizedBox(height: 1),
                                           Text(
                                             'Data: ${amex.dataTransazione ?? "-"} • Fornitore: ${amex.nomeFornitore ?? "-"}',
-                                            style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                                            style: TextStyle(fontSize: isVeryCompact ? 8 : (isCompactList ? 9 : 10), color: Colors.grey.shade600),
                                           ),
                                         ],
                                       ),
                                     ),
                                     SizedBox(
-                                      width: 160,
+                                      width: trailingWidth,
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
@@ -1232,16 +1336,16 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.orange.shade800,
-                                              fontSize: 13,
+                                              fontSize: isVeryCompact ? 10 : (isCompactList ? 11 : 13),
                                             ),
                                           ),
-                                          const SizedBox(width: 8),
+                                          SizedBox(width: isVeryCompact ? 4 : 8),
                                           IconButton(
-                                            icon: const Icon(Icons.credit_card_outlined, color: Colors.orange, size: 18),
+                                            icon: Icon(Icons.credit_card_outlined, color: Colors.orange, size: isVeryCompact ? 12 : (isCompactList ? 16 : 18)),
                                             onPressed: () => _showAmexRecordDetails(context, amex),
                                             tooltip: 'Dettaglio AMEX',
                                             constraints: const BoxConstraints(),
-                                            padding: const EdgeInsets.all(8),
+                                            padding: EdgeInsets.all(isVeryCompact ? 2 : 8),
                                           ),
                                         ],
                                       ),
@@ -1268,16 +1372,16 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Padding(
-                                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                                padding: EdgeInsets.fromLTRB(isVeryCompact ? 12 : 16, isVeryCompact ? 4 : (isCompactList ? 10 : 16), isVeryCompact ? 12 : 16, isVeryCompact ? 1 : (isCompactList ? 4 : 8)),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.info_outline, size: 16, color: Colors.orange.shade800),
-                                    const SizedBox(width: 8),
+                                    Icon(Icons.info_outline, size: isVeryCompact ? 10 : (isCompactList ? 14 : 16), color: Colors.orange.shade800),
+                                    SizedBox(width: isVeryCompact ? 4 : 8),
                                     Text(
                                       'Record Estratto Conto senza corrispondenza nel Tracciato',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: 12,
+                                        fontSize: isVeryCompact ? 9 : (isCompactList ? 11 : 12),
                                         color: Colors.orange.shade800,
                                       ),
                                     ),
@@ -1285,53 +1389,60 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                 ),
                               ),
                               ...orphanedEC.map((ec) => Container(
-                                margin: const EdgeInsets.only(left: 20, bottom: 8, right: 8),
-                                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                                margin: EdgeInsets.only(
+                                  left: isVeryCompact ? 4 : (isCompactList ? 12 : 20),
+                                  bottom: isVeryCompact ? 1 : (isCompactList ? 4 : 8),
+                                  right: isVeryCompact ? 2 : 8,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: horizontalPadding,
+                                  vertical: isVeryCompact ? 2 : (isCompactList ? 4 : 8),
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.orange.shade50.withAlpha(100),
-                                  borderRadius: BorderRadius.circular(12),
+                                  borderRadius: BorderRadius.circular(8),
                                   border: Border.all(color: Colors.orange.shade100),
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.account_balance_wallet_outlined, size: 16, color: Colors.orange.shade700),
-                                    const SizedBox(width: 8),
+                                    Icon(Icons.account_balance_wallet_outlined, size: isVeryCompact ? 10 : (isCompactList ? 14 : 16), color: Colors.orange.shade700),
+                                    SizedBox(width: isVeryCompact ? 4 : 8),
                                     Text(
                                       'EC SOLO',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         color: Colors.orange.shade700,
-                                        fontSize: 12,
+                                        fontSize: isVeryCompact ? 9 : (isCompactList ? 11 : 12),
                                       ),
                                     ),
-                                    const SizedBox(width: 12),
+                                    SizedBox(width: isVeryCompact ? 6 : 12),
                                     Expanded(
                                       child: Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
                                           Text(
                                             ec.descrizioneServizio,
-                                            style: TextStyle(fontSize: 12, color: Colors.grey.shade700, fontWeight: FontWeight.w500),
+                                            style: TextStyle(fontSize: isVeryCompact ? 9 : (isCompactList ? 11 : 12), color: Colors.grey.shade700, fontWeight: FontWeight.w500),
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           Text(
                                             'CID: ${_formatCidWithName(ec.cid, anagraficaMap)}',
                                             style: TextStyle(
-                                              fontSize: 10, 
+                                              fontSize: isVeryCompact ? 8 : (isCompactList ? 9 : 10), 
                                               color: (hasCidMismatch && ec.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade500,
                                               fontWeight: (hasCidMismatch && ec.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
                                             ),
                                           ),
-                                          const SizedBox(width: 8),
+                                          const SizedBox(height: 1),
                                           Text(
                                             'Bolla: ${ec.bolla} • ${ec.fornitore}',
-                                            style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                                            style: TextStyle(fontSize: isVeryCompact ? 8 : (isCompactList ? 9 : 10), color: Colors.grey.shade500),
                                           ),
                                         ],
                                       ),
                                     ),
                                     SizedBox(
-                                      width: 160,
+                                      width: trailingWidth,
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
@@ -1340,16 +1451,16 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
                                               color: Colors.orange.shade700,
-                                              fontSize: 13,
+                                              fontSize: isVeryCompact ? 10 : (isCompactList ? 11 : 13),
                                             ),
                                           ),
-                                          const SizedBox(width: 8),
+                                          SizedBox(width: isVeryCompact ? 4 : 8),
                                           IconButton(
-                                            icon: const Icon(Icons.receipt_long_outlined, color: Colors.orange, size: 18),
+                                            icon: Icon(Icons.receipt_long_outlined, color: Colors.orange, size: isVeryCompact ? 12 : (isCompactList ? 16 : 18)),
                                             onPressed: () => _showECRecordDetails(context, ec),
                                             tooltip: 'Dettaglio Estratto Conto',
                                             constraints: const BoxConstraints(),
-                                            padding: const EdgeInsets.all(8),
+                                            padding: EdgeInsets.all(isVeryCompact ? 2 : 8),
                                           ),
                                         ],
                                       ),
@@ -1364,18 +1475,23 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                       ),
                       // RIGA RIEPILOGO TOTALI TRASFERTA
                       Container(
-                        margin: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                        padding: const EdgeInsets.all(16),
+                        margin: EdgeInsets.fromLTRB(
+                          isVeryCompact ? 4 : 16, 
+                          isVeryCompact ? 1 : (isCompactList ? 4 : 8), 
+                          isVeryCompact ? 4 : 16, 
+                          isVeryCompact ? 2 : (isCompactList ? 8 : 16),
+                        ),
+                        padding: EdgeInsets.all(isVeryCompact ? 4 : (isCompactList ? 10 : 16)),
                         decoration: BoxDecoration(
                           color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(12),
+                          borderRadius: BorderRadius.circular(8),
                           border: Border.all(color: Colors.grey.shade300),
                         ),
                         child: Wrap(
                           alignment: WrapAlignment.spaceBetween,
                           crossAxisAlignment: WrapCrossAlignment.center,
-                          spacing: 24,
-                          runSpacing: 16,
+                          spacing: isVeryCompact ? 4 : (isCompactList ? 12 : 24),
+                          runSpacing: isVeryCompact ? 2 : (isCompactList ? 8 : 16),
                           children: [
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -1384,7 +1500,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                 Text(
                                   'RIEPILOGO TOTALI',
                                   style: TextStyle(
-                                    fontSize: 10,
+                                    fontSize: isVeryCompact ? 7 : (isCompactList ? 9 : 10),
                                     fontWeight: FontWeight.bold,
                                     color: Colors.grey.shade600,
                                     letterSpacing: 1.2,
@@ -1399,17 +1515,19 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                     final totaleAmex = amexForTrasferta.fold<double>(0, (sum, ame) => sum + (ame.importoLordo ?? 0));
 
                                     return Wrap(
-                                      spacing: 32,
-                                      runSpacing: 12,
+                                      spacing: isVeryCompact ? 6 : (isCompactList ? 16 : 32),
+                                      runSpacing: isVeryCompact ? 2 : (isCompactList ? 6 : 12),
                                       children: [
-                                        _buildTotalIndicator('Tracciato', totaleTrasferta, SkyTheme.timBlue),
+                                        _buildTotalIndicator('Tracciato', totaleTrasferta, SkyTheme.timBlue, isCompact: isCompactList, isVeryCompact: isVeryCompact),
                                         _buildTotalIndicator(
                                           'Estratto Conto', 
                                           totaleEC, 
                                           Colors.purple.shade700,
+                                          isCompact: isCompactList,
+                                          isVeryCompact: isVeryCompact,
                                         ),
-                                        _buildTotalIndicator('SAP', totaleSap, Colors.green.shade700),
-                                        _buildTotalIndicator('AMEX', totaleAmex, Colors.orange.shade700),
+                                        _buildTotalIndicator('SAP', totaleSap, Colors.green.shade700, isCompact: isCompactList, isVeryCompact: isVeryCompact),
+                                        _buildTotalIndicator('AMEX', totaleAmex, Colors.orange.shade700, isCompact: isCompactList, isVeryCompact: isVeryCompact),
                                       ],
                                     );
                                   },
@@ -1435,19 +1553,20 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
                                 if (isMatchingEC && isMatchingSap && isMatchingAmex) {
                                   return Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    padding: EdgeInsets.symmetric(horizontal: isVeryCompact ? 4 : (isCompactList ? 8 : 12), vertical: isVeryCompact ? 1.5 : (isCompactList ? 4 : 6)),
                                     decoration: BoxDecoration(
                                       color: Colors.green.shade50,
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(16),
                                       border: Border.all(color: Colors.green.shade200),
                                     ),
                                     child: Row(
+                                      mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(Icons.check_circle, color: Colors.green.shade700, size: 16),
-                                        const SizedBox(width: 8),
+                                        Icon(Icons.check_circle, color: Colors.green.shade700, size: isVeryCompact ? 10 : (isCompactList ? 14 : 16)),
+                                        SizedBox(width: isVeryCompact ? 4 : 8),
                                         Text(
                                           'QUADRATO',
-                                          style: TextStyle(color: Colors.green.shade700, fontWeight: FontWeight.bold, fontSize: 12),
+                                          style: TextStyle(color: Colors.green.shade700, fontWeight: FontWeight.bold, fontSize: isVeryCompact ? 8 : (isCompactList ? 10 : 12)),
                                         ),
                                       ],
                                     ),
@@ -1459,19 +1578,20 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                   if (!isMatchingAmex) labels.add('AMEX: ${_formatCurrency(diffAmex)}');
 
                                   return Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                                    padding: EdgeInsets.symmetric(horizontal: isVeryCompact ? 4 : (isCompactList ? 8 : 12), vertical: isVeryCompact ? 1.5 : (isCompactList ? 4 : 6)),
                                     decoration: BoxDecoration(
                                       color: Colors.red.shade50,
-                                      borderRadius: BorderRadius.circular(20),
+                                      borderRadius: BorderRadius.circular(16),
                                       border: Border.all(color: Colors.red.shade200),
                                     ),
                                     child: Row(
+                                      mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Icon(Icons.warning, color: Colors.red.shade700, size: 16),
-                                        const SizedBox(width: 8),
+                                        Icon(Icons.warning, color: Colors.red.shade700, size: isVeryCompact ? 10 : (isCompactList ? 14 : 16)),
+                                        SizedBox(width: isVeryCompact ? 4 : 8),
                                         Text(
                                           'DISCREPANZA: ${labels.join(" | ")}',
-                                          style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: 12),
+                                          style: TextStyle(color: Colors.red.shade700, fontWeight: FontWeight.bold, fontSize: isVeryCompact ? 8 : (isCompactList ? 10 : 12)),
                                         ),
                                       ],
                                     ),
@@ -1586,7 +1706,106 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     return '$formattedWhole,$decimal €';
   }
 
-  Widget _buildGlobalTotal(String label, double value, Color color) {
+  Widget _buildGlobalTotal(String label, double value, Color color, {bool isCompact = false, bool isVeryCompact = false, bool isUltraCompact = false}) {
+    if (isUltraCompact) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        decoration: BoxDecoration(
+          color: color.withAlpha(12),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: color.withAlpha(30)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 7,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade700,
+                letterSpacing: 0.2,
+              ),
+            ),
+            const SizedBox(width: 2),
+            Text(
+              _formatCurrency(value),
+              style: TextStyle(
+                fontSize: 8,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    if (isVeryCompact) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withAlpha(12),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: color.withAlpha(30)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 8,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade700,
+                letterSpacing: 0.3,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              _formatCurrency(value),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    if (isCompact) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: color.withAlpha(12),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: color.withAlpha(30)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade700,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              _formatCurrency(value),
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
@@ -1611,18 +1830,22 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     );
   }
 
-  Widget _buildTotalIndicator(String label, double value, Color color, {Color? labelColor}) {
+  Widget _buildTotalIndicator(String label, double value, Color color, {Color? labelColor, bool isCompact = false, bool isVeryCompact = false, bool isUltraCompact = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: TextStyle(fontSize: 11, color: labelColor ?? Colors.grey.shade600, fontWeight: labelColor != null ? FontWeight.bold : FontWeight.normal),
+          style: TextStyle(
+            fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompact ? 10 : 11)),
+            color: labelColor ?? Colors.grey.shade600,
+            fontWeight: labelColor != null ? FontWeight.bold : FontWeight.normal,
+          ),
         ),
         Text(
           _formatCurrency(value),
           style: TextStyle(
-            fontSize: 18,
+            fontSize: isUltraCompact ? 10 : (isVeryCompact ? 12 : (isCompact ? 14 : 18)),
             fontWeight: FontWeight.bold,
             color: color,
           ),

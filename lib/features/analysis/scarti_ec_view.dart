@@ -324,32 +324,70 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
           // DASHBOARD STATS SUMMARY
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
-            child: Row(
-              children: [
-                _buildSummaryCard(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final card1 = _buildSummaryCard(
                   'TOTALE RECORD / IMPORTO',
                   '$totalRecords / ${_formatAmount(totalAmount)}',
                   Icons.folder_open_rounded,
                   SkyTheme.timBlue,
                   SkyTheme.timBlue.withAlpha(20),
-                ),
-                const SizedBox(width: 16),
-                _buildSummaryCard(
+                );
+                final card2 = _buildSummaryCard(
                   'RISCONTRATI / IMPORTO',
                   '$reconciledRecords / ${_formatAmount(reconciledAmount)}',
                   Icons.check_circle_outline,
                   Colors.green.shade700,
                   Colors.green.shade50,
-                ),
-                const SizedBox(width: 16),
-                _buildSummaryCard(
+                );
+                final card3 = _buildSummaryCard(
                   'IN ATTESA / IMPORTO',
                   '$waitingRecords / ${_formatAmount(waitingAmount)}',
                   Icons.help_outline_rounded,
                   Colors.orange.shade700,
                   Colors.orange.shade50,
-                ),
-              ],
+                );
+
+                if (constraints.maxWidth >= 950) {
+                  return Row(
+                    children: [
+                      Expanded(child: card1),
+                      const SizedBox(width: 16),
+                      Expanded(child: card2),
+                      const SizedBox(width: 16),
+                      Expanded(child: card3),
+                    ],
+                  );
+                } else if (constraints.maxWidth >= 650) {
+                  return Column(
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(child: card1),
+                          const SizedBox(width: 16),
+                          Expanded(child: card2),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(child: card3),
+                        ],
+                      ),
+                    ],
+                  );
+                } else {
+                  return Column(
+                    children: [
+                      card1,
+                      const SizedBox(height: 12),
+                      card2,
+                      const SizedBox(height: 12),
+                      card3,
+                    ],
+                  );
+                }
+              },
             ),
           ),
           // TABELLA PRINCIPALE
@@ -886,60 +924,58 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
 
 
   Widget _buildSummaryCard(String title, String value, IconData icon, Color color, Color bgLightColor) {
-    return Expanded(
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade100),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withAlpha(3),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: bgLightColor,
+              borderRadius: BorderRadius.circular(12),
             ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: bgLightColor,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, color: color, size: 24),
-            ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    title,
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade600,
-                      letterSpacing: 0.2,
-                    ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade600,
+                    letterSpacing: 0.2,
                   ),
-                  const SizedBox(height: 4),
-                  Text(
-                    value,
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                      color: color == SkyTheme.timRed ? Colors.black87 : color,
-                    ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: color == SkyTheme.timRed ? Colors.black87 : color,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

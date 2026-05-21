@@ -263,12 +263,15 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showUpdateDialog(AppUpdateInfo info) {
+    UpdateService.performUpdate(info);
+
     showDialog(
       context: context,
-      barrierDismissible: !info.mandatory,
+      barrierDismissible: kIsWeb,
       builder: (context) {
+        final isDesktop = !kIsWeb && (Platform.isWindows || Platform.isMacOS);
         return PopScope(
-          canPop: !info.mandatory,
+          canPop: !isDesktop,
           child: Dialog(
             backgroundColor: Colors.white,
             shape: RoundedRectangleBorder(
@@ -279,143 +282,57 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(28),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Row(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: SkyTheme.timBlue.withAlpha(25),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.system_update_alt,
-                          color: SkyTheme.timBlue,
-                          size: 28,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              'Aggiornamento Disponibile',
-                              style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color: SkyTheme.timBlue,
-                              ),
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              'Nuova versione: ${info.version}',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: Colors.grey.shade600,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: SkyTheme.timBlue.withAlpha(25),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const CircularProgressIndicator(
+                      color: SkyTheme.timBlue,
+                    ),
                   ),
                   const SizedBox(height: 24),
+                  const Text(
+                    'Aggiornamento in corso',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: SkyTheme.timBlue,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   Text(
-                    'È disponibile una nuova versione di SkyAudit. Si consiglia di procedere all\'aggiornamento per usufruire delle ultime ottimizzazioni e funzionalità.',
+                    isDesktop
+                        ? 'Download e installazione della versione ${info.version} in corso...'
+                        : 'Reindirizzamento al download della versione ${info.version}...',
+                    textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14,
-                      height: 1.5,
-                      color: Colors.grey.shade800,
+                      color: Colors.grey.shade600,
                     ),
                   ),
-                  if (info.changelog.isNotEmpty) ...[
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Novità introdotte:',
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: SkyTheme.timBlue,
-                      ),
+                  const SizedBox(height: 16),
+                  Text(
+                    isDesktop
+                        ? 'L\'applicazione verrà riavviata automaticamente al termine.'
+                        : 'Puoi chiudere questa finestra una volta completato il download.',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontStyle: FontStyle.italic,
+                      color: Colors.grey.shade500,
                     ),
-                    const SizedBox(height: 8),
-                    Container(
-                      constraints: const BoxConstraints(maxHeight: 150),
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.grey.shade50,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: Colors.grey.shade200),
-                      ),
-                      child: SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: info.changelog.map((log) => Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 3.0),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text('• ', style: TextStyle(fontWeight: FontWeight.bold, color: SkyTheme.timRed)),
-                                Expanded(
-                                  child: Text(
-                                    log,
-                                    style: const TextStyle(fontSize: 13, height: 1.4),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )).toList(),
-                        ),
-                      ),
+                  ),
+                  if (!isDesktop) ...[
+                    const SizedBox(height: 24),
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text('Chiudi'),
                     ),
                   ],
-                  const SizedBox(height: 28),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    children: [
-                      if (!info.mandatory)
-                        TextButton(
-                          onPressed: () => Navigator.pop(context),
-                          child: Text(
-                            'Più tardi',
-                            style: TextStyle(color: Colors.grey.shade600),
-                          ),
-                        ),
-                      const SizedBox(width: 12),
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: SkyTheme.timBlue,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                        ),
-                        onPressed: () async {
-                          final navigator = Navigator.of(context);
-                          final scaffoldMessenger = ScaffoldMessenger.of(context);
-                          try {
-                            await UpdateService.performUpdate(info);
-                            if (!info.mandatory && mounted) {
-                              navigator.pop();
-                            }
-                          } catch (e) {
-                            if (!mounted) return;
-                            scaffoldMessenger.showSnackBar(
-                              SnackBar(
-                                content: Text('Errore nel lancio dell\'aggiornamento: $e'),
-                                backgroundColor: SkyTheme.timRed,
-                              ),
-                            );
-                          }
-                        },
-                        child: const Text('Aggiorna Ora'),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),

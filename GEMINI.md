@@ -3,6 +3,7 @@
 - NEVER generate final walkthroughs, summaries, or explanations unless explicitly requested.
 - DO NOT launch autonomous sub-agents to scan the workspace without asking for my confirmation first.
 - Stop execution immediately after writing the required code block.
+- non mostrare il codice della modifica effettuata in chat (anche se richiesto). Fai solo una breve sintesi del task completato.
 
 
 

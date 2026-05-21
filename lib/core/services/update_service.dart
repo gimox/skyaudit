@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:travel_check/core/services/updater/updater.dart';
 
 class AppUpdateInfo {
   final String version;
@@ -117,6 +118,11 @@ class UpdateService {
 
   /// Esegue il reindirizzamento al download o aggiorna la pagina Web
   static Future<void> performUpdate(AppUpdateInfo info) async {
+    if (!kIsWeb && (Platform.isWindows || Platform.isMacOS)) {
+      await appUpdaterInstance.checkForUpdates();
+      return;
+    }
+
     if (info.downloadUrl.isEmpty) return;
     
     final uri = Uri.parse(info.downloadUrl);

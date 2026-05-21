@@ -6,6 +6,7 @@ import 'package:window_manager/window_manager.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:travel_check/core/config/app_config.dart';
+import 'package:travel_check/core/services/updater/updater.dart';
 import 'package:video_player_win/video_player_win_plugin.dart';
 import 'package:isar/isar.dart';
 import 'package:path_provider/path_provider.dart';
@@ -67,6 +68,7 @@ void main() async {
 
   if (!kIsWeb && (Platform.isMacOS || Platform.isWindows || Platform.isLinux)) {
     await windowManager.ensureInitialized();
+    await appUpdaterInstance.initialize();
     WindowOptions windowOptions = const WindowOptions(
       size: Size(1280, 800),
       minimumSize: Size(1000, 700),

@@ -492,7 +492,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
-                      width: 1680, // Larghezza fissa per scorrimento orizzontale
+                      width: 1730, // Larghezza fissa per scorrimento orizzontale
                       child: Column(
                         children: [
                           // HEADER FISSO
@@ -504,7 +504,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                             ),
                             child: Row(
                               children: [
-                                _buildCell('CID', 100, isHeader: true),
+                                _buildCell('CID', 150, isHeader: true),
                                 _buildCell('UID (MATRICOLA)', 140, isHeader: true),
                                 _buildCell('NOMINATIVO', 250, isHeader: true),
                                 _buildCell('ETÀ', 80, isHeader: true),
@@ -536,7 +536,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                                       children: [
                                         _buildCell(
                                           record.cid ?? '-',
-                                          100,
+                                          150,
                                           child: Row(
                                             children: [
                                               Expanded(

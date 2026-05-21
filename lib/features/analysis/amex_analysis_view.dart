@@ -9,10 +9,12 @@ import 'package:travel_check/features/upload/models/estratto_amex.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 
 // Filter providers for Estratti AMEX
 final amexSelectedSearchProvider = StateProvider<String?>((ref) => null);
 final amexSelectedFornitoreProvider = StateProvider<String?>((ref) => null);
+final amexSelectedContoProvider = StateProvider<String?>((ref) => null);
 final amexStartDateProvider = StateProvider<DateTime?>((ref) => null);
 final amexEndDateProvider = StateProvider<DateTime?>((ref) => null);
 final amexSortAscendingProvider = StateProvider<bool>((ref) => false);
@@ -44,6 +46,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     final allRecords = ref.watch(estrattoAmexProvider);
     final searchFilter = ref.watch(amexSelectedSearchProvider);
     final selectedFornitore = ref.watch(amexSelectedFornitoreProvider);
+    final selectedConto = ref.watch(amexSelectedContoProvider);
     final startDate = ref.watch(amexStartDateProvider);
     final endDate = ref.watch(amexEndDateProvider);
     final sortAscending = ref.watch(amexSortAscendingProvider);
@@ -54,6 +57,11 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         .map((tc) => tc.numeroTrasferta.trim())
         .where((t) => t.isNotEmpty)
         .toSet();
+    final anagrafiche = ref.watch(anagraficaProvider);
+    final anagraficheMap = {
+      for (var a in anagrafiche)
+        if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
+    };
     const pageSize = 50;
 
     if (allRecords.isEmpty) {
@@ -86,6 +94,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     final activeFiltersCount = [
       searchFilter != null,
       selectedFornitore != null,
+      selectedConto != null,
       startDate != null,
       endDate != null,
       trasfertaFilter != AmexTrasfertaPresenzaFilter.all,
@@ -99,17 +108,28 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         .toList()
       ..sort();
 
+    // Estrai conti disponibili per il filtro
+    final availableConti = allRecords
+        .map((r) => r.conto ?? '')
+        .where((s) => s.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+
     // Filtra i record
     final filteredRecords = allRecords.where((r) {
       if (searchFilter != null) {
         final query = searchFilter.toLowerCase();
+        final nominativo = anagraficheMap[r.cid?.trim()] ?? '';
         if (!(r.numeroTrasferta?.toLowerCase().contains(query) ?? false) &&
             !(r.cid?.toLowerCase().contains(query) ?? false) &&
-            !(r.bolla?.toLowerCase().contains(query) ?? false)) {
+            !(r.bolla?.toLowerCase().contains(query) ?? false) &&
+            !nominativo.toLowerCase().contains(query)) {
           return false;
         }
       }
       if (selectedFornitore != null && r.nomeFornitore != selectedFornitore) return false;
+      if (selectedConto != null && r.conto != selectedConto) return false;
       
       // Filtro Data Transazione (F) - Il formato nel file AMEX è solitamente DD/MM/YYYY o simile
       if (startDate != null || endDate != null) {
@@ -149,7 +169,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      endDrawer: _buildFilterDrawer(context, ref, availableFornitori),
+      endDrawer: _buildFilterDrawer(context, ref, availableFornitori, availableConti),
       floatingActionButton: filteredRecords.isNotEmpty 
           ? FloatingActionButton(
               onPressed: () => _exportToExcel(filteredRecords),
@@ -193,7 +213,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                             Expanded(
                               child: TextField(
                                 controller: _searchController,
-                                decoration: const InputDecoration(hintText: 'Cerca per trasferta, CID o bolla...', border: InputBorder.none, isDense: true),
+                                decoration: const InputDecoration(hintText: 'Cerca per trasferta, CID, nominativo o bolla...', border: InputBorder.none, isDense: true),
                                 style: const TextStyle(fontSize: 14),
                                 onChanged: (value) {
                                   ref.read(amexSelectedSearchProvider.notifier).state = value.isEmpty ? null : value;
@@ -249,6 +269,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                             _searchController.clear();
                           }),
                         if (selectedFornitore != null) _buildFilterChip('Fornitore: $selectedFornitore', () => ref.read(amexSelectedFornitoreProvider.notifier).state = null),
+                        if (selectedConto != null) _buildFilterChip('Conto: $selectedConto', () => ref.read(amexSelectedContoProvider.notifier).state = null),
                         if (startDate != null) _buildFilterChip('Dal: ${startDate.day}/${startDate.month}/${startDate.year}', () => ref.read(amexStartDateProvider.notifier).state = null),
                         if (endDate != null) _buildFilterChip('Al: ${endDate.day}/${endDate.month}/${endDate.year}', () => ref.read(amexEndDateProvider.notifier).state = null),
                         if (trasfertaFilter != AmexTrasfertaPresenzaFilter.all)
@@ -287,7 +308,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
-                      width: 1510,
+                      width: 1730,
                       child: Column(
                         children: [
                           // HEADER FISSO
@@ -300,6 +321,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                             child: Row(
                               children: [
                                 _buildCell('CID', 200, isHeader: true),
+                                _buildCell('NOMINATIVO', 220, isHeader: true),
                                 _buildCell('TRASFERTA', 180, isHeader: true),
                                 _buildCell('IMPORTO', 120, isHeader: true),
                                 _buildCell('VIAGGIATORE', 200, isHeader: true),
@@ -328,6 +350,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                     child: Row(
                                       children: [
                                         _buildCopyableCell(record.cid ?? '-', 200, typeLabel: 'CID', fontWeight: FontWeight.w500),
+                                        _buildCell(anagraficheMap[record.cid?.trim()] ?? '-', 220),
                                         _buildCopyableCell(
                                           record.numeroTrasferta ?? '-',
                                           180,
@@ -432,6 +455,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
   void _resetAllFilters(WidgetRef ref) {
     ref.read(amexSelectedSearchProvider.notifier).state = null;
     ref.read(amexSelectedFornitoreProvider.notifier).state = null;
+    ref.read(amexSelectedContoProvider.notifier).state = null;
     ref.read(amexStartDateProvider.notifier).state = null;
     ref.read(amexEndDateProvider.notifier).state = null;
     ref.read(amexTrasfertaPresenzaFilterProvider.notifier).state = AmexTrasfertaPresenzaFilter.all;
@@ -453,7 +477,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     );
   }
 
-  Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, List<String> fornitori) {
+  Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, List<String> fornitori, List<String> conti) {
     return Drawer(
       width: 350,
       child: Column(
@@ -538,6 +562,10 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                 _buildDrawerSectionTitle('FORNITORE'),
                 const SizedBox(height: 12),
                 _buildFilterDropdown<String?>('Fornitore', ref.watch(amexSelectedFornitoreProvider), fornitori, (val) => ref.read(amexSelectedFornitoreProvider.notifier).state = val, icon: Icons.store),
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('CONTO'),
+                const SizedBox(height: 12),
+                _buildFilterDropdown<String?>('Conto', ref.watch(amexSelectedContoProvider), conti, (val) => ref.read(amexSelectedContoProvider.notifier).state = val, icon: Icons.account_balance_outlined),
                 const SizedBox(height: 32),
                 _buildDrawerSectionTitle('RISCONTRO CONTABILE'),
                 const SizedBox(height: 12),
@@ -774,6 +802,11 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
   }
 
   void _showRecordDetails(BuildContext context, EstrattoAmex record) {
+    final anagrafiche = ref.read(anagraficaProvider);
+    final anagraficheMap = {
+      for (var a in anagrafiche)
+        if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
+    };
     showDialog(
       context: context,
       builder: (context) {
@@ -851,6 +884,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                       children: [
                         _buildDetailSection('INFORMAZIONI PRINCIPALI', Icons.info_outline, Colors.blue, [
                           _buildDetailRow('CID', record.cid ?? '-'),
+                          _buildDetailRow('Nominativo', anagraficheMap[record.cid?.trim()] ?? '-'),
                           _buildDetailRow('Numero Trasferta', record.numeroTrasferta ?? '-'),
                           _buildDetailRow('Bolla (Trasformata)', record.bolla ?? '-'),
                           _buildDetailRow('Bolla Originale', record.bollaOriginale ?? '-'),
@@ -942,12 +976,18 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
   }
 
   Future<void> _exportToExcel(List<EstrattoAmex> records) async {
+    final anagrafiche = ref.read(anagraficaProvider);
+    final anagraficheMap = {
+      for (var a in anagrafiche)
+        if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
+    };
     final excel = Excel.createExcel();
     final Sheet sheet = excel['Estratti_AMEX'];
     
     // Headers
     sheet.appendRow([
       TextCellValue('CID'),
+      TextCellValue('NOMINATIVO'),
       TextCellValue('TRASFERTA'),
       TextCellValue('VIAGGIATORE'),
       TextCellValue('BOLLA'),
@@ -960,6 +1000,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     for (var r in records) {
       sheet.appendRow([
         TextCellValue(r.cid ?? ''),
+        TextCellValue(anagraficheMap[r.cid?.trim()] ?? ''),
         TextCellValue(r.numeroTrasferta ?? ''),
         TextCellValue(r.nomeViaggiatore ?? ''),
         TextCellValue(r.bolla ?? ''),

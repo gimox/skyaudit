@@ -6,6 +6,7 @@
 
 #include "generated_plugin_registrant.h"
 
+#include <auto_updater_windows/auto_updater_windows_plugin_c_api.h>
 #include <desktop_drop/desktop_drop_plugin.h>
 #include <desktop_webview_window/desktop_webview_window_plugin.h>
 #include <flutter_secure_storage_windows/flutter_secure_storage_windows_plugin.h>
@@ -17,6 +18,8 @@
 #include <window_to_front/window_to_front_plugin.h>
 
 void RegisterPlugins(flutter::PluginRegistry* registry) {
+  AutoUpdaterWindowsPluginCApiRegisterWithRegistrar(
+      registry->GetRegistrarForPlugin("AutoUpdaterWindowsPluginCApi"));
   DesktopDropPluginRegisterWithRegistrar(
       registry->GetRegistrarForPlugin("DesktopDropPlugin"));
   DesktopWebviewWindowPluginRegisterWithRegistrar(
