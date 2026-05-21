@@ -33,7 +33,7 @@ class SyncState {
 
   factory SyncState.initial() {
     return SyncState(
-      selectedSyncType: 'contabile',
+      selectedSyncType: 'all',
       clearBeforeSync: false,
       isSyncing: false,
       syncProgress: 0.0,

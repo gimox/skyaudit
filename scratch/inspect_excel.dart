@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:excel/excel.dart';
 
 void main() {
-  var file = '/Users/giorgiomodoni/development/skyaudit/data_mock/Estratto conto ECN26-08866.xlsx';
+  var file = '/Users/giorgiomodoni/development/skyaudit/data_mock/estratti conto/EC TIM/TIM Estratto conto APRILE.xlsx';
   var bytes = File(file).readAsBytesSync();
   var excel = Excel.decodeBytes(bytes);
 

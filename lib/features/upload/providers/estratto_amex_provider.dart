@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cross_file/cross_file.dart';
@@ -85,23 +86,64 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
   final String uniqueCode = params['uniqueCode'];
 
   final bytes = File(filePath).readAsBytesSync();
-  final excel = Excel.decodeBytes(bytes);
+  final isCsv = filePath.toLowerCase().endsWith('.csv');
 
-  if (excel.tables.isEmpty) return [];
+  String cleanQuotes(String s) {
+    s = s.trim();
+    while (s.isNotEmpty && (s.startsWith('"') || s.startsWith("'"))) {
+      s = s.substring(1);
+    }
+    while (s.isNotEmpty && (s.endsWith('"') || s.endsWith("'"))) {
+      s = s.substring(0, s.length - 1);
+    }
+    return s.trim();
+  }
 
-  // Usiamo il primo foglio come da file AMEX
-  final sheetName = excel.tables.keys.first;
-  final sheet = excel.tables[sheetName]!;
+  Excel? excel;
+  Sheet? sheet;
+  List<List<String>> csvRows = [];
+
+  if (isCsv) {
+    final csvString = utf8.decode(bytes, allowMalformed: true);
+    final lines = csvString.split(RegExp(r'\r?\n'));
+    for (final line in lines) {
+      if (line.trim().isEmpty) continue;
+      final List<String> row = [];
+      final StringBuffer sb = StringBuffer();
+      bool inQuotes = false;
+      for (int i = 0; i < line.length; i++) {
+        final char = line[i];
+        if (char == '"') {
+          inQuotes = !inQuotes;
+        } else if (char == ';' && !inQuotes) {
+          row.add(cleanQuotes(sb.toString()));
+          sb.clear();
+        } else {
+          sb.write(char);
+        }
+      }
+      row.add(cleanQuotes(sb.toString()));
+      csvRows.add(row);
+    }
+    if (csvRows.isEmpty) return [];
+  } else {
+    excel = Excel.decodeBytes(bytes);
+    if (excel.tables.isEmpty) return [];
+    final sheetName = excel.tables.keys.first;
+    sheet = excel.tables[sheetName]!;
+    if (sheet.maxRows <= 1) return [];
+  }
+
   final List<Map<String, dynamic>> results = [];
 
-  if (sheet.maxRows <= 1) return [];
-
   // Analisi delle intestazioni (riga 1) per mappare dinamicamente le colonne
-  final headerRow = sheet.rows.first;
-  final List<String> headers = headerRow.map((cell) => cell?.value?.toString().trim() ?? '').toList();
+  final List<String> headers = isCsv
+      ? csvRows.first
+      : sheet!.rows.first.map((cell) => cleanQuotes(cell?.value?.toString() ?? '')).toList();
 
   String normalize(String val) {
-    return val.toLowerCase()
+    return cleanQuotes(val)
+        .toLowerCase()
         .replaceAll(RegExp(r'<[^>]*>'), '') // Rimuove tag HTML come <br/>
         .replaceAll(RegExp(r'[.\-\s/_°]+'), '') // Rimuove spazi, punteggiatura e gradi/simboli speciali
         .replaceAll('à', 'a')
@@ -201,59 +243,74 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
     }
   }
 
-  // Saltiamo la prima riga (intestazione)
-  int rowIndex = 0;
-  for (final row in sheet.rows) {
-    rowIndex++;
-    if (rowIndex == 1) continue; // Salta intestazione
-    if (row.isEmpty) continue;
+  final int totalRows = isCsv ? csvRows.length : sheet!.rows.length;
+
+  for (int rowIndex = 1; rowIndex < totalRows; rowIndex++) {
+    final excelRow = isCsv ? null : sheet!.rows[rowIndex];
+    final csvRow = isCsv ? csvRows[rowIndex] : null;
+
+    if (!isCsv && excelRow == null) continue;
+    if (isCsv && csvRow == null) continue;
+    if (!isCsv && excelRow!.isEmpty) continue;
+    if (isCsv && csvRow!.isEmpty) continue;
 
     String val(int? index) {
-      if (index == null || index < 0 || index >= row.length) return '';
-      final cell = row[index];
-      if (cell == null || cell.value == null) return '';
-      String s = cell.value.toString().trim();
-      if (s.startsWith("'")) {
-        s = s.substring(1);
+      if (isCsv) {
+        if (index == null || index < 0 || index >= csvRow!.length) return '';
+        return csvRow[index];
+      } else {
+        if (index == null || index < 0 || index >= excelRow!.length) return '';
+        final cell = excelRow[index];
+        if (cell == null || cell.value == null) return '';
+        return cleanQuotes(cell.value.toString());
       }
-      if (s.endsWith("'")) {
-        s = s.substring(0, s.length - 1);
-      }
-      return s.trim();
     }
 
     double dVal(int? index) {
-      if (index == null || index < 0 || index >= row.length) return 0.0;
-      final cell = row[index];
-      if (cell == null || cell.value == null) return 0.0;
+      if (isCsv) {
+        if (index == null || index < 0 || index >= csvRow!.length) return 0.0;
+        String s = csvRow[index].replaceAll(' ', '');
+        if (s.isEmpty) return 0.0;
 
-      final val = cell.value;
-      if (val is DoubleCellValue) return val.value;
-      if (val is IntCellValue) return val.value.toDouble();
-
-      String s = val.toString().replaceAll(' ', '').trim();
-      if (s.startsWith("'")) {
-        s = s.substring(1);
-      }
-      if (s.endsWith("'")) {
-        s = s.substring(0, s.length - 1);
-      }
-      s = s.trim();
-      if (s.isEmpty) return 0.0;
-
-      if (s.contains('.') && s.contains(',')) {
-        final dotIndex = s.indexOf('.');
-        final commaIndex = s.indexOf(',');
-        if (dotIndex < commaIndex) {
-          s = s.replaceAll('.', '').replaceAll(',', '.');
-        } else {
-          s = s.replaceAll(',', '');
+        if (s.contains('.') && s.contains(',')) {
+          final dotIndex = s.indexOf('.');
+          final commaIndex = s.indexOf(',');
+          if (dotIndex < commaIndex) {
+            s = s.replaceAll('.', '').replaceAll(',', '.');
+          } else {
+            s = s.replaceAll(',', '');
+          }
+        } else if (s.contains(',')) {
+          s = s.replaceAll(',', '.');
         }
-      } else if (s.contains(',')) {
-        s = s.replaceAll(',', '.');
-      }
 
-      return double.tryParse(s) ?? 0.0;
+        return double.tryParse(s) ?? 0.0;
+      } else {
+        if (index == null || index < 0 || index >= excelRow!.length) return 0.0;
+        final cell = excelRow[index];
+        if (cell == null || cell.value == null) return 0.0;
+
+        final val = cell.value;
+        if (val is DoubleCellValue) return val.value;
+        if (val is IntCellValue) return val.value.toDouble();
+
+        String s = cleanQuotes(val.toString()).replaceAll(' ', '');
+        if (s.isEmpty) return 0.0;
+
+        if (s.contains('.') && s.contains(',')) {
+          final dotIndex = s.indexOf('.');
+          final commaIndex = s.indexOf(',');
+          if (dotIndex < commaIndex) {
+            s = s.replaceAll('.', '').replaceAll(',', '.');
+          } else {
+            s = s.replaceAll(',', '');
+          }
+        } else if (s.contains(',')) {
+          s = s.replaceAll(',', '.');
+        }
+
+        return double.tryParse(s) ?? 0.0;
+      }
     }
 
     final rif5Raw = val(getIndex('rif5', 36)); // AK (Rif 5)

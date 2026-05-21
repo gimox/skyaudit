@@ -225,7 +225,6 @@ Future<List<Map<String, dynamic>>> _parseExcelIsolate(Map<String, dynamic> param
       return double.tryParse(s) ?? 0.0;
     }
 
-
     final nrBollaRaw = val(1);
     String bollaCalc = '';
     if (nrBollaRaw.isNotEmpty) {
@@ -240,8 +239,8 @@ Future<List<Map<String, dynamic>>> _parseExcelIsolate(Map<String, dynamic> param
       'nrEstrattoConto': val(0),
       'nrBolla': nrBollaRaw,
       'bolla': bollaCalc,
-      'dataBolla': val(2),
-      'dataCompetenza': val(3),
+      'dataBolla': _normalizeExcelDate(val(2)),
+      'dataCompetenza': _normalizeExcelDate(val(3)),
       'codiceCliente': val(4),
       'ragioneSociale': val(5),
       'tipoTransazione': val(6),
@@ -266,8 +265,8 @@ Future<List<Map<String, dynamic>>> _parseExcelIsolate(Map<String, dynamic> param
       'totaleTasse': dVal(25),
       'totaleServizioGenerale': dVal(24),
       'totaleFee': dVal(27),
-      'dataIn': val(28),
-      'dataOut': val(29),
+      'dataIn': _normalizeExcelDate(val(28)),
+      'dataOut': _normalizeExcelDate(val(29)),
       'localitaPartenza': val(30),
       'localitaArrivo': val(31),
       'codiceTrattamento': val(32),
@@ -305,3 +304,39 @@ final estrattoContoProvider =
     NotifierProvider<EstrattoContoNotifier, List<EstrattoConto>>(() {
       return EstrattoContoNotifier();
     });
+
+String _normalizeExcelDate(String dateStr) {
+  if (dateStr.trim().isEmpty) return '';
+  final d = dateStr.trim();
+  try {
+    // 1. Prova a gestire dd/MM/yy o d/M/yy o dd/MM/yyyy
+    final slashMatch = RegExp(r'^(\d{1,2})/(\d{1,2})/(\d{2,4})').firstMatch(d);
+    if (slashMatch != null) {
+      final day = slashMatch.group(1)!.padLeft(2, '0');
+      final month = slashMatch.group(2)!.padLeft(2, '0');
+      var year = slashMatch.group(3)!;
+      if (year.length == 2) {
+        year = "20$year";
+      }
+      return "$day/$month/$year";
+    }
+
+    // 2. Prova DateTime.tryParse (ISO yyyy-MM-dd)
+    final dt = DateTime.tryParse(d);
+    if (dt != null) {
+      final day = dt.day.toString().padLeft(2, '0');
+      final month = dt.month.toString().padLeft(2, '0');
+      final year = dt.year.toString();
+      return "$day/$month/$year";
+    }
+    
+    // 3. Formato compatto yyyyMMdd
+    if (d.length == 8 && RegExp(r'^\d{8}$').hasMatch(d)) {
+      return "${d.substring(6, 8)}/${d.substring(4, 6)}/${d.substring(0, 4)}";
+    }
+
+    return d;
+  } catch (_) {
+    return d;
+  }
+}

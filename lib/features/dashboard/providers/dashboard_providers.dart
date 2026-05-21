@@ -11,13 +11,23 @@ final dashboardStatsProvider = Provider((ref) {
   // Filtra i record TC per l'anno selezionato
   final records = allRecords.where((r) {
     final parts = r.dataSpesa.split('/');
-    return parts.length == 3 && parts[2] == selectedYear.toString();
+    if (parts.length == 3) {
+      var yearStr = parts[2];
+      if (yearStr.length == 2) yearStr = "20$yearStr";
+      return yearStr == selectedYear.toString();
+    }
+    return false;
   }).toList();
 
   // Filtra i record EC per l'anno selezionato
   final filteredEC = ecRecords.where((r) {
     final parts = r.dataBolla.split('/');
-    return parts.length == 3 && parts[2] == selectedYear.toString();
+    if (parts.length == 3) {
+      var yearStr = parts[2];
+      if (yearStr.length == 2) yearStr = "20$yearStr";
+      return yearStr == selectedYear.toString();
+    }
+    return false;
   }).toList();
 
   final totalTickets = records.length;
@@ -50,7 +60,9 @@ final dashboardAvailableYearsProvider = Provider((ref) {
   for (final r in tcRecords) {
     final parts = r.dataSpesa.split('/');
     if (parts.length == 3) {
-      final y = int.tryParse(parts[2]);
+      var yearStr = parts[2];
+      if (yearStr.length == 2) yearStr = "20$yearStr";
+      final y = int.tryParse(yearStr);
       if (y != null) years.add(y);
     }
   }
@@ -58,7 +70,9 @@ final dashboardAvailableYearsProvider = Provider((ref) {
   for (final r in ecRecords) {
     final parts = r.dataBolla.split('/');
     if (parts.length == 3) {
-      final y = int.tryParse(parts[2]);
+      var yearStr = parts[2];
+      if (yearStr.length == 2) yearStr = "20$yearStr";
+      final y = int.tryParse(yearStr);
       if (y != null) years.add(y);
     }
   }
@@ -78,7 +92,12 @@ final dashboardFilteredRecordsProvider = Provider((ref) {
 
   return records.where((r) {
     final parts = r.dataSpesa.split('/');
-    return parts.length == 3 && parts[2] == year.toString();
+    if (parts.length == 3) {
+      var yearStr = parts[2];
+      if (yearStr.length == 2) yearStr = "20$yearStr";
+      return yearStr == year.toString();
+    }
+    return false;
   }).toList();
 });
 

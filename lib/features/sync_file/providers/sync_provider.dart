@@ -310,7 +310,7 @@ class SyncNotifier extends StateNotifier<SyncState> {
           sourceType = 'Tracciato SAP';
         } else if (type == 'amex') {
           folderPath = settings.sharepointEstrattiAmexPath.isEmpty ? 'estratti_amex' : settings.sharepointEstrattiAmexPath;
-          allowedExtensions = ['.xlsx'];
+          allowedExtensions = ['.xlsx', '.csv'];
           syncName = 'Estratti AMEX';
           sourceType = 'Estratto AMEX';
         } else if (type == 'anagrafica') {

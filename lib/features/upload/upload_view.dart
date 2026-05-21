@@ -63,7 +63,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
     } else if (type == 'sap') {
       extensions = ['xlsx'];
     } else if (type == 'amex') {
-      extensions = ['xlsx'];
+      extensions = ['xlsx', 'csv'];
     } else if (type == 'anagrafica') {
       extensions = ['xlsx'];
     } else {
@@ -1347,14 +1347,14 @@ class _UploadViewState extends ConsumerState<UploadView> {
       children: [
         _buildSectionHeader(
           'ESTRATTI AMEX',
-          'File estratti AMEX (.xlsx)',
+          'File estratti AMEX (.xlsx, .csv)',
         ),
         const SizedBox(height: 24),
         _buildDropZone(
           type: 'amex',
           selectedFile: _selectedAmexFile,
           isDragging: _isDraggingAmex,
-          allowedExtensions: ['xlsx'],
+          allowedExtensions: ['xlsx', 'csv'],
         ),
         const SizedBox(height: 24),
         _buildActionButton(

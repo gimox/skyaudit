@@ -12,14 +12,26 @@ final anagraficaSortAscendingProvider = StateProvider<bool>((ref) => true);
 
 // Advanced Filter Providers
 final selectedAnagLivelliProvider = StateProvider<List<String>>((ref) => []);
-final selectedAnagGradoOccupazProvider = StateProvider<String?>((ref) => null);
+enum GradoFilterType { all, specific, range }
+final gradoFilterTypeProvider = StateProvider<GradoFilterType>((ref) => GradoFilterType.all);
+final selectedGradoSpecificProvider = StateProvider<String?>((ref) => null);
+final selectedGradoMinProvider = StateProvider<double?>((ref) => null);
+final selectedGradoMaxProvider = StateProvider<double?>((ref) => null);
+
+enum EtaFilterType { all, specific, range }
+final etaFilterTypeProvider = StateProvider<EtaFilterType>((ref) => EtaFilterType.all);
+final selectedEtaSpecificProvider = StateProvider<int?>((ref) => null);
+final selectedEtaMinProvider = StateProvider<double?>((ref) => null);
+final selectedEtaMaxProvider = StateProvider<double?>((ref) => null);
+
 final selectedAnagContrSolidarietaProvider = StateProvider<String?>((ref) => null);
-final selectedAnagSocietaProvider = StateProvider<String?>((ref) => null);
-final selectedAnagSedeComuneProvider = StateProvider<String?>((ref) => null);
-final selectedAnagProvinciaProvider = StateProvider<String?>((ref) => null);
+final selectedAnagSocietaProvider = StateProvider<List<String>>((ref) => []);
+final selectedAnagSedeComuneProvider = StateProvider<List<String>>((ref) => []);
+final selectedAnagProvinciaProvider = StateProvider<List<String>>((ref) => []);
 final selectedAnagPartFullTimeProvider = StateProvider<String?>((ref) => null);
-final selectedAnagResponsabileProvider = StateProvider<String?>((ref) => null);
-final selectedAnagGestoreProvider = StateProvider<String?>((ref) => null);
+final selectedAnagResponsabileProvider = StateProvider<List<String>>((ref) => []);
+final selectedAnagGestoreProvider = StateProvider<List<String>>((ref) => []);
+final selectedAnagStatusProvider = StateProvider<List<String>>((ref) => []);
 
 class AnagraficaView extends ConsumerStatefulWidget {
   const AnagraficaView({super.key});
@@ -93,6 +105,8 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     super.dispose();
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     final allRecords = ref.watch(anagraficaProvider);
@@ -130,7 +144,14 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
 
     // Watch advanced filters
     final selectedLivelli = ref.watch(selectedAnagLivelliProvider);
-    final selectedGrado = ref.watch(selectedAnagGradoOccupazProvider);
+    final gradoFilterType = ref.watch(gradoFilterTypeProvider);
+    final selectedGradoSpecific = ref.watch(selectedGradoSpecificProvider);
+    final selectedGradoMin = ref.watch(selectedGradoMinProvider);
+    final selectedGradoMax = ref.watch(selectedGradoMaxProvider);
+    final etaFilterType = ref.watch(etaFilterTypeProvider);
+    final selectedEtaSpecific = ref.watch(selectedEtaSpecificProvider);
+    final selectedEtaMin = ref.watch(selectedEtaMinProvider);
+    final selectedEtaMax = ref.watch(selectedEtaMaxProvider);
     final selectedSolidarieta = ref.watch(selectedAnagContrSolidarietaProvider);
     final selectedSocieta = ref.watch(selectedAnagSocietaProvider);
     final selectedComune = ref.watch(selectedAnagSedeComuneProvider);
@@ -138,22 +159,26 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     final selectedPartFull = ref.watch(selectedAnagPartFullTimeProvider);
     final selectedResponsabile = ref.watch(selectedAnagResponsabileProvider);
     final selectedGestore = ref.watch(selectedAnagGestoreProvider);
+    final selectedStatus = ref.watch(selectedAnagStatusProvider);
 
     final activeFiltersCount = [
       selectedLivelli.isNotEmpty,
-      selectedGrado != null,
+      gradoFilterType != GradoFilterType.all,
+      etaFilterType != EtaFilterType.all,
       selectedSolidarieta != null,
-      selectedSocieta != null,
-      selectedComune != null,
-      selectedProvincia != null,
+      selectedSocieta.isNotEmpty,
+      selectedComune.isNotEmpty,
+      selectedProvincia.isNotEmpty,
       selectedPartFull != null,
-      selectedResponsabile != null,
-      selectedGestore != null,
+      selectedResponsabile.isNotEmpty,
+      selectedGestore.isNotEmpty,
+      selectedStatus.isNotEmpty,
     ].where((e) => e).length;
 
     // Estrattori valori unici per i filtri
     final livelliList = allRecords.map((e) => e.livello ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
     final gradiList = allRecords.map((e) => e.gradoOccupaz ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
+    final etaList = allRecords.map((e) => _parseAge(e.dataNascita)).whereType<int>().toSet().toList()..sort();
     final solidarietaList = allRecords.map((e) => e.contrSolidarieta ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
     final societaList = allRecords.map((e) => e.societa ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
     final comuniList = allRecords.map((e) => e.sedeComune ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
@@ -161,6 +186,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     final partFullList = allRecords.map((e) => e.partTimeFullTime ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
     final responsabiliList = allRecords.map((e) => e.nominativoResponsabileUO ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
     final gestoriList = allRecords.map((e) => e.nominativoGestore ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
+    final statusList = allRecords.map((e) => e.status ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
 
     // Filtra i record
     final filteredRecords = allRecords.where((r) {
@@ -177,14 +203,35 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
 
       // Filtri avanzati
       if (selectedLivelli.isNotEmpty && !selectedLivelli.contains(r.livello ?? '')) return false;
-      if (selectedGrado != null && r.gradoOccupaz != selectedGrado) return false;
+      
+      // Filtro Grado Occupazione
+      if (gradoFilterType == GradoFilterType.specific && selectedGradoSpecific != null) {
+        if (r.gradoOccupaz != selectedGradoSpecific) return false;
+      } else if (gradoFilterType == GradoFilterType.range && (selectedGradoMin != null || selectedGradoMax != null)) {
+        final val = _parseGrado(r.gradoOccupaz);
+        if (val == null) return false;
+        if (selectedGradoMin != null && val < selectedGradoMin) return false;
+        if (selectedGradoMax != null && val > selectedGradoMax) return false;
+      }
+
+      // Filtro Età
+      if (etaFilterType == EtaFilterType.specific && selectedEtaSpecific != null) {
+        if (_parseAge(r.dataNascita) != selectedEtaSpecific) return false;
+      } else if (etaFilterType == EtaFilterType.range && (selectedEtaMin != null || selectedEtaMax != null)) {
+        final val = _parseAge(r.dataNascita);
+        if (val == null) return false;
+        if (selectedEtaMin != null && val < selectedEtaMin) return false;
+        if (selectedEtaMax != null && val > selectedEtaMax) return false;
+      }
+
       if (selectedSolidarieta != null && r.contrSolidarieta != selectedSolidarieta) return false;
-      if (selectedSocieta != null && r.societa != selectedSocieta) return false;
-      if (selectedComune != null && r.sedeComune != selectedComune) return false;
-      if (selectedProvincia != null && r.provincia != selectedProvincia) return false;
+      if (selectedSocieta.isNotEmpty && !selectedSocieta.contains(r.societa ?? '')) return false;
+      if (selectedComune.isNotEmpty && !selectedComune.contains(r.sedeComune ?? '')) return false;
+      if (selectedProvincia.isNotEmpty && !selectedProvincia.contains(r.provincia ?? '')) return false;
       if (selectedPartFull != null && r.partTimeFullTime != selectedPartFull) return false;
-      if (selectedResponsabile != null && r.nominativoResponsabileUO != selectedResponsabile) return false;
-      if (selectedGestore != null && r.nominativoGestore != selectedGestore) return false;
+      if (selectedResponsabile.isNotEmpty && !selectedResponsabile.contains(r.nominativoResponsabileUO ?? '')) return false;
+      if (selectedGestore.isNotEmpty && !selectedGestore.contains(r.nominativoGestore ?? '')) return false;
+      if (selectedStatus.isNotEmpty && !selectedStatus.contains(r.status ?? '')) return false;
 
       return true;
     }).toList()..sort((a, b) {
@@ -212,7 +259,9 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
         provinceList, 
         partFullList, 
         responsabiliList, 
-        gestoriList
+        gestoriList,
+        etaList,
+        statusList,
       ),
       body: Column(
         children: [
@@ -366,22 +415,50 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                       children: [
                         if (selectedLivelli.isNotEmpty) 
                           _buildFilterChip('Livelli: ${selectedLivelli.length}', () => ref.read(selectedAnagLivelliProvider.notifier).state = []),
-                        if (selectedGrado != null) 
-                          _buildFilterChip('Grado: $selectedGrado', () => ref.read(selectedAnagGradoOccupazProvider.notifier).state = null),
+                        if (gradoFilterType == GradoFilterType.specific && selectedGradoSpecific != null)
+                          _buildFilterChip('Grado: $selectedGradoSpecific', () {
+                            ref.read(selectedGradoSpecificProvider.notifier).state = null;
+                            ref.read(gradoFilterTypeProvider.notifier).state = GradoFilterType.all;
+                          }),
+                        if (gradoFilterType == GradoFilterType.range && (selectedGradoMin != null || selectedGradoMax != null))
+                          _buildFilterChip(
+                            'Grado: ${(selectedGradoMin ?? 0.0).toStringAsFixed(0)} - ${(selectedGradoMax ?? 100.0).toStringAsFixed(0)}%', 
+                            () {
+                              ref.read(selectedGradoMinProvider.notifier).state = null;
+                              ref.read(selectedGradoMaxProvider.notifier).state = null;
+                              ref.read(gradoFilterTypeProvider.notifier).state = GradoFilterType.all;
+                            }
+                          ),
+                        if (etaFilterType == EtaFilterType.specific && selectedEtaSpecific != null)
+                          _buildFilterChip('Età: $selectedEtaSpecific anni', () {
+                            ref.read(selectedEtaSpecificProvider.notifier).state = null;
+                            ref.read(etaFilterTypeProvider.notifier).state = EtaFilterType.all;
+                          }),
+                        if (etaFilterType == EtaFilterType.range && (selectedEtaMin != null || selectedEtaMax != null))
+                          _buildFilterChip(
+                            'Età: ${(selectedEtaMin ?? 18.0).toStringAsFixed(0)} - ${(selectedEtaMax ?? 75.0).toStringAsFixed(0)} anni', 
+                            () {
+                              ref.read(selectedEtaMinProvider.notifier).state = null;
+                              ref.read(selectedEtaMaxProvider.notifier).state = null;
+                              ref.read(etaFilterTypeProvider.notifier).state = EtaFilterType.all;
+                            }
+                          ),
                         if (selectedSolidarieta != null) 
                           _buildFilterChip('Solidarietà: $selectedSolidarieta', () => ref.read(selectedAnagContrSolidarietaProvider.notifier).state = null),
                         if (selectedPartFull != null) 
                           _buildFilterChip('Part/Full-Time: $selectedPartFull', () => ref.read(selectedAnagPartFullTimeProvider.notifier).state = null),
-                        if (selectedSocieta != null) 
-                          _buildFilterChip('Società: $selectedSocieta', () => ref.read(selectedAnagSocietaProvider.notifier).state = null),
-                        if (selectedComune != null) 
-                          _buildFilterChip('Comune: $selectedComune', () => ref.read(selectedAnagSedeComuneProvider.notifier).state = null),
-                        if (selectedProvincia != null) 
-                          _buildFilterChip('Provincia: $selectedProvincia', () => ref.read(selectedAnagProvinciaProvider.notifier).state = null),
-                        if (selectedResponsabile != null) 
-                          _buildFilterChip('Responsabile: $selectedResponsabile', () => ref.read(selectedAnagResponsabileProvider.notifier).state = null),
-                        if (selectedGestore != null) 
-                          _buildFilterChip('Gestore: $selectedGestore', () => ref.read(selectedAnagGestoreProvider.notifier).state = null),
+                        if (selectedSocieta.isNotEmpty) 
+                          _buildFilterChip('Società: ${selectedSocieta.length}', () => ref.read(selectedAnagSocietaProvider.notifier).state = []),
+                        if (selectedComune.isNotEmpty) 
+                          _buildFilterChip('Comune: ${selectedComune.length}', () => ref.read(selectedAnagSedeComuneProvider.notifier).state = []),
+                        if (selectedProvincia.isNotEmpty) 
+                          _buildFilterChip('Provincia: ${selectedProvincia.length}', () => ref.read(selectedAnagProvinciaProvider.notifier).state = []),
+                        if (selectedResponsabile.isNotEmpty) 
+                          _buildFilterChip('Responsabile: ${selectedResponsabile.length}', () => ref.read(selectedAnagResponsabileProvider.notifier).state = []),
+                        if (selectedGestore.isNotEmpty) 
+                          _buildFilterChip('Gestore: ${selectedGestore.length}', () => ref.read(selectedAnagGestoreProvider.notifier).state = []),
+                        if (selectedStatus.isNotEmpty)
+                          _buildFilterChip('Stato: ${selectedStatus.length}', () => ref.read(selectedAnagStatusProvider.notifier).state = []),
                         TextButton(
                           onPressed: () => _resetAllFiltersAnag(ref), 
                           child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))
@@ -415,7 +492,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: SizedBox(
-                      width: 1600, // Larghezza fissa per scorrimento orizzontale
+                      width: 1680, // Larghezza fissa per scorrimento orizzontale
                       child: Column(
                         children: [
                           // HEADER FISSO
@@ -430,6 +507,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                                 _buildCell('CID', 100, isHeader: true),
                                 _buildCell('UID (MATRICOLA)', 140, isHeader: true),
                                 _buildCell('NOMINATIVO', 250, isHeader: true),
+                                _buildCell('ETÀ', 80, isHeader: true),
                                 _buildCell('UNITÀ ORG. 3 DES.', 250, isHeader: true),
                                 _buildCell('REGIONE', 150, isHeader: true),
                                 _buildCell('SEDE COMUNE', 150, isHeader: true),
@@ -536,6 +614,10 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                                           ),
                                         ),
                                         _buildCell(record.nominativo ?? '-', 250, color: SkyTheme.timBlue, fontWeight: FontWeight.bold),
+                                        _buildCell(
+                                          _parseAge(record.dataNascita)?.toString() ?? '-',
+                                          80,
+                                        ),
                                         _buildCell(record.unitaOrg3Des ?? '-', 250),
                                         _buildCell(record.regione ?? '-', 150),
                                         _buildCell(record.sedeComune ?? '-', 150),
@@ -786,7 +868,9 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     List<String> province,
     List<String> partFull,
     List<String> responsabili,
-    List<String> gestori
+    List<String> gestori,
+    List<int> etaList,
+    List<String> statusList,
   ) {
     return Drawer(
       width: 400,
@@ -822,35 +906,100 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
               padding: const EdgeInsets.all(24),
               children: [
                 _buildDrawerSectionTitle('LAVORO'),
-                _buildMultiSelectFilter('Livello', ref.watch(selectedAnagLivelliProvider), livelli, (val) {
-                  final list = List<String>.from(ref.read(selectedAnagLivelliProvider));
-                  if (list.contains(val)) {
-                    list.remove(val);
-                  } else {
-                    list.add(val);
-                  }
-                  ref.read(selectedAnagLivelliProvider.notifier).state = list;
-                }),
+                _buildMultiSelectFilter(
+                  'Livello',
+                  ref.watch(selectedAnagLivelliProvider),
+                  livelli,
+                  (val) {
+                    ref.read(selectedAnagLivelliProvider.notifier).state = val;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                  icon: Icons.layers_outlined,
+                ),
                 const SizedBox(height: 16),
-                _buildFilterDropdown<String?>('Grado Occupazione', ref.watch(selectedAnagGradoOccupazProvider), gradi, (val) => ref.read(selectedAnagGradoOccupazProvider.notifier).state = val, icon: Icons.work_history_outlined),
+                _buildGradoOccupazioneFilter(context, ref, gradi),
                 const SizedBox(height: 16),
-                _buildFilterDropdown<String?>('Contr. Solidarietà', ref.watch(selectedAnagContrSolidarietaProvider), solidarieta, (val) => ref.read(selectedAnagContrSolidarietaProvider.notifier).state = val, icon: Icons.handshake_outlined),
+                _buildFilterDropdown<String?>('Contr. Solidarietà', ref.watch(selectedAnagContrSolidarietaProvider), solidarieta, (val) {
+                  ref.read(selectedAnagContrSolidarietaProvider.notifier).state = val;
+                  ref.read(anagraficaPageProvider.notifier).state = 0;
+                }, icon: Icons.handshake_outlined),
                 const SizedBox(height: 16),
-                _buildFilterDropdown<String?>('Part-Time / Full-Time', ref.watch(selectedAnagPartFullTimeProvider), partFull, (val) => ref.read(selectedAnagPartFullTimeProvider.notifier).state = val, icon: Icons.timer_outlined),
+                _buildFilterDropdown<String?>('Part-Time / Full-Time', ref.watch(selectedAnagPartFullTimeProvider), partFull, (val) {
+                  ref.read(selectedAnagPartFullTimeProvider.notifier).state = val;
+                  ref.read(anagraficaPageProvider.notifier).state = 0;
+                }, icon: Icons.timer_outlined),
+                const SizedBox(height: 16),
+                _buildEtaFilter(context, ref, etaList),
+                const SizedBox(height: 16),
+                _buildMultiSelectFilter(
+                  'Stato',
+                  ref.watch(selectedAnagStatusProvider),
+                  statusList,
+                  (val) {
+                    ref.read(selectedAnagStatusProvider.notifier).state = val;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                  icon: Icons.info_outline,
+                ),
                 
                 const SizedBox(height: 32),
                 _buildDrawerSectionTitle('SEDE E SOCIETÀ'),
-                _buildFilterDropdown<String?>('Società', ref.watch(selectedAnagSocietaProvider), societa, (val) => ref.read(selectedAnagSocietaProvider.notifier).state = val, icon: Icons.business),
+                _buildMultiSelectFilter(
+                  'Società',
+                  ref.watch(selectedAnagSocietaProvider),
+                  societa,
+                  (val) {
+                    ref.read(selectedAnagSocietaProvider.notifier).state = val;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                  icon: Icons.business_outlined,
+                ),
                 const SizedBox(height: 16),
-                _buildFilterDropdown<String?>('Sede Comune', ref.watch(selectedAnagSedeComuneProvider), comuni, (val) => ref.read(selectedAnagSedeComuneProvider.notifier).state = val, icon: Icons.location_city),
+                _buildMultiSelectFilter(
+                  'Sede Comune',
+                  ref.watch(selectedAnagSedeComuneProvider),
+                  comuni,
+                  (val) {
+                    ref.read(selectedAnagSedeComuneProvider.notifier).state = val;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                  icon: Icons.location_city_outlined,
+                ),
                 const SizedBox(height: 16),
-                _buildFilterDropdown<String?>('Sede Provincia', ref.watch(selectedAnagProvinciaProvider), province, (val) => ref.read(selectedAnagProvinciaProvider.notifier).state = val, icon: Icons.map_outlined),
+                _buildMultiSelectFilter(
+                  'Sede Provincia',
+                  ref.watch(selectedAnagProvinciaProvider),
+                  province,
+                  (val) {
+                    ref.read(selectedAnagProvinciaProvider.notifier).state = val;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                  icon: Icons.map_outlined,
+                ),
                 
                 const SizedBox(height: 32),
                 _buildDrawerSectionTitle('GERARCHIA'),
-                _buildFilterDropdown<String?>('Responsabile', ref.watch(selectedAnagResponsabileProvider), responsabili, (val) => ref.read(selectedAnagResponsabileProvider.notifier).state = val, icon: Icons.person_outline),
+                _buildMultiSelectFilter(
+                  'Responsabile',
+                  ref.watch(selectedAnagResponsabileProvider),
+                  responsabili,
+                  (val) {
+                    ref.read(selectedAnagResponsabileProvider.notifier).state = val;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                  icon: Icons.supervisor_account_outlined,
+                ),
                 const SizedBox(height: 16),
-                _buildFilterDropdown<String?>('Gestore', ref.watch(selectedAnagGestoreProvider), gestori, (val) => ref.read(selectedAnagGestoreProvider.notifier).state = val, icon: Icons.person_search_outlined),
+                _buildMultiSelectFilter(
+                  'Gestore',
+                  ref.watch(selectedAnagGestoreProvider),
+                  gestori,
+                  (val) {
+                    ref.read(selectedAnagGestoreProvider.notifier).state = val;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                  icon: Icons.manage_accounts_outlined,
+                ),
               ],
             ),
           ),
@@ -904,7 +1053,295 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     );
   }
 
+  double? _parseGrado(String? s) {
+    if (s == null) return null;
+    final cleaned = s.replaceAll('%', '').replaceAll(',', '.').replaceAll(RegExp(r'\s+'), '');
+    return double.tryParse(cleaned);
+  }
+
+  int? _parseAge(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty || dateStr == '-') return null;
+    try {
+      final dt = DateTime.tryParse(dateStr);
+      if (dt == null) return null;
+      final now = DateTime.now();
+      int age = now.year - dt.year;
+      if (now.month < dt.month || (now.month == dt.month && now.day < dt.day)) {
+        age--;
+      }
+      return age;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  Widget _buildEtaFilter(
+    BuildContext context,
+    WidgetRef ref,
+    List<int> etaList,
+  ) {
+    final filterType = ref.watch(etaFilterTypeProvider);
+    final selectedSpecific = ref.watch(selectedEtaSpecificProvider);
+    final selectedMin = ref.watch(selectedEtaMinProvider);
+    final selectedMax = ref.watch(selectedEtaMaxProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Età',
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildSegmentButton(
+                  'Tutti',
+                  filterType == EtaFilterType.all,
+                  () {
+                    ref.read(etaFilterTypeProvider.notifier).state = EtaFilterType.all;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                ),
+              ),
+              Expanded(
+                child: _buildSegmentButton(
+                  'Specifico',
+                  filterType == EtaFilterType.specific,
+                  () {
+                    ref.read(etaFilterTypeProvider.notifier).state = EtaFilterType.specific;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                ),
+              ),
+              Expanded(
+                child: _buildSegmentButton(
+                  'Intervallo',
+                  filterType == EtaFilterType.range,
+                  () {
+                    ref.read(etaFilterTypeProvider.notifier).state = EtaFilterType.range;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (filterType == EtaFilterType.specific) ...[
+          const SizedBox(height: 12),
+          _buildFilterDropdown<int?>(
+            'Seleziona Valore',
+            selectedSpecific,
+            etaList,
+            (val) {
+              ref.read(selectedEtaSpecificProvider.notifier).state = val;
+              ref.read(anagraficaPageProvider.notifier).state = 0;
+            },
+            icon: Icons.cake_outlined,
+            labelMapper: (val) => '$val anni',
+          ),
+        ],
+        if (filterType == EtaFilterType.range) ...[
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Min: ${(selectedMin ?? 18.0).toStringAsFixed(0)} anni',
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+              Text(
+                'Max: ${(selectedMax ?? 75.0).toStringAsFixed(0)} anni',
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          RangeSlider(
+            values: RangeValues(
+              (selectedMin ?? 18.0).clamp(18.0, 75.0),
+              (selectedMax ?? 75.0).clamp(18.0, 75.0),
+            ),
+            min: 18.0,
+            max: 75.0,
+            divisions: 57,
+            labels: RangeLabels(
+              '${(selectedMin ?? 18.0).toStringAsFixed(0)} anni',
+              '${(selectedMax ?? 75.0).toStringAsFixed(0)} anni',
+            ),
+            activeColor: SkyTheme.timBlue,
+            inactiveColor: Colors.grey.shade300,
+            onChanged: (RangeValues newValues) {
+              ref.read(selectedEtaMinProvider.notifier).state = newValues.start;
+              ref.read(selectedEtaMaxProvider.notifier).state = newValues.end;
+              ref.read(anagraficaPageProvider.notifier).state = 0;
+            },
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildGradoOccupazioneFilter(
+    BuildContext context,
+    WidgetRef ref,
+    List<String> gradiList,
+  ) {
+    final filterType = ref.watch(gradoFilterTypeProvider);
+    final selectedSpecific = ref.watch(selectedGradoSpecificProvider);
+    final selectedMin = ref.watch(selectedGradoMinProvider);
+    final selectedMax = ref.watch(selectedGradoMaxProvider);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Grado Occupazione',
+          style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildSegmentButton(
+                  'Tutti',
+                  filterType == GradoFilterType.all,
+                  () {
+                    ref.read(gradoFilterTypeProvider.notifier).state = GradoFilterType.all;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                ),
+              ),
+              Expanded(
+                child: _buildSegmentButton(
+                  'Specifico',
+                  filterType == GradoFilterType.specific,
+                  () {
+                    ref.read(gradoFilterTypeProvider.notifier).state = GradoFilterType.specific;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                ),
+              ),
+              Expanded(
+                child: _buildSegmentButton(
+                  'Intervallo',
+                  filterType == GradoFilterType.range,
+                  () {
+                    ref.read(gradoFilterTypeProvider.notifier).state = GradoFilterType.range;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (filterType == GradoFilterType.specific) ...[
+          const SizedBox(height: 12),
+          _buildFilterDropdown<String?>(
+            'Seleziona Valore',
+            selectedSpecific,
+            gradiList,
+            (val) {
+              ref.read(selectedGradoSpecificProvider.notifier).state = val;
+              ref.read(anagraficaPageProvider.notifier).state = 0;
+            },
+            icon: Icons.work_history_outlined,
+          ),
+        ],
+        if (filterType == GradoFilterType.range) ...[
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Min: ${(selectedMin ?? 0.0).toStringAsFixed(0)}%',
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+              Text(
+                'Max: ${(selectedMax ?? 100.0).toStringAsFixed(0)}%',
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+              ),
+            ],
+          ),
+          const SizedBox(height: 4),
+          RangeSlider(
+            values: RangeValues(
+              (selectedMin ?? 0.0).clamp(0.0, 100.0),
+              (selectedMax ?? 100.0).clamp(0.0, 100.0),
+            ),
+            min: 0.0,
+            max: 100.0,
+            divisions: 100,
+            labels: RangeLabels(
+              '${(selectedMin ?? 0.0).toStringAsFixed(0)}%',
+              '${(selectedMax ?? 100.0).toStringAsFixed(0)}%',
+            ),
+            activeColor: SkyTheme.timBlue,
+            inactiveColor: Colors.grey.shade300,
+            onChanged: (RangeValues newValues) {
+              ref.read(selectedGradoMinProvider.notifier).state = newValues.start;
+              ref.read(selectedGradoMaxProvider.notifier).state = newValues.end;
+              ref.read(anagraficaPageProvider.notifier).state = 0;
+            },
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildSegmentButton(String text, bool isSelected, VoidCallback onTap) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? Colors.white : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(8),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  )
+                ]
+              : null,
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 12,
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            color: isSelected ? SkyTheme.timBlue : Colors.grey.shade700,
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildFilterDropdown<T>(String label, T value, List<T> items, ValueChanged<T?> onChanged, {IconData? icon, String Function(T)? labelMapper}) {
+    final effectiveItems = List<T>.from(items);
+    if (value != null && !effectiveItems.contains(value)) {
+      effectiveItems.add(value);
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -928,7 +1365,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                 overflow: TextOverflow.ellipsis,
               ),
             ),
-            ...items.map((item) => DropdownMenuItem<T>(
+            ...effectiveItems.map((item) => DropdownMenuItem<T>(
               value: item,
               child: Text(
                 labelMapper != null ? labelMapper(item) : item.toString(), 
@@ -940,7 +1377,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
           selectedItemBuilder: (context) {
             return [
               Text('Tutti', style: TextStyle(color: Colors.grey.shade600, fontSize: 13), overflow: TextOverflow.ellipsis),
-              ...items.map((item) => Text(
+              ...effectiveItems.map((item) => Text(
                 labelMapper != null ? labelMapper(item) : item.toString(),
                 style: const TextStyle(fontSize: 13),
                 overflow: TextOverflow.ellipsis,
@@ -953,33 +1390,175 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     );
   }
 
-  Widget _buildMultiSelectFilter(String label, List<String> selectedItems, List<String> allItems, Function(String) onToggle) {
+  Widget _buildMultiSelectFilter(
+    String label,
+    List<String> selectedItems,
+    List<String> allItems,
+    Function(List<String>) onChanged, {
+    IconData? icon,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w500)),
         const SizedBox(height: 8),
-        Container(
-          height: 150,
-          decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey.shade300),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: ListView.builder(
-            padding: const EdgeInsets.symmetric(vertical: 4),
-            itemCount: allItems.length,
-            itemBuilder: (context, index) {
-              final item = allItems[index];
-              final isSelected = selectedItems.contains(item);
-              return CheckboxListTile(
-                title: Text(item, style: const TextStyle(fontSize: 12)),
-                value: isSelected,
-                onChanged: (_) => onToggle(item),
-                dense: true,
-                visualDensity: VisualDensity.compact,
-                controlAffinity: ListTileControlAffinity.leading,
-              );
-            },
+        InkWell(
+          onTap: () async {
+            final results = await showDialog<List<String>>(
+              context: context,
+              builder: (context) {
+                List<String> tempSelected = List<String>.from(selectedItems);
+                String searchQuery = "";
+                return StatefulBuilder(
+                  builder: (context, setModalState) {
+                    final filteredItems = allItems.where((item) =>
+                        item.toLowerCase().contains(searchQuery.toLowerCase())).toList();
+
+                    return AlertDialog(
+                      title: Text('Seleziona $label'),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      contentPadding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
+                      content: SizedBox(
+                        width: 400,
+                        height: 450,
+                        child: Column(
+                          children: [
+                            TextField(
+                              decoration: InputDecoration(
+                                hintText: 'Cerca...',
+                                prefixIcon: const Icon(Icons.search, size: 20),
+                                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                isDense: true,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                              ),
+                              onChanged: (val) {
+                                setModalState(() {
+                                  searchQuery = val;
+                                });
+                              },
+                            ),
+                            const SizedBox(height: 12),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                TextButton.icon(
+                                  onPressed: () {
+                                    setModalState(() {
+                                      for (final item in filteredItems) {
+                                        if (!tempSelected.contains(item)) {
+                                          tempSelected.add(item);
+                                        }
+                                      }
+                                    });
+                                  },
+                                  icon: const Icon(Icons.select_all, size: 16),
+                                  label: const Text('Tutti', style: TextStyle(fontSize: 12)),
+                                ),
+                                TextButton.icon(
+                                  onPressed: () {
+                                    setModalState(() {
+                                      for (final item in filteredItems) {
+                                        tempSelected.remove(item);
+                                      }
+                                    });
+                                  },
+                                  icon: const Icon(Icons.deselect, size: 16),
+                                  label: const Text('Reset', style: TextStyle(fontSize: 12)),
+                                ),
+                              ],
+                            ),
+                            const Divider(height: 8),
+                            Expanded(
+                              child: filteredItems.isEmpty
+                                  ? Center(
+                                      child: Text(
+                                        'Nessun risultato trovato',
+                                        style: TextStyle(color: Colors.grey.shade500, fontSize: 13),
+                                      ),
+                                    )
+                                  : ListView.builder(
+                                      itemCount: filteredItems.length,
+                                      itemBuilder: (context, index) {
+                                        final item = filteredItems[index];
+                                        final isSelected = tempSelected.contains(item);
+                                        return CheckboxListTile(
+                                          title: Text(item, style: const TextStyle(fontSize: 13)),
+                                          value: isSelected,
+                                          onChanged: (val) {
+                                            setModalState(() {
+                                              if (val == true) {
+                                                if (!tempSelected.contains(item)) {
+                                                  tempSelected.add(item);
+                                                }
+                                              } else {
+                                                tempSelected.remove(item);
+                                              }
+                                            });
+                                          },
+                                          dense: true,
+                                          visualDensity: VisualDensity.compact,
+                                          controlAffinity: ListTileControlAffinity.leading,
+                                        );
+                                      },
+                                    ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('Annulla'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(context, tempSelected),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: SkyTheme.timBlue,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('Conferma'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+            if (results != null) {
+              onChanged(results);
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, size: 18, color: Colors.grey.shade600),
+                  const SizedBox(width: 8),
+                ],
+                Expanded(
+                  child: Text(
+                    selectedItems.isEmpty
+                        ? 'Tutti / Nessuno selezionato'
+                        : selectedItems.length == 1
+                            ? selectedItems.first
+                            : '${selectedItems.length} selezionati',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: selectedItems.isEmpty ? Colors.grey.shade600 : Colors.black87,
+                      fontWeight: selectedItems.isEmpty ? FontWeight.normal : FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                Icon(Icons.arrow_drop_down, size: 20, color: Colors.grey.shade600),
+              ],
+            ),
           ),
         ),
       ],
@@ -988,14 +1567,22 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
 
   void _resetAllFiltersAnag(WidgetRef ref) {
     ref.read(selectedAnagLivelliProvider.notifier).state = [];
-    ref.read(selectedAnagGradoOccupazProvider.notifier).state = null;
+    ref.read(gradoFilterTypeProvider.notifier).state = GradoFilterType.all;
+    ref.read(selectedGradoSpecificProvider.notifier).state = null;
+    ref.read(selectedGradoMinProvider.notifier).state = null;
+    ref.read(selectedGradoMaxProvider.notifier).state = null;
+    ref.read(etaFilterTypeProvider.notifier).state = EtaFilterType.all;
+    ref.read(selectedEtaSpecificProvider.notifier).state = null;
+    ref.read(selectedEtaMinProvider.notifier).state = null;
+    ref.read(selectedEtaMaxProvider.notifier).state = null;
     ref.read(selectedAnagContrSolidarietaProvider.notifier).state = null;
-    ref.read(selectedAnagSocietaProvider.notifier).state = null;
-    ref.read(selectedAnagSedeComuneProvider.notifier).state = null;
-    ref.read(selectedAnagProvinciaProvider.notifier).state = null;
+    ref.read(selectedAnagSocietaProvider.notifier).state = [];
+    ref.read(selectedAnagSedeComuneProvider.notifier).state = [];
+    ref.read(selectedAnagProvinciaProvider.notifier).state = [];
     ref.read(selectedAnagPartFullTimeProvider.notifier).state = null;
-    ref.read(selectedAnagResponsabileProvider.notifier).state = null;
-    ref.read(selectedAnagGestoreProvider.notifier).state = null;
+    ref.read(selectedAnagResponsabileProvider.notifier).state = [];
+    ref.read(selectedAnagGestoreProvider.notifier).state = [];
+    ref.read(selectedAnagStatusProvider.notifier).state = [];
     ref.read(anagraficaSearchProvider.notifier).state = null;
     _searchController.clear();
   }
