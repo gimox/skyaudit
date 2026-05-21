@@ -6,7 +6,7 @@ import 'package:path_provider/path_provider.dart';
 
 class SecureStorageService {
   final _storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
+    aOptions: AndroidOptions(),
     mOptions: MacOsOptions(
       accessibility: KeychainAccessibility.first_unlock,
       usesDataProtectionKeychain: true,

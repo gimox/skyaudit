@@ -834,7 +834,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                         ).toList();
                         final hasMatch = matchingEC.isNotEmpty;
 
-                              // RIGA TRACCIATO CONTABILE
+                        return [
+                          // RIGA TRACCIATO CONTABILE
                           Container(
                             padding: EdgeInsets.symmetric(
                               horizontal: horizontalPadding,
@@ -1121,11 +1122,6 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                         padding: EdgeInsets.all(isUltraCompact ? 1 : (isVeryCompact ? 2 : 8)),
                                       ),
                                     ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )),                                    ],
                                   ),
                                 ),
                               ],

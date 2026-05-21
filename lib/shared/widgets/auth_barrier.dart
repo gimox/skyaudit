@@ -18,7 +18,7 @@ class AuthBarrier {
       context: context,
       barrierDismissible: true,
       barrierLabel: 'AuthBarrierDismiss',
-      barrierColor: Colors.black.withOpacity(0.4),
+      barrierColor: Colors.black.withValues(alpha: 0.4),
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (context, anim1, anim2) => const SizedBox.shrink(),
       transitionBuilder: (context, anim1, anim2, child) {
@@ -38,7 +38,7 @@ class AuthBarrier {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
+                      color: Colors.black.withValues(alpha: 0.15),
                       blurRadius: 30,
                       offset: const Offset(0, 15),
                     ),
@@ -66,10 +66,10 @@ class AuthBarrier {
                         Container(
                           padding: const EdgeInsets.all(20),
                           decoration: BoxDecoration(
-                            color: SkyTheme.timBlue.withOpacity(0.08),
+                            color: SkyTheme.timBlue.withValues(alpha: 0.08),
                             shape: BoxShape.circle,
                             border: Border.all(
-                              color: SkyTheme.timBlue.withOpacity(0.15),
+                              color: SkyTheme.timBlue.withValues(alpha: 0.15),
                               width: 1.5,
                             ),
                           ),
@@ -107,9 +107,9 @@ class AuthBarrier {
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                             margin: const EdgeInsets.only(bottom: 20),
                             decoration: BoxDecoration(
-                              color: SkyTheme.timRed.withOpacity(0.08),
+                              color: SkyTheme.timRed.withValues(alpha: 0.08),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: SkyTheme.timRed.withOpacity(0.2)),
+                              border: Border.all(color: SkyTheme.timRed.withValues(alpha: 0.2)),
                             ),
                             child: Row(
                               children: [
