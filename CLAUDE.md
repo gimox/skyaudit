@@ -1,10 +1,10 @@
-# CRITICAL TOKEN-SAVING INSTRUCTIONS
-- Always be extremely concise. Restrict all chat answers to the core code fix.
-- NEVER generate final walkthroughs, summaries, or explanations unless explicitly requested.
-- DO NOT launch autonomous sub-agents to scan the workspace without asking for my confirmation first.
-- Stop execution immediately after writing the required code block.
+# SkyAudit - Claude Development Guide
 
-
+## Build & Run Commands
+- Get dependencies: `flutter pub get`
+- Code generation: `dart run build_runner build --delete-conflicting-outputs`
+- Run web: `flutter run -d chrome`
+- Run desktop: `flutter run -d macos` (or windows)
 
 # SkyAudit - System Rules & Context
 
