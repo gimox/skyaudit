@@ -88,11 +88,21 @@ jobs:
         run: |
           Compress-Archive -Path build\windows\x64\runner\Release\* -DestinationPath SkyAudit_Windows.zip
 
-      - name: Upload Windows Artifact
+      - name: Build Installer (Inno Setup)
+        shell: pwsh
+        run: |
+          $versionLine = Get-Content pubspec.yaml | Select-String "version: "
+          $versionFull = $versionLine.ToString().Split(" ")[1]
+          $version = $versionFull.Split("+")[0]
+          & "iscc" /DAppVersion="$version" windows/installer.iss
+
+      - name: Upload Windows Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: windows-zip
-          path: SkyAudit_Windows.zip
+          name: windows-artifacts
+          path: |
+            SkyAudit_Windows.zip
+            SkyAudit_Windows_Installer.exe
 
   create-release:
     name: Create GitHub Release
@@ -111,10 +121,10 @@ jobs:
         with:
           name: macos-dmg
 
-      - name: Download Windows Artifact
+      - name: Download Windows Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: windows-zip
+          name: windows-artifacts
 
       # Aggiorna automaticamente il file version.json con la versione di pubspec.yaml e il changelog generato dai commit
       - name: Generate Changelog and Update version.json
@@ -146,7 +156,7 @@ jobs:
           
           # Genera gli URL corretti per la nuova release
           MACOS_URL="https://github.com/gimox/skyaudit/releases/download/v$VERSION/SkyAudit_macOS.dmg"
-          WINDOWS_URL="https://github.com/gimox/skyaudit/releases/download/v$VERSION/SkyAudit_Windows.zip"
+          WINDOWS_URL="https://github.com/gimox/skyaudit/releases/download/v$VERSION/SkyAudit_Windows_Installer.exe"
           
           # Crea il nuovo file version.json in una cartella temporanea
           jq -n \
@@ -183,6 +193,7 @@ jobs:
           files: |
             SkyAudit_macOS.dmg
             SkyAudit_Windows.zip
+            SkyAudit_Windows_Installer.exe
           draft: false
           prerelease: false
         env:
