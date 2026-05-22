@@ -1,15 +1,15 @@
 {
-  "version": "1.0.5",
-  "buildNumber": 6,
+  "version": "1.0.6",
+  "buildNumber": 7,
   "mandatory": false,
   "downloadUrls": {
-    "macos": "https://github.com/gimox/skyaudit/releases/download/v1.0.5/SkyAudit_macOS.dmg",
-    "windows": "https://github.com/gimox/skyaudit/releases/download/v1.0.5/SkyAudit_Windows.zip",
+    "macos": "https://github.com/gimox/skyaudit/releases/download/v1.0.6/SkyAudit_macOS.dmg",
+    "windows": "https://github.com/gimox/skyaudit/releases/download/v1.0.6/SkyAudit_Windows_Installer.exe",
     "web": ""
   },
   "changelog": [
-    "fixing bus",
-    "autoupdate and bette ui for lower screen",
-    "chore: auto-update version.json to v1.0.4 [skip ci]"
+    "chore: release v1.0.6+7",
+    "windows installer and release script",
+    "chore: auto-update version.json to v1.0.5 [skip ci]"
   ]
 }
