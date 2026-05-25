@@ -17,50 +17,65 @@ const AppSettingsSchema = CollectionSchema(
   name: r'AppSettings',
   id: -5633561779022347008,
   properties: {
-    r'discardIdenticalBolla': PropertySchema(
+    r'alignWithRemote': PropertySchema(
       id: 0,
+      name: r'alignWithRemote',
+      type: IsarType.bool,
+    ),
+    r'discardIdenticalBolla': PropertySchema(
+      id: 1,
       name: r'discardIdenticalBolla',
       type: IsarType.bool,
     ),
+    r'lastSyncTime': PropertySchema(
+      id: 2,
+      name: r'lastSyncTime',
+      type: IsarType.dateTime,
+    ),
     r'sharepointAnagraficaPath': PropertySchema(
-      id: 1,
+      id: 3,
       name: r'sharepointAnagraficaPath',
       type: IsarType.string,
     ),
     r'sharepointDocumentLibrary': PropertySchema(
-      id: 2,
+      id: 4,
       name: r'sharepointDocumentLibrary',
       type: IsarType.string,
     ),
     r'sharepointEstrattiAmexPath': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'sharepointEstrattiAmexPath',
       type: IsarType.string,
     ),
     r'sharepointEstrattiContoPath': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'sharepointEstrattiContoPath',
       type: IsarType.string,
     ),
     r'sharepointFolderPath': PropertySchema(
-      id: 5,
+      id: 7,
       name: r'sharepointFolderPath',
       type: IsarType.string,
     ),
     r'sharepointScartiTracciatoPath': PropertySchema(
-      id: 6,
+      id: 8,
       name: r'sharepointScartiTracciatoPath',
       type: IsarType.string,
     ),
     r'sharepointSiteName': PropertySchema(
-      id: 7,
+      id: 9,
       name: r'sharepointSiteName',
       type: IsarType.string,
     ),
     r'sharepointTracciatoSapPath': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'sharepointTracciatoSapPath',
       type: IsarType.string,
+    ),
+    r'syncOnStartup': PropertySchema(
+      id: 11,
+      name: r'syncOnStartup',
+      type: IsarType.bool,
     )
   },
   estimateSize: _appSettingsEstimateSize,
@@ -100,15 +115,18 @@ void _appSettingsSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeBool(offsets[0], object.discardIdenticalBolla);
-  writer.writeString(offsets[1], object.sharepointAnagraficaPath);
-  writer.writeString(offsets[2], object.sharepointDocumentLibrary);
-  writer.writeString(offsets[3], object.sharepointEstrattiAmexPath);
-  writer.writeString(offsets[4], object.sharepointEstrattiContoPath);
-  writer.writeString(offsets[5], object.sharepointFolderPath);
-  writer.writeString(offsets[6], object.sharepointScartiTracciatoPath);
-  writer.writeString(offsets[7], object.sharepointSiteName);
-  writer.writeString(offsets[8], object.sharepointTracciatoSapPath);
+  writer.writeBool(offsets[0], object.alignWithRemote);
+  writer.writeBool(offsets[1], object.discardIdenticalBolla);
+  writer.writeDateTime(offsets[2], object.lastSyncTime);
+  writer.writeString(offsets[3], object.sharepointAnagraficaPath);
+  writer.writeString(offsets[4], object.sharepointDocumentLibrary);
+  writer.writeString(offsets[5], object.sharepointEstrattiAmexPath);
+  writer.writeString(offsets[6], object.sharepointEstrattiContoPath);
+  writer.writeString(offsets[7], object.sharepointFolderPath);
+  writer.writeString(offsets[8], object.sharepointScartiTracciatoPath);
+  writer.writeString(offsets[9], object.sharepointSiteName);
+  writer.writeString(offsets[10], object.sharepointTracciatoSapPath);
+  writer.writeBool(offsets[11], object.syncOnStartup);
 }
 
 AppSettings _appSettingsDeserialize(
@@ -118,16 +136,19 @@ AppSettings _appSettingsDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = AppSettings();
-  object.discardIdenticalBolla = reader.readBool(offsets[0]);
+  object.alignWithRemote = reader.readBool(offsets[0]);
+  object.discardIdenticalBolla = reader.readBool(offsets[1]);
   object.id = id;
-  object.sharepointAnagraficaPath = reader.readString(offsets[1]);
-  object.sharepointDocumentLibrary = reader.readString(offsets[2]);
-  object.sharepointEstrattiAmexPath = reader.readString(offsets[3]);
-  object.sharepointEstrattiContoPath = reader.readString(offsets[4]);
-  object.sharepointFolderPath = reader.readString(offsets[5]);
-  object.sharepointScartiTracciatoPath = reader.readString(offsets[6]);
-  object.sharepointSiteName = reader.readString(offsets[7]);
-  object.sharepointTracciatoSapPath = reader.readString(offsets[8]);
+  object.lastSyncTime = reader.readDateTimeOrNull(offsets[2]);
+  object.sharepointAnagraficaPath = reader.readString(offsets[3]);
+  object.sharepointDocumentLibrary = reader.readString(offsets[4]);
+  object.sharepointEstrattiAmexPath = reader.readString(offsets[5]);
+  object.sharepointEstrattiContoPath = reader.readString(offsets[6]);
+  object.sharepointFolderPath = reader.readString(offsets[7]);
+  object.sharepointScartiTracciatoPath = reader.readString(offsets[8]);
+  object.sharepointSiteName = reader.readString(offsets[9]);
+  object.sharepointTracciatoSapPath = reader.readString(offsets[10]);
+  object.syncOnStartup = reader.readBool(offsets[11]);
   return object;
 }
 
@@ -141,9 +162,9 @@ P _appSettingsDeserializeProp<P>(
     case 0:
       return (reader.readBool(offset)) as P;
     case 1:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
@@ -156,6 +177,12 @@ P _appSettingsDeserializeProp<P>(
       return (reader.readString(offset)) as P;
     case 8:
       return (reader.readString(offset)) as P;
+    case 9:
+      return (reader.readString(offset)) as P;
+    case 10:
+      return (reader.readString(offset)) as P;
+    case 11:
+      return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
@@ -255,6 +282,16 @@ extension AppSettingsQueryWhere
 extension AppSettingsQueryFilter
     on QueryBuilder<AppSettings, AppSettings, QFilterCondition> {
   QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      alignWithRemoteEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'alignWithRemote',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
       discardIdenticalBollaEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -309,6 +346,80 @@ extension AppSettingsQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.between(
         property: r'id',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      lastSyncTimeIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'lastSyncTime',
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      lastSyncTimeIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'lastSyncTime',
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      lastSyncTimeEqualTo(DateTime? value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'lastSyncTime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      lastSyncTimeGreaterThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'lastSyncTime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      lastSyncTimeLessThan(
+    DateTime? value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'lastSyncTime',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      lastSyncTimeBetween(
+    DateTime? lower,
+    DateTime? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'lastSyncTime',
         lower: lower,
         includeLower: includeLower,
         upper: upper,
@@ -1416,6 +1527,16 @@ extension AppSettingsQueryFilter
       ));
     });
   }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      syncOnStartupEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'syncOnStartup',
+        value: value,
+      ));
+    });
+  }
 }
 
 extension AppSettingsQueryObject
@@ -1426,6 +1547,19 @@ extension AppSettingsQueryLinks
 
 extension AppSettingsQuerySortBy
     on QueryBuilder<AppSettings, AppSettings, QSortBy> {
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByAlignWithRemote() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'alignWithRemote', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByAlignWithRemoteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'alignWithRemote', Sort.desc);
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
       sortByDiscardIdenticalBolla() {
     return QueryBuilder.apply(this, (query) {
@@ -1437,6 +1571,19 @@ extension AppSettingsQuerySortBy
       sortByDiscardIdenticalBollaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'discardIdenticalBolla', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByLastSyncTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastSyncTime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByLastSyncTimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastSyncTime', Sort.desc);
     });
   }
 
@@ -1551,10 +1698,36 @@ extension AppSettingsQuerySortBy
       return query.addSortBy(r'sharepointTracciatoSapPath', Sort.desc);
     });
   }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortBySyncOnStartup() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOnStartup', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortBySyncOnStartupDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOnStartup', Sort.desc);
+    });
+  }
 }
 
 extension AppSettingsQuerySortThenBy
     on QueryBuilder<AppSettings, AppSettings, QSortThenBy> {
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByAlignWithRemote() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'alignWithRemote', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByAlignWithRemoteDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'alignWithRemote', Sort.desc);
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
       thenByDiscardIdenticalBolla() {
     return QueryBuilder.apply(this, (query) {
@@ -1578,6 +1751,19 @@ extension AppSettingsQuerySortThenBy
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'id', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByLastSyncTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastSyncTime', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByLastSyncTimeDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'lastSyncTime', Sort.desc);
     });
   }
 
@@ -1692,14 +1878,40 @@ extension AppSettingsQuerySortThenBy
       return query.addSortBy(r'sharepointTracciatoSapPath', Sort.desc);
     });
   }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenBySyncOnStartup() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOnStartup', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenBySyncOnStartupDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'syncOnStartup', Sort.desc);
+    });
+  }
 }
 
 extension AppSettingsQueryWhereDistinct
     on QueryBuilder<AppSettings, AppSettings, QDistinct> {
   QueryBuilder<AppSettings, AppSettings, QDistinct>
+      distinctByAlignWithRemote() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'alignWithRemote');
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct>
       distinctByDiscardIdenticalBolla() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'discardIdenticalBolla');
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByLastSyncTime() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'lastSyncTime');
     });
   }
 
@@ -1766,6 +1978,12 @@ extension AppSettingsQueryWhereDistinct
           caseSensitive: caseSensitive);
     });
   }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct> distinctBySyncOnStartup() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'syncOnStartup');
+    });
+  }
 }
 
 extension AppSettingsQueryProperty
@@ -1776,10 +1994,23 @@ extension AppSettingsQueryProperty
     });
   }
 
+  QueryBuilder<AppSettings, bool, QQueryOperations> alignWithRemoteProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'alignWithRemote');
+    });
+  }
+
   QueryBuilder<AppSettings, bool, QQueryOperations>
       discardIdenticalBollaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'discardIdenticalBolla');
+    });
+  }
+
+  QueryBuilder<AppSettings, DateTime?, QQueryOperations>
+      lastSyncTimeProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'lastSyncTime');
     });
   }
 
@@ -1836,6 +2067,12 @@ extension AppSettingsQueryProperty
       sharepointTracciatoSapPathProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sharepointTracciatoSapPath');
+    });
+  }
+
+  QueryBuilder<AppSettings, bool, QQueryOperations> syncOnStartupProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'syncOnStartup');
     });
   }
 }

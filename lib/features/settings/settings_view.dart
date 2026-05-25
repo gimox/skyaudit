@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:travel_check/core/db/isar_provider.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
@@ -19,6 +20,7 @@ import 'package:travel_check/features/upload/models/scarti_ec_sap.dart';
 import 'package:travel_check/features/auth/providers/auth_provider.dart';
 import 'package:travel_check/features/auth/models/auth_state.dart';
 import 'package:travel_check/features/settings/providers/app_settings_provider.dart';
+import 'package:travel_check/features/settings/models/app_settings.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:travel_check/core/services/update_service.dart';
 import 'dart:io';
@@ -266,6 +268,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final dictionaries = ref.watch(dictionaryProvider);
+    final appSettings = ref.watch(appSettingsProvider);
     final prepagatoEntries = dictionaries
         .where((e) => e.category == 'giustificativi_prepagati')
         .toList();
@@ -282,6 +285,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildAuthStatusCard(context, authState),
+          const SizedBox(height: 24),
+          _buildAutoSyncSettingsCard(context, appSettings),
           const SizedBox(height: 32),
 
           // Sezione Dizionari
@@ -323,7 +328,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             'Configura gli endpoint, il drive e il percorso dei tracciati contabili aziendali su SharePoint.',
           ),
           const SizedBox(height: 24),
-          _buildRemoteSyncCard(context),
+          _buildRemoteSyncCard(context, appSettings),
 
           const SizedBox(height: 48),
 
@@ -1071,7 +1076,71 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     );
   }
 
-  Widget _buildRemoteSyncCard(BuildContext context) {
+  Widget _buildAutoSyncSettingsCard(BuildContext context, AppSettings settings) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(5),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Row(
+            children: [
+              Icon(Icons.autorenew, color: SkyTheme.timBlue),
+              SizedBox(width: 12),
+              Text(
+                'Opzioni di Sincronizzazione Automatica',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            activeTrackColor: SkyTheme.timBlue,
+            title: const Text(
+              'Sincronizza all\'avvio',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            subtitle: const Text(
+              'Avvia automaticamente la sincronizzazione di tutti i dati ad ogni apertura dell\'applicazione.',
+              style: TextStyle(fontSize: 12),
+            ),
+            value: settings.syncOnStartup,
+            onChanged: (val) {
+              ref.read(appSettingsProvider.notifier).updateSyncOnStartup(val);
+            },
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              const Icon(Icons.access_time, size: 16, color: Colors.grey),
+              const SizedBox(width: 8),
+              Text(
+                "Ultima sincronizzazione: ${settings.lastSyncTime != null ? DateFormat('dd/MM/yyyy HH:mm:ss').format(settings.lastSyncTime!) : 'Mai sincronizzato'}",
+                style: const TextStyle(fontSize: 13, color: Colors.grey, fontWeight: FontWeight.w500),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRemoteSyncCard(BuildContext context, AppSettings settings) {
     return Container(
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(

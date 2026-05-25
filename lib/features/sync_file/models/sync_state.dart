@@ -1,6 +1,7 @@
 class SyncState {
   final String selectedSyncType;
   final bool clearBeforeSync;
+  final bool alignWithRemote;
   final bool isSyncing;
   final double syncProgress;
   final String syncStep;
@@ -17,6 +18,7 @@ class SyncState {
   SyncState({
     required this.selectedSyncType,
     required this.clearBeforeSync,
+    required this.alignWithRemote,
     required this.isSyncing,
     required this.syncProgress,
     required this.syncStep,
@@ -31,10 +33,11 @@ class SyncState {
     required this.syncQueue,
   });
 
-  factory SyncState.initial() {
+  factory SyncState.initial({bool alignWithRemote = true}) {
     return SyncState(
       selectedSyncType: 'all',
       clearBeforeSync: false,
+      alignWithRemote: alignWithRemote,
       isSyncing: false,
       syncProgress: 0.0,
       syncStep: '',
@@ -53,6 +56,7 @@ class SyncState {
   SyncState copyWith({
     String? selectedSyncType,
     bool? clearBeforeSync,
+    bool? alignWithRemote,
     bool? isSyncing,
     double? syncProgress,
     String? syncStep,
@@ -69,6 +73,7 @@ class SyncState {
     return SyncState(
       selectedSyncType: selectedSyncType ?? this.selectedSyncType,
       clearBeforeSync: clearBeforeSync ?? this.clearBeforeSync,
+      alignWithRemote: alignWithRemote ?? this.alignWithRemote,
       isSyncing: isSyncing ?? this.isSyncing,
       syncProgress: syncProgress ?? this.syncProgress,
       syncStep: syncStep ?? this.syncStep,

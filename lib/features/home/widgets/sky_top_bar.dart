@@ -5,7 +5,9 @@ import '../../../core/theme/app_theme.dart';
 import '../../auth/models/auth_state.dart';
 import '../../auth/providers/auth_provider.dart';
 import '../../auth/providers/user_avatar_provider.dart';
+import '../../sync_file/providers/sync_provider.dart';
 import 'sky_sync_icon.dart';
+
 
 class SkyTopBar extends ConsumerWidget implements PreferredSizeWidget {
   final String title;
@@ -23,6 +25,8 @@ class SkyTopBar extends ConsumerWidget implements PreferredSizeWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final authState = ref.watch(authProvider);
     final avatarPath = ref.watch(userAvatarProvider);
+    final isSyncing = ref.watch(syncProvider).isSyncing;
+
 
     return AppBar(
       leading: showMenuIcon
@@ -44,11 +48,16 @@ class SkyTopBar extends ConsumerWidget implements PreferredSizeWidget {
         ],
       ),
       actions: [
+        if (isSyncing) ...[
+          const _FlashingSyncBadge(),
+          const SizedBox(width: 8),
+        ],
         const SkySyncIcon(),
         const SizedBox(width: 8),
         _buildUserActions(context, ref, authState, avatarPath),
         const SizedBox(width: 16),
       ],
+
       elevation: 0,
       centerTitle: false,
     );
@@ -288,3 +297,80 @@ class SkyTopBar extends ConsumerWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
+
+class _FlashingSyncBadge extends ConsumerStatefulWidget {
+  const _FlashingSyncBadge();
+
+  @override
+  ConsumerState<_FlashingSyncBadge> createState() => _FlashingSyncBadgeState();
+}
+
+class _FlashingSyncBadgeState extends ConsumerState<_FlashingSyncBadge> with SingleTickerProviderStateMixin {
+  late final AnimationController _controller;
+  late final Animation<double> _animation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(milliseconds: 1000),
+      vsync: this,
+    )..repeat(reverse: true);
+    _animation = Tween<double>(begin: 0.2, end: 1.0).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final progress = ref.watch(syncProvider).syncProgress;
+    final percentage = (progress * 100).clamp(0.0, 100.0).toInt();
+
+    return FadeTransition(
+      opacity: _animation,
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: SkyTheme.timRed,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: SkyTheme.timRed.withValues(alpha: 0.4),
+                blurRadius: 6,
+                spreadRadius: 1.5,
+              )
+            ],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(
+                Icons.sync,
+                size: 14,
+                color: Colors.white,
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'Sincronizzazione dati in corso ($percentage%)',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+

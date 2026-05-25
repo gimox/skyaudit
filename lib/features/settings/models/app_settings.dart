@@ -7,6 +7,9 @@ class AppSettings {
   Id id = 0; // Singleton ID
 
   bool discardIdenticalBolla = true;
+  bool alignWithRemote = true;
+  bool syncOnStartup = true;
+  DateTime? lastSyncTime;
 
   // Remote Sync SharePoint Configuration
   String sharepointSiteName = 'skyaudit';

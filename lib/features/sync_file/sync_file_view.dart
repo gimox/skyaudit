@@ -380,6 +380,36 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
     );
   }
 
+  Widget _buildAlignWithRemoteOption(SyncState syncState) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: SwitchListTile(
+        activeTrackColor: SkyTheme.timBlue,
+        title: const Text(
+          'Allinea con dati remoti',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        subtitle: const Text(
+          'Rimuove dal database locale i file e i record associati che non sono più presenti nelle cartelle remote di SharePoint.',
+          style: TextStyle(fontSize: 11),
+        ),
+        value: syncState.alignWithRemote,
+        onChanged: syncState.isSyncing
+            ? null
+            : (val) {
+                ref.read(syncProvider.notifier).setAlignWithRemote(val);
+              },
+      ),
+    );
+  }
+
   Widget _buildSyncButton(SyncState syncState) {
     String buttonLabel = '';
 
@@ -579,6 +609,8 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
 
             if (!syncState.isSyncing && syncState.selectedSyncType != 'anagrafica') ...[
               _buildClearDbOption(syncState),
+              const SizedBox(height: 12),
+              _buildAlignWithRemoteOption(syncState),
               const SizedBox(height: 24),
             ],
 

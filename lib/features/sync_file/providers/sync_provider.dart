@@ -14,6 +14,11 @@ import '../../upload/providers/anagrafica_provider.dart';
 import '../../upload/providers/scarti_ec_sap_provider.dart';
 import '../../upload/providers/log_history_provider.dart';
 import '../../upload/models/tracciato_contabile.dart';
+import '../../upload/models/tracciato_sap.dart';
+import '../../upload/models/estratto_conto.dart';
+import '../../upload/models/estratto_amex.dart';
+import '../../upload/models/anagrafica.dart';
+import '../../upload/models/scarti_ec_sap.dart';
 import '../../upload/models/log_history.dart';
 import '../services/sharepoint_service.dart';
 import '../models/sync_state.dart';
@@ -22,7 +27,9 @@ class SyncNotifier extends StateNotifier<SyncState> {
   final Ref _ref;
   final SharePointService _sharePointService = SharePointService();
 
-  SyncNotifier(this._ref) : super(SyncState.initial());
+  SyncNotifier(this._ref) : super(SyncState.initial(
+    alignWithRemote: _ref.read(appSettingsProvider).alignWithRemote,
+  ));
 
   void setSelectedSyncType(String type) {
     if (!state.isSyncing) {
@@ -33,6 +40,13 @@ class SyncNotifier extends StateNotifier<SyncState> {
   void setClearBeforeSync(bool val) {
     if (!state.isSyncing) {
       state = state.copyWith(clearBeforeSync: val);
+    }
+  }
+
+  void setAlignWithRemote(bool val) {
+    if (!state.isSyncing) {
+      state = state.copyWith(alignWithRemote: val);
+      _ref.read(appSettingsProvider.notifier).updateAlignWithRemote(val);
     }
   }
 
@@ -344,6 +358,38 @@ class SyncNotifier extends StateNotifier<SyncState> {
             .sourceTypeEqualTo(sourceType == 'Tracciato Contabile' ? 'contabile' : sourceType)
             .findAll();
 
+        if (state.alignWithRemote) {
+          final remoteFileNames = sharepointFiles.map((f) => f.name).toSet();
+          final logsToDelete = existingLogs.where((log) => !remoteFileNames.contains(log.fileName)).toList();
+          
+          if (logsToDelete.isNotEmpty) {
+            _log('[$syncName] Allineamento con SharePoint: rilevati ${logsToDelete.length} file locali non più presenti in remoto. Rimozione in corso...');
+            await isar.writeTxn(() async {
+              for (final log in logsToDelete) {
+                _log('[$syncName] Rimozione record per il file: ${log.fileName} (Codice: ${log.uniqueCode})...');
+                final uniqueCode = log.uniqueCode;
+                
+                await isar.logHistorys.filter().uniqueCodeEqualTo(uniqueCode).deleteAll();
+                await isar.tracciatoContabiles.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                await isar.tracciatoSaps.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                await isar.estrattoContos.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                await isar.estrattoAmexs.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                await isar.anagraficas.filter().importBatchEqualTo(uniqueCode).deleteAll();
+                await isar.scartiEcSaps.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+              }
+            });
+            _log('[$syncName] Allineamento completato: rimossi record per ${logsToDelete.length} file.');
+            
+            // Ricarica la lista dei log locali dopo l'eliminazione
+            existingLogs.clear();
+            existingLogs.addAll(await isar.logHistorys.filter()
+                .sourceTypeEqualTo(sourceType)
+                .or()
+                .sourceTypeEqualTo(sourceType == 'Tracciato Contabile' ? 'contabile' : sourceType)
+                .findAll());
+          }
+        }
+
         List<SharePointFile> filesToQueue = sharepointFiles;
         if (type == 'anagrafica' && sharepointFiles.isNotEmpty) {
           // Ordina per data di ultima modifica decrescente (il più recente per primo)
@@ -393,6 +439,7 @@ class SyncNotifier extends StateNotifier<SyncState> {
       _log('Totale file da elaborare: ${state.totalFilesFound}.');
 
       if (state.totalFilesFound == 0) {
+        await _ref.read(appSettingsProvider.notifier).updateLastSyncTime(DateTime.now());
         state = state.copyWith(
           syncProgress: 1.0,
           syncStep: 'Sincronizzazione completata: nessun nuovo file trovato.',
@@ -453,6 +500,8 @@ class SyncNotifier extends StateNotifier<SyncState> {
       _ref.invalidate(anagraficaProvider);
       _ref.invalidate(scartiEcSapProvider);
       _ref.invalidate(logHistoryProvider);
+
+      await _ref.read(appSettingsProvider.notifier).updateLastSyncTime(DateTime.now());
 
       state = state.copyWith(
         syncProgress: 1.0,

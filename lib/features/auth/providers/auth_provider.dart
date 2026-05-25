@@ -9,6 +9,8 @@ import '../../../core/config/auth_config.dart';
 import '../models/auth_state.dart';
 import 'secure_storage_service.dart';
 import 'user_avatar_provider.dart';
+import '../../sync_file/providers/sync_provider.dart';
+import '../../settings/providers/app_settings_provider.dart';
 
 class AuthNotifier extends StateNotifier<AuthState> {
   AuthNotifier(this._secureStorage, this._ref) : super(AuthState.checking()) {
@@ -73,6 +75,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
         final email = decoded?['preferred_username'] as String? ?? decoded?['email'] as String? ?? 'utente@tim.it';
 
         state = AuthState.authenticated(userName: name, userEmail: email);
+
+        // Sincronizzazione automatica all'avvio di tutti i dati
+        Future.microtask(() {
+          final settings = _ref.read(appSettingsProvider);
+          if (settings.syncOnStartup) {
+            _ref.read(syncProvider.notifier).setSelectedSyncType('all');
+            _ref.read(syncProvider.notifier).startSynchronization();
+          }
+        });
 
         // Se non c'è la foto profilo in locale, prova a riscaricarla da Microsoft Graph in background
         final dir = await getApplicationSupportDirectory();
