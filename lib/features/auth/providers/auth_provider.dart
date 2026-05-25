@@ -148,6 +148,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
       await _fetchAndSaveMicrosoftGraphPhoto(_oauthClient!.credentials.accessToken);
 
       state = AuthState.authenticated(userName: name, userEmail: email);
+
+      // Sincronizzazione automatica al termine del login se configurata
+      Future.microtask(() {
+        final settings = _ref.read(appSettingsProvider);
+        if (settings.syncOnStartup) {
+          _ref.read(syncProvider.notifier).setSelectedSyncType('all');
+          _ref.read(syncProvider.notifier).startSynchronization();
+        }
+      });
     } catch (e) {
       state = AuthState.error(e.toString());
       // Rimane scollegato in caso di errore

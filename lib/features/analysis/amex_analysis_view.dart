@@ -33,11 +33,13 @@ class AmexAnalysisView extends ConsumerStatefulWidget {
 class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
+  final _horizontalScrollController = ScrollController();
 
   @override
   void dispose() {
     _searchController.dispose();
     _scrollController.dispose();
+    _horizontalScrollController.dispose();
     super.dispose();
   }
 
@@ -305,12 +307,19 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: SizedBox(
-                      width: 1730,
-                      child: Column(
-                        children: [
+                  child: Scrollbar(
+                    controller: _horizontalScrollController,
+                    thumbVisibility: true,
+                    trackVisibility: true,
+                    child: SingleChildScrollView(
+                      controller: _horizontalScrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: SizedBox(
+                          width: 1730,
+                          child: Column(
+                            children: [
                           // HEADER FISSO
                           Container(
                             height: 56,
@@ -320,6 +329,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                             ),
                             child: Row(
                               children: [
+                                _buildCell('AZIONI', 120, isHeader: true, alignment: Alignment.center),
                                 _buildCell('CID', 200, isHeader: true),
                                 _buildCell('NOMINATIVO', 220, isHeader: true),
                                 _buildCell('TRASFERTA', 180, isHeader: true),
@@ -328,7 +338,6 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                 _buildCell('BOLLA', 150, isHeader: true),
                                 _buildCell('FORNITORE', 250, isHeader: true),
                                 _buildCell('DATA TRANS.', 120, isHeader: true),
-                                _buildCell('AZIONI', 120, isHeader: true, alignment: Alignment.center),
                               ],
                             ),
                           ),
@@ -349,6 +358,11 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                     ),
                                     child: Row(
                                       children: [
+                                        _buildCell('', 120, alignment: Alignment.center, child: Row(mainAxisSize: MainAxisSize.min, children: [
+                                          IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+                                          const SizedBox(width: 12),
+                                          IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), onPressed: () => _showDeleteDialog(context, ref, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+                                        ])),
                                         _buildCopyableCell(record.cid ?? '-', 200, typeLabel: 'CID', fontWeight: FontWeight.w500),
                                         _buildCell(anagraficheMap[record.cid?.trim()] ?? '-', 220),
                                         _buildCopyableCell(
@@ -365,11 +379,6 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                         _buildCell(record.bolla ?? '-', 150),
                                         _buildCell(record.nomeFornitore ?? '-', 250),
                                         _buildCell(record.dataTransazione ?? '-', 120),
-                                        _buildCell('', 120, alignment: Alignment.center, child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                          IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-                                          const SizedBox(width: 12),
-                                          IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), onPressed: () => _showDeleteDialog(context, ref, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-                                        ])),
                                       ],
                                     ),
                                   );
@@ -377,7 +386,9 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                               ),
                             ),
                           ),
-                        ],
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),

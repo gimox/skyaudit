@@ -49,6 +49,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   String _buildNumber = '';
   bool _isCheckingUpdate = false;
   String _updateCheckStatus = '';
+  int _selectedTabIndex = 0;
+
 
   @override
   void initState() {
@@ -279,147 +281,323 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         .where((e) => e.category == 'societa')
         .toList();
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(32.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _buildAuthStatusCard(context, authState),
-          const SizedBox(height: 24),
-          _buildAutoSyncSettingsCard(context, appSettings),
-          const SizedBox(height: 32),
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(32.0, 48.0, 32.0, 32.0),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth >= 900;
 
-          // Sezione Dizionari
-          _buildSectionHeader(
-            context,
-            Icons.book_outlined,
-            'Dizionari di Decodifica',
-            'Configura i valori per la decifrazione automatica dei record.',
-          ),
-          const SizedBox(height: 24),
-
-          _buildDictionaryCard(
-            context,
-            'Giustificativi Prepagati',
-            'giustificativi_prepagati',
-            prepagatoEntries,
-          ),
-
-          const SizedBox(height: 24),
-
-          _buildDictionaryCard(
-            context,
-            'Tipo Dipendente',
-            'tipo_dipendente',
-            tipoDipendenteEntries,
-          ),
-
-          const SizedBox(height: 24),
-
-          _buildDictionaryCard(context, 'Società', 'societa', societaEntries),
-
-          const SizedBox(height: 48),
-
-          // Sezione Sincronizzazione Remota
-          _buildSectionHeader(
-            context,
-            Icons.cloud_sync_outlined,
-            'Sincronizzazione Remota (SharePoint)',
-            'Configura gli endpoint, il drive e il percorso dei tracciati contabili aziendali su SharePoint.',
-          ),
-          const SizedBox(height: 24),
-          _buildRemoteSyncCard(context, appSettings),
-
-          const SizedBox(height: 48),
-
-          // Sezione Database
-          _buildSectionHeader(
-            context,
-            Icons.storage,
-            'Gestione Database Locale',
-            'Amministrazione dei dati salvati localmente. Attenzione: le cancellazioni sono irreversibili.',
-          ),
-          const SizedBox(height: 24),
-
-          Container(
-            padding: const EdgeInsets.all(24),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: Colors.grey.shade200),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(5),
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
-            ),
-            child: Column(
+          if (isWide) {
+            return Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildCollectionTile(
-                  context,
-                  Icons.table_chart_outlined,
-                  'Collection: Tracciato Contabile',
-                  'Elimina solo i record importati del tracciato contabile',
-                  () => _clearCollection('Tracciato Contabile'),
+                // Sidebar di navigazione a sinistra
+                SizedBox(
+                  width: 280,
+                  child: Card(
+                    elevation: 0,
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(16),
+                      side: BorderSide(color: Colors.grey.shade200),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            child: Text(
+                              'IMPOSTAZIONI',
+                              style: TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.grey,
+                                letterSpacing: 1.2,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          ...List.generate(_tabs.length, (index) {
+                            final tab = _tabs[index];
+                            final isSelected = _selectedTabIndex == index;
+                            return Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 2),
+                              child: ListTile(
+                                selected: isSelected,
+                                selectedColor: SkyTheme.timBlue,
+                                selectedTileColor: SkyTheme.timBlue.withAlpha(20),
+                                iconColor: Colors.grey.shade600,
+                                textColor: Colors.black87,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                leading: Icon(tab.icon),
+                                title: Text(
+                                  tab.title,
+                                  style: TextStyle(
+                                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                onTap: () {
+                                  setState(() {
+                                    _selectedTabIndex = index;
+                                  });
+                                },
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-                _buildCollectionTile(
-                  context,
-                  Icons.history,
-                  'Collection: Log History',
-                  'Elimina lo storico delle importazioni (file, date, etc.)',
-                  () => _clearCollection('Log History'),
+                const SizedBox(width: 24),
+                // Contenuto a destra
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: _buildTabContent(
+                        context,
+                        authState,
+                        appSettings,
+                        prepagatoEntries,
+                        tipoDipendenteEntries,
+                        societaEntries,
+                      ),
+                    ),
+                  ),
                 ),
-                _buildCollectionTile(
-                  context,
-                  Icons.account_balance_wallet_outlined,
-                  'Collection: Estratto Conto',
-                  'Elimina tutti i dati caricati dagli estratti conto',
-                  () => _clearCollection('Estratto Conto'),
-                ),
-                _buildCollectionTile(
-                  context,
-                  Icons.analytics_outlined,
-                  'Collection: Tracciato Sap',
-                  'Elimina tutti i dati caricati dal tracciato SAP',
-                  () => _clearCollection('Tracciato Sap'),
-                ),
-                _buildCollectionTile(
-                  context,
-                  Icons.credit_card_outlined,
-                  'Collection: Estratti Amex',
-                  'Elimina tutti i dati caricati dagli estratti American Express',
-                  () => _clearCollection('Estratti Amex'),
-                ),
-                _buildCollectionTile(
-                  context,
-                  Icons.warning_amber_outlined,
-                  'Collection: Scarti EC SAP',
-                  'Elimina tutti i dati caricati dagli scarti Estratto Conto SAP',
-                  () => _clearCollection('Scarti EC SAP'),
-                ),
-                const Divider(height: 32),
-                _buildHardResetAction(context),
               ],
-            ),
-          ),
-
-          const SizedBox(height: 48),
-
-          // Sezione Info Applicativo & Aggiornamenti
-          _buildSectionHeader(
-            context,
-            Icons.info_outline,
-            'Info Applicativo & Aggiornamenti',
-            'Verifica la versione installata e controlla se ci sono nuovi rilasci di SkyAudit.',
-          ),
-          const SizedBox(height: 24),
-          _buildAppUpdateCard(context),
-        ],
+            );
+          } else {
+            // Layout per schermi più piccoli
+            return Column(
+              children: [
+                Card(
+                  elevation: 0,
+                  color: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                    side: BorderSide(color: Colors.grey.shade200),
+                  ),
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Row(
+                        children: List.generate(_tabs.length, (index) {
+                          final tab = _tabs[index];
+                          final isSelected = _selectedTabIndex == index;
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
+                            child: ChoiceChip(
+                              showCheckmark: false,
+                              avatar: Icon(
+                                tab.icon,
+                                color: isSelected ? Colors.white : SkyTheme.timBlue,
+                                size: 16,
+                              ),
+                              label: Text(tab.title),
+                              selected: isSelected,
+                              selectedColor: SkyTheme.timBlue,
+                              labelStyle: TextStyle(
+                                color: isSelected ? Colors.white : Colors.black87,
+                                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                              ),
+                              onSelected: (selected) {
+                                if (selected) {
+                                  setState(() {
+                                    _selectedTabIndex = index;
+                                  });
+                                }
+                              },
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: _buildTabContent(
+                      context,
+                      authState,
+                      appSettings,
+                      prepagatoEntries,
+                      tipoDipendenteEntries,
+                      societaEntries,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+        },
       ),
     );
   }
+
+  Widget _buildTabContent(
+    BuildContext context,
+    AuthState authState,
+    AppSettings appSettings,
+    List<Dictionary> prepagatoEntries,
+    List<Dictionary> tipoDipendenteEntries,
+    List<Dictionary> societaEntries,
+  ) {
+    switch (_selectedTabIndex) {
+      case 0:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionHeader(
+              context,
+              Icons.cloud_sync_outlined,
+              'Cloud & Sincronizzazione',
+              'Gestisci l\'accesso aziendale e le impostazioni del drive SharePoint.',
+            ),
+            const SizedBox(height: 24),
+            _buildAuthStatusCard(context, authState),
+            const SizedBox(height: 24),
+            _buildAutoSyncSettingsCard(context, appSettings),
+            const SizedBox(height: 24),
+            _buildRemoteSyncCard(context, appSettings),
+          ],
+        );
+      case 1:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionHeader(
+              context,
+              Icons.book_outlined,
+              'Dizionari di Decodifica',
+              'Configura i dizionari per la traduzione automatica dei codici.',
+            ),
+            const SizedBox(height: 24),
+            _buildDictionaryCard(
+              context,
+              'Giustificativi Prepagati',
+              'giustificativi_prepagati',
+              prepagatoEntries,
+            ),
+            const SizedBox(height: 24),
+            _buildDictionaryCard(
+              context,
+              'Tipo Dipendente',
+              'tipo_dipendente',
+              tipoDipendenteEntries,
+            ),
+            const SizedBox(height: 24),
+            _buildDictionaryCard(
+              context,
+              'Società',
+              'societa',
+              societaEntries,
+            ),
+          ],
+        );
+      case 2:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionHeader(
+              context,
+              Icons.storage,
+              'Gestione Database Locale',
+              'Amministrazione delle collection e dei dati salvati localmente.',
+            ),
+            const SizedBox(height: 24),
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: Colors.grey.shade200),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withAlpha(5),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  _buildCollectionTile(
+                    context,
+                    Icons.table_chart_outlined,
+                    'Collection: Tracciato Contabile',
+                    'Elimina solo i record importati del tracciato contabile',
+                    () => _clearCollection('Tracciato Contabile'),
+                  ),
+                  _buildCollectionTile(
+                    context,
+                    Icons.history,
+                    'Collection: Log History',
+                    'Elimina lo storico delle importazioni (file, date, etc.)',
+                    () => _clearCollection('Log History'),
+                  ),
+                  _buildCollectionTile(
+                    context,
+                    Icons.account_balance_wallet_outlined,
+                    'Collection: Estratto Conto',
+                    'Elimina tutti i dati caricati dagli estratti conto',
+                    () => _clearCollection('Estratto Conto'),
+                  ),
+                  _buildCollectionTile(
+                    context,
+                    Icons.analytics_outlined,
+                    'Collection: Tracciato Sap',
+                    'Elimina tutti i dati caricati dal tracciato SAP',
+                    () => _clearCollection('Tracciato Sap'),
+                  ),
+                  _buildCollectionTile(
+                    context,
+                    Icons.credit_card_outlined,
+                    'Collection: Estratti Amex',
+                    'Elimina tutti i dati caricati dagli estratti American Express',
+                    () => _clearCollection('Estratti Amex'),
+                  ),
+                  _buildCollectionTile(
+                    context,
+                    Icons.warning_amber_outlined,
+                    'Collection: Scarti EC SAP',
+                    'Elimina tutti i dati caricati dagli scarti Estratto Conto SAP',
+                    () => _clearCollection('Scarti EC SAP'),
+                  ),
+                  const Divider(height: 32),
+                  _buildHardResetAction(context),
+                ],
+              ),
+            ),
+          ],
+        );
+      case 3:
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildSectionHeader(
+              context,
+              Icons.info_outline,
+              'Info Applicativo & Aggiornamenti',
+              'Verifica la versione installata e controlla la disponibilità di aggiornamenti.',
+            ),
+            const SizedBox(height: 24),
+            _buildAppUpdateCard(context),
+          ],
+        );
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
 
   Future<void> _loadAppVersion() async {
     try {
@@ -1383,3 +1561,39 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     );
   }
 }
+
+class _SettingsTab {
+  final String title;
+  final IconData icon;
+  final String description;
+
+  const _SettingsTab({
+    required this.title,
+    required this.icon,
+    required this.description,
+  });
+}
+
+const List<_SettingsTab> _tabs = [
+  _SettingsTab(
+    title: 'Cloud & Sync',
+    icon: Icons.cloud_sync_outlined,
+    description: 'Account, sincronizzazione automatica ed endpoint SharePoint.',
+  ),
+  _SettingsTab(
+    title: 'Dizionari Decodifica',
+    icon: Icons.book_outlined,
+    description: 'Giustificativi, tipi dipendente e tabelle società.',
+  ),
+  _SettingsTab(
+    title: 'Database Locale',
+    icon: Icons.storage_outlined,
+    description: 'Manutenzione dati, pulizia e ripristino di fabbrica.',
+  ),
+  _SettingsTab(
+    title: 'Sistema & Info',
+    icon: Icons.info_outline,
+    description: 'Versione installata e verifica aggiornamenti software.',
+  ),
+];
+

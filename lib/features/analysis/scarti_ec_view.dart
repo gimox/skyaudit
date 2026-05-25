@@ -38,11 +38,13 @@ class ScartiEcView extends ConsumerStatefulWidget {
 class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
+  final _horizontalScrollController = ScrollController();
 
   @override
   void dispose() {
     _searchController.dispose();
     _scrollController.dispose();
+    _horizontalScrollController.dispose();
     super.dispose();
   }
 
@@ -408,12 +410,19 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: SizedBox(
-                      width: 1320,
-                      child: Column(
-                        children: [
+                  child: Scrollbar(
+                    controller: _horizontalScrollController,
+                    thumbVisibility: true,
+                    trackVisibility: true,
+                    child: SingleChildScrollView(
+                      controller: _horizontalScrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: SizedBox(
+                          width: 1320,
+                          child: Column(
+                            children: [
                           // INTESTAZIONE TABELLA (HEADER FISSO)
                           Container(
                             height: 56,
@@ -423,6 +432,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                             ),
                             child: Row(
                               children: [
+                                _buildCell('AZIONI', 120, isHeader: true, alignment: Alignment.center),
                                 _buildCell('CID', 120, isHeader: true),
                                 _buildCell('TRASFERTA', 150, isHeader: true),
                                 _buildCell('SPESA', 100, isHeader: true),
@@ -432,7 +442,6 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                                 _buildCell('STORNO', 100, isHeader: true),
                                 _buildCell('DATA INVIO', 130, isHeader: true),
                                 _buildCell('DESCRIZIONE SCARTO', 280, isHeader: true),
-                                _buildCell('AZIONI', 120, isHeader: true, alignment: Alignment.center),
                               ],
                             ),
                           ),
@@ -453,6 +462,24 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                                     ),
                                     child: Row(
                                       children: [
+                                        _buildCell('', 120, alignment: Alignment.center, child: Row(
+                                          mainAxisSize: MainAxisSize.min, 
+                                          children: [
+                                            IconButton(
+                                              icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), 
+                                              onPressed: () => _showRecordDetails(context, record), 
+                                              padding: EdgeInsets.zero, 
+                                              constraints: const BoxConstraints()
+                                            ),
+                                            const SizedBox(width: 12),
+                                            IconButton(
+                                              icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), 
+                                              onPressed: () => _showDeleteDialog(context, ref, record), 
+                                              padding: EdgeInsets.zero, 
+                                              constraints: const BoxConstraints()
+                                            ),
+                                          ]
+                                        )),
                                         _buildCell(
                                           record.cid,
                                           120,
@@ -581,24 +608,6 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                                         _buildCell(record.storno ?? '-', 100, color: record.storno != null ? Colors.orange.shade800 : null),
                                         _buildCell(record.dataInvio, 130),
                                         _buildCell(record.descrizioneScarto, 280),
-                                        _buildCell('', 120, alignment: Alignment.center, child: Row(
-                                          mainAxisSize: MainAxisSize.min, 
-                                          children: [
-                                            IconButton(
-                                              icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), 
-                                              onPressed: () => _showRecordDetails(context, record), 
-                                              padding: EdgeInsets.zero, 
-                                              constraints: const BoxConstraints()
-                                            ),
-                                            const SizedBox(width: 12),
-                                            IconButton(
-                                              icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), 
-                                              onPressed: () => _showDeleteDialog(context, ref, record), 
-                                              padding: EdgeInsets.zero, 
-                                              constraints: const BoxConstraints()
-                                            ),
-                                          ]
-                                        )),
                                       ],
                                     ),
                                   );
@@ -606,7 +615,9 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                               ),
                             ),
                           ),
-                        ],
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),

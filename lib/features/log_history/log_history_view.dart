@@ -31,13 +31,17 @@ class LogHistoryView extends ConsumerStatefulWidget {
 class _LogHistoryViewState extends ConsumerState<LogHistoryView> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
+  final _horizontalScrollController = ScrollController();
+
 
   @override
   void dispose() {
     _searchController.dispose();
     _scrollController.dispose();
+    _horizontalScrollController.dispose();
     super.dispose();
   }
+
 
   Future<bool?> _showConfirmationDialog({
     required String title,
@@ -367,12 +371,20 @@ class _LogHistoryViewState extends ConsumerState<LogHistoryView> {
                             ],
                           ),
                         )
-                      : SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: SizedBox(
-                            width: 1370,
-                            child: Column(
-                              children: [
+                      : Scrollbar(
+                          controller: _horizontalScrollController,
+                          thumbVisibility: true,
+                          trackVisibility: true,
+                          child: SingleChildScrollView(
+                            controller: _horizontalScrollController,
+                            scrollDirection: Axis.horizontal,
+                            child: Padding(
+                              padding: const EdgeInsets.only(bottom: 16), // Spazio per non sovrapporsi all'ultimo record
+                              child: SizedBox(
+                                width: 1370,
+                                child: Column(
+                                  children: [
+
                                 // HEADER FISSO
                                 Container(
                                   height: 56,
@@ -382,6 +394,7 @@ class _LogHistoryViewState extends ConsumerState<LogHistoryView> {
                                   ),
                                   child: Row(
                                     children: [
+                                      _buildCell('AZIONI', 100, isHeader: true, alignment: Alignment.center),
                                       _buildCell('NOME FILE', 400, isHeader: true),
                                       _buildCell('TIPO DATI', 160, isHeader: true),
                                       _buildCell('DATA IMPORTAZIONE', 180, isHeader: true),
@@ -390,7 +403,6 @@ class _LogHistoryViewState extends ConsumerState<LogHistoryView> {
                                       _buildCell('AGGIORNATI', 100, isHeader: true, alignment: Alignment.center),
                                       _buildCell('SCARTATI', 90, isHeader: true, alignment: Alignment.center),
                                       _buildCell('CODICE UNIVOCO', 160, isHeader: true),
-                                      _buildCell('AZIONI', 100, isHeader: true, alignment: Alignment.center),
                                     ],
                                   ),
                                 ),
@@ -412,14 +424,6 @@ class _LogHistoryViewState extends ConsumerState<LogHistoryView> {
                                           ),
                                           child: Row(
                                             children: [
-                                              _buildCell(log.fileName, 400, fontWeight: FontWeight.w500),
-                                              _buildCell(translatedType, 160, color: SkyTheme.timBlue, fontWeight: FontWeight.bold),
-                                              _buildCell(DateFormat('dd/MM/yyyy HH:mm').format(log.date), 180),
-                                              _buildCell(log.totalRecords.toString(), 90, alignment: Alignment.center, fontWeight: FontWeight.bold),
-                                              _buildCell(log.insertedRecords.toString(), 90, alignment: Alignment.center, color: Colors.green.shade700, fontWeight: FontWeight.bold),
-                                              _buildCell(log.updatedRecords.toString(), 100, alignment: Alignment.center, color: Colors.blue.shade700, fontWeight: FontWeight.bold),
-                                              _buildCell(log.discardedRecords.toString(), 90, alignment: Alignment.center, color: log.discardedRecords > 0 ? Colors.orange.shade700 : Colors.grey.shade400, fontWeight: FontWeight.bold),
-                                              _buildCell(log.uniqueCode, 160, color: Colors.grey.shade500),
                                               _buildCell(
                                                 '',
                                                 100,
@@ -448,6 +452,14 @@ class _LogHistoryViewState extends ConsumerState<LogHistoryView> {
                                                   tooltip: 'Elimina importazione',
                                                 ),
                                               ),
+                                              _buildCell(log.fileName, 400, fontWeight: FontWeight.w500),
+                                              _buildCell(translatedType, 160, color: SkyTheme.timBlue, fontWeight: FontWeight.bold),
+                                              _buildCell(DateFormat('dd/MM/yyyy HH:mm').format(log.date), 180),
+                                              _buildCell(log.totalRecords.toString(), 90, alignment: Alignment.center, fontWeight: FontWeight.bold),
+                                              _buildCell(log.insertedRecords.toString(), 90, alignment: Alignment.center, color: Colors.green.shade700, fontWeight: FontWeight.bold),
+                                              _buildCell(log.updatedRecords.toString(), 100, alignment: Alignment.center, color: Colors.blue.shade700, fontWeight: FontWeight.bold),
+                                              _buildCell(log.discardedRecords.toString(), 90, alignment: Alignment.center, color: log.discardedRecords > 0 ? Colors.orange.shade700 : Colors.grey.shade400, fontWeight: FontWeight.bold),
+                                              _buildCell(log.uniqueCode, 160, color: Colors.grey.shade500),
                                             ],
                                           ),
                                         );
@@ -455,14 +467,17 @@ class _LogHistoryViewState extends ConsumerState<LogHistoryView> {
                                     ),
                                   ),
                                 ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
+                      ),
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
+
 
           // PAGINAZIONE
           if (totalPages > 1)

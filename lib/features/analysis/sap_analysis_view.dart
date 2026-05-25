@@ -33,13 +33,16 @@ class SapAnalysisView extends ConsumerStatefulWidget {
 class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
   final _trasfertaController = TextEditingController();
   final _scrollController = ScrollController();
+  final _horizontalScrollController = ScrollController();
 
   @override
   void dispose() {
     _trasfertaController.dispose();
     _scrollController.dispose();
+    _horizontalScrollController.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -323,82 +326,91 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: SizedBox(
-                      width: 1200,
-                      child: Column(
-                        children: [
-                          // HEADER FISSO
-                          Container(
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade50, 
-                              border: Border(bottom: BorderSide(color: Colors.grey.shade200))
-                            ),
-                            child: Row(
-                              children: [
-                                _buildCell('CID', 140, isHeader: true),
-                                _buildCell('TRASFERTA', 160, isHeader: true),
-                                _buildCell('DATA', 120, isHeader: true),
-                                _buildCell('IMPORTO', 140, isHeader: true),
-                                _buildCell('CD RICHIESTA', 150, isHeader: true),
-                                _buildCell('CODICE STATO', 120, isHeader: true),
-                                _buildCell('SOC. CODICE', 120, isHeader: true),
-                                _buildCell('TIPO SPESA', 150, isHeader: true),
-                                _buildCell('AZIONI', 100, isHeader: true, alignment: Alignment.center),
-                              ],
-                            ),
-                          ),
-                          // BODY SCROLLABILE
-                          Expanded(
-                            child: SingleChildScrollView(
-                              controller: _scrollController,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: paginatedRecords.length,
-                                itemBuilder: (context, index) {
-                                  final record = paginatedRecords[index];
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      color: index % 2 == 0 ? Colors.white : Colors.grey.shade50.withAlpha(120), 
-                                      border: Border(bottom: BorderSide(color: Colors.grey.shade100))
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        _buildCopyableCell(record.cid, 140, typeLabel: 'CID', fontWeight: FontWeight.w500),
-                                        _buildCopyableCell(
-                                          record.numeroTrasferta,
-                                          160,
-                                          typeLabel: 'Trasferta',
-                                          fontWeight: FontWeight.bold,
-                                          color: contabileTrasferte.contains(record.numeroTrasferta.trim())
-                                              ? Colors.green.shade800
-                                              : Colors.red.shade700,
-                                        ),
-                                        _buildCell(record.data, 120),
-                                        _buildCell('${record.importo.toStringAsFixed(2)} ${record.valuta}', 140, color: Colors.green.shade800, fontWeight: FontWeight.bold),
-                                        _buildCell(record.cdRichiesta ?? '-', 150),
-                                        _buildCell(record.codiceStato ?? '-', 120),
-                                        _buildCell(record.societaCodice, 120),
-                                        _buildCell(record.tipoSpesaCodice, 150),
-                                        _buildCell('', 100, alignment: Alignment.center, child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-                                            const SizedBox(width: 8),
-                                            IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), onPressed: () => _deleteRecord(context, ref, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-                                          ],
-                                        )),
-                                      ],
-                                    ),
-                                  );
-                                },
+                  child: Scrollbar(
+                    controller: _horizontalScrollController,
+                    thumbVisibility: true,
+                    trackVisibility: true,
+                    child: SingleChildScrollView(
+                      controller: _horizontalScrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: SizedBox(
+                          width: 1200,
+                          child: Column(
+                            children: [
+                              // HEADER FISSO
+                              Container(
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade50, 
+                                  border: Border(bottom: BorderSide(color: Colors.grey.shade200))
+                                ),
+                                child: Row(
+                                  children: [
+                                    _buildCell('AZIONI', 100, isHeader: true, alignment: Alignment.center),
+                                    _buildCell('CID', 140, isHeader: true),
+                                    _buildCell('TRASFERTA', 160, isHeader: true),
+                                    _buildCell('DATA', 120, isHeader: true),
+                                    _buildCell('IMPORTO', 140, isHeader: true),
+                                    _buildCell('CD RICHIESTA', 150, isHeader: true),
+                                    _buildCell('CODICE STATO', 120, isHeader: true),
+                                    _buildCell('SOC. CODICE', 120, isHeader: true),
+                                    _buildCell('TIPO SPESA', 150, isHeader: true),
+                                  ],
+                                ),
                               ),
-                            ),
+                              // BODY SCROLLABILE
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  controller: _scrollController,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: paginatedRecords.length,
+                                    itemBuilder: (context, index) {
+                                      final record = paginatedRecords[index];
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: index % 2 == 0 ? Colors.white : Colors.grey.shade50.withAlpha(120), 
+                                          border: Border(bottom: BorderSide(color: Colors.grey.shade100))
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            _buildCell('', 100, alignment: Alignment.center, child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+                                                const SizedBox(width: 8),
+                                                IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), onPressed: () => _deleteRecord(context, ref, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+                                              ],
+                                            )),
+                                            _buildCopyableCell(record.cid, 140, typeLabel: 'CID', fontWeight: FontWeight.w500),
+                                            _buildCopyableCell(
+                                              record.numeroTrasferta,
+                                              160,
+                                              typeLabel: 'Trasferta',
+                                              fontWeight: FontWeight.bold,
+                                              color: contabileTrasferte.contains(record.numeroTrasferta.trim())
+                                                  ? Colors.green.shade800
+                                                  : Colors.red.shade700,
+                                            ),
+                                            _buildCell(record.data, 120),
+                                            _buildCell('${record.importo.toStringAsFixed(2)} ${record.valuta}', 140, color: Colors.green.shade800, fontWeight: FontWeight.bold),
+                                            _buildCell(record.cdRichiesta ?? '-', 150),
+                                            _buildCell(record.codiceStato ?? '-', 120),
+                                            _buildCell(record.societaCodice, 120),
+                                            _buildCell(record.tipoSpesaCodice, 150),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),

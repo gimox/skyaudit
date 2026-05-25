@@ -43,6 +43,7 @@ class AnagraficaView extends ConsumerStatefulWidget {
 class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
+  final _horizontalScrollController = ScrollController();
 
   String _formatDate(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty || dateStr == '-') return '-';
@@ -102,6 +103,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
   void dispose() {
     _searchController.dispose();
     _scrollController.dispose();
+    _horizontalScrollController.dispose();
     super.dispose();
   }
 
@@ -489,34 +491,41 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: SizedBox(
-                      width: 1730, // Larghezza fissa per scorrimento orizzontale
-                      child: Column(
-                        children: [
-                          // HEADER FISSO
-                          Container(
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade50,
-                              border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
-                            ),
-                            child: Row(
-                              children: [
-                                _buildCell('CID', 150, isHeader: true),
-                                _buildCell('UID (MATRICOLA)', 140, isHeader: true),
-                                _buildCell('NOMINATIVO', 250, isHeader: true),
-                                _buildCell('ETÀ', 80, isHeader: true),
-                                _buildCell('UNITÀ ORG. 3 DES.', 250, isHeader: true),
-                                _buildCell('REGIONE', 150, isHeader: true),
-                                _buildCell('SEDE COMUNE', 150, isHeader: true),
-                                _buildCell('MANSIONE', 250, isHeader: true),
-                                _buildCell('EMAIL', 210, isHeader: true),
-                                _buildCell('AZIONI', 100, isHeader: true, alignment: Alignment.center),
-                              ],
-                            ),
-                          ),
+                  child: Scrollbar(
+                    controller: _horizontalScrollController,
+                    thumbVisibility: true,
+                    trackVisibility: true,
+                    child: SingleChildScrollView(
+                      controller: _horizontalScrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: SizedBox(
+                          width: 1730, // Larghezza fissa per scorrimento orizzontale
+                          child: Column(
+                            children: [
+                              // HEADER FISSO
+                              Container(
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade50,
+                                  border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+                                ),
+                                child: Row(
+                                  children: [
+                                    _buildCell('AZIONI', 100, isHeader: true, alignment: Alignment.center),
+                                    _buildCell('CID', 150, isHeader: true),
+                                    _buildCell('UID (MATRICOLA)', 140, isHeader: true),
+                                    _buildCell('NOMINATIVO', 250, isHeader: true),
+                                    _buildCell('ETÀ', 80, isHeader: true),
+                                    _buildCell('UNITÀ ORG. 3 DES.', 250, isHeader: true),
+                                    _buildCell('REGIONE', 150, isHeader: true),
+                                    _buildCell('SEDE COMUNE', 150, isHeader: true),
+                                    _buildCell('MANSIONE', 250, isHeader: true),
+                                    _buildCell('EMAIL', 210, isHeader: true),
+                                  ],
+                                ),
+                              ),
                           // BODY
                           Expanded(
                             child: SingleChildScrollView(
@@ -534,6 +543,12 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                                     ),
                                     child: Row(
                                       children: [
+                                        _buildCell('', 100, alignment: Alignment.center, child: IconButton(
+                                          icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20),
+                                          onPressed: () => _showAnagraficaDetails(context, record),
+                                          padding: EdgeInsets.zero,
+                                          constraints: const BoxConstraints(),
+                                        )),
                                         _buildCell(
                                           record.cid ?? '-',
                                           150,
@@ -661,12 +676,6 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                                               ],
                                             ),
                                           ),
-                                        _buildCell('', 100, alignment: Alignment.center, child: IconButton(
-                                          icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20),
-                                          onPressed: () => _showAnagraficaDetails(context, record),
-                                          padding: EdgeInsets.zero,
-                                          constraints: const BoxConstraints(),
-                                        )),
                                       ],
                                     ),
                                   );
@@ -674,7 +683,9 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                               ),
                             ),
                           ),
-                        ],
+                            ],
+                          ),
+                        ),
                       ),
                     ),
                   ),

@@ -31,13 +31,16 @@ class AnalysisView extends ConsumerStatefulWidget {
 class _AnalysisViewState extends ConsumerState<AnalysisView> {
   final _trasfertaController = TextEditingController();
   final _scrollController = ScrollController();
+  final _horizontalScrollController = ScrollController();
 
   @override
   void dispose() {
     _trasfertaController.dispose();
     _scrollController.dispose();
+    _horizontalScrollController.dispose();
     super.dispose();
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -337,80 +340,88 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                       color: Colors.black.withAlpha(5), 
                       blurRadius: 15, 
                       offset: const Offset(0, 5)
-                    )
-                  ]
+                    )                  ]
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(16),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: SizedBox(
-                      width: 1870,
-                      child: Column(
-                        children: [
-                          // HEADER FISSO
-                          Container(
-                            height: 56,
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade50, 
-                              border: Border(bottom: BorderSide(color: Colors.grey.shade200))
-                            ),
-                            child: Row(
-                              children: [
-                                _buildCell('CID', 140, isHeader: true),
-                                _buildCell('NOMINATIVO', 220, isHeader: true),
-                                _buildCell('TRASFERTA', 160, isHeader: true),
-                                _buildCell('IMPORTO', 140, isHeader: true),
-                                _buildCell('SEGNO', 80, isHeader: true),
-                                _buildCell('GIUSTIFICATIVO', 250, isHeader: true),
-                                _buildCell('BOLLA', 150, isHeader: true),
-                                _buildCell('SOCIETÀ', 100, isHeader: true),
-                                _buildCell('DATA SPESA', 120, isHeader: true),
-                                _buildCell('DATA INIZIO', 120, isHeader: true),
-                                _buildCell('DATA FINE', 120, isHeader: true),
-                                _buildCell('LOCALITÀ', 170, isHeader: true),
-                                _buildCell('AZIONI', 100, isHeader: true, alignment: Alignment.center),
-                              ],
-                            ),
-                          ),
-                          // BODY SCROLLABILE
-                          Expanded(
-                            child: SingleChildScrollView(
-                              controller: _scrollController,
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: paginatedRecords.length,
-                                itemBuilder: (context, index) {
-                                  final record = paginatedRecords[index];
-                                  return Container(
-                                    decoration: BoxDecoration(
-                                      color: index % 2 == 0 ? Colors.white : Colors.grey.shade50.withAlpha(120), 
-                                      border: Border(bottom: BorderSide(color: Colors.grey.shade100))
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        _buildCopyableCell(record.cid, 140, typeLabel: 'CID', fontWeight: FontWeight.w500),
-                                        _buildCell(anagraficheMap[record.cid.trim()] ?? '', 220, fontWeight: FontWeight.w500),
-                                        _buildCopyableCell(record.numeroTrasferta, 160, typeLabel: 'Trasferta'),
-                                        _buildCell('${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}', 140, fontWeight: FontWeight.bold, color: record.isNegative ? Colors.red.shade700 : Colors.green.shade800),
-                                        _buildCell('', 80, child: Icon(record.isNegative ? Icons.remove_circle_outline : Icons.add_circle_outline, color: record.isNegative ? Colors.red.shade300 : Colors.green.shade300, size: 18)),
-                                        _buildCell(dictionaryMap[record.giustificativoSpesa] != null ? '${record.giustificativoSpesa} - ${dictionaryMap[record.giustificativoSpesa]}' : record.giustificativoSpesa, 250, color: dictionaryMap[record.giustificativoSpesa] != null ? SkyTheme.timBlue : null),
-                                        _buildCopyableCell(record.numeroBolla, 150, typeLabel: 'Bolla'),
-                                        _buildCell(dictionaryMap[record.societa] != null ? '${record.societa} - ${dictionaryMap[record.societa]}' : record.societa, 100, color: dictionaryMap[record.societa] != null ? SkyTheme.timBlue : null),
-                                        _buildCell(record.dataSpesa, 120),
-                                        _buildCell(record.dataInizio, 120),
-                                        _buildCell(record.dataFine, 120),
-                                        _buildCell(record.localita, 170),
-                                        _buildCell('', 100, alignment: Alignment.center, child: IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record, dictionaryMap), padding: EdgeInsets.zero, constraints: const BoxConstraints())),
-                                      ],
-                                    ),
-                                  );
-                                },
+                  child: Scrollbar(
+                    controller: _horizontalScrollController,
+                    thumbVisibility: true,
+                    trackVisibility: true,
+                    child: SingleChildScrollView(
+                      controller: _horizontalScrollController,
+                      scrollDirection: Axis.horizontal,
+                      child: Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: SizedBox(
+                          width: 1870,
+                          child: Column(
+                            children: [
+                              // HEADER FISSO
+                              Container(
+                                height: 56,
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade50, 
+                                  border: Border(bottom: BorderSide(color: Colors.grey.shade200))
+                                ),
+                                child: Row(
+                                  children: [
+                                    _buildCell('AZIONI', 100, isHeader: true, alignment: Alignment.center),
+                                    _buildCell('CID', 140, isHeader: true),
+                                    _buildCell('NOMINATIVO', 220, isHeader: true),
+                                    _buildCell('TRASFERTA', 160, isHeader: true),
+                                    _buildCell('IMPORTO', 140, isHeader: true),
+                                    _buildCell('SEGNO', 80, isHeader: true),
+                                    _buildCell('GIUSTIFICATIVO', 250, isHeader: true),
+                                    _buildCell('BOLLA', 150, isHeader: true),
+                                    _buildCell('SOCIETÀ', 100, isHeader: true),
+                                    _buildCell('DATA SPESA', 120, isHeader: true),
+                                    _buildCell('DATA INIZIO', 120, isHeader: true),
+                                    _buildCell('DATA FINE', 120, isHeader: true),
+                                    _buildCell('LOCALITÀ', 170, isHeader: true),
+                                  ],
+                                ),
                               ),
-                            ),
+                              // BODY SCROLLABILE
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  controller: _scrollController,
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    physics: const NeverScrollableScrollPhysics(),
+                                    itemCount: paginatedRecords.length,
+                                    itemBuilder: (context, index) {
+                                      final record = paginatedRecords[index];
+                                      return Container(
+                                        decoration: BoxDecoration(
+                                          color: index % 2 == 0 ? Colors.white : Colors.grey.shade50.withAlpha(120), 
+                                          border: Border(bottom: BorderSide(color: Colors.grey.shade100))
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            _buildCell('', 100, alignment: Alignment.center, child: IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record, dictionaryMap), padding: EdgeInsets.zero, constraints: const BoxConstraints())),
+                                            _buildCopyableCell(record.cid, 140, typeLabel: 'CID', fontWeight: FontWeight.w500),
+                                            _buildCell(anagraficheMap[record.cid.trim()] ?? '', 220, fontWeight: FontWeight.w500),
+                                            _buildCopyableCell(record.numeroTrasferta, 160, typeLabel: 'Trasferta'),
+                                            _buildCell('${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}', 140, fontWeight: FontWeight.bold, color: record.isNegative ? Colors.red.shade700 : Colors.green.shade800),
+                                            _buildCell('', 80, child: Icon(record.isNegative ? Icons.remove_circle_outline : Icons.add_circle_outline, color: record.isNegative ? Colors.red.shade300 : Colors.green.shade300, size: 18)),
+                                            _buildCell(dictionaryMap[record.giustificativoSpesa] != null ? '${record.giustificativoSpesa} - ${dictionaryMap[record.giustificativoSpesa]}' : record.giustificativoSpesa, 250, color: dictionaryMap[record.giustificativoSpesa] != null ? SkyTheme.timBlue : null),
+                                            _buildCopyableCell(record.numeroBolla, 150, typeLabel: 'Bolla'),
+                                            _buildCell(dictionaryMap[record.societa] != null ? '${record.societa} - ${dictionaryMap[record.societa]}' : record.societa, 100, color: dictionaryMap[record.societa] != null ? SkyTheme.timBlue : null),
+                                            _buildCell(record.dataSpesa, 120),
+                                            _buildCell(record.dataInizio, 120),
+                                            _buildCell(record.dataFine, 120),
+                                            _buildCell(record.localita, 170),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
