@@ -22,4 +22,12 @@ class AppSettings {
   String sharepointEstrattiAmexPath = 'estratti_amex';
   String sharepointAnagraficaPath = 'anagrafica';
   String sharepointScartiTracciatoPath = 'scarti_tracciato';
+
+  // Network & Proxy Settings
+  bool proxyEnabled = false;
+  bool proxyAutoConfig = true;
+  String customProxyUrl = '';
+  bool bypassSslVerification = false;
+  String proxyUsername = '';
+  String proxyPassword = '';
 }

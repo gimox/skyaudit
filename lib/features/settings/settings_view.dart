@@ -23,6 +23,7 @@ import 'package:travel_check/features/settings/providers/app_settings_provider.d
 import 'package:travel_check/features/settings/models/app_settings.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:travel_check/core/services/update_service.dart';
+import 'package:travel_check/core/services/proxy_service.dart';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 
@@ -44,6 +45,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   final TextEditingController _spEstrattiAmexController = TextEditingController();
   final TextEditingController _spAnagraficaController = TextEditingController();
   final TextEditingController _spScartiTracciatoController = TextEditingController();
+  final TextEditingController _proxyUrlController = TextEditingController();
+  final TextEditingController _proxyUsernameController = TextEditingController();
+  final TextEditingController _proxyPasswordController = TextEditingController();
+
+  bool? _proxyEnabled;
+  bool? _proxyAutoConfig;
+  bool? _bypassSslVerification;
 
   String _appVersion = 'Caricamento...';
   String _buildNumber = '';
@@ -66,6 +74,10 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       _spEstrattiAmexController.text = settings.sharepointEstrattiAmexPath;
       _spAnagraficaController.text = settings.sharepointAnagraficaPath;
       _spScartiTracciatoController.text = settings.sharepointScartiTracciatoPath;
+      
+      _proxyUrlController.text = settings.customProxyUrl;
+      _proxyUsernameController.text = settings.proxyUsername;
+      _proxyPasswordController.text = settings.proxyPassword;
     });
   }
 
@@ -81,6 +93,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     _spEstrattiAmexController.dispose();
     _spAnagraficaController.dispose();
     _spScartiTracciatoController.dispose();
+    _proxyUrlController.dispose();
+    _proxyUsernameController.dispose();
+    _proxyPasswordController.dispose();
     super.dispose();
   }
 
@@ -580,6 +595,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           ],
         );
       case 3:
+        return _buildNetworkSettingsTab(context, appSettings);
+      case 4:
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -1560,6 +1577,249 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       ],
     );
   }
+
+  Widget _buildNetworkSettingsTab(BuildContext context, AppSettings settings) {
+    _proxyEnabled ??= settings.proxyEnabled;
+    _proxyAutoConfig ??= settings.proxyAutoConfig;
+    _bypassSslVerification ??= settings.bypassSslVerification;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildSectionHeader(
+          context,
+          Icons.settings_ethernet,
+          'Rete & Proxy Aziendale',
+          'Gestisci la connessione verso i server aziendali tramite proxy o bypass di sicurezza.',
+        ),
+        const SizedBox(height: 24),
+        Container(
+          padding: const EdgeInsets.all(28),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey.shade200),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withAlpha(8),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'CONFIGURAZIONE PROXY',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: SkyTheme.timBlue,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              const SizedBox(height: 20),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                activeTrackColor: SkyTheme.timBlue,
+                title: const Text(
+                  'Abilita Proxy di Rete',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                subtitle: const Text(
+                  'Instarda il traffico dell\'app attraverso un proxy. Consigliato in VPN o rete aziendale.',
+                  style: TextStyle(fontSize: 12),
+                ),
+                value: _proxyEnabled!,
+                onChanged: (val) {
+                  setState(() {
+                    _proxyEnabled = val;
+                  });
+                },
+              ),
+              if (_proxyEnabled!) ...[
+                const Divider(height: 32),
+                const Text(
+                  'Modalità di configurazione',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: RadioListTile<bool>(
+                        contentPadding: EdgeInsets.zero,
+                        title: const Text('Automatica (Rete/PAC)', style: TextStyle(fontSize: 14)),
+                        subtitle: const Text('Rileva il proxy dal sistema o file PAC', style: TextStyle(fontSize: 11)),
+                        value: true,
+                        groupValue: _proxyAutoConfig!,
+                        activeColor: SkyTheme.timBlue,
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() {
+                              _proxyAutoConfig = val;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                    Expanded(
+                      child: RadioListTile<bool>(
+                        contentPadding: EdgeInsets.zero,
+                        title: const Text('Manuale', style: TextStyle(fontSize: 14)),
+                        subtitle: const Text('Specifica host, porta e credenziali', style: TextStyle(fontSize: 11)),
+                        value: false,
+                        groupValue: _proxyAutoConfig!,
+                        activeColor: SkyTheme.timBlue,
+                        onChanged: (val) {
+                          if (val != null) {
+                            setState(() {
+                              _proxyAutoConfig = val;
+                            });
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                if (!_proxyAutoConfig!) ...[
+                  const SizedBox(height: 20),
+                  _buildSharepointFolderField(
+                    label: 'Server Proxy (host:porta)',
+                    controller: _proxyUrlController,
+                    hintText: 'Es: lelapomi.telecomitalia.local:8080',
+                    icon: Icons.dns_outlined,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: _buildSharepointFolderField(
+                          label: 'Username (opzionale)',
+                          controller: _proxyUsernameController,
+                          hintText: 'Es: utente_proxy',
+                          icon: Icons.person_outline,
+                        ),
+                      ),
+                      const SizedBox(width: 24),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Password (opzionale)',
+                              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                            ),
+                            const SizedBox(height: 8),
+                            TextField(
+                              controller: _proxyPasswordController,
+                              obscureText: true,
+                              decoration: InputDecoration(
+                                hintText: '••••••••',
+                                filled: true,
+                                fillColor: Colors.grey.shade50,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: BorderSide(color: Colors.grey.shade300),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(color: SkyTheme.timBlue, width: 1.5),
+                                ),
+                                prefixIcon: const Icon(Icons.lock_outline, size: 20, color: SkyTheme.timBlue),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+              const Divider(height: 48),
+              const Text(
+                'SICUREZZA & CERTIFICATI',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: SkyTheme.timBlue,
+                  letterSpacing: 1.0,
+                ),
+              ),
+              const SizedBox(height: 16),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                activeTrackColor: SkyTheme.timBlue,
+                title: const Text(
+                  'Bypass Controllo SSL (SSL Inspection)',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                ),
+                subtitle: const Text(
+                  'Evita errori di handshake SSL se la rete aziendale o VPN decifra il traffico HTTPS (SSL Inspection). Consigliato solo in reti aziendali sicure.',
+                  style: TextStyle(fontSize: 12),
+                ),
+                value: _bypassSslVerification!,
+                onChanged: (val) {
+                  setState(() {
+                    _bypassSslVerification = val;
+                  });
+                },
+              ),
+              const SizedBox(height: 32),
+              SizedBox(
+                width: double.infinity,
+                height: 48,
+                child: ElevatedButton.icon(
+                  onPressed: () async {
+                    await ref.read(appSettingsProvider.notifier).updateNetworkSettings(
+                      proxyEnabled: _proxyEnabled!,
+                      proxyAutoConfig: _proxyAutoConfig!,
+                      customProxyUrl: _proxyUrlController.text.trim(),
+                      bypassSslVerification: _bypassSslVerification!,
+                      proxyUsername: _proxyUsernameController.text.trim(),
+                      proxyPassword: _proxyPasswordController.text,
+                    );
+
+                    final updatedSettings = ref.read(appSettingsProvider);
+                    await ProxyService.initialize(updatedSettings);
+
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Row(
+                            children: const [
+                              Icon(Icons.check_circle, color: Colors.white),
+                              SizedBox(width: 12),
+                              Text('Impostazioni di rete salvate ed applicate con successo!'),
+                            ],
+                          ),
+                          backgroundColor: Colors.green.shade700,
+                          behavior: SnackBarBehavior.floating,
+                        ),
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.save_outlined),
+                  label: const Text(
+                    'Salva ed Applica Impostazioni Rete',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: SkyTheme.timBlue,
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
 }
 
 class _SettingsTab {
@@ -1589,6 +1849,11 @@ const List<_SettingsTab> _tabs = [
     title: 'Database Locale',
     icon: Icons.storage_outlined,
     description: 'Manutenzione dati, pulizia e ripristino di fabbrica.',
+  ),
+  _SettingsTab(
+    title: 'Rete & Proxy',
+    icon: Icons.settings_ethernet,
+    description: 'Configurazione proxy aziendale, credenziali e bypass SSL.',
   ),
   _SettingsTab(
     title: 'Sistema & Info',

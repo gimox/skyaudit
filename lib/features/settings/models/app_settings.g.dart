@@ -22,58 +22,88 @@ const AppSettingsSchema = CollectionSchema(
       name: r'alignWithRemote',
       type: IsarType.bool,
     ),
-    r'discardIdenticalBolla': PropertySchema(
+    r'bypassSslVerification': PropertySchema(
       id: 1,
+      name: r'bypassSslVerification',
+      type: IsarType.bool,
+    ),
+    r'customProxyUrl': PropertySchema(
+      id: 2,
+      name: r'customProxyUrl',
+      type: IsarType.string,
+    ),
+    r'discardIdenticalBolla': PropertySchema(
+      id: 3,
       name: r'discardIdenticalBolla',
       type: IsarType.bool,
     ),
     r'lastSyncTime': PropertySchema(
-      id: 2,
+      id: 4,
       name: r'lastSyncTime',
       type: IsarType.dateTime,
     ),
+    r'proxyAutoConfig': PropertySchema(
+      id: 5,
+      name: r'proxyAutoConfig',
+      type: IsarType.bool,
+    ),
+    r'proxyEnabled': PropertySchema(
+      id: 6,
+      name: r'proxyEnabled',
+      type: IsarType.bool,
+    ),
+    r'proxyPassword': PropertySchema(
+      id: 7,
+      name: r'proxyPassword',
+      type: IsarType.string,
+    ),
+    r'proxyUsername': PropertySchema(
+      id: 8,
+      name: r'proxyUsername',
+      type: IsarType.string,
+    ),
     r'sharepointAnagraficaPath': PropertySchema(
-      id: 3,
+      id: 9,
       name: r'sharepointAnagraficaPath',
       type: IsarType.string,
     ),
     r'sharepointDocumentLibrary': PropertySchema(
-      id: 4,
+      id: 10,
       name: r'sharepointDocumentLibrary',
       type: IsarType.string,
     ),
     r'sharepointEstrattiAmexPath': PropertySchema(
-      id: 5,
+      id: 11,
       name: r'sharepointEstrattiAmexPath',
       type: IsarType.string,
     ),
     r'sharepointEstrattiContoPath': PropertySchema(
-      id: 6,
+      id: 12,
       name: r'sharepointEstrattiContoPath',
       type: IsarType.string,
     ),
     r'sharepointFolderPath': PropertySchema(
-      id: 7,
+      id: 13,
       name: r'sharepointFolderPath',
       type: IsarType.string,
     ),
     r'sharepointScartiTracciatoPath': PropertySchema(
-      id: 8,
+      id: 14,
       name: r'sharepointScartiTracciatoPath',
       type: IsarType.string,
     ),
     r'sharepointSiteName': PropertySchema(
-      id: 9,
+      id: 15,
       name: r'sharepointSiteName',
       type: IsarType.string,
     ),
     r'sharepointTracciatoSapPath': PropertySchema(
-      id: 10,
+      id: 16,
       name: r'sharepointTracciatoSapPath',
       type: IsarType.string,
     ),
     r'syncOnStartup': PropertySchema(
-      id: 11,
+      id: 17,
       name: r'syncOnStartup',
       type: IsarType.bool,
     )
@@ -98,6 +128,9 @@ int _appSettingsEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.customProxyUrl.length * 3;
+  bytesCount += 3 + object.proxyPassword.length * 3;
+  bytesCount += 3 + object.proxyUsername.length * 3;
   bytesCount += 3 + object.sharepointAnagraficaPath.length * 3;
   bytesCount += 3 + object.sharepointDocumentLibrary.length * 3;
   bytesCount += 3 + object.sharepointEstrattiAmexPath.length * 3;
@@ -116,17 +149,23 @@ void _appSettingsSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeBool(offsets[0], object.alignWithRemote);
-  writer.writeBool(offsets[1], object.discardIdenticalBolla);
-  writer.writeDateTime(offsets[2], object.lastSyncTime);
-  writer.writeString(offsets[3], object.sharepointAnagraficaPath);
-  writer.writeString(offsets[4], object.sharepointDocumentLibrary);
-  writer.writeString(offsets[5], object.sharepointEstrattiAmexPath);
-  writer.writeString(offsets[6], object.sharepointEstrattiContoPath);
-  writer.writeString(offsets[7], object.sharepointFolderPath);
-  writer.writeString(offsets[8], object.sharepointScartiTracciatoPath);
-  writer.writeString(offsets[9], object.sharepointSiteName);
-  writer.writeString(offsets[10], object.sharepointTracciatoSapPath);
-  writer.writeBool(offsets[11], object.syncOnStartup);
+  writer.writeBool(offsets[1], object.bypassSslVerification);
+  writer.writeString(offsets[2], object.customProxyUrl);
+  writer.writeBool(offsets[3], object.discardIdenticalBolla);
+  writer.writeDateTime(offsets[4], object.lastSyncTime);
+  writer.writeBool(offsets[5], object.proxyAutoConfig);
+  writer.writeBool(offsets[6], object.proxyEnabled);
+  writer.writeString(offsets[7], object.proxyPassword);
+  writer.writeString(offsets[8], object.proxyUsername);
+  writer.writeString(offsets[9], object.sharepointAnagraficaPath);
+  writer.writeString(offsets[10], object.sharepointDocumentLibrary);
+  writer.writeString(offsets[11], object.sharepointEstrattiAmexPath);
+  writer.writeString(offsets[12], object.sharepointEstrattiContoPath);
+  writer.writeString(offsets[13], object.sharepointFolderPath);
+  writer.writeString(offsets[14], object.sharepointScartiTracciatoPath);
+  writer.writeString(offsets[15], object.sharepointSiteName);
+  writer.writeString(offsets[16], object.sharepointTracciatoSapPath);
+  writer.writeBool(offsets[17], object.syncOnStartup);
 }
 
 AppSettings _appSettingsDeserialize(
@@ -137,18 +176,24 @@ AppSettings _appSettingsDeserialize(
 ) {
   final object = AppSettings();
   object.alignWithRemote = reader.readBool(offsets[0]);
-  object.discardIdenticalBolla = reader.readBool(offsets[1]);
+  object.bypassSslVerification = reader.readBool(offsets[1]);
+  object.customProxyUrl = reader.readString(offsets[2]);
+  object.discardIdenticalBolla = reader.readBool(offsets[3]);
   object.id = id;
-  object.lastSyncTime = reader.readDateTimeOrNull(offsets[2]);
-  object.sharepointAnagraficaPath = reader.readString(offsets[3]);
-  object.sharepointDocumentLibrary = reader.readString(offsets[4]);
-  object.sharepointEstrattiAmexPath = reader.readString(offsets[5]);
-  object.sharepointEstrattiContoPath = reader.readString(offsets[6]);
-  object.sharepointFolderPath = reader.readString(offsets[7]);
-  object.sharepointScartiTracciatoPath = reader.readString(offsets[8]);
-  object.sharepointSiteName = reader.readString(offsets[9]);
-  object.sharepointTracciatoSapPath = reader.readString(offsets[10]);
-  object.syncOnStartup = reader.readBool(offsets[11]);
+  object.lastSyncTime = reader.readDateTimeOrNull(offsets[4]);
+  object.proxyAutoConfig = reader.readBool(offsets[5]);
+  object.proxyEnabled = reader.readBool(offsets[6]);
+  object.proxyPassword = reader.readString(offsets[7]);
+  object.proxyUsername = reader.readString(offsets[8]);
+  object.sharepointAnagraficaPath = reader.readString(offsets[9]);
+  object.sharepointDocumentLibrary = reader.readString(offsets[10]);
+  object.sharepointEstrattiAmexPath = reader.readString(offsets[11]);
+  object.sharepointEstrattiContoPath = reader.readString(offsets[12]);
+  object.sharepointFolderPath = reader.readString(offsets[13]);
+  object.sharepointScartiTracciatoPath = reader.readString(offsets[14]);
+  object.sharepointSiteName = reader.readString(offsets[15]);
+  object.sharepointTracciatoSapPath = reader.readString(offsets[16]);
+  object.syncOnStartup = reader.readBool(offsets[17]);
   return object;
 }
 
@@ -164,15 +209,15 @@ P _appSettingsDeserializeProp<P>(
     case 1:
       return (reader.readBool(offset)) as P;
     case 2:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 3:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 4:
-      return (reader.readString(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 5:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 6:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 7:
       return (reader.readString(offset)) as P;
     case 8:
@@ -182,6 +227,18 @@ P _appSettingsDeserializeProp<P>(
     case 10:
       return (reader.readString(offset)) as P;
     case 11:
+      return (reader.readString(offset)) as P;
+    case 12:
+      return (reader.readString(offset)) as P;
+    case 13:
+      return (reader.readString(offset)) as P;
+    case 14:
+      return (reader.readString(offset)) as P;
+    case 15:
+      return (reader.readString(offset)) as P;
+    case 16:
+      return (reader.readString(offset)) as P;
+    case 17:
       return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -287,6 +344,152 @@ extension AppSettingsQueryFilter
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'alignWithRemote',
         value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      bypassSslVerificationEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'bypassSslVerification',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      customProxyUrlEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'customProxyUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      customProxyUrlGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'customProxyUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      customProxyUrlLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'customProxyUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      customProxyUrlBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'customProxyUrl',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      customProxyUrlStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'customProxyUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      customProxyUrlEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'customProxyUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      customProxyUrlContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'customProxyUrl',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      customProxyUrlMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'customProxyUrl',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      customProxyUrlIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'customProxyUrl',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      customProxyUrlIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'customProxyUrl',
+        value: '',
       ));
     });
   }
@@ -424,6 +627,298 @@ extension AppSettingsQueryFilter
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyAutoConfigEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'proxyAutoConfig',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyEnabledEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'proxyEnabled',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyPasswordEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'proxyPassword',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyPasswordGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'proxyPassword',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyPasswordLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'proxyPassword',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyPasswordBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'proxyPassword',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyPasswordStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'proxyPassword',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyPasswordEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'proxyPassword',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyPasswordContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'proxyPassword',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyPasswordMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'proxyPassword',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyPasswordIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'proxyPassword',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyPasswordIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'proxyPassword',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyUsernameEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'proxyUsername',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyUsernameGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'proxyUsername',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyUsernameLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'proxyUsername',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyUsernameBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'proxyUsername',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyUsernameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'proxyUsername',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyUsernameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'proxyUsername',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyUsernameContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'proxyUsername',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyUsernameMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'proxyUsername',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyUsernameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'proxyUsername',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      proxyUsernameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'proxyUsername',
+        value: '',
       ));
     });
   }
@@ -1561,6 +2056,33 @@ extension AppSettingsQuerySortBy
   }
 
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByBypassSslVerification() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bypassSslVerification', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByBypassSslVerificationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bypassSslVerification', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByCustomProxyUrl() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'customProxyUrl', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByCustomProxyUrlDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'customProxyUrl', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
       sortByDiscardIdenticalBolla() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'discardIdenticalBolla', Sort.asc);
@@ -1584,6 +2106,58 @@ extension AppSettingsQuerySortBy
       sortByLastSyncTimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastSyncTime', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByProxyAutoConfig() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyAutoConfig', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByProxyAutoConfigDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyAutoConfig', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByProxyEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByProxyEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyEnabled', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByProxyPassword() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyPassword', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByProxyPasswordDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyPassword', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByProxyUsername() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyUsername', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByProxyUsernameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyUsername', Sort.desc);
     });
   }
 
@@ -1729,6 +2303,33 @@ extension AppSettingsQuerySortThenBy
   }
 
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByBypassSslVerification() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bypassSslVerification', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByBypassSslVerificationDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'bypassSslVerification', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByCustomProxyUrl() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'customProxyUrl', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByCustomProxyUrlDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'customProxyUrl', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
       thenByDiscardIdenticalBolla() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'discardIdenticalBolla', Sort.asc);
@@ -1764,6 +2365,58 @@ extension AppSettingsQuerySortThenBy
       thenByLastSyncTimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastSyncTime', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByProxyAutoConfig() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyAutoConfig', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByProxyAutoConfigDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyAutoConfig', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByProxyEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyEnabled', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByProxyEnabledDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyEnabled', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByProxyPassword() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyPassword', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByProxyPasswordDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyPassword', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByProxyUsername() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyUsername', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByProxyUsernameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'proxyUsername', Sort.desc);
     });
   }
 
@@ -1903,6 +2556,21 @@ extension AppSettingsQueryWhereDistinct
   }
 
   QueryBuilder<AppSettings, AppSettings, QDistinct>
+      distinctByBypassSslVerification() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'bypassSslVerification');
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByCustomProxyUrl(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'customProxyUrl',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct>
       distinctByDiscardIdenticalBolla() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'discardIdenticalBolla');
@@ -1912,6 +2580,35 @@ extension AppSettingsQueryWhereDistinct
   QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByLastSyncTime() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'lastSyncTime');
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct>
+      distinctByProxyAutoConfig() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'proxyAutoConfig');
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByProxyEnabled() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'proxyEnabled');
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByProxyPassword(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'proxyPassword',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByProxyUsername(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'proxyUsername',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -2001,6 +2698,19 @@ extension AppSettingsQueryProperty
   }
 
   QueryBuilder<AppSettings, bool, QQueryOperations>
+      bypassSslVerificationProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'bypassSslVerification');
+    });
+  }
+
+  QueryBuilder<AppSettings, String, QQueryOperations> customProxyUrlProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'customProxyUrl');
+    });
+  }
+
+  QueryBuilder<AppSettings, bool, QQueryOperations>
       discardIdenticalBollaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'discardIdenticalBolla');
@@ -2011,6 +2721,30 @@ extension AppSettingsQueryProperty
       lastSyncTimeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastSyncTime');
+    });
+  }
+
+  QueryBuilder<AppSettings, bool, QQueryOperations> proxyAutoConfigProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'proxyAutoConfig');
+    });
+  }
+
+  QueryBuilder<AppSettings, bool, QQueryOperations> proxyEnabledProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'proxyEnabled');
+    });
+  }
+
+  QueryBuilder<AppSettings, String, QQueryOperations> proxyPasswordProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'proxyPassword');
+    });
+  }
+
+  QueryBuilder<AppSettings, String, QQueryOperations> proxyUsernameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'proxyUsername');
     });
   }
 

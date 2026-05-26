@@ -24,7 +24,13 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
       ..sharepointTracciatoSapPath = state.sharepointTracciatoSapPath
       ..sharepointEstrattiAmexPath = state.sharepointEstrattiAmexPath
       ..sharepointAnagraficaPath = state.sharepointAnagraficaPath
-      ..sharepointScartiTracciatoPath = state.sharepointScartiTracciatoPath;
+      ..sharepointScartiTracciatoPath = state.sharepointScartiTracciatoPath
+      ..proxyEnabled = state.proxyEnabled
+      ..proxyAutoConfig = state.proxyAutoConfig
+      ..customProxyUrl = state.customProxyUrl
+      ..bypassSslVerification = state.bypassSslVerification
+      ..proxyUsername = state.proxyUsername
+      ..proxyPassword = state.proxyPassword;
 
     await isar.writeTxn(() async {
       await isar.appSettings.put(newSettings);
@@ -48,7 +54,13 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
       ..sharepointTracciatoSapPath = state.sharepointTracciatoSapPath
       ..sharepointEstrattiAmexPath = state.sharepointEstrattiAmexPath
       ..sharepointAnagraficaPath = state.sharepointAnagraficaPath
-      ..sharepointScartiTracciatoPath = state.sharepointScartiTracciatoPath;
+      ..sharepointScartiTracciatoPath = state.sharepointScartiTracciatoPath
+      ..proxyEnabled = state.proxyEnabled
+      ..proxyAutoConfig = state.proxyAutoConfig
+      ..customProxyUrl = state.customProxyUrl
+      ..bypassSslVerification = state.bypassSslVerification
+      ..proxyUsername = state.proxyUsername
+      ..proxyPassword = state.proxyPassword;
 
     await isar.writeTxn(() async {
       await isar.appSettings.put(newSettings);
@@ -72,7 +84,13 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
       ..sharepointTracciatoSapPath = state.sharepointTracciatoSapPath
       ..sharepointEstrattiAmexPath = state.sharepointEstrattiAmexPath
       ..sharepointAnagraficaPath = state.sharepointAnagraficaPath
-      ..sharepointScartiTracciatoPath = state.sharepointScartiTracciatoPath;
+      ..sharepointScartiTracciatoPath = state.sharepointScartiTracciatoPath
+      ..proxyEnabled = state.proxyEnabled
+      ..proxyAutoConfig = state.proxyAutoConfig
+      ..customProxyUrl = state.customProxyUrl
+      ..bypassSslVerification = state.bypassSslVerification
+      ..proxyUsername = state.proxyUsername
+      ..proxyPassword = state.proxyPassword;
 
     await isar.writeTxn(() async {
       await isar.appSettings.put(newSettings);
@@ -96,7 +114,13 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
       ..sharepointTracciatoSapPath = state.sharepointTracciatoSapPath
       ..sharepointEstrattiAmexPath = state.sharepointEstrattiAmexPath
       ..sharepointAnagraficaPath = state.sharepointAnagraficaPath
-      ..sharepointScartiTracciatoPath = state.sharepointScartiTracciatoPath;
+      ..sharepointScartiTracciatoPath = state.sharepointScartiTracciatoPath
+      ..proxyEnabled = state.proxyEnabled
+      ..proxyAutoConfig = state.proxyAutoConfig
+      ..customProxyUrl = state.customProxyUrl
+      ..bypassSslVerification = state.bypassSslVerification
+      ..proxyUsername = state.proxyUsername
+      ..proxyPassword = state.proxyPassword;
 
     await isar.writeTxn(() async {
       await isar.appSettings.put(newSettings);
@@ -129,7 +153,50 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
       ..sharepointTracciatoSapPath = tracciatoSapPath
       ..sharepointEstrattiAmexPath = estrattiAmexPath
       ..sharepointAnagraficaPath = anagraficaPath
-      ..sharepointScartiTracciatoPath = scartiTracciatoPath;
+      ..sharepointScartiTracciatoPath = scartiTracciatoPath
+      ..proxyEnabled = state.proxyEnabled
+      ..proxyAutoConfig = state.proxyAutoConfig
+      ..customProxyUrl = state.customProxyUrl
+      ..bypassSslVerification = state.bypassSslVerification
+      ..proxyUsername = state.proxyUsername
+      ..proxyPassword = state.proxyPassword;
+
+    await isar.writeTxn(() async {
+      await isar.appSettings.put(newSettings);
+    });
+
+    state = newSettings;
+  }
+
+  Future<void> updateNetworkSettings({
+    required bool proxyEnabled,
+    required bool proxyAutoConfig,
+    required String customProxyUrl,
+    required bool bypassSslVerification,
+    required String proxyUsername,
+    required String proxyPassword,
+  }) async {
+    final isar = ref.read(isarProvider);
+    final newSettings = AppSettings()
+      ..id = 0
+      ..discardIdenticalBolla = state.discardIdenticalBolla
+      ..alignWithRemote = state.alignWithRemote
+      ..syncOnStartup = state.syncOnStartup
+      ..lastSyncTime = state.lastSyncTime
+      ..sharepointSiteName = state.sharepointSiteName
+      ..sharepointFolderPath = state.sharepointFolderPath
+      ..sharepointDocumentLibrary = state.sharepointDocumentLibrary
+      ..sharepointEstrattiContoPath = state.sharepointEstrattiContoPath
+      ..sharepointTracciatoSapPath = state.sharepointTracciatoSapPath
+      ..sharepointEstrattiAmexPath = state.sharepointEstrattiAmexPath
+      ..sharepointAnagraficaPath = state.sharepointAnagraficaPath
+      ..sharepointScartiTracciatoPath = state.sharepointScartiTracciatoPath
+      ..proxyEnabled = proxyEnabled
+      ..proxyAutoConfig = proxyAutoConfig
+      ..customProxyUrl = customProxyUrl
+      ..bypassSslVerification = bypassSslVerification
+      ..proxyUsername = proxyUsername
+      ..proxyPassword = proxyPassword;
 
     await isar.writeTxn(() async {
       await isar.appSettings.put(newSettings);

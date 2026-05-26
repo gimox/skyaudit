@@ -20,6 +20,7 @@ import 'package:travel_check/features/upload/models/tracciato_sap.dart';
 import 'package:travel_check/features/upload/models/estratto_amex.dart';
 import 'package:travel_check/features/upload/models/anagrafica.dart';
 import 'package:travel_check/features/upload/models/scarti_ec_sap.dart';
+import 'package:travel_check/core/services/proxy_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -61,6 +62,10 @@ void main() async {
     directory: dir.path,
     inspector: true, // Assicurati che sia su true
   );
+
+  // Inizializza la rilevazione e l'override del proxy leggendo i parametri da Isar
+  final settings = isar.appSettings.getSync(0) ?? AppSettings();
+  await ProxyService.initialize(settings);
 
   if (!kIsWeb && Platform.isWindows) {
     WindowsVideoPlayer.registerWith();
