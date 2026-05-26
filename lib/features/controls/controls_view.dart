@@ -3379,6 +3379,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                           _buildDetailRow('Bolla (Trasformata)', record.bolla ?? '-'),
                           _buildDetailRow('Bolla Originale', record.bollaOriginale ?? '-'),
                           _buildDetailRow('Nome Viaggiatore', record.nomeViaggiatore ?? '-'),
+                          _buildDetailRow('Conto', record.conto ?? '-'),
+                          _buildDetailRow('Numero di conto', record.numeroConto ?? '-'),
                         ]),
                         const SizedBox(height: 24),
                         _buildDetailSection('Economia', Icons.euro_symbol, Colors.green, [

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:excel/excel.dart' hide Border;
+import 'package:excel/excel.dart' hide Border, TextSpan;
 import 'package:file_picker/file_picker.dart';
 import 'package:travel_check/features/upload/providers/estratto_amex_provider.dart';
 import 'package:travel_check/features/upload/models/estratto_amex.dart';
@@ -10,11 +10,12 @@ import 'package:travel_check/core/theme/app_theme.dart';
 
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
+import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
 
 // Filter providers for Estratti AMEX
 final amexSelectedSearchProvider = StateProvider<String?>((ref) => null);
 final amexSelectedFornitoreProvider = StateProvider<String?>((ref) => null);
-final amexSelectedContoProvider = StateProvider<String?>((ref) => null);
+final amexSelectedNumeroContoProvider = StateProvider<Set<String>>((ref) => {});
 final amexStartDateProvider = StateProvider<DateTime?>((ref) => null);
 final amexEndDateProvider = StateProvider<DateTime?>((ref) => null);
 final amexSortAscendingProvider = StateProvider<bool>((ref) => false);
@@ -50,7 +51,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     final allRecords = ref.watch(estrattoAmexProvider);
     final searchFilter = ref.watch(amexSelectedSearchProvider);
     final selectedFornitore = ref.watch(amexSelectedFornitoreProvider);
-    final selectedConto = ref.watch(amexSelectedContoProvider);
+    final selectedNumeroConto = ref.watch(amexSelectedNumeroContoProvider);
     final startDate = ref.watch(amexStartDateProvider);
     final endDate = ref.watch(amexEndDateProvider);
     final sortAscending = ref.watch(amexSortAscendingProvider);
@@ -65,6 +66,11 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     final anagraficheMap = {
       for (var a in anagrafiche)
         if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
+    };
+    final dictionaries = ref.watch(dictionaryProvider);
+    final contoDictionaryMap = {
+      for (var d in dictionaries)
+        if (d.category == 'conto') d.code: d.value
     };
     const pageSize = 50;
 
@@ -113,7 +119,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     final activeFiltersCount = [
       searchFilter != null,
       selectedFornitore != null,
-      selectedConto != null,
+      selectedNumeroConto.isNotEmpty,
       startDate != null,
       endDate != null,
       trasfertaFilter != AmexTrasfertaPresenzaFilter.all,
@@ -127,9 +133,9 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         .toList()
       ..sort();
 
-    // Estrai conti disponibili per il filtro
-    final availableConti = allRecords
-        .map((r) => r.conto ?? '')
+    // Estrai numero conto disponibili per il filtro
+    final availableNumeroConto = allRecords
+        .map((r) => r.numeroConto ?? '')
         .where((s) => s.isNotEmpty)
         .toSet()
         .toList()
@@ -148,7 +154,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         }
       }
       if (selectedFornitore != null && r.nomeFornitore != selectedFornitore) return false;
-      if (selectedConto != null && r.conto != selectedConto) return false;
+      if (selectedNumeroConto.isNotEmpty && (r.numeroConto == null || !selectedNumeroConto.contains(r.numeroConto))) return false;
       
       // Filtro Data Transazione (F) - Il formato nel file AMEX è solitamente DD/MM/YYYY o simile
       if (startDate != null || endDate != null) {
@@ -188,7 +194,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      endDrawer: _buildFilterDrawer(context, ref, availableFornitori, availableConti),
+      endDrawer: _buildFilterDrawer(context, ref, availableFornitori, availableNumeroConto, contoDictionaryMap),
       floatingActionButton: filteredRecords.isNotEmpty 
           ? FloatingActionButton(
               onPressed: () => _exportToExcel(filteredRecords),
@@ -288,7 +294,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                             _searchController.clear();
                           }),
                         if (selectedFornitore != null) _buildFilterChip('Fornitore: $selectedFornitore', () => ref.read(amexSelectedFornitoreProvider.notifier).state = null),
-                        if (selectedConto != null) _buildFilterChip('Conto: $selectedConto', () => ref.read(amexSelectedContoProvider.notifier).state = null),
+                        if (selectedNumeroConto.isNotEmpty) _buildFilterChip('Num. Conto: ${selectedNumeroConto.map((code) => contoDictionaryMap[code] ?? code).join(", ")}', () => ref.read(amexSelectedNumeroContoProvider.notifier).state = {}),
                         if (startDate != null) _buildFilterChip('Dal: ${startDate.day}/${startDate.month}/${startDate.year}', () => ref.read(amexStartDateProvider.notifier).state = null),
                         if (endDate != null) _buildFilterChip('Al: ${endDate.day}/${endDate.month}/${endDate.year}', () => ref.read(amexEndDateProvider.notifier).state = null),
                         if (trasfertaFilter != AmexTrasfertaPresenzaFilter.all)
@@ -432,7 +438,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SizedBox(
-                          width: 1730,
+                          width: 1780,
                           child: Column(
                             children: [
                           // HEADER FISSO
@@ -449,6 +455,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                 _buildCell('NOMINATIVO', 220, isHeader: true),
                                 _buildCell('TRASFERTA', 180, isHeader: true),
                                 _buildCell('IMPORTO', 120, isHeader: true),
+                                _buildCell('NUMERO CONTO', 220, isHeader: true),
                                 _buildCell('VIAGGIATORE', 200, isHeader: true),
                                 _buildCell('BOLLA', 150, isHeader: true),
                                 _buildCell('FORNITORE', 250, isHeader: true),
@@ -490,6 +497,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                               : Colors.red.shade700,
                                         ),
                                         _buildCell('${record.importoLordo?.toStringAsFixed(2) ?? '0.00'} €', 120, fontWeight: FontWeight.bold, color: (record.importoLordo ?? 0) < 0 ? Colors.red.shade700 : Colors.green.shade800),
+                                        _buildCopyableCell(record.numeroConto ?? '-', 220, typeLabel: 'Numero Conto'),
                                         _buildCopyableCell(record.nomeViaggiatore ?? '-', 200, typeLabel: 'Viaggiatore'),
                                         _buildCell(record.bolla ?? '-', 150),
                                         _buildCell(record.nomeFornitore ?? '-', 250),
@@ -579,7 +587,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
   void _resetAllFilters(WidgetRef ref) {
     ref.read(amexSelectedSearchProvider.notifier).state = null;
     ref.read(amexSelectedFornitoreProvider.notifier).state = null;
-    ref.read(amexSelectedContoProvider.notifier).state = null;
+    ref.read(amexSelectedNumeroContoProvider.notifier).state = {};
     ref.read(amexStartDateProvider.notifier).state = null;
     ref.read(amexEndDateProvider.notifier).state = null;
     ref.read(amexTrasfertaPresenzaFilterProvider.notifier).state = AmexTrasfertaPresenzaFilter.all;
@@ -601,7 +609,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     );
   }
 
-  Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, List<String> fornitori, List<String> conti) {
+  Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, List<String> fornitori, List<String> numeroContoOptions, Map<String, String> contoDictionaryMap) {
     return Drawer(
       width: 350,
       child: Column(
@@ -687,9 +695,9 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                 const SizedBox(height: 12),
                 _buildFilterDropdown<String?>('Fornitore', ref.watch(amexSelectedFornitoreProvider), fornitori, (val) => ref.read(amexSelectedFornitoreProvider.notifier).state = val, icon: Icons.store),
                 const SizedBox(height: 32),
-                _buildDrawerSectionTitle('CONTO'),
+                _buildDrawerSectionTitle('NUMERO CONTO'),
                 const SizedBox(height: 12),
-                _buildFilterDropdown<String?>('Conto', ref.watch(amexSelectedContoProvider), conti, (val) => ref.read(amexSelectedContoProvider.notifier).state = val, icon: Icons.account_balance_outlined),
+                _buildMultiSelectFilter('Numero Conto', ref.watch(amexSelectedNumeroContoProvider), numeroContoOptions, (val) => ref.read(amexSelectedNumeroContoProvider.notifier).state = val, icon: Icons.account_balance_outlined, dictionary: contoDictionaryMap),
                 const SizedBox(height: 32),
                 _buildDrawerSectionTitle('RISCONTRO CONTABILE'),
                 const SizedBox(height: 12),
@@ -849,6 +857,117 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     );
   }
 
+  Widget _buildMultiSelectFilter(
+    String label,
+    Set<String> selectedValues,
+    List<String> options,
+    Function(Set<String>) onChanged, {
+    IconData? icon,
+    Map<String, String>? dictionary,
+  }) {
+    return InkWell(
+      onTap: () async {
+        final results = await showDialog<Set<String>>(
+          context: context,
+          builder: (context) {
+            Set<String> tempSelected = Set.from(selectedValues);
+            return StatefulBuilder(
+              builder: (context, setModalState) {
+                return AlertDialog(
+                  title: Text('Seleziona $label'),
+                  content: SizedBox(
+                    width: 300,
+                    height: 400,
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            TextButton(
+                              onPressed: () => setModalState(() => tempSelected = Set.from(options)),
+                              child: const Text('Tutti'),
+                            ),
+                            TextButton(
+                              onPressed: () => setModalState(() => tempSelected.clear()),
+                              child: const Text('Reset'),
+                            ),
+                          ],
+                        ),
+                        Expanded(
+                          child: ListView.builder(
+                            itemCount: options.length,
+                            itemBuilder: (context, index) {
+                              final option = options[index];
+                              final hasTranslation = dictionary != null && dictionary[option] != null;
+                              return CheckboxListTile(
+                               title: Text(
+                                  hasTranslation ? dictionary[option]! : option,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: hasTranslation ? FontWeight.bold : FontWeight.normal,
+                                  ),
+                                ),
+                                subtitle: hasTranslation
+                                    ? Text(
+                                        option,
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.grey.shade600,
+                                        ),
+                                      )
+                                    : null,
+                                value: tempSelected.contains(option),
+                                onChanged: (val) {
+                                  setModalState(() {
+                                    if (val == true) {
+                                      tempSelected.add(option);
+                                    } else {
+                                      tempSelected.remove(option);
+                                    }
+                                  });
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  actions: [
+                    TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
+                    ElevatedButton(onPressed: () => Navigator.pop(context, tempSelected), child: const Text('Conferma')),
+                  ],
+                );
+              },
+            );
+          },
+        );
+        if (results != null) onChanged(results);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        child: Row(
+          children: [
+            if (icon != null) Icon(icon, size: 18, color: Colors.grey),
+            if (icon != null) const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                selectedValues.isEmpty ? label : '${selectedValues.length} selezionati',
+                style: const TextStyle(fontSize: 14),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            const Icon(Icons.arrow_drop_down, size: 20, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
   Widget _buildCopyableCell(
     String text,
     double width, {
@@ -931,6 +1050,11 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
       for (var a in anagrafiche)
         if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
     };
+    final dictionaries = ref.read(dictionaryProvider);
+    final contoDictionaryMap = {
+      for (var d in dictionaries)
+        if (d.category == 'conto') d.code: d.value
+    };
     showDialog(
       context: context,
       builder: (context) {
@@ -1007,13 +1131,15 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _buildDetailSection('INFORMAZIONI PRINCIPALI', Icons.info_outline, Colors.blue, [
-                          _buildDetailRow('CID', record.cid ?? '-'),
+                          _buildDetailRow('CID', record.cid ?? '-', copyable: true),
                           _buildDetailRow('Nominativo', anagraficheMap[record.cid?.trim()] ?? '-'),
-                          _buildDetailRow('Numero Trasferta', record.numeroTrasferta ?? '-'),
-                          _buildDetailRow('Bolla (Trasformata)', record.bolla ?? '-'),
-                          _buildDetailRow('Bolla Originale', record.bollaOriginale ?? '-'),
+                          _buildDetailRow('Numero Trasferta', record.numeroTrasferta ?? '-', copyable: true),
+                          _buildDetailRow('Bolla (Trasformata)', record.bolla ?? '-', copyable: true),
+                          _buildDetailRow('Bolla Originale', record.bollaOriginale ?? '-', copyable: true),
                           _buildDetailRow('Nome Viaggiatore', record.nomeViaggiatore ?? '-'),
                           _buildDetailRow('Conto', record.conto ?? '-'),
+                          _buildDetailRow('Numero di conto', record.numeroConto ?? '-', copyable: true),
+                          _buildDetailRow('Nome del conto', record.numeroConto != null ? (contoDictionaryMap[record.numeroConto?.trim()] ?? contoDictionaryMap[record.numeroConto] ?? '-') : '-'),
                         ]),
                         const SizedBox(height: 24),
                         _buildDetailSection('DETTAGLI ECONOMICI', Icons.euro_symbol, Colors.green, [
@@ -1085,7 +1211,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     );
   }
 
-  Widget _buildDetailRow(String label, String value, {bool isHighlight = false, Color? highlightColor}) {
+  Widget _buildDetailRow(String label, String value, {bool isHighlight = false, Color? highlightColor, bool copyable = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -1093,7 +1219,49 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         children: [
           Expanded(flex: 2, child: Text(label, style: TextStyle(color: Colors.grey.shade500, fontSize: 13, fontWeight: FontWeight.w400))),
           const SizedBox(width: 16),
-          Expanded(flex: 3, child: Text(value, textAlign: TextAlign.right, style: TextStyle(fontWeight: isHighlight ? FontWeight.bold : FontWeight.w600, color: isHighlight ? (highlightColor ?? Colors.purple.shade700) : Colors.black87, fontSize: 14))),
+          Expanded(
+            flex: 3,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: Text(
+                    value,
+                    textAlign: TextAlign.right,
+                    style: TextStyle(
+                      fontWeight: isHighlight ? FontWeight.bold : FontWeight.w600,
+                      color: isHighlight ? (highlightColor ?? Colors.purple.shade700) : Colors.black87,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                if (copyable && value != '-') ...[
+                  const SizedBox(width: 8),
+                  Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(4),
+                      onTap: () {
+                        Clipboard.setData(ClipboardData(text: value));
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text('$label $value copiato negli appunti'),
+                            duration: const Duration(seconds: 1),
+                            backgroundColor: SkyTheme.timBlue,
+                          ),
+                        );
+                      },
+                      child: const Padding(
+                        padding: EdgeInsets.all(4.0),
+                        child: Icon(Icons.copy_rounded, size: 14, color: Colors.grey),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
         ],
       ),
     );

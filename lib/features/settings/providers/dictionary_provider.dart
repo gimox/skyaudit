@@ -22,7 +22,8 @@ class DictionaryNotifier extends StateNotifier<List<Dictionary>> {
     final categories = dictionaries.map((e) => e.category).toSet();
     if (!categories.contains('giustificativi_prepagati') ||
         !categories.contains('tipo_dipendente') ||
-        !categories.contains('societa')) {
+        !categories.contains('societa') ||
+        !categories.contains('conto')) {
       await _seedDefaults();
     } else {
       state = dictionaries;
@@ -110,6 +111,41 @@ class DictionaryNotifier extends StateNotifier<List<Dictionary>> {
         ..code = 'A150'
         ..value = 'Telecontact Center S.p.A'
         ..category = 'societa'
+        ..updatedAt = DateTime.now(),
+      Dictionary()
+        ..code = '374008738141002'
+        ..value = 'TELECOM ITALIA SPA - DIP'
+        ..category = 'conto'
+        ..updatedAt = DateTime.now(),
+      Dictionary()
+        ..code = '374008881141007'
+        ..value = "OLIVETTI SPA SOCIETA' BENEFIT"
+        ..category = 'conto'
+        ..updatedAt = DateTime.now(),
+      Dictionary()
+        ..code = '374008876141004'
+        ..value = 'TELECONTACT CENTER S.P.A.'
+        ..category = 'conto'
+        ..updatedAt = DateTime.now(),
+      Dictionary()
+        ..code = '3740-082621-41006'
+        ..value = 'Sparkle'
+        ..category = 'conto'
+        ..updatedAt = DateTime.now(),
+      Dictionary()
+        ..code = '3740-083801-41003'
+        ..value = 'TI Trust'
+        ..category = 'conto'
+        ..updatedAt = DateTime.now(),
+      Dictionary()
+        ..code = 'TELECOM ITALIA SPA - DIP'
+        ..value = 'TELECOM ITALIA SPA - DIP'
+        ..category = 'conto'
+        ..updatedAt = DateTime.now(),
+      Dictionary()
+        ..code = '375297372151000'
+        ..value = 'TELECOM ITALIA SPA (MOBILE)'
+        ..category = 'conto'
         ..updatedAt = DateTime.now(),
     ];
 

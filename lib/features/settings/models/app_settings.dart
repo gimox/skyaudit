@@ -27,7 +27,7 @@ class AppSettings {
   bool proxyEnabled = false;
   bool proxyAutoConfig = true;
   String customProxyUrl = '';
-  bool bypassSslVerification = false;
+  bool bypassSslVerification = true;
   String proxyUsername = '';
   String proxyPassword = '';
 }

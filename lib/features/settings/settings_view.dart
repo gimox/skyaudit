@@ -295,6 +295,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     final societaEntries = dictionaries
         .where((e) => e.category == 'societa')
         .toList();
+    final contoEntries = dictionaries
+        .where((e) => e.category == 'conto')
+        .toList();
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(32.0, 48.0, 32.0, 32.0),
@@ -382,6 +385,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                         prepagatoEntries,
                         tipoDipendenteEntries,
                         societaEntries,
+                        contoEntries,
                       ),
                     ),
                   ),
@@ -447,6 +451,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                       prepagatoEntries,
                       tipoDipendenteEntries,
                       societaEntries,
+                      contoEntries,
                     ),
                   ),
                 ),
@@ -465,6 +470,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     List<Dictionary> prepagatoEntries,
     List<Dictionary> tipoDipendenteEntries,
     List<Dictionary> societaEntries,
+    List<Dictionary> contoEntries,
   ) {
     switch (_selectedTabIndex) {
       case 0:
@@ -515,6 +521,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               'Società',
               'societa',
               societaEntries,
+            ),
+            const SizedBox(height: 24),
+            _buildDictionaryCard(
+              context,
+              'Conto',
+              'conto',
+              contoEntries,
             ),
           ],
         );
