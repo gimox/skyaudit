@@ -117,6 +117,10 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     final sortAscending = ref.watch(anagraficaSortAscendingProvider);
     const pageSize = 50;
 
+    final totalUsers = allRecords.length;
+    final validAges = allRecords.map((e) => _parseAge(e.dataNascita)).whereType<int>().toList();
+    final double averageAge = validAges.isEmpty ? 0.0 : validAges.reduce((a, b) => a + b) / validAges.length;
+
     if (allRecords.isEmpty) {
       return Center(
         child: Column(
@@ -470,6 +474,41 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                   ),
                 ],
               ],
+            ),
+          ),
+          // DASHBOARD STATS SUMMARY
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100.withAlpha(120),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _buildSummaryCard(
+                      title: 'TOTALE UTENTI',
+                      value: '$totalUsers utenti',
+                      icon: Icons.people_outline,
+                      color: SkyTheme.timBlue,
+                      bgLightColor: SkyTheme.timBlue.withAlpha(20),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: _buildSummaryCard(
+                      title: 'ETÀ MEDIA',
+                      value: averageAge > 0 ? '${averageAge.toStringAsFixed(1).replaceAll('.', ',')} anni' : '-',
+                      icon: Icons.cake_outlined,
+                      color: Colors.green.shade700,
+                      bgLightColor: Colors.green.shade50,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
 
@@ -1685,6 +1724,71 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
         backgroundColor: SkyTheme.timBlue.withAlpha(20),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         side: BorderSide(color: SkyTheme.timBlue.withAlpha(50)),
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+    required Color bgLightColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: bgLightColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 22),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade600,
+                    letterSpacing: 0.2,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: color == SkyTheme.timRed ? Colors.black87 : color,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

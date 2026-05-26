@@ -9,11 +9,25 @@ import 'package:travel_check/features/dashboard/providers/dashboard_providers.da
 
 final dashboardYearProvider = StateProvider<int>((ref) => DateTime.now().year);
 
-class DashboardView extends ConsumerWidget {
+class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<DashboardView> createState() => _DashboardViewState();
+}
+
+class _DashboardViewState extends ConsumerState<DashboardView> {
+  final _statsScrollController = ScrollController();
+
+  @override
+  void dispose() {
+    _statsScrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ref = this.ref;
     final allRecords = ref.watch(tracciatoContabilesProvider);
     final selectedYear = ref.watch(dashboardYearProvider);
     final topCidsByTrips = ref.watch(dashboardTopCidByTripsProvider);
@@ -82,87 +96,108 @@ class DashboardView extends ConsumerWidget {
               const SizedBox(height: 32),
 
               // Indicatori
-              if (isMobile)
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _buildStatCard(
-                      context,
-                      'TOTALE TRASFERTE',
-                      stats.totalTrasferte.toString(),
-                      Icons.travel_explore,
-                      SkyTheme.timBlue,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildStatCard(
-                      context,
-                      'SINGOLI TICKET',
-                      stats.totalTickets.toString(),
-                      Icons.confirmation_number_outlined,
-                      Colors.orange.shade700,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildStatCard(
-                      context,
-                      'TOTALE IMPORTI TC',
-                      '€ ${_formatAmount(stats.totalAmountTC)}',
-                      Icons.euro_symbol,
-                      SkyTheme.timBlue,
-                    ),
-                    const SizedBox(height: 16),
-                    _buildStatCard(
-                      context,
-                      'TOTALE IMPORTI E.C.',
-                      '€ ${_formatAmount(stats.totalAmountEC)}',
-                      Icons.receipt_long,
-                      Colors.green.shade700,
-                    ),
-                  ],
-                )
-              else
-                Row(
-                  children: [
-                    Expanded(
-                      child: _buildStatCard(
-                        context,
-                        'TOTALE TRASFERTE',
-                        stats.totalTrasferte.toString(),
-                        Icons.travel_explore,
-                        SkyTheme.timBlue,
-                      ),
-                    ),
-                    const SizedBox(width: 24),
-                    Expanded(
-                      child: _buildStatCard(
-                        context,
-                        'SINGOLI TICKET',
-                        stats.totalTickets.toString(),
-                        Icons.confirmation_number_outlined,
-                        Colors.orange.shade700,
-                      ),
-                    ),
-                    const SizedBox(width: 24),
-                    Expanded(
-                      child: _buildStatCard(
-                        context,
-                        'TOTALE IMPORTI TC',
-                        '€ ${_formatAmount(stats.totalAmountTC)}',
-                        Icons.euro_symbol,
-                        SkyTheme.timBlue,
-                      ),
-                    ),
-                    const SizedBox(width: 24),
-                    Expanded(
-                      child: _buildStatCard(
-                        context,
-                        'TOTALE IMPORTI E.C.',
-                        '€ ${_formatAmount(stats.totalAmountEC)}',
-                        Icons.receipt_long,
-                        Colors.green.shade700,
-                      ),
-                    ),
-                  ],
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100.withAlpha(120),
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey.shade200),
                 ),
+                child: LayoutBuilder(
+                  builder: (context, constraints) {
+                    final card1 = _buildStatCard(
+                      context: context,
+                      title: 'TOTALE TRASFERTE',
+                      value: stats.totalTrasferte.toString(),
+                      icon: Icons.travel_explore,
+                      color: SkyTheme.timBlue,
+                    );
+                    final card2 = _buildStatCard(
+                      context: context,
+                      title: 'SINGOLI TICKET',
+                      value: stats.totalTickets.toString(),
+                      icon: Icons.confirmation_number_outlined,
+                      color: Colors.orange.shade700,
+                    );
+                    final card3 = _buildStatCard(
+                      context: context,
+                      title: 'TOTALE IMPORTI TC',
+                      value: '€ ${_formatAmount(stats.totalAmountTC)}',
+                      icon: Icons.euro_symbol,
+                      color: SkyTheme.timBlue,
+                    );
+                    final card4 = _buildStatCard(
+                      context: context,
+                      title: 'TOTALE IMPORTI E.C.',
+                      value: '€ ${_formatAmount(stats.totalAmountEC)}',
+                      icon: Icons.receipt_long,
+                      color: Colors.green.shade700,
+                    );
+
+                    if (constraints.maxWidth >= 1100) {
+                      return Row(
+                        children: [
+                          Expanded(child: card1),
+                          const SizedBox(width: 16),
+                          Expanded(child: card2),
+                          const SizedBox(width: 16),
+                          Expanded(child: card3),
+                          const SizedBox(width: 16),
+                          Expanded(child: card4),
+                        ],
+                      );
+                    } else {
+                      return Row(
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              if (_statsScrollController.hasClients) {
+                                _statsScrollController.animateTo(
+                                  (_statsScrollController.offset - 200).clamp(0, _statsScrollController.position.maxScrollExtent),
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.chevron_left_rounded, color: SkyTheme.timBlue),
+                            hoverColor: SkyTheme.timBlue.withAlpha(20),
+                          ),
+                          Expanded(
+                            child: SingleChildScrollView(
+                              controller: _statsScrollController,
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                children: [
+                                  SizedBox(width: 250, child: card1),
+                                  const SizedBox(width: 16),
+                                  SizedBox(width: 250, child: card2),
+                                  const SizedBox(width: 16),
+                                  SizedBox(width: 250, child: card3),
+                                  const SizedBox(width: 16),
+                                  SizedBox(width: 250, child: card4),
+                                ],
+                              ),
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () {
+                              if (_statsScrollController.hasClients) {
+                                _statsScrollController.animateTo(
+                                  (_statsScrollController.offset + 200).clamp(0, _statsScrollController.position.maxScrollExtent),
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.chevron_right_rounded, color: SkyTheme.timBlue),
+                            hoverColor: SkyTheme.timBlue.withAlpha(20),
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+              ),
 
               const SizedBox(height: 48),
 
@@ -433,45 +468,47 @@ class DashboardView extends ConsumerWidget {
     ).format(amount);
   }
 
-  Widget _buildStatCard(
-    BuildContext context,
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
+  Widget _buildStatCard({
+    required BuildContext context,
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+  }) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade100),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(5),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
+            color: Colors.black.withAlpha(3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
         ],
       ),
       child: Row(
         children: [
           Container(
-            padding: const EdgeInsets.all(12),
+            padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
               color: color.withAlpha(20),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(icon, color: color, size: 32),
+            child: Icon(icon, color: color, size: 22),
           ),
-          const SizedBox(width: 20),
+          const SizedBox(width: 12),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
                   title,
                   style: const TextStyle(
-                    fontSize: 12,
+                    fontSize: 10,
                     fontWeight: FontWeight.bold,
                     color: Colors.grey,
                     letterSpacing: 1.1,
@@ -479,11 +516,11 @@ class DashboardView extends ConsumerWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 2),
                 Text(
                   value,
                   style: TextStyle(
-                    fontSize: 28,
+                    fontSize: 18,
                     fontWeight: FontWeight.bold,
                     color: Colors.grey.shade900,
                   ),

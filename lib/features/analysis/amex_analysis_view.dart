@@ -34,12 +34,14 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
   final _horizontalScrollController = ScrollController();
+  final _statsScrollController = ScrollController();
 
   @override
   void dispose() {
     _searchController.dispose();
     _scrollController.dispose();
     _horizontalScrollController.dispose();
+    _statsScrollController.dispose();
     super.dispose();
   }
 
@@ -65,6 +67,21 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
     };
     const pageSize = 50;
+
+    final totalRecords = allRecords.length;
+    final reconciledRecords = allRecords.where((r) => r.numeroTrasferta != null && contabileTrasferte.contains(r.numeroTrasferta!.trim())).length;
+    final waitingRecords = totalRecords - reconciledRecords;
+
+    final totalAmountAbsolute = allRecords.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0).abs());
+    final totalAmountSigned = allRecords.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0));
+
+    final reconciledRecordsList = allRecords.where((r) => r.numeroTrasferta != null && contabileTrasferte.contains(r.numeroTrasferta!.trim()));
+    final reconciledAmountAbsolute = reconciledRecordsList.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0).abs());
+    final reconciledAmountSigned = reconciledRecordsList.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0));
+
+    final waitingRecordsList = allRecords.where((r) => !(r.numeroTrasferta != null && contabileTrasferte.contains(r.numeroTrasferta!.trim())));
+    final waitingAmountAbsolute = waitingRecordsList.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0).abs());
+    final waitingAmountSigned = waitingRecordsList.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0));
 
     if (allRecords.isEmpty) {
       return Center(
@@ -289,6 +306,104 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
               ],
             ),
           ),
+          // DASHBOARD STATS SUMMARY
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100.withAlpha(120),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final card1 = _buildSummaryCard(
+                    title: 'TOTALE IMPORTI / SOMME',
+                    value: _formatAmount(totalAmountAbsolute),
+                    subtitle: 'Netto (con neg.): ${_formatAmount(totalAmountSigned)}',
+                    icon: Icons.folder_open_rounded,
+                    color: SkyTheme.timBlue,
+                    bgLightColor: SkyTheme.timBlue.withAlpha(20),
+                  );
+                  final card2 = _buildSummaryCard(
+                    title: 'RISCONTRATI / IMPORTO',
+                    value: '$reconciledRecords trasferte',
+                    subtitle: 'Ass: ${_formatAmount(reconciledAmountAbsolute)} | Net: ${_formatAmount(reconciledAmountSigned)}',
+                    icon: Icons.check_circle_outline,
+                    color: Colors.green.shade700,
+                    bgLightColor: Colors.green.shade50,
+                  );
+                  final card3 = _buildSummaryCard(
+                    title: 'IN ATTESA / IMPORTO',
+                    value: '$waitingRecords trasferte',
+                    subtitle: 'Ass: ${_formatAmount(waitingAmountAbsolute)} | Net: ${_formatAmount(waitingAmountSigned)}',
+                    icon: Icons.help_outline_rounded,
+                    color: Colors.red.shade700,
+                    bgLightColor: Colors.red.shade50,
+                  );
+
+                  if (constraints.maxWidth >= 950) {
+                    return Row(
+                      children: [
+                        Expanded(child: card1),
+                        const SizedBox(width: 16),
+                        Expanded(child: card2),
+                        const SizedBox(width: 16),
+                        Expanded(child: card3),
+                      ],
+                    );
+                  } else {
+                    return Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            if (_statsScrollController.hasClients) {
+                              _statsScrollController.animateTo(
+                                (_statsScrollController.offset - 200).clamp(0, _statsScrollController.position.maxScrollExtent),
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.chevron_left_rounded, color: SkyTheme.timBlue),
+                          hoverColor: SkyTheme.timBlue.withAlpha(20),
+                        ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            controller: _statsScrollController,
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                SizedBox(width: 290, child: card1),
+                                const SizedBox(width: 16),
+                                SizedBox(width: 290, child: card2),
+                                const SizedBox(width: 16),
+                                SizedBox(width: 290, child: card3),
+                              ],
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            if (_statsScrollController.hasClients) {
+                              _statsScrollController.animateTo(
+                                (_statsScrollController.offset + 200).clamp(0, _statsScrollController.position.maxScrollExtent),
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.chevron_right_rounded, color: SkyTheme.timBlue),
+                          hoverColor: SkyTheme.timBlue.withAlpha(20),
+                        ),
+                      ],
+                    );
+                  }
+                },
+              ),
+            ),
+          ),
           // MAIN TABLE
           Expanded(
             child: Padding(
@@ -413,8 +528,9 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                     ),
                   ],
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     IconButton(
                       onPressed: currentPage > 0 ? () {
@@ -440,18 +556,15 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                       } : null,
                       icon: const Icon(Icons.chevron_right),
                     ),
-                    Container(
-                      height: 24,
-                      width: 1,
-                      color: Colors.grey.shade300,
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                    ),
-                    Text(
-                      'Totale record: ${filteredRecords.length}',
-                      style: const TextStyle(
-                        color: SkyTheme.timBlue,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: Text(
+                        'Totale record: ${filteredRecords.length}',
+                        style: const TextStyle(
+                          color: SkyTheme.timBlue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
                       ),
                     ),
                   ],
@@ -1036,5 +1149,94 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Export completato con successo')));
       }
     }
+  }
+
+  Widget _buildSummaryCard({
+    required String title,
+    required String value,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required Color bgLightColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade100),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(3),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: bgLightColor,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 22),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade600,
+                    letterSpacing: 0.2,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                    color: color == SkyTheme.timRed ? Colors.black87 : color,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey.shade600,
+                    fontWeight: FontWeight.w500,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _formatAmount(double amount) {
+    final isNeg = amount < 0;
+    final absVal = amount.abs();
+    final parts = absVal.toStringAsFixed(2).split('.');
+    final whole = parts[0];
+    final decimals = parts[1];
+    
+    final RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+    final String formattedWhole = whole.replaceAllMapped(reg, (Match match) => '${match[1]}.');
+    
+    return '${isNeg ? "-" : ""}$formattedWhole,$decimals €';
   }
 }
