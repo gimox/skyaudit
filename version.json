@@ -1,15 +1,16 @@
 {
-  "version": "1.0.11",
-  "buildNumber": 12,
+  "version": "1.0.12",
+  "buildNumber": 13,
   "mandatory": false,
   "downloadUrls": {
-    "macos": "https://github.com/gimox/skyaudit/releases/download/v1.0.11/SkyAudit_macOS.dmg",
-    "windows": "https://github.com/gimox/skyaudit/releases/download/v1.0.11/SkyAudit_Windows_Installer.exe",
+    "macos": "https://github.com/gimox/skyaudit/releases/download/v1.0.12/SkyAudit_macOS.dmg",
+    "windows": "https://github.com/gimox/skyaudit/releases/download/v1.0.12/SkyAudit_Windows_Installer.exe",
     "web": ""
   },
   "changelog": [
-    "chore: release v1.0.11+12",
-    "fix default settings for netwok, amex improvements",
-    "chore: auto-update version.json to v1.0.10 [skip ci]"
+    "chore: release v1.0.12+13",
+    "fix windows buttons",
+    "fix update",
+    "chore: auto-update version.json to v1.0.11 [skip ci]"
   ]
 }
