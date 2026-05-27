@@ -671,6 +671,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   }
 
   void _showSettingsUpdateDialog(AppUpdateInfo info) {
+    UpdateService.setEventCallback((event, {message}) {
+      if ((event == 'error' || event == 'updateNotAvailable') && mounted) {
+        Navigator.of(context).pop();
+        UpdateService.setEventCallback(null);
+      }
+    });
+
     UpdateService.performUpdate(info);
 
     showDialog(
@@ -747,7 +754,9 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
           ),
         );
       },
-    );
+    ).then((_) {
+      UpdateService.setEventCallback(null);
+    });
   }
 
   Widget _buildAppUpdateCard(BuildContext context) {

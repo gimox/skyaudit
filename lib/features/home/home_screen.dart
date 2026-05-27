@@ -263,6 +263,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showUpdateDialog(AppUpdateInfo info) {
+    UpdateService.setEventCallback((event, {message}) {
+      if ((event == 'error' || event == 'updateNotAvailable') && mounted) {
+        Navigator.of(context).pop();
+        UpdateService.setEventCallback(null);
+      }
+    });
+
     UpdateService.performUpdate(info);
 
     showDialog(
@@ -339,6 +346,8 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       },
-    );
+    ).then((_) {
+      UpdateService.setEventCallback(null);
+    });
   }
 }

@@ -10,6 +10,11 @@ class AppUpdaterImpl implements AppUpdater {
   Future<void> checkForUpdates() async {
     // No-op on Web/other platforms
   }
+
+  @override
+  void setEventCallback(void Function(String event, {String? message})? callback) {
+    // No-op on Web/other platforms
+  }
 }
 
 AppUpdater getUpdater() => AppUpdaterImpl();

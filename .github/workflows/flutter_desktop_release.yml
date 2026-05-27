@@ -177,14 +177,30 @@ jobs:
               changelog: $changelog
             }' > /tmp/version.json
           
+          # Genera il file appcast.xml in una cartella temporanea
+          echo '<?xml version="1.0" encoding="utf-8"?>' > /tmp/appcast.xml
+          echo '<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">' >> /tmp/appcast.xml
+          echo '  <channel>' >> /tmp/appcast.xml
+          echo '    <title>SkyAudit</title>' >> /tmp/appcast.xml
+          echo '    <item>' >> /tmp/appcast.xml
+          echo "      <title>Version $VERSION</title>" >> /tmp/appcast.xml
+          echo "      <pubDate>$(date -u +'%a, %d %b %Y %H:%M:%S GMT')</pubDate>" >> /tmp/appcast.xml
+          echo "      <sparkle:version>$VERSION</sparkle:version>" >> /tmp/appcast.xml
+          echo "      <enclosure url=\"$MACOS_URL\" sparkle:version=\"$VERSION\" sparkle:os=\"macos\" length=\"0\" type=\"application/octet-stream\" />" >> /tmp/appcast.xml
+          echo "      <enclosure url=\"$WINDOWS_URL\" sparkle:version=\"$VERSION\" sparkle:os=\"windows\" length=\"0\" type=\"application/octet-stream\" />" >> /tmp/appcast.xml
+          echo '    </item>' >> /tmp/appcast.xml
+          echo '  </channel>' >> /tmp/appcast.xml
+          echo '</rss>' >> /tmp/appcast.xml
+          
           # Passa al branch main, applica le modifiche e invia
           git fetch origin main
           git checkout main
           git pull origin main --rebase
           cp /tmp/version.json version.json
+          cp /tmp/appcast.xml appcast.xml
           
-          git add version.json
-          git commit -m "chore: auto-update version.json to v$VERSION [skip ci]" && git push || echo "Nessuna modifica da inviare"
+          git add version.json appcast.xml
+          git commit -m "chore: auto-update version.json and appcast.xml to v$VERSION [skip ci]" && git push || echo "Nessuna modifica da inviare"
 
       # Crea la Release e carica gli asset nel repository
       - name: Create GitHub Release

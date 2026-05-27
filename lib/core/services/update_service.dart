@@ -132,4 +132,9 @@ class UpdateService {
       throw Exception('Impossibile aprire il link di download: ${info.downloadUrl}');
     }
   }
+
+  /// Registra il callback per gli eventi dell'auto updater
+  static void setEventCallback(void Function(String event, {String? message})? callback) {
+    appUpdaterInstance.setEventCallback(callback);
+  }
 }
