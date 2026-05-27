@@ -444,6 +444,7 @@ class SyncNotifier extends StateNotifier<SyncState> {
           syncProgress: 1.0,
           syncStep: 'Sincronizzazione completata: nessun nuovo file trovato.',
           isSyncing: false,
+          clearBeforeSync: false,
         );
         return;
       }
@@ -507,12 +508,14 @@ class SyncNotifier extends StateNotifier<SyncState> {
         syncProgress: 1.0,
         syncStep: 'Sincronizzazione completata!',
         isSyncing: false,
+        clearBeforeSync: false,
       );
       _log('Sincronizzazione conclusa con successo. Importati ${state.totalRecordsImported} record in totale.');
     } catch (e) {
       state = state.copyWith(
         isSyncing: false,
         syncStep: 'Errore durante la sincronizzazione: $e',
+        clearBeforeSync: false,
       );
       _log('ERRORE CRITICO: $e');
       rethrow;

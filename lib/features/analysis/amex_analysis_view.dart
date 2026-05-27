@@ -11,6 +11,9 @@ import 'package:travel_check/core/theme/app_theme.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
+import 'package:travel_check/features/upload/providers/log_history_provider.dart';
+import 'package:travel_check/features/upload/models/log_history.dart';
+import 'package:travel_check/shared/widgets/file_selection_dialog.dart';
 
 // Filter providers for Estratti AMEX
 final amexSelectedSearchProvider = StateProvider<String?>((ref) => null);
@@ -18,6 +21,7 @@ final amexSelectedFornitoreProvider = StateProvider<String?>((ref) => null);
 final amexSelectedNumeroContoProvider = StateProvider<Set<String>>((ref) => {});
 final amexStartDateProvider = StateProvider<DateTime?>((ref) => null);
 final amexEndDateProvider = StateProvider<DateTime?>((ref) => null);
+final amexSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final amexSortAscendingProvider = StateProvider<bool>((ref) => false);
 final amexPageProvider = StateProvider<int>((ref) => 0);
 
@@ -54,6 +58,17 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     final selectedNumeroConto = ref.watch(amexSelectedNumeroContoProvider);
     final startDate = ref.watch(amexStartDateProvider);
     final endDate = ref.watch(amexEndDateProvider);
+    final selectedLogHistoryIds = ref.watch(amexSelectedLogHistoryIdsProvider);
+    final allLogs = ref.watch(logHistoryProvider);
+    String? selectedLogFileName;
+    if (selectedLogHistoryIds.length == 1) {
+      for (final log in allLogs) {
+        if (log.uniqueCode == selectedLogHistoryIds.first) {
+          selectedLogFileName = log.fileName;
+          break;
+        }
+      }
+    }
     final sortAscending = ref.watch(amexSortAscendingProvider);
     final currentPage = ref.watch(amexPageProvider);
     final trasfertaFilter = ref.watch(amexTrasfertaPresenzaFilterProvider);
@@ -123,6 +138,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
       startDate != null,
       endDate != null,
       trasfertaFilter != AmexTrasfertaPresenzaFilter.all,
+      selectedLogHistoryIds.isNotEmpty,
     ].where((e) => e).length;
 
     // Estrai fornitori disponibili per il filtro
@@ -143,6 +159,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
 
     // Filtra i record
     final filteredRecords = allRecords.where((r) {
+      if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) return false;
       if (searchFilter != null) {
         final query = searchFilter.toLowerCase();
         final nominativo = anagraficheMap[r.cid?.trim()] ?? '';
@@ -303,6 +320,13 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                 ? 'Riscontro: Presenti'
                                 : 'Riscontro: Non Presenti',
                             () => ref.read(amexTrasfertaPresenzaFilterProvider.notifier).state = AmexTrasfertaPresenzaFilter.all,
+                          ),
+                        if (selectedLogHistoryIds.isNotEmpty)
+                          _buildFilterChip(
+                            selectedLogFileName != null
+                                ? 'File: $selectedLogFileName'
+                                : 'File: ${selectedLogHistoryIds.length} selezionati',
+                            () => ref.read(amexSelectedLogHistoryIdsProvider.notifier).state = {},
                           ),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
@@ -590,6 +614,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     ref.read(amexSelectedNumeroContoProvider.notifier).state = {};
     ref.read(amexStartDateProvider.notifier).state = null;
     ref.read(amexEndDateProvider.notifier).state = null;
+    ref.read(amexSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(amexTrasfertaPresenzaFilterProvider.notifier).state = AmexTrasfertaPresenzaFilter.all;
     ref.read(amexPageProvider.notifier).state = 0;
     _searchController.clear();
@@ -610,6 +635,8 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
   }
 
   Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, List<String> fornitori, List<String> numeroContoOptions, Map<String, String> contoDictionaryMap) {
+    final allLogs = ref.watch(logHistoryProvider);
+    final amexLogs = allLogs.where((log) => log.sourceType == 'Estratto AMEX').toList();
     return Drawer(
       width: 350,
       child: Column(
@@ -710,6 +737,19 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                   },
                   (val) => ref.read(amexTrasfertaPresenzaFilterProvider.notifier).state = val,
                 ),
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('FILE CARICATI'),
+                const SizedBox(height: 12),
+                _buildFileSelectionTrigger(
+                  context,
+                  'Seleziona File',
+                  ref.watch(amexSelectedLogHistoryIdsProvider),
+                  amexLogs,
+                  (next) {
+                    ref.read(amexSelectedLogHistoryIdsProvider.notifier).state = next;
+                  },
+                  icon: Icons.insert_drive_file_outlined,
+                ),
               ],
             ),
           ),
@@ -725,6 +765,86 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFileSelectionTrigger(
+    BuildContext context,
+    String label,
+    Set<String> selectedValues,
+    List<LogHistory> logs,
+    Function(Set<String>) onSelectedChanged, {
+    IconData? icon,
+  }) {
+    final selectedCount = selectedValues.length;
+    String displayText = 'Tutti i file';
+    if (selectedCount == 1) {
+      final matching = logs.where((l) => l.uniqueCode == selectedValues.first);
+      if (matching.isNotEmpty) {
+        displayText = matching.first.fileName;
+      }
+    } else if (selectedCount > 1) {
+      displayText = '$selectedCount file selezionati';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 18, color: Colors.grey),
+              const SizedBox(width: 8),
+            ],
+            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () => _showFileSelectionModal(context, selectedValues, logs, onSelectedChanged),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    displayText,
+                    style: TextStyle(
+                      color: selectedCount == 0 ? Colors.grey : Colors.black87,
+                      fontSize: 14,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.arrow_drop_down, color: Colors.grey),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showFileSelectionModal(
+    BuildContext context,
+    Set<String> initialSelected,
+    List<LogHistory> logs,
+    Function(Set<String>) onSelectedChanged,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return FileSelectionDialog(
+          logs: logs,
+          initialSelected: initialSelected,
+          onSelectedChanged: onSelectedChanged,
+        );
+      },
     );
   }
 

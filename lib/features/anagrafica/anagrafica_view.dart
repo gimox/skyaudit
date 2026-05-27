@@ -5,6 +5,9 @@ import 'package:intl/intl.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/features/upload/models/anagrafica.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
+import 'package:travel_check/features/upload/providers/log_history_provider.dart';
+import 'package:travel_check/shared/widgets/file_selection_dialog.dart';
+import 'package:travel_check/features/upload/models/log_history.dart';
 
 final anagraficaSearchProvider = StateProvider<String?>((ref) => null);
 final anagraficaPageProvider = StateProvider<int>((ref) => 0);
@@ -32,6 +35,7 @@ final selectedAnagPartFullTimeProvider = StateProvider<String?>((ref) => null);
 final selectedAnagResponsabileProvider = StateProvider<List<String>>((ref) => []);
 final selectedAnagGestoreProvider = StateProvider<List<String>>((ref) => []);
 final selectedAnagStatusProvider = StateProvider<List<String>>((ref) => []);
+final selectedAnagLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 
 class AnagraficaView extends ConsumerStatefulWidget {
   const AnagraficaView({super.key});
@@ -44,6 +48,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
   final _searchController = TextEditingController();
   final _scrollController = ScrollController();
   final _horizontalScrollController = ScrollController();
+  final _statsScrollController = ScrollController();
 
   String _formatDate(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty || dateStr == '-') return '-';
@@ -104,6 +109,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     _searchController.dispose();
     _scrollController.dispose();
     _horizontalScrollController.dispose();
+    _statsScrollController.dispose();
     super.dispose();
   }
 
@@ -115,11 +121,45 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     final searchQuery = ref.watch(anagraficaSearchProvider);
     final currentPage = ref.watch(anagraficaPageProvider);
     final sortAscending = ref.watch(anagraficaSortAscendingProvider);
+    final selectedLogHistoryIds = ref.watch(selectedAnagLogHistoryIdsProvider);
     const pageSize = 50;
 
-    final totalUsers = allRecords.length;
-    final validAges = allRecords.map((e) => _parseAge(e.dataNascita)).whereType<int>().toList();
+    final logs = ref.watch(logHistoryProvider);
+    final anagLogs = logs.where((l) => l.sourceType == 'Anagrafica').toList();
+
+    String? selectedLogFileName;
+    if (selectedLogHistoryIds.length == 1) {
+      for (final log in anagLogs) {
+        if (log.uniqueCode == selectedLogHistoryIds.first) {
+          selectedLogFileName = log.fileName;
+          break;
+        }
+      }
+    }
+
+    final filteredByFileRecords = selectedLogHistoryIds.isNotEmpty
+        ? allRecords.where((r) => selectedLogHistoryIds.contains(r.importBatch)).toList()
+        : allRecords;
+
+    final totalUsers = filteredByFileRecords.length;
+    final validAges = filteredByFileRecords.map((e) => _parseAge(e.dataNascita)).whereType<int>().toList();
     final double averageAge = validAges.isEmpty ? 0.0 : validAges.reduce((a, b) => a + b) / validAges.length;
+
+    DateTime? lastImportDate;
+    if (selectedLogHistoryIds.isNotEmpty) {
+      final selectedLogs = anagLogs.where((l) => selectedLogHistoryIds.contains(l.uniqueCode)).toList();
+      if (selectedLogs.isNotEmpty) {
+        lastImportDate = selectedLogs.first.date;
+      }
+    } else {
+      if (anagLogs.isNotEmpty) {
+        lastImportDate = anagLogs.first.date;
+      }
+    }
+
+    final lastImportDateStr = lastImportDate != null
+        ? DateFormat('dd/MM/yyyy HH:mm:ss').format(lastImportDate)
+        : 'Mai caricata';
 
     if (allRecords.isEmpty) {
       return Center(
@@ -143,6 +183,16 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
             ),
             const SizedBox(height: 8),
             const Text('Vai nella sezione "Carica File" per importare i dati.'),
+            if (lastImportDate != null) ...[
+              const SizedBox(height: 16),
+              Text(
+                'Ultimo caricamento di sistema: $lastImportDateStr',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade500,
+                ),
+              ),
+            ],
           ],
         ),
       );
@@ -179,6 +229,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
       selectedResponsabile.isNotEmpty,
       selectedGestore.isNotEmpty,
       selectedStatus.isNotEmpty,
+      selectedLogHistoryIds.isNotEmpty,
     ].where((e) => e).length;
 
     // Estrattori valori unici per i filtri
@@ -196,6 +247,9 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
 
     // Filtra i record
     final filteredRecords = allRecords.where((r) {
+      // Filtro File Caricato
+      if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.importBatch)) return false;
+
       // Ricerca testuale
       bool matchSearch = true;
       if (searchQuery != null && searchQuery.isNotEmpty) {
@@ -465,6 +519,16 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                           _buildFilterChip('Gestore: ${selectedGestore.length}', () => ref.read(selectedAnagGestoreProvider.notifier).state = []),
                         if (selectedStatus.isNotEmpty)
                           _buildFilterChip('Stato: ${selectedStatus.length}', () => ref.read(selectedAnagStatusProvider.notifier).state = []),
+                        if (selectedLogHistoryIds.isNotEmpty)
+                          _buildFilterChip(
+                            selectedLogFileName != null
+                                ? 'File: $selectedLogFileName'
+                                : 'File: ${selectedLogHistoryIds.length} selezionati',
+                            () {
+                              ref.read(selectedAnagLogHistoryIdsProvider.notifier).state = {};
+                              ref.read(anagraficaPageProvider.notifier).state = 0;
+                            },
+                          ),
                         TextButton(
                           onPressed: () => _resetAllFiltersAnag(ref), 
                           child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))
@@ -486,28 +550,88 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                 borderRadius: BorderRadius.circular(20),
                 border: Border.all(color: Colors.grey.shade200),
               ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _buildSummaryCard(
-                      title: 'TOTALE UTENTI',
-                      value: '$totalUsers utenti',
-                      icon: Icons.people_outline,
-                      color: SkyTheme.timBlue,
-                      bgLightColor: SkyTheme.timBlue.withAlpha(20),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: _buildSummaryCard(
-                      title: 'ETÀ MEDIA',
-                      value: averageAge > 0 ? '${averageAge.toStringAsFixed(1).replaceAll('.', ',')} anni' : '-',
-                      icon: Icons.cake_outlined,
-                      color: Colors.green.shade700,
-                      bgLightColor: Colors.green.shade50,
-                    ),
-                  ),
-                ],
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final card1 = _buildSummaryCard(
+                    title: 'TOTALE UTENTI',
+                    value: '$totalUsers utenti',
+                    icon: Icons.people_outline,
+                    color: SkyTheme.timBlue,
+                    bgLightColor: SkyTheme.timBlue.withAlpha(20),
+                  );
+                  final card2 = _buildSummaryCard(
+                    title: 'ETÀ MEDIA',
+                    value: averageAge > 0 ? '${averageAge.toStringAsFixed(1).replaceAll('.', ',')} anni' : '-',
+                    icon: Icons.cake_outlined,
+                    color: Colors.green.shade700,
+                    bgLightColor: Colors.green.shade50,
+                  );
+                  final card3 = _buildSummaryCard(
+                    title: 'ULTIMA IMPORTAZIONE',
+                    value: lastImportDateStr,
+                    icon: Icons.cloud_upload_outlined,
+                    color: Colors.orange.shade800,
+                    bgLightColor: Colors.orange.shade50,
+                  );
+
+                  if (constraints.maxWidth >= 950) {
+                    return Row(
+                      children: [
+                        Expanded(child: card1),
+                        const SizedBox(width: 16),
+                        Expanded(child: card2),
+                        const SizedBox(width: 16),
+                        Expanded(child: card3),
+                      ],
+                    );
+                  } else {
+                    return Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            if (_statsScrollController.hasClients) {
+                              _statsScrollController.animateTo(
+                                (_statsScrollController.offset - 200).clamp(0, _statsScrollController.position.maxScrollExtent),
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.chevron_left_rounded, color: SkyTheme.timBlue),
+                          hoverColor: SkyTheme.timBlue.withAlpha(20),
+                        ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            controller: _statsScrollController,
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                SizedBox(width: 290, child: card1),
+                                const SizedBox(width: 16),
+                                SizedBox(width: 290, child: card2),
+                                const SizedBox(width: 16),
+                                SizedBox(width: 290, child: card3),
+                              ],
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            if (_statsScrollController.hasClients) {
+                              _statsScrollController.animateTo(
+                                (_statsScrollController.offset + 200).clamp(0, _statsScrollController.position.maxScrollExtent),
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.chevron_right_rounded, color: SkyTheme.timBlue),
+                          hoverColor: SkyTheme.timBlue.withAlpha(20),
+                        ),
+                      ],
+                    );
+                  }
+                },
               ),
             ),
           ),
@@ -1027,6 +1151,20 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                   icon: Icons.map_outlined,
                 ),
                 
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('FILE CARICATI'),
+                const SizedBox(height: 12),
+                _buildFileSelectionTrigger(
+                  context,
+                  'Seleziona File',
+                  ref.watch(selectedAnagLogHistoryIdsProvider),
+                  ref.watch(logHistoryProvider).where((l) => l.sourceType == 'Anagrafica').toList(),
+                  (next) {
+                    ref.read(selectedAnagLogHistoryIdsProvider.notifier).state = next;
+                    ref.read(anagraficaPageProvider.notifier).state = 0;
+                  },
+                  icon: Icons.insert_drive_file_outlined,
+                ),
                 const SizedBox(height: 32),
                 _buildDrawerSectionTitle('GERARCHIA'),
                 _buildMultiSelectFilter(
@@ -1633,6 +1771,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     ref.read(selectedAnagResponsabileProvider.notifier).state = [];
     ref.read(selectedAnagGestoreProvider.notifier).state = [];
     ref.read(selectedAnagStatusProvider.notifier).state = [];
+    ref.read(selectedAnagLogHistoryIdsProvider.notifier).state = {};
     ref.read(anagraficaSearchProvider.notifier).state = null;
     _searchController.clear();
   }
@@ -1776,20 +1915,103 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 2),
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    color: color == SkyTheme.timRed ? Colors.black87 : color,
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.bold,
+                      color: color == SkyTheme.timRed ? Colors.black87 : color,
+                    ),
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFileSelectionTrigger(
+    BuildContext context,
+    String label,
+    Set<String> selectedValues,
+    List<LogHistory> logs,
+    Function(Set<String>) onSelectedChanged, {
+    IconData? icon,
+  }) {
+    final selectedCount = selectedValues.length;
+    String displayText = 'Tutti i file';
+    if (selectedCount == 1) {
+      final matching = logs.where((l) => l.uniqueCode == selectedValues.first);
+      if (matching.isNotEmpty) {
+        displayText = matching.first.fileName;
+      }
+    } else if (selectedCount > 1) {
+      displayText = '$selectedCount file selezionati';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 18, color: Colors.grey),
+              const SizedBox(width: 8),
+            ],
+            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () => _showFileSelectionModal(context, selectedValues, logs, onSelectedChanged),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    displayText,
+                    style: TextStyle(
+                      color: selectedCount == 0 ? Colors.grey : Colors.black87,
+                      fontSize: 14,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.arrow_drop_down, color: Colors.grey),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showFileSelectionModal(
+    BuildContext context,
+    Set<String> initialSelected,
+    List<LogHistory> logs,
+    Function(Set<String>) onSelectedChanged,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return FileSelectionDialog(
+          logs: logs,
+          initialSelected: initialSelected,
+          onSelectedChanged: onSelectedChanged,
+        );
+      },
     );
   }
 }

@@ -8,6 +8,9 @@ import 'package:travel_check/features/upload/providers/tracciato_contabile_provi
 import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
 import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
+import 'package:travel_check/features/upload/providers/log_history_provider.dart';
+import 'package:travel_check/features/upload/models/log_history.dart';
+import 'package:travel_check/shared/widgets/file_selection_dialog.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 
 final _defaultDate = DateTime(DateTime.now().year, DateTime.now().month - 1, 1);
@@ -20,6 +23,7 @@ final selectedSocietaProvider = StateProvider<String?>((ref) => null);
 final selectedTipiProvider = StateProvider<List<String>>((ref) => []);
 final sortAscendingProvider = StateProvider<bool>((ref) => false);
 final analysisPageProvider = StateProvider<int>((ref) => 0);
+final tcSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 
 class AnalysisView extends ConsumerStatefulWidget {
   const AnalysisView({super.key});
@@ -52,6 +56,17 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final selectedTipi = ref.watch(selectedTipiProvider);
     final sortAscending = ref.watch(sortAscendingProvider);
     final currentPage = ref.watch(analysisPageProvider);
+    final selectedLogHistoryIds = ref.watch(tcSelectedLogHistoryIdsProvider);
+    final allLogs = ref.watch(logHistoryProvider);
+    String? selectedLogFileName;
+    if (selectedLogHistoryIds.length == 1) {
+      for (final log in allLogs) {
+        if (log.uniqueCode == selectedLogHistoryIds.first) {
+          selectedLogFileName = log.fileName;
+          break;
+        }
+      }
+    }
     final anagrafiche = ref.watch(anagraficaProvider);
     final anagraficheMap = {
       for (var a in anagrafiche)
@@ -92,6 +107,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
       selectedSocieta != null,
       selectedTipi.isNotEmpty,
       selectedTrasferta != null,
+      selectedLogHistoryIds.isNotEmpty,
     ].where((e) => e).length;
 
     // Estrai dati disponibili per i filtri
@@ -146,6 +162,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     // Filtra i record
     final filteredRecords =
         allRecords.where((r) {
+          if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) return false;
           final parts = r.dataSpesa.split('/');
           if (parts.length != 3) return false;
           final month = parts[1];
@@ -319,6 +336,13 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                           _buildFilterChip(
                             'Tipi: ${selectedTipi.join(", ")}',
                             () => ref.read(selectedTipiProvider.notifier).state = [],
+                          ),
+                        if (selectedLogHistoryIds.isNotEmpty)
+                          _buildFilterChip(
+                            selectedLogFileName != null
+                                ? 'File: $selectedLogFileName'
+                                : 'File: ${selectedLogHistoryIds.length} selezionati',
+                            () => ref.read(tcSelectedLogHistoryIdsProvider.notifier).state = {},
                           ),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
@@ -501,6 +525,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     ref.read(selectedTrasfertaProvider.notifier).state = null;
     ref.read(selectedSocietaProvider.notifier).state = null;
     ref.read(selectedTipiProvider.notifier).state = [];
+    ref.read(tcSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(analysisPageProvider.notifier).state = 0;
     _trasfertaController.clear();
   }
@@ -520,6 +545,8 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
   }
 
   Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, Map<String, String> dictionaryMap, List<String> years, List<String> societa, List<String> tipi, List<String> selectedTipi) {
+    final allLogs = ref.watch(logHistoryProvider);
+    final ecLogs = allLogs.where((log) => log.sourceType == 'Tracciato Contabile').toList();
     final monthNames = {
       '01': 'Gennaio', '02': 'Febbraio', '03': 'Marzo', '04': 'Aprile',
       '05': 'Maggio', '06': 'Giugno', '07': 'Luglio', '08': 'Agosto',
@@ -611,6 +638,19 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                   }
                   ref.read(selectedTipiProvider.notifier).state = newList;
                 }, dictionaryMap: dictionaryMap),
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('FILE CARICATI'),
+                const SizedBox(height: 12),
+                _buildFileSelectionTrigger(
+                  context,
+                  'Seleziona File',
+                  ref.watch(tcSelectedLogHistoryIdsProvider),
+                  ecLogs,
+                  (next) {
+                    ref.read(tcSelectedLogHistoryIdsProvider.notifier).state = next;
+                  },
+                  icon: Icons.insert_drive_file_outlined,
+                ),
               ],
             ),
           ),
@@ -691,6 +731,86 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
           }).toList(),
         ),
       ],
+    );
+  }
+
+  Widget _buildFileSelectionTrigger(
+    BuildContext context,
+    String label,
+    Set<String> selectedValues,
+    List<LogHistory> logs,
+    Function(Set<String>) onSelectedChanged, {
+    IconData? icon,
+  }) {
+    final selectedCount = selectedValues.length;
+    String displayText = 'Tutti i file';
+    if (selectedCount == 1) {
+      final matching = logs.where((l) => l.uniqueCode == selectedValues.first);
+      if (matching.isNotEmpty) {
+        displayText = matching.first.fileName;
+      }
+    } else if (selectedCount > 1) {
+      displayText = '$selectedCount file selezionati';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 18, color: Colors.grey),
+              const SizedBox(width: 8),
+            ],
+            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () => _showFileSelectionModal(context, selectedValues, logs, onSelectedChanged),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    displayText,
+                    style: TextStyle(
+                      color: selectedCount == 0 ? Colors.grey : Colors.black87,
+                      fontSize: 14,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.arrow_drop_down, color: Colors.grey),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showFileSelectionModal(
+    BuildContext context,
+    Set<String> initialSelected,
+    List<LogHistory> logs,
+    Function(Set<String>) onSelectedChanged,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return FileSelectionDialog(
+          logs: logs,
+          initialSelected: initialSelected,
+          onSelectedChanged: onSelectedChanged,
+        );
+      },
     );
   }
 

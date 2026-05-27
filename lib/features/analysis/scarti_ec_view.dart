@@ -9,9 +9,11 @@ import 'package:travel_check/features/upload/models/scarti_ec_sap.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
+import 'package:travel_check/features/upload/models/log_history.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
+import 'package:travel_check/shared/widgets/file_selection_dialog.dart';
 
 
 // Filter providers for Scarti EC SAP
@@ -21,6 +23,7 @@ final scEndDateProvider = StateProvider<DateTime?>((ref) => null);
 final scSelectedSpesaProvider = StateProvider<Set<String>>((ref) => {});
 final scSortAscendingProvider = StateProvider<bool>((ref) => false);
 final scPageProvider = StateProvider<int>((ref) => 0);
+final scSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 
 enum ScartiIncrocioFilter { all, matched, notMatched }
 final scIncrocioFilterProvider = StateProvider<ScartiIncrocioFilter>((ref) => ScartiIncrocioFilter.all);
@@ -59,6 +62,17 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
     final selectedSpese = ref.watch(scSelectedSpesaProvider);
     final sortAscending = ref.watch(scSortAscendingProvider);
     final currentPage = ref.watch(scPageProvider);
+    final selectedLogHistoryIds = ref.watch(scSelectedLogHistoryIdsProvider);
+    final allLogs = ref.watch(logHistoryProvider);
+    String? selectedLogFileName;
+    if (selectedLogHistoryIds.length == 1) {
+      for (final log in allLogs) {
+        if (log.uniqueCode == selectedLogHistoryIds.first) {
+          selectedLogFileName = log.fileName;
+          break;
+        }
+      }
+    }
     final incrocioFilter = ref.watch(scIncrocioFilterProvider);
     final trasfertaFilter = ref.watch(scTrasfertaPresenzaFilterProvider);
     final contabileRecords = ref.watch(tracciatoContabilesProvider);
@@ -102,6 +116,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
       selectedSpese.isNotEmpty,
       incrocioFilter != ScartiIncrocioFilter.all,
       trasfertaFilter != ScTrasfertaPresenzaFilter.all,
+      selectedLogHistoryIds.isNotEmpty,
     ].where((e) => e).length;
 
     // Estrai giustificativi di spesa disponibili per il filtro
@@ -132,6 +147,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
 
     // Filtra i record
     final filteredRecords = allRecords.where((r) {
+      if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) return false;
       if (selectedQuery != null) {
         final query = selectedQuery.toLowerCase();
         if (!r.numeroTrasferta.toLowerCase().contains(query) &&
@@ -316,6 +332,13 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                                 ? 'Riscontro: Presenti'
                                 : 'Riscontro: Non Presenti',
                             () => ref.read(scTrasfertaPresenzaFilterProvider.notifier).state = ScTrasfertaPresenzaFilter.all,
+                          ),
+                        if (selectedLogHistoryIds.isNotEmpty)
+                          _buildFilterChip(
+                            selectedLogFileName != null
+                                ? 'File: $selectedLogFileName'
+                                : 'File: ${selectedLogHistoryIds.length} selezionati',
+                            () => ref.read(scSelectedLogHistoryIdsProvider.notifier).state = {},
                           ),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
@@ -728,6 +751,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
     ref.read(scSelectedSpesaProvider.notifier).state = {};
     ref.read(scIncrocioFilterProvider.notifier).state = ScartiIncrocioFilter.all;
     ref.read(scTrasfertaPresenzaFilterProvider.notifier).state = ScTrasfertaPresenzaFilter.all;
+    ref.read(scSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(scPageProvider.notifier).state = 0;
     _searchController.clear();
   }
@@ -747,6 +771,8 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
   }
 
   Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, List<String> availableSpese) {
+    final allLogs = ref.watch(logHistoryProvider);
+    final ecLogs = allLogs.where((log) => log.sourceType == 'Scarti EC SAP').toList();
     return Drawer(
       width: 350,
       child: Column(
@@ -870,6 +896,19 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                   },
                   (val) => ref.read(scTrasfertaPresenzaFilterProvider.notifier).state = val,
                 ),
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('FILE CARICATI'),
+                const SizedBox(height: 12),
+                _buildFileSelectionTrigger(
+                  context,
+                  'Seleziona File',
+                  ref.watch(scSelectedLogHistoryIdsProvider),
+                  ecLogs,
+                  (next) {
+                    ref.read(scSelectedLogHistoryIdsProvider.notifier).state = next;
+                  },
+                  icon: Icons.insert_drive_file_outlined,
+                ),
               ],
             ),
           ),
@@ -958,6 +997,86 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
           }).toList(),
         ),
       ],
+    );
+  }
+
+  Widget _buildFileSelectionTrigger(
+    BuildContext context,
+    String label,
+    Set<String> selectedValues,
+    List<LogHistory> logs,
+    Function(Set<String>) onSelectedChanged, {
+    IconData? icon,
+  }) {
+    final selectedCount = selectedValues.length;
+    String displayText = 'Tutti i file';
+    if (selectedCount == 1) {
+      final matching = logs.where((l) => l.uniqueCode == selectedValues.first);
+      if (matching.isNotEmpty) {
+        displayText = matching.first.fileName;
+      }
+    } else if (selectedCount > 1) {
+      displayText = '$selectedCount file selezionati';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 18, color: Colors.grey),
+              const SizedBox(width: 8),
+            ],
+            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () => _showFileSelectionModal(context, selectedValues, logs, onSelectedChanged),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    displayText,
+                    style: TextStyle(
+                      color: selectedCount == 0 ? Colors.grey : Colors.black87,
+                      fontSize: 14,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.arrow_drop_down, color: Colors.grey),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showFileSelectionModal(
+    BuildContext context,
+    Set<String> initialSelected,
+    List<LogHistory> logs,
+    Function(Set<String>) onSelectedChanged,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return FileSelectionDialog(
+          logs: logs,
+          initialSelected: initialSelected,
+          onSelectedChanged: onSelectedChanged,
+        );
+      },
     );
   }
 

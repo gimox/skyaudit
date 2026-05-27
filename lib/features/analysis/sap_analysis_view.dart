@@ -10,6 +10,9 @@ import 'package:travel_check/features/settings/providers/dictionary_provider.dar
 import 'package:travel_check/core/theme/app_theme.dart';
 
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+import 'package:travel_check/features/upload/providers/log_history_provider.dart';
+import 'package:travel_check/features/upload/models/log_history.dart';
+import 'package:travel_check/shared/widgets/file_selection_dialog.dart';
 
 // SAP Filter Providers
 final sapMonthProvider = StateProvider<String?>((ref) => null);
@@ -17,6 +20,7 @@ final sapYearProvider = StateProvider<String?>((ref) => null);
 final sapTrasfertaProvider = StateProvider<String?>((ref) => null);
 final sapSocietaProvider = StateProvider<Set<String>>((ref) => {});
 final sapRichiestaProvider = StateProvider<String?>((ref) => null);
+final sapSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final sapPageProvider = StateProvider<int>((ref) => 0);
 final sapSortAscendingProvider = StateProvider<bool>((ref) => false);
 
@@ -52,6 +56,17 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     final selectedTrasferta = ref.watch(sapTrasfertaProvider);
     final selectedRichiesta = ref.watch(sapRichiestaProvider);
     final selectedSocieta = ref.watch(sapSocietaProvider);
+    final selectedLogHistoryIds = ref.watch(sapSelectedLogHistoryIdsProvider);
+    final allLogs = ref.watch(logHistoryProvider);
+    String? selectedLogFileName;
+    if (selectedLogHistoryIds.length == 1) {
+      for (final log in allLogs) {
+        if (log.uniqueCode == selectedLogHistoryIds.first) {
+          selectedLogFileName = log.fileName;
+          break;
+        }
+      }
+    }
     final sortAscending = ref.watch(sapSortAscendingProvider);
     final currentPage = ref.watch(sapPageProvider);
     final dictionaries = ref.watch(dictionaryProvider);
@@ -98,6 +113,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       selectedTrasferta != null,
       selectedRichiesta != null,
       trasfertaFilter != SapTrasfertaPresenzaFilter.all,
+      selectedLogHistoryIds.isNotEmpty,
     ].where((e) => e).length;
 
     // Estrai anni disponibili (formato data SAP potrebbe variare, assumiamo DD.MM.YYYY o simile)
@@ -116,6 +132,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     };
 
     final filteredRecords = allRecords.where((r) {
+      if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) return false;
       final parts = r.data.split(RegExp(r'[./-]'));
       String? month, year;
       if (parts.length == 3) {
@@ -300,6 +317,13 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                                 ? 'Riscontro: Presenti'
                                 : 'Riscontro: Non Presenti',
                             () => ref.read(sapTrasfertaPresenzaFilterProvider.notifier).state = SapTrasfertaPresenzaFilter.all,
+                          ),
+                        if (selectedLogHistoryIds.isNotEmpty)
+                          _buildFilterChip(
+                            selectedLogFileName != null
+                                ? 'File: $selectedLogFileName'
+                                : 'File: ${selectedLogHistoryIds.length} selezionati',
+                            () => ref.read(sapSelectedLogHistoryIdsProvider.notifier).state = {},
                           ),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
@@ -489,6 +513,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     ref.read(sapMonthProvider.notifier).state = null;
     ref.read(sapSocietaProvider.notifier).state = {};
     ref.read(sapRichiestaProvider.notifier).state = null;
+    ref.read(sapSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(sapTrasfertaPresenzaFilterProvider.notifier).state = SapTrasfertaPresenzaFilter.all;
     ref.read(sapPageProvider.notifier).state = 0;
     _trasfertaController.clear();
@@ -557,6 +582,8 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     };
     final dictionaries = ref.watch(dictionaryProvider);
     final dictionaryMap = {for (var d in dictionaries) d.code: d.value};
+    final allLogs = ref.watch(logHistoryProvider);
+    final sapLogs = allLogs.where((log) => log.sourceType == 'Tracciato SAP').toList();
 
     return Drawer(
       width: 350,
@@ -664,6 +691,25 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                   },
                   (val) => ref.read(sapTrasfertaPresenzaFilterProvider.notifier).state = val,
                 ),
+                const SizedBox(height: 24),
+                const Row(
+                  children: [
+                    Icon(Icons.insert_drive_file_outlined, size: 18, color: Colors.grey),
+                    SizedBox(width: 8),
+                    Text('File Caricati', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _buildFileSelectionTrigger(
+                  context,
+                  'Seleziona File',
+                  ref.watch(sapSelectedLogHistoryIdsProvider),
+                  sapLogs,
+                  (next) {
+                    ref.read(sapSelectedLogHistoryIdsProvider.notifier).state = next;
+                  },
+                  icon: Icons.insert_drive_file_outlined,
+                ),
               ],
             ),
           ),
@@ -679,6 +725,76 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFileSelectionTrigger(
+    BuildContext context,
+    String label,
+    Set<String> selectedValues,
+    List<LogHistory> logs,
+    Function(Set<String>) onSelectedChanged, {
+    IconData? icon,
+  }) {
+    final selectedCount = selectedValues.length;
+    String displayText = 'Tutti i file';
+    if (selectedCount == 1) {
+      final matching = logs.where((l) => l.uniqueCode == selectedValues.first);
+      if (matching.isNotEmpty) {
+        displayText = matching.first.fileName;
+      }
+    } else if (selectedCount > 1) {
+      displayText = '$selectedCount file selezionati';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InkWell(
+          onTap: () => _showFileSelectionModal(context, selectedValues, logs, onSelectedChanged),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    displayText,
+                    style: TextStyle(
+                      color: selectedCount == 0 ? Colors.grey : Colors.black87,
+                      fontSize: 14,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.arrow_drop_down, color: Colors.grey),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showFileSelectionModal(
+    BuildContext context,
+    Set<String> initialSelected,
+    List<LogHistory> logs,
+    Function(Set<String>) onSelectedChanged,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return FileSelectionDialog(
+          logs: logs,
+          initialSelected: initialSelected,
+          onSelectedChanged: onSelectedChanged,
+        );
+      },
     );
   }
 

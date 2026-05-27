@@ -9,6 +9,9 @@ import 'package:travel_check/features/upload/models/estratto_conto.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
+import 'package:travel_check/features/upload/providers/log_history_provider.dart';
+import 'package:travel_check/features/upload/models/log_history.dart';
+import 'package:travel_check/shared/widgets/file_selection_dialog.dart';
 
 // Filter providers for Estratti Conto
 final ecSelectedTrasfertaProvider = StateProvider<String?>((ref) => null);
@@ -16,6 +19,7 @@ final ecSelectedSocietaProvider = StateProvider<String?>((ref) => null);
 final ecStartDateProvider = StateProvider<DateTime?>((ref) => null);
 final ecEndDateProvider = StateProvider<DateTime?>((ref) => null);
 final ecSelectedTipiServizioProvider = StateProvider<Set<String>>((ref) => {});
+final ecSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final ecSortAscendingProvider = StateProvider<bool>((ref) => false);
 final ecPageProvider = StateProvider<int>((ref) => 0);
 
@@ -57,8 +61,19 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     final endDate = ref.watch(ecEndDateProvider);
     final selectedTipi = ref.watch(ecSelectedTipiServizioProvider);
     final trasfertaFilter = ref.watch(ecTrasfertaPresenzaFilterProvider);
+    final selectedLogHistoryIds = ref.watch(ecSelectedLogHistoryIdsProvider);
     final sortAscending = ref.watch(ecSortAscendingProvider);
     final currentPage = ref.watch(ecPageProvider);
+    final allLogs = ref.watch(logHistoryProvider);
+    String? selectedLogFileName;
+    if (selectedLogHistoryIds.length == 1) {
+      for (final log in allLogs) {
+        if (log.uniqueCode == selectedLogHistoryIds.first) {
+          selectedLogFileName = log.fileName;
+          break;
+        }
+      }
+    }
     final anagrafiche = ref.watch(anagraficaProvider);
     final anagraficheMap = {
       for (var a in anagrafiche)
@@ -100,6 +115,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       endDate != null,
       selectedTipi.isNotEmpty,
       trasfertaFilter != EcTrasfertaPresenzaFilter.all,
+      selectedLogHistoryIds.isNotEmpty,
     ].where((e) => e).length;
 
     // Estrai società disponibili per il filtro
@@ -119,6 +135,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
 
     // Filtra i record
     final filteredRecords = allRecords.where((r) {
+      if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) return false;
       if (selectedTrasferta != null) {
         final query = selectedTrasferta.toLowerCase();
         final name = anagraficheMap[r.cid.trim()] ?? '';
@@ -292,6 +309,13 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                                 ? 'Riscontro: Presenti'
                                 : 'Riscontro: Non Presenti',
                             () => ref.read(ecTrasfertaPresenzaFilterProvider.notifier).state = EcTrasfertaPresenzaFilter.all,
+                          ),
+                        if (selectedLogHistoryIds.isNotEmpty)
+                          _buildFilterChip(
+                            selectedLogFileName != null
+                                ? 'File: $selectedLogFileName'
+                                : 'File: ${selectedLogHistoryIds.length} selezionati',
+                            () => ref.read(ecSelectedLogHistoryIdsProvider.notifier).state = {},
                           ),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
@@ -484,6 +508,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     ref.read(ecEndDateProvider.notifier).state = null;
     ref.read(ecSelectedTipiServizioProvider.notifier).state = {};
     ref.read(ecTrasfertaPresenzaFilterProvider.notifier).state = EcTrasfertaPresenzaFilter.all;
+    ref.read(ecSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(ecPageProvider.notifier).state = 0;
     _trasfertaController.clear();
   }
@@ -503,6 +528,8 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
   }
 
   Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, List<String> societa, List<String> availableTipi) {
+    final allLogs = ref.watch(logHistoryProvider);
+    final ecLogs = allLogs.where((log) => log.sourceType == 'Estratto Conto').toList();
     return Drawer(
       width: 350,
       child: Column(
@@ -616,6 +643,19 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                   },
                   (val) => ref.read(ecTrasfertaPresenzaFilterProvider.notifier).state = val,
                 ),
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('FILE CARICATI'),
+                const SizedBox(height: 12),
+                _buildFileSelectionTrigger(
+                  context,
+                  'Seleziona File',
+                  ref.watch(ecSelectedLogHistoryIdsProvider),
+                  ecLogs,
+                  (next) {
+                    ref.read(ecSelectedLogHistoryIdsProvider.notifier).state = next;
+                  },
+                  icon: Icons.insert_drive_file_outlined,
+                ),
               ],
             ),
           ),
@@ -684,6 +724,86 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
           }).toList(),
         ),
       ],
+    );
+  }
+
+  Widget _buildFileSelectionTrigger(
+    BuildContext context,
+    String label,
+    Set<String> selectedValues,
+    List<LogHistory> logs,
+    Function(Set<String>) onSelectedChanged, {
+    IconData? icon,
+  }) {
+    final selectedCount = selectedValues.length;
+    String displayText = 'Tutti i file';
+    if (selectedCount == 1) {
+      final matching = logs.where((l) => l.uniqueCode == selectedValues.first);
+      if (matching.isNotEmpty) {
+        displayText = matching.first.fileName;
+      }
+    } else if (selectedCount > 1) {
+      displayText = '$selectedCount file selezionati';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 18, color: Colors.grey),
+              const SizedBox(width: 8),
+            ],
+            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () => _showFileSelectionModal(context, selectedValues, logs, onSelectedChanged),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    displayText,
+                    style: TextStyle(
+                      color: selectedCount == 0 ? Colors.grey : Colors.black87,
+                      fontSize: 14,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.arrow_drop_down, color: Colors.grey),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showFileSelectionModal(
+    BuildContext context,
+    Set<String> initialSelected,
+    List<LogHistory> logs,
+    Function(Set<String>) onSelectedChanged,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return FileSelectionDialog(
+          logs: logs,
+          initialSelected: initialSelected,
+          onSelectedChanged: onSelectedChanged,
+        );
+      },
     );
   }
 
