@@ -27,8 +27,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Inizializzazione Isar con pulizia una tantum per migrazione schema
-  final dir = await getApplicationDocumentsDirectory();
-  final resetFile = File('${dir.path}/.isar_reset_v3');
+  final dir = await getApplicationSupportDirectory();
+  final resetFile = File('${dir.path}/isar_reset_v3.flag');
   if (!resetFile.existsSync()) {
     final files = [
       File('${dir.path}/default.isar'),

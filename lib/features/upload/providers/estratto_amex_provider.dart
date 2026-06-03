@@ -6,6 +6,7 @@ import 'package:cross_file/cross_file.dart';
 import 'package:isar/isar.dart';
 import 'package:excel/excel.dart';
 import 'package:travel_check/core/db/isar_provider.dart';
+import 'package:travel_check/features/settings/providers/app_settings_provider.dart';
 import '../models/estratto_amex.dart';
 import '../models/log_history.dart';
 import 'log_history_provider.dart';
@@ -20,11 +21,17 @@ class EstrattoAmexNotifier extends Notifier<List<EstrattoAmex>> {
   Future<Map<String, dynamic>> loadFromFile(XFile file) async {
     final isar = ref.read(isarProvider);
     final uniqueCode = DateTime.now().millisecondsSinceEpoch.toString();
+    final settings = ref.read(appSettingsProvider);
 
     // Parsing pesante in isolate
     final List<Map<String, dynamic>> parsedData = await compute(
       _parseAmexIsolate,
-      {'filePath': file.path, 'uniqueCode': uniqueCode},
+      {
+        'filePath': file.path,
+        'uniqueCode': uniqueCode,
+        'filterLabel': settings.amexFilterHeaderLabel,
+        'filterValue': settings.amexFilterHeaderValue,
+      },
     );
 
     final List<EstrattoAmex> newRecords = parsedData
@@ -84,6 +91,8 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
 ) async {
   final String filePath = params['filePath'];
   final String uniqueCode = params['uniqueCode'];
+  final String? filterLabel = params['filterLabel'];
+  final String? filterValue = params['filterValue'];
 
   final bytes = File(filePath).readAsBytesSync();
   final isCsv = filePath.toLowerCase().endsWith('.csv');
@@ -233,6 +242,18 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
     }
   });
 
+  // Trova indice colonna per filtro Amex
+  int? amexFilterColIndex;
+  final String activeLabel = (filterLabel == null || filterLabel.trim().isEmpty) ? 'Categ. transazione' : filterLabel;
+  final String activeValue = (filterValue == null || filterValue.trim().isEmpty) ? 'Nuovi addebiti' : filterValue;
+
+  for (int col = 0; col < headers.length; col++) {
+    if (headers[col].trim().toLowerCase() == activeLabel.trim().toLowerCase()) {
+      amexFilterColIndex = col;
+      break;
+    }
+  }
+
   final bool hasHeaders = fieldToColIndex.isNotEmpty;
 
   int? getIndex(String field, int defaultIndex) {
@@ -310,6 +331,13 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
         }
 
         return double.tryParse(s) ?? 0.0;
+      }
+    }
+
+    if (amexFilterColIndex != null) {
+      final actualVal = val(amexFilterColIndex).trim();
+      if (actualVal.toLowerCase() != activeValue.trim().toLowerCase()) {
+        continue; // Scarta la riga se non corrisponde
       }
     }
 

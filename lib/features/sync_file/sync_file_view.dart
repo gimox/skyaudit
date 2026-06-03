@@ -427,6 +427,8 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
       buttonLabel = 'Sincronizza Anagrafica';
     } else if (syncState.selectedSyncType == 'scarti') {
       buttonLabel = 'Sincronizza Scarti';
+    } else if (syncState.selectedSyncType == 'trasferte_sap') {
+      buttonLabel = 'Sincronizza Trasferte SAP';
     }
 
     return SizedBox(
@@ -472,7 +474,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
 
     if (syncState.selectedSyncType == 'all') {
       titleText = 'Sincronizzazione Completa';
-      descText = 'Sincronizza in sequenza tutte le categorie configurate (Contabili, Estratti Conto, SAP, AMEX, Scarti, Anagrafica) da SharePoint.';
+      descText = 'Sincronizza in sequenza tutte le categorie configurate (Contabili, Estratti Conto, SAP, AMEX, Scarti, Anagrafica, Trasferte SAP) da SharePoint.';
       folderInfo = 'Tutte le cartelle configurate';
     } else if (syncState.selectedSyncType == 'contabile') {
       titleText = 'Tracciati Contabili';
@@ -498,6 +500,10 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
       titleText = 'Scarti Tracciato';
       descText = 'Sincronizza i file degli scarti del tracciato (*.xlsx) da SharePoint.';
       folderInfo = settings.sharepointScartiTracciatoPath.isEmpty ? 'scarti_tracciato' : settings.sharepointScartiTracciatoPath;
+    } else if (syncState.selectedSyncType == 'trasferte_sap') {
+      titleText = 'Trasferte SAP';
+      descText = 'Sincronizza i file di trasferte SAP (*.xlsx) da SharePoint.';
+      folderInfo = settings.sharepointTrasferteSapPath.isEmpty ? 'trasferte_sap' : settings.sharepointTrasferteSapPath;
     }
 
     return Column(
@@ -947,6 +953,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                   ButtonSegment(value: 'amex', label: Text('AMEX'), icon: Icon(Icons.credit_card)),
                   ButtonSegment(value: 'scarti', label: Text('Scarti'), icon: Icon(Icons.warning_amber)),
                   ButtonSegment(value: 'anagrafica', label: Text('Anagrafica'), icon: Icon(Icons.people)),
+                  ButtonSegment(value: 'trasferte_sap', label: Text('Trasferte SAP'), icon: Icon(Icons.flight_takeoff)),
                 ],
                 selected: {syncState.selectedSyncType},
                 onSelectionChanged: syncState.isSyncing

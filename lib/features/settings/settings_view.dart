@@ -47,9 +47,12 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
   final TextEditingController _spEstrattiAmexController = TextEditingController();
   final TextEditingController _spAnagraficaController = TextEditingController();
   final TextEditingController _spScartiTracciatoController = TextEditingController();
+  final TextEditingController _spTrasferteSapController = TextEditingController();
   final TextEditingController _proxyUrlController = TextEditingController();
   final TextEditingController _proxyUsernameController = TextEditingController();
   final TextEditingController _proxyPasswordController = TextEditingController();
+  final TextEditingController _amexFilterHeaderLabelController = TextEditingController();
+  final TextEditingController _amexFilterHeaderValueController = TextEditingController();
 
   bool? _proxyEnabled;
   bool? _proxyAutoConfig;
@@ -76,10 +79,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       _spEstrattiAmexController.text = settings.sharepointEstrattiAmexPath;
       _spAnagraficaController.text = settings.sharepointAnagraficaPath;
       _spScartiTracciatoController.text = settings.sharepointScartiTracciatoPath;
+      _spTrasferteSapController.text = settings.sharepointTrasferteSapPath.isEmpty ? 'trasferte_sap' : settings.sharepointTrasferteSapPath;
       
       _proxyUrlController.text = settings.customProxyUrl;
       _proxyUsernameController.text = settings.proxyUsername;
       _proxyPasswordController.text = settings.proxyPassword;
+      _amexFilterHeaderLabelController.text = settings.amexFilterHeaderLabel.isEmpty ? 'Categ. transazione' : settings.amexFilterHeaderLabel;
+      _amexFilterHeaderValueController.text = settings.amexFilterHeaderValue.isEmpty ? 'Nuovi addebiti' : settings.amexFilterHeaderValue;
     });
   }
 
@@ -95,9 +101,12 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
     _spEstrattiAmexController.dispose();
     _spAnagraficaController.dispose();
     _spScartiTracciatoController.dispose();
+    _spTrasferteSapController.dispose();
     _proxyUrlController.dispose();
     _proxyUsernameController.dispose();
     _proxyPasswordController.dispose();
+    _amexFilterHeaderLabelController.dispose();
+    _amexFilterHeaderValueController.dispose();
     super.dispose();
   }
 
@@ -495,6 +504,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
             _buildAutoSyncSettingsCard(context, appSettings),
             const SizedBox(height: 24),
             _buildRemoteSyncCard(context, appSettings),
+            const SizedBox(height: 24),
+            _buildAmexFilterCard(context, appSettings),
           ],
         );
       case 1:
@@ -1527,6 +1538,23 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               ),
             ],
           ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                child: _buildSharepointFolderField(
+                  label: 'Cartella Trasferte SAP',
+                  controller: _spTrasferteSapController,
+                  hintText: 'Es: General/TrasferteSap',
+                  icon: Icons.flight_takeoff_outlined,
+                ),
+              ),
+              const SizedBox(width: 24),
+              const Expanded(
+                child: SizedBox.shrink(),
+              ),
+            ],
+          ),
           const SizedBox(height: 28),
           SizedBox(
             width: double.infinity,
@@ -1542,6 +1570,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   estrattiAmexPath: _spEstrattiAmexController.text.trim(),
                   anagraficaPath: _spAnagraficaController.text.trim(),
                   scartiTracciatoPath: _spScartiTracciatoController.text.trim(),
+                  trasferteSapPath: _spTrasferteSapController.text.trim(),
                 );
                 if (context.mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -1562,6 +1591,150 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
               icon: const Icon(Icons.save_outlined),
               label: const Text(
                 'Salva Impostazioni SharePoint',
+                style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: SkyTheme.timBlue,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildAmexFilterCard(BuildContext context, AppSettings settings) {
+    return Container(
+      padding: const EdgeInsets.all(28),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade200),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withAlpha(8),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'REGOLA FILTRO IMPORTAZIONE ESTRATTI AMEX',
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.bold,
+              color: SkyTheme.timBlue,
+              letterSpacing: 1.0,
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Imposta la colonna e il valore da mantenere durante l\'importazione degli estratti AMEX. Le righe non corrispondenti verranno scartate.',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
+          const SizedBox(height: 24),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Label Colonna (es. Categ. transazione)',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _amexFilterHeaderLabelController,
+                      decoration: InputDecoration(
+                        hintText: 'Es: Categ. transazione',
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: SkyTheme.timBlue, width: 1.5),
+                        ),
+                        prefixIcon: const Icon(Icons.label_outline, size: 20, color: SkyTheme.timBlue),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 24),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Valore da mantenere (es. Nuovi addebiti)',
+                      style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 8),
+                    TextField(
+                      controller: _amexFilterHeaderValueController,
+                      decoration: InputDecoration(
+                        hintText: 'Es: Nuovi addebiti',
+                        filled: true,
+                        fillColor: Colors.grey.shade50,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(color: Colors.grey.shade300),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: const BorderSide(color: SkyTheme.timBlue, width: 1.5),
+                        ),
+                        prefixIcon: const Icon(Icons.filter_alt_outlined, size: 20, color: SkyTheme.timBlue),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 28),
+          SizedBox(
+            width: double.infinity,
+            height: 48,
+            child: ElevatedButton.icon(
+              onPressed: () async {
+                await ref.read(appSettingsProvider.notifier).updateAmexFilterSettings(
+                  label: _amexFilterHeaderLabelController.text.trim(),
+                  value: _amexFilterHeaderValueController.text.trim(),
+                );
+                if (context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: const [
+                          Icon(Icons.check_circle, color: Colors.white),
+                          SizedBox(width: 12),
+                          Text('Regola filtro AMEX salvata con successo!'),
+                        ],
+                      ),
+                      backgroundColor: Colors.green.shade700,
+                      behavior: SnackBarBehavior.floating,
+                    ),
+                  );
+                }
+              },
+              icon: const Icon(Icons.save_outlined),
+              label: const Text(
+                'Salva Regola Filtro AMEX',
                 style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
               ),
               style: ElevatedButton.styleFrom(

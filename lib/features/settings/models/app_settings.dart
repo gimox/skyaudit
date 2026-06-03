@@ -23,6 +23,7 @@ class AppSettings {
   String sharepointEstrattiAmexPath = 'estratti_amex';
   String sharepointAnagraficaPath = 'anagrafica';
   String sharepointScartiTracciatoPath = 'scarti_tracciato';
+  String sharepointTrasferteSapPath = 'trasferte_sap';
 
   // Network & Proxy Settings
   bool proxyEnabled = false;
@@ -31,4 +32,8 @@ class AppSettings {
   bool bypassSslVerification = true;
   String proxyUsername = '';
   String proxyPassword = '';
+
+  // Amex Filter Settings
+  String amexFilterHeaderLabel = 'Categ. transazione';
+  String amexFilterHeaderValue = 'Nuovi addebiti';
 }

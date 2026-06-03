@@ -13,6 +13,7 @@ import '../../upload/providers/estratto_amex_provider.dart';
 import '../../upload/providers/anagrafica_provider.dart';
 import '../../upload/providers/scarti_ec_sap_provider.dart';
 import '../../upload/providers/log_history_provider.dart';
+import '../../upload/providers/trasferte_sap_provider.dart';
 import '../../upload/models/tracciato_contabile.dart';
 import '../../upload/models/tracciato_sap.dart';
 import '../../upload/models/estratto_conto.dart';
@@ -20,6 +21,7 @@ import '../../upload/models/estratto_amex.dart';
 import '../../upload/models/anagrafica.dart';
 import '../../upload/models/scarti_ec_sap.dart';
 import '../../upload/models/log_history.dart';
+import '../../upload/models/trasferte_sap.dart';
 import '../services/sharepoint_service.dart';
 import '../models/sync_state.dart';
 
@@ -83,6 +85,8 @@ class SyncNotifier extends StateNotifier<SyncState> {
       syncName = 'Anagrafica';
     } else if (syncType == 'scarti') {
       syncName = 'Scarti Tracciato';
+    } else if (syncType == 'trasferte_sap') {
+      syncName = 'Trasferte SAP';
     }
 
     _log('[$syncName] Inizio elaborazione file: ${file.name}...');
@@ -188,6 +192,8 @@ class SyncNotifier extends StateNotifier<SyncState> {
           result = await _ref.read(anagraficaProvider.notifier).loadFromFile(xFile);
         } else if (syncType == 'scarti') {
           result = await _ref.read(scartiEcSapProvider.notifier).loadFromFile(xFile);
+        } else if (syncType == 'trasferte_sap') {
+          result = await _ref.read(trasferteSapProvider.notifier).loadFromFile(xFile);
         }
 
         importedRecords = result['inserted'] as int? ?? 0;
@@ -242,7 +248,7 @@ class SyncNotifier extends StateNotifier<SyncState> {
 
       List<String> typesToSync = [];
       if (state.selectedSyncType == 'all') {
-        typesToSync = ['contabile', 'conto', 'sap', 'amex', 'scarti', 'anagrafica'];
+        typesToSync = ['contabile', 'conto', 'sap', 'amex', 'scarti', 'anagrafica', 'trasferte_sap'];
       } else {
         typesToSync = [state.selectedSyncType];
       }
@@ -274,6 +280,9 @@ class SyncNotifier extends StateNotifier<SyncState> {
           } else if (type == 'scarti') {
             await _ref.read(scartiEcSapProvider.notifier).clear();
             sourceType = 'Scarti EC SAP';
+          } else if (type == 'trasferte_sap') {
+            await _ref.read(trasferteSapProvider.notifier).clear();
+            sourceType = 'Trasferte SAP';
           }
           
           await isar.writeTxn(() async {
@@ -291,6 +300,7 @@ class SyncNotifier extends StateNotifier<SyncState> {
         _ref.invalidate(estrattoAmexProvider);
         _ref.invalidate(anagraficaProvider);
         _ref.invalidate(scartiEcSapProvider);
+        _ref.invalidate(trasferteSapProvider);
         _ref.invalidate(logHistoryProvider);
         
         _log('Database locale e cronologia per i tipi selezionati puliti con successo.');
@@ -339,94 +349,104 @@ class SyncNotifier extends StateNotifier<SyncState> {
           allowedExtensions = ['.xlsx'];
           syncName = 'Scarti Tracciato';
           sourceType = 'Scarti EC SAP';
+        } else if (type == 'trasferte_sap') {
+          folderPath = settings.sharepointTrasferteSapPath.isEmpty ? 'trasferte_sap' : settings.sharepointTrasferteSapPath;
+          allowedExtensions = ['.xlsx'];
+          syncName = 'Trasferte SAP';
+          sourceType = 'Trasferte SAP';
         }
 
-        _log('[$syncName] Ricerca dei file in corso in "/$folderPath"...');
-        
-        final sharepointFiles = await _sharePointService.listFiles(
-          accessToken: token,
-          siteName: settings.sharepointSiteName,
-          documentLibrary: settings.sharepointDocumentLibrary,
-          folderPath: folderPath,
-          allowedExtensions: allowedExtensions,
-        );
-
-        _log('[$syncName] Rilevati ${sharepointFiles.length} file su SharePoint.');
-
-        // Filtro delta logic
-        final existingLogs = await isar.logHistorys.filter()
-            .sourceTypeEqualTo(sourceType)
-            .or()
-            .sourceTypeEqualTo(sourceType == 'Tracciato Contabile' ? 'contabile' : sourceType)
-            .findAll();
-
-        if (state.alignWithRemote) {
-          final remoteFileNames = sharepointFiles.map((f) => f.name).toSet();
-          final logsToDelete = existingLogs.where((log) => !remoteFileNames.contains(log.fileName)).toList();
+        try {
+          _log('[$syncName] Ricerca dei file in corso in "/$folderPath"...');
           
-          if (logsToDelete.isNotEmpty) {
-            _log('[$syncName] Allineamento con SharePoint: rilevati ${logsToDelete.length} file locali non più presenti in remoto. Rimozione in corso...');
-            await isar.writeTxn(() async {
-              for (final log in logsToDelete) {
-                _log('[$syncName] Rimozione record per il file: ${log.fileName} (Codice: ${log.uniqueCode})...');
-                final uniqueCode = log.uniqueCode;
-                
-                await isar.logHistorys.filter().uniqueCodeEqualTo(uniqueCode).deleteAll();
-                await isar.tracciatoContabiles.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
-                await isar.tracciatoSaps.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
-                await isar.estrattoContos.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
-                await isar.estrattoAmexs.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
-                await isar.anagraficas.filter().importBatchEqualTo(uniqueCode).deleteAll();
-                await isar.scartiEcSaps.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
-              }
-            });
-            _log('[$syncName] Allineamento completato: rimossi record per ${logsToDelete.length} file.');
+          final sharepointFiles = await _sharePointService.listFiles(
+            accessToken: token,
+            siteName: settings.sharepointSiteName,
+            documentLibrary: settings.sharepointDocumentLibrary,
+            folderPath: folderPath,
+            allowedExtensions: allowedExtensions,
+          );
+
+          _log('[$syncName] Rilevati ${sharepointFiles.length} file su SharePoint.');
+
+          // Filtro delta logic
+          final existingLogs = await isar.logHistorys.filter()
+              .sourceTypeEqualTo(sourceType)
+              .or()
+              .sourceTypeEqualTo(sourceType == 'Tracciato Contabile' ? 'contabile' : sourceType)
+              .findAll();
+
+          if (state.alignWithRemote) {
+            final remoteFileNames = sharepointFiles.map((f) => f.name).toSet();
+            final logsToDelete = existingLogs.where((log) => !remoteFileNames.contains(log.fileName)).toList();
             
-            // Ricarica la lista dei log locali dopo l'eliminazione
-            existingLogs.clear();
-            existingLogs.addAll(await isar.logHistorys.filter()
-                .sourceTypeEqualTo(sourceType)
-                .or()
-                .sourceTypeEqualTo(sourceType == 'Tracciato Contabile' ? 'contabile' : sourceType)
-                .findAll());
-          }
-        }
-
-        List<SharePointFile> filesToQueue = sharepointFiles;
-        if (type == 'anagrafica' && sharepointFiles.isNotEmpty) {
-          // Ordina per data di ultima modifica decrescente (il più recente per primo)
-          sharepointFiles.sort((a, b) => b.lastModified.compareTo(a.lastModified));
-          filesToQueue = [sharepointFiles.first];
-          _log('[$syncName] Modalità anagrafica: selezionato il file più recente: ${sharepointFiles.first.name} (${sharepointFiles.first.lastModified.toLocal()})');
-        }
-
-        for (final file in filesToQueue) {
-          final fileLogs = existingLogs.where((log) => log.fileName == file.name).toList();
-          
-          bool isAlreadyImported = false;
-          int importedRecordsCount = 0;
-          
-          if (fileLogs.isNotEmpty && !state.clearBeforeSync) {
-            fileLogs.sort((a, b) => b.date.compareTo(a.date));
-            final lastLog = fileLogs.first;
-            
-            // Il file è considerato già importato solo se non è stato modificato su SharePoint
-            // dopo la sua ultima importazione locale (+5 secondi di tolleranza)
-            if (!file.lastModified.isAfter(lastLog.date.add(const Duration(seconds: 5)))) {
-              isAlreadyImported = true;
-              importedRecordsCount = lastLog.insertedRecords;
+            if (logsToDelete.isNotEmpty) {
+              _log('[$syncName] Allineamento con SharePoint: rilevati ${logsToDelete.length} file locali non più presenti in remoto. Rimozione in corso...');
+              await isar.writeTxn(() async {
+                for (final log in logsToDelete) {
+                  _log('[$syncName] Rimozione record per il file: ${log.fileName} (Codice: ${log.uniqueCode})...');
+                  final uniqueCode = log.uniqueCode;
+                  
+                  await isar.logHistorys.filter().uniqueCodeEqualTo(uniqueCode).deleteAll();
+                  await isar.tracciatoContabiles.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                  await isar.tracciatoSaps.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                  await isar.estrattoContos.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                  await isar.estrattoAmexs.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                  await isar.anagraficas.filter().importBatchEqualTo(uniqueCode).deleteAll();
+                  await isar.scartiEcSaps.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                  await isar.trasferteSaps.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                }
+              });
+              _log('[$syncName] Allineamento completato: rimossi record per ${logsToDelete.length} file.');
+              
+              // Ricarica la lista dei log locali dopo l'eliminazione
+              existingLogs.clear();
+              existingLogs.addAll(await isar.logHistorys.filter()
+                  .sourceTypeEqualTo(sourceType)
+                  .or()
+                  .sourceTypeEqualTo(sourceType == 'Tracciato Contabile' ? 'contabile' : sourceType)
+                  .findAll());
             }
           }
-          
-          tempQueue.add({
-            'file': file,
-            'syncType': type,
-            'syncName': syncName,
-            'sourceType': sourceType,
-            'status': isAlreadyImported ? 'completed' : 'pending',
-            'records': isAlreadyImported ? importedRecordsCount : 0,
-            'isDeltaSkipped': isAlreadyImported,
-          });
+
+          List<SharePointFile> filesToQueue = sharepointFiles;
+          if (type == 'anagrafica' && sharepointFiles.isNotEmpty) {
+            // Ordina per data di ultima modifica decrescente (il più recente per primo)
+            sharepointFiles.sort((a, b) => b.lastModified.compareTo(a.lastModified));
+            filesToQueue = [sharepointFiles.first];
+            _log('[$syncName] Modalità anagrafica: selezionato il file più recente: ${sharepointFiles.first.name} (${sharepointFiles.first.lastModified.toLocal()})');
+          }
+
+          for (final file in filesToQueue) {
+            final fileLogs = existingLogs.where((log) => log.fileName == file.name).toList();
+            
+            bool isAlreadyImported = false;
+            int importedRecordsCount = 0;
+            
+            if (fileLogs.isNotEmpty && !state.clearBeforeSync) {
+              fileLogs.sort((a, b) => b.date.compareTo(a.date));
+              final lastLog = fileLogs.first;
+              
+              // Il file è considerato già importato solo se non è stato modificato su SharePoint
+              // dopo la sua ultima importazione locale (+5 secondi di tolleranza)
+              if (!file.lastModified.isAfter(lastLog.date.add(const Duration(seconds: 5)))) {
+                isAlreadyImported = true;
+                importedRecordsCount = lastLog.insertedRecords;
+              }
+            }
+            
+            tempQueue.add({
+              'file': file,
+              'syncType': type,
+              'syncName': syncName,
+              'sourceType': sourceType,
+              'status': isAlreadyImported ? 'completed' : 'pending',
+              'records': isAlreadyImported ? importedRecordsCount : 0,
+              'isDeltaSkipped': isAlreadyImported,
+            });
+          }
+        } catch (err) {
+          _log('[$syncName] Cartella non trovata o errore di accesso su SharePoint ("/$folderPath"). Sincronizzazione saltata per questo tipo.');
         }
       }
 

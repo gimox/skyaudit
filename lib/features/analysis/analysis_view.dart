@@ -1263,16 +1263,66 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
         for (var a in anagrafiche)
           if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
       };
+      final unitaOrgMap = {
+        for (var a in anagrafiche)
+          if (a.cid != null) a.cid!.trim(): a.unitaOrganizzativa ?? ''
+      };
+
+      final dictionaries = ref.read(dictionaryProvider);
+      final dictMap = {
+        for (final d in dictionaries) d.code.trim().toUpperCase(): d.value
+      };
+
+      final sapRecords = ref.read(trasferteSapProvider);
+      final sapTrasferte = sapRecords
+          .map((r) => r.numeroTrasferta.trim())
+          .where((t) => t.isNotEmpty)
+          .toSet();
+
+      // STILI
+      final headerStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#003399'), // TIM Blue
+        fontColorHex: ExcelColor.fromHexString('#FFFFFF'),
+        bold: true,
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final okStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#D4EDDA'), // Light green
+        fontColorHex: ExcelColor.fromHexString('#155724'), // Dark green
+      );
+
+      final okAmountStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#D4EDDA'),
+        fontColorHex: ExcelColor.fromHexString('#155724'),
+        horizontalAlign: HorizontalAlign.Right,
+      );
+
+      final koStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#F8D7DA'), // Light red
+        fontColorHex: ExcelColor.fromHexString('#721C24'), // Dark red
+      );
+
+      final koAmountStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#F8D7DA'),
+        fontColorHex: ExcelColor.fromHexString('#721C24'),
+        horizontalAlign: HorizontalAlign.Right,
+      );
 
       // Header
       sheet.appendRow([
         TextCellValue('CID'),
         TextCellValue('Nominativo'),
+        TextCellValue('Unità Org.'),
         TextCellValue('Trasferta'),
         TextCellValue('Progressivo'),
         TextCellValue('Società'),
+        TextCellValue('Nome Società'),
         TextCellValue('Tipo Dipendente'),
+        TextCellValue('Descrizione Tipo Dipendente'),
         TextCellValue('Giustificativo Spesa'),
+        TextCellValue('Descrizione Giustificativo'),
         TextCellValue('Numero Bolla'),
         TextCellValue('Data Spesa'),
         TextCellValue('Località'),
@@ -1284,19 +1334,35 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
         TextCellValue('Importo'),
         TextCellValue('Valuta'),
         TextCellValue('Segno'),
+        TextCellValue('Stato Riscontro'),
       ]);
 
       // Dati
       for (final r in records) {
         final amountValue = r.isNegative ? -r.importo : r.importo;
+        final isMatched = sapTrasferte.contains(r.numeroTrasferta.trim());
+        
+        final socCode = r.societa.trim().toUpperCase();
+        final socName = dictMap[socCode] ?? '';
+
+        final tdCode = r.tipoDipendente.trim().toUpperCase();
+        final tdDesc = dictMap[tdCode] ?? '';
+
+        final giustCode = r.giustificativoSpesa.trim().toUpperCase();
+        final giustDesc = dictMap[giustCode] ?? '';
+
         sheet.appendRow([
           TextCellValue(r.cid),
           TextCellValue(anagraficheMap[r.cid.trim()] ?? ''),
+          TextCellValue(unitaOrgMap[r.cid.trim()] ?? ''),
           TextCellValue(r.numeroTrasferta),
           TextCellValue(r.progressivo),
           TextCellValue(r.societa),
+          TextCellValue(socName),
           TextCellValue(r.tipoDipendente),
+          TextCellValue(tdDesc),
           TextCellValue(r.giustificativoSpesa),
+          TextCellValue(giustDesc),
           TextCellValue(r.numeroBolla),
           TextCellValue(r.dataSpesa),
           TextCellValue(r.localita),
@@ -1308,8 +1374,59 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
           DoubleCellValue(amountValue),
           TextCellValue(r.valuta),
           TextCellValue(r.isNegative ? 'R' : ''),
+          TextCellValue(isMatched ? 'RISCONTRATO' : 'NON RISCONTRATO'),
         ]);
       }
+
+      // Applica stili alle righe
+      const colCount = 23;
+      for (var col = 0; col < colCount; col++) {
+        final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+        cell.cellStyle = headerStyle;
+      }
+      sheet.setRowHeight(0, 30);
+
+      int rowIndex = 1;
+      for (final r in records) {
+        final isMatched = sapTrasferte.contains(r.numeroTrasferta.trim());
+        final rowStyle = isMatched ? okStyle : koStyle;
+        final amountStyle = isMatched ? okAmountStyle : koAmountStyle;
+
+        for (var col = 0; col < colCount; col++) {
+          final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: rowIndex));
+          if (col == 19) { // Column per Importo
+            cell.cellStyle = amountStyle;
+          } else {
+            cell.cellStyle = rowStyle;
+          }
+        }
+        rowIndex++;
+      }
+
+      // Imposta larghezza colonne
+      sheet.setColumnWidth(0, 12);  // CID
+      sheet.setColumnWidth(1, 25);  // Nominativo
+      sheet.setColumnWidth(2, 25);  // Unità Org.
+      sheet.setColumnWidth(3, 15);  // Trasferta
+      sheet.setColumnWidth(4, 12);  // Progressivo
+      sheet.setColumnWidth(5, 10);  // Società
+      sheet.setColumnWidth(6, 25);  // Nome Società
+      sheet.setColumnWidth(7, 15);  // Tipo Dipendente
+      sheet.setColumnWidth(8, 25);  // Descrizione Tipo Dipendente
+      sheet.setColumnWidth(9, 15);  // Giustificativo Spesa
+      sheet.setColumnWidth(10, 30); // Descrizione Giustificativo
+      sheet.setColumnWidth(11, 15); // Numero Bolla
+      sheet.setColumnWidth(12, 15); // Data Spesa
+      sheet.setColumnWidth(13, 35); // Località
+      sheet.setColumnWidth(14, 15); // Data Inizio
+      sheet.setColumnWidth(15, 12); // Ora Inizio
+      sheet.setColumnWidth(16, 15); // Data Fine
+      sheet.setColumnWidth(17, 12); // Ora Fine
+      sheet.setColumnWidth(18, 12); // Tipo Attività
+      sheet.setColumnWidth(19, 15); // Importo
+      sheet.setColumnWidth(20, 10); // Valuta
+      sheet.setColumnWidth(21, 10); // Segno
+      sheet.setColumnWidth(22, 20); // Stato Riscontro
 
       final fileBytes = excel.encode();
       if (fileBytes == null) return;

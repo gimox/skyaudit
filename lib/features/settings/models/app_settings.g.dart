@@ -22,93 +22,108 @@ const AppSettingsSchema = CollectionSchema(
       name: r'alignWithRemote',
       type: IsarType.bool,
     ),
-    r'bypassSslVerification': PropertySchema(
+    r'amexFilterHeaderLabel': PropertySchema(
       id: 1,
+      name: r'amexFilterHeaderLabel',
+      type: IsarType.string,
+    ),
+    r'amexFilterHeaderValue': PropertySchema(
+      id: 2,
+      name: r'amexFilterHeaderValue',
+      type: IsarType.string,
+    ),
+    r'bypassSslVerification': PropertySchema(
+      id: 3,
       name: r'bypassSslVerification',
       type: IsarType.bool,
     ),
     r'clearBeforeSync': PropertySchema(
-      id: 2,
+      id: 4,
       name: r'clearBeforeSync',
       type: IsarType.bool,
     ),
     r'customProxyUrl': PropertySchema(
-      id: 3,
+      id: 5,
       name: r'customProxyUrl',
       type: IsarType.string,
     ),
     r'discardIdenticalBolla': PropertySchema(
-      id: 4,
+      id: 6,
       name: r'discardIdenticalBolla',
       type: IsarType.bool,
     ),
     r'lastSyncTime': PropertySchema(
-      id: 5,
+      id: 7,
       name: r'lastSyncTime',
       type: IsarType.dateTime,
     ),
     r'proxyAutoConfig': PropertySchema(
-      id: 6,
+      id: 8,
       name: r'proxyAutoConfig',
       type: IsarType.bool,
     ),
     r'proxyEnabled': PropertySchema(
-      id: 7,
+      id: 9,
       name: r'proxyEnabled',
       type: IsarType.bool,
     ),
     r'proxyPassword': PropertySchema(
-      id: 8,
+      id: 10,
       name: r'proxyPassword',
       type: IsarType.string,
     ),
     r'proxyUsername': PropertySchema(
-      id: 9,
+      id: 11,
       name: r'proxyUsername',
       type: IsarType.string,
     ),
     r'sharepointAnagraficaPath': PropertySchema(
-      id: 10,
+      id: 12,
       name: r'sharepointAnagraficaPath',
       type: IsarType.string,
     ),
     r'sharepointDocumentLibrary': PropertySchema(
-      id: 11,
+      id: 13,
       name: r'sharepointDocumentLibrary',
       type: IsarType.string,
     ),
     r'sharepointEstrattiAmexPath': PropertySchema(
-      id: 12,
+      id: 14,
       name: r'sharepointEstrattiAmexPath',
       type: IsarType.string,
     ),
     r'sharepointEstrattiContoPath': PropertySchema(
-      id: 13,
+      id: 15,
       name: r'sharepointEstrattiContoPath',
       type: IsarType.string,
     ),
     r'sharepointFolderPath': PropertySchema(
-      id: 14,
+      id: 16,
       name: r'sharepointFolderPath',
       type: IsarType.string,
     ),
     r'sharepointScartiTracciatoPath': PropertySchema(
-      id: 15,
+      id: 17,
       name: r'sharepointScartiTracciatoPath',
       type: IsarType.string,
     ),
     r'sharepointSiteName': PropertySchema(
-      id: 16,
+      id: 18,
       name: r'sharepointSiteName',
       type: IsarType.string,
     ),
     r'sharepointTracciatoSapPath': PropertySchema(
-      id: 17,
+      id: 19,
       name: r'sharepointTracciatoSapPath',
       type: IsarType.string,
     ),
+    r'sharepointTrasferteSapPath': PropertySchema(
+      id: 20,
+      name: r'sharepointTrasferteSapPath',
+      type: IsarType.string,
+    ),
     r'syncOnStartup': PropertySchema(
-      id: 18,
+      id: 21,
       name: r'syncOnStartup',
       type: IsarType.bool,
     )
@@ -133,6 +148,8 @@ int _appSettingsEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.amexFilterHeaderLabel.length * 3;
+  bytesCount += 3 + object.amexFilterHeaderValue.length * 3;
   bytesCount += 3 + object.customProxyUrl.length * 3;
   bytesCount += 3 + object.proxyPassword.length * 3;
   bytesCount += 3 + object.proxyUsername.length * 3;
@@ -144,6 +161,7 @@ int _appSettingsEstimateSize(
   bytesCount += 3 + object.sharepointScartiTracciatoPath.length * 3;
   bytesCount += 3 + object.sharepointSiteName.length * 3;
   bytesCount += 3 + object.sharepointTracciatoSapPath.length * 3;
+  bytesCount += 3 + object.sharepointTrasferteSapPath.length * 3;
   return bytesCount;
 }
 
@@ -154,24 +172,27 @@ void _appSettingsSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeBool(offsets[0], object.alignWithRemote);
-  writer.writeBool(offsets[1], object.bypassSslVerification);
-  writer.writeBool(offsets[2], object.clearBeforeSync);
-  writer.writeString(offsets[3], object.customProxyUrl);
-  writer.writeBool(offsets[4], object.discardIdenticalBolla);
-  writer.writeDateTime(offsets[5], object.lastSyncTime);
-  writer.writeBool(offsets[6], object.proxyAutoConfig);
-  writer.writeBool(offsets[7], object.proxyEnabled);
-  writer.writeString(offsets[8], object.proxyPassword);
-  writer.writeString(offsets[9], object.proxyUsername);
-  writer.writeString(offsets[10], object.sharepointAnagraficaPath);
-  writer.writeString(offsets[11], object.sharepointDocumentLibrary);
-  writer.writeString(offsets[12], object.sharepointEstrattiAmexPath);
-  writer.writeString(offsets[13], object.sharepointEstrattiContoPath);
-  writer.writeString(offsets[14], object.sharepointFolderPath);
-  writer.writeString(offsets[15], object.sharepointScartiTracciatoPath);
-  writer.writeString(offsets[16], object.sharepointSiteName);
-  writer.writeString(offsets[17], object.sharepointTracciatoSapPath);
-  writer.writeBool(offsets[18], object.syncOnStartup);
+  writer.writeString(offsets[1], object.amexFilterHeaderLabel);
+  writer.writeString(offsets[2], object.amexFilterHeaderValue);
+  writer.writeBool(offsets[3], object.bypassSslVerification);
+  writer.writeBool(offsets[4], object.clearBeforeSync);
+  writer.writeString(offsets[5], object.customProxyUrl);
+  writer.writeBool(offsets[6], object.discardIdenticalBolla);
+  writer.writeDateTime(offsets[7], object.lastSyncTime);
+  writer.writeBool(offsets[8], object.proxyAutoConfig);
+  writer.writeBool(offsets[9], object.proxyEnabled);
+  writer.writeString(offsets[10], object.proxyPassword);
+  writer.writeString(offsets[11], object.proxyUsername);
+  writer.writeString(offsets[12], object.sharepointAnagraficaPath);
+  writer.writeString(offsets[13], object.sharepointDocumentLibrary);
+  writer.writeString(offsets[14], object.sharepointEstrattiAmexPath);
+  writer.writeString(offsets[15], object.sharepointEstrattiContoPath);
+  writer.writeString(offsets[16], object.sharepointFolderPath);
+  writer.writeString(offsets[17], object.sharepointScartiTracciatoPath);
+  writer.writeString(offsets[18], object.sharepointSiteName);
+  writer.writeString(offsets[19], object.sharepointTracciatoSapPath);
+  writer.writeString(offsets[20], object.sharepointTrasferteSapPath);
+  writer.writeBool(offsets[21], object.syncOnStartup);
 }
 
 AppSettings _appSettingsDeserialize(
@@ -182,25 +203,28 @@ AppSettings _appSettingsDeserialize(
 ) {
   final object = AppSettings();
   object.alignWithRemote = reader.readBool(offsets[0]);
-  object.bypassSslVerification = reader.readBool(offsets[1]);
-  object.clearBeforeSync = reader.readBool(offsets[2]);
-  object.customProxyUrl = reader.readString(offsets[3]);
-  object.discardIdenticalBolla = reader.readBool(offsets[4]);
+  object.amexFilterHeaderLabel = reader.readString(offsets[1]);
+  object.amexFilterHeaderValue = reader.readString(offsets[2]);
+  object.bypassSslVerification = reader.readBool(offsets[3]);
+  object.clearBeforeSync = reader.readBool(offsets[4]);
+  object.customProxyUrl = reader.readString(offsets[5]);
+  object.discardIdenticalBolla = reader.readBool(offsets[6]);
   object.id = id;
-  object.lastSyncTime = reader.readDateTimeOrNull(offsets[5]);
-  object.proxyAutoConfig = reader.readBool(offsets[6]);
-  object.proxyEnabled = reader.readBool(offsets[7]);
-  object.proxyPassword = reader.readString(offsets[8]);
-  object.proxyUsername = reader.readString(offsets[9]);
-  object.sharepointAnagraficaPath = reader.readString(offsets[10]);
-  object.sharepointDocumentLibrary = reader.readString(offsets[11]);
-  object.sharepointEstrattiAmexPath = reader.readString(offsets[12]);
-  object.sharepointEstrattiContoPath = reader.readString(offsets[13]);
-  object.sharepointFolderPath = reader.readString(offsets[14]);
-  object.sharepointScartiTracciatoPath = reader.readString(offsets[15]);
-  object.sharepointSiteName = reader.readString(offsets[16]);
-  object.sharepointTracciatoSapPath = reader.readString(offsets[17]);
-  object.syncOnStartup = reader.readBool(offsets[18]);
+  object.lastSyncTime = reader.readDateTimeOrNull(offsets[7]);
+  object.proxyAutoConfig = reader.readBool(offsets[8]);
+  object.proxyEnabled = reader.readBool(offsets[9]);
+  object.proxyPassword = reader.readString(offsets[10]);
+  object.proxyUsername = reader.readString(offsets[11]);
+  object.sharepointAnagraficaPath = reader.readString(offsets[12]);
+  object.sharepointDocumentLibrary = reader.readString(offsets[13]);
+  object.sharepointEstrattiAmexPath = reader.readString(offsets[14]);
+  object.sharepointEstrattiContoPath = reader.readString(offsets[15]);
+  object.sharepointFolderPath = reader.readString(offsets[16]);
+  object.sharepointScartiTracciatoPath = reader.readString(offsets[17]);
+  object.sharepointSiteName = reader.readString(offsets[18]);
+  object.sharepointTracciatoSapPath = reader.readString(offsets[19]);
+  object.sharepointTrasferteSapPath = reader.readString(offsets[20]);
+  object.syncOnStartup = reader.readBool(offsets[21]);
   return object;
 }
 
@@ -214,23 +238,23 @@ P _appSettingsDeserializeProp<P>(
     case 0:
       return (reader.readBool(offset)) as P;
     case 1:
-      return (reader.readBool(offset)) as P;
-    case 2:
-      return (reader.readBool(offset)) as P;
-    case 3:
       return (reader.readString(offset)) as P;
+    case 2:
+      return (reader.readString(offset)) as P;
+    case 3:
+      return (reader.readBool(offset)) as P;
     case 4:
       return (reader.readBool(offset)) as P;
     case 5:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 6:
       return (reader.readBool(offset)) as P;
     case 7:
-      return (reader.readBool(offset)) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 8:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 9:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 10:
       return (reader.readString(offset)) as P;
     case 11:
@@ -248,6 +272,12 @@ P _appSettingsDeserializeProp<P>(
     case 17:
       return (reader.readString(offset)) as P;
     case 18:
+      return (reader.readString(offset)) as P;
+    case 19:
+      return (reader.readString(offset)) as P;
+    case 20:
+      return (reader.readString(offset)) as P;
+    case 21:
       return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -353,6 +383,280 @@ extension AppSettingsQueryFilter
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'alignWithRemote',
         value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderLabelEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'amexFilterHeaderLabel',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderLabelGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'amexFilterHeaderLabel',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderLabelLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'amexFilterHeaderLabel',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderLabelBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'amexFilterHeaderLabel',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderLabelStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'amexFilterHeaderLabel',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderLabelEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'amexFilterHeaderLabel',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderLabelContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'amexFilterHeaderLabel',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderLabelMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'amexFilterHeaderLabel',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderLabelIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'amexFilterHeaderLabel',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderLabelIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'amexFilterHeaderLabel',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderValueEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'amexFilterHeaderValue',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderValueGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'amexFilterHeaderValue',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderValueLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'amexFilterHeaderValue',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderValueBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'amexFilterHeaderValue',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderValueStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'amexFilterHeaderValue',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderValueEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'amexFilterHeaderValue',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderValueContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'amexFilterHeaderValue',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderValueMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'amexFilterHeaderValue',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderValueIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'amexFilterHeaderValue',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      amexFilterHeaderValueIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'amexFilterHeaderValue',
+        value: '',
       ));
     });
   }
@@ -2043,6 +2347,144 @@ extension AppSettingsQueryFilter
   }
 
   QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      sharepointTrasferteSapPathEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sharepointTrasferteSapPath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      sharepointTrasferteSapPathGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'sharepointTrasferteSapPath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      sharepointTrasferteSapPathLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'sharepointTrasferteSapPath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      sharepointTrasferteSapPathBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'sharepointTrasferteSapPath',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      sharepointTrasferteSapPathStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'sharepointTrasferteSapPath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      sharepointTrasferteSapPathEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'sharepointTrasferteSapPath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      sharepointTrasferteSapPathContains(String value,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'sharepointTrasferteSapPath',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      sharepointTrasferteSapPathMatches(String pattern,
+          {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'sharepointTrasferteSapPath',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      sharepointTrasferteSapPathIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'sharepointTrasferteSapPath',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      sharepointTrasferteSapPathIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'sharepointTrasferteSapPath',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
       syncOnStartupEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -2071,6 +2513,34 @@ extension AppSettingsQuerySortBy
       sortByAlignWithRemoteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'alignWithRemote', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByAmexFilterHeaderLabel() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'amexFilterHeaderLabel', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByAmexFilterHeaderLabelDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'amexFilterHeaderLabel', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByAmexFilterHeaderValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'amexFilterHeaderValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByAmexFilterHeaderValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'amexFilterHeaderValue', Sort.desc);
     });
   }
 
@@ -2305,6 +2775,20 @@ extension AppSettingsQuerySortBy
     });
   }
 
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortBySharepointTrasferteSapPath() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sharepointTrasferteSapPath', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortBySharepointTrasferteSapPathDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sharepointTrasferteSapPath', Sort.desc);
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortBySyncOnStartup() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'syncOnStartup', Sort.asc);
@@ -2331,6 +2815,34 @@ extension AppSettingsQuerySortThenBy
       thenByAlignWithRemoteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'alignWithRemote', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByAmexFilterHeaderLabel() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'amexFilterHeaderLabel', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByAmexFilterHeaderLabelDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'amexFilterHeaderLabel', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByAmexFilterHeaderValue() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'amexFilterHeaderValue', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByAmexFilterHeaderValueDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'amexFilterHeaderValue', Sort.desc);
     });
   }
 
@@ -2577,6 +3089,20 @@ extension AppSettingsQuerySortThenBy
     });
   }
 
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenBySharepointTrasferteSapPath() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sharepointTrasferteSapPath', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenBySharepointTrasferteSapPathDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'sharepointTrasferteSapPath', Sort.desc);
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenBySyncOnStartup() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'syncOnStartup', Sort.asc);
@@ -2597,6 +3123,22 @@ extension AppSettingsQueryWhereDistinct
       distinctByAlignWithRemote() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'alignWithRemote');
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct>
+      distinctByAmexFilterHeaderLabel({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'amexFilterHeaderLabel',
+          caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QDistinct>
+      distinctByAmexFilterHeaderValue({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'amexFilterHeaderValue',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -2728,6 +3270,14 @@ extension AppSettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<AppSettings, AppSettings, QDistinct>
+      distinctBySharepointTrasferteSapPath({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'sharepointTrasferteSapPath',
+          caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QDistinct> distinctBySyncOnStartup() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'syncOnStartup');
@@ -2746,6 +3296,20 @@ extension AppSettingsQueryProperty
   QueryBuilder<AppSettings, bool, QQueryOperations> alignWithRemoteProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'alignWithRemote');
+    });
+  }
+
+  QueryBuilder<AppSettings, String, QQueryOperations>
+      amexFilterHeaderLabelProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'amexFilterHeaderLabel');
+    });
+  }
+
+  QueryBuilder<AppSettings, String, QQueryOperations>
+      amexFilterHeaderValueProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'amexFilterHeaderValue');
     });
   }
 
@@ -2859,6 +3423,13 @@ extension AppSettingsQueryProperty
       sharepointTracciatoSapPathProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'sharepointTracciatoSapPath');
+    });
+  }
+
+  QueryBuilder<AppSettings, String, QQueryOperations>
+      sharepointTrasferteSapPathProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'sharepointTrasferteSapPath');
     });
   }
 
