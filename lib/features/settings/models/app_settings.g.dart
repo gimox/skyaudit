@@ -27,83 +27,88 @@ const AppSettingsSchema = CollectionSchema(
       name: r'bypassSslVerification',
       type: IsarType.bool,
     ),
-    r'customProxyUrl': PropertySchema(
+    r'clearBeforeSync': PropertySchema(
       id: 2,
+      name: r'clearBeforeSync',
+      type: IsarType.bool,
+    ),
+    r'customProxyUrl': PropertySchema(
+      id: 3,
       name: r'customProxyUrl',
       type: IsarType.string,
     ),
     r'discardIdenticalBolla': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'discardIdenticalBolla',
       type: IsarType.bool,
     ),
     r'lastSyncTime': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'lastSyncTime',
       type: IsarType.dateTime,
     ),
     r'proxyAutoConfig': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'proxyAutoConfig',
       type: IsarType.bool,
     ),
     r'proxyEnabled': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'proxyEnabled',
       type: IsarType.bool,
     ),
     r'proxyPassword': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'proxyPassword',
       type: IsarType.string,
     ),
     r'proxyUsername': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'proxyUsername',
       type: IsarType.string,
     ),
     r'sharepointAnagraficaPath': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'sharepointAnagraficaPath',
       type: IsarType.string,
     ),
     r'sharepointDocumentLibrary': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'sharepointDocumentLibrary',
       type: IsarType.string,
     ),
     r'sharepointEstrattiAmexPath': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'sharepointEstrattiAmexPath',
       type: IsarType.string,
     ),
     r'sharepointEstrattiContoPath': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'sharepointEstrattiContoPath',
       type: IsarType.string,
     ),
     r'sharepointFolderPath': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'sharepointFolderPath',
       type: IsarType.string,
     ),
     r'sharepointScartiTracciatoPath': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'sharepointScartiTracciatoPath',
       type: IsarType.string,
     ),
     r'sharepointSiteName': PropertySchema(
-      id: 15,
+      id: 16,
       name: r'sharepointSiteName',
       type: IsarType.string,
     ),
     r'sharepointTracciatoSapPath': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'sharepointTracciatoSapPath',
       type: IsarType.string,
     ),
     r'syncOnStartup': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'syncOnStartup',
       type: IsarType.bool,
     )
@@ -150,22 +155,23 @@ void _appSettingsSerialize(
 ) {
   writer.writeBool(offsets[0], object.alignWithRemote);
   writer.writeBool(offsets[1], object.bypassSslVerification);
-  writer.writeString(offsets[2], object.customProxyUrl);
-  writer.writeBool(offsets[3], object.discardIdenticalBolla);
-  writer.writeDateTime(offsets[4], object.lastSyncTime);
-  writer.writeBool(offsets[5], object.proxyAutoConfig);
-  writer.writeBool(offsets[6], object.proxyEnabled);
-  writer.writeString(offsets[7], object.proxyPassword);
-  writer.writeString(offsets[8], object.proxyUsername);
-  writer.writeString(offsets[9], object.sharepointAnagraficaPath);
-  writer.writeString(offsets[10], object.sharepointDocumentLibrary);
-  writer.writeString(offsets[11], object.sharepointEstrattiAmexPath);
-  writer.writeString(offsets[12], object.sharepointEstrattiContoPath);
-  writer.writeString(offsets[13], object.sharepointFolderPath);
-  writer.writeString(offsets[14], object.sharepointScartiTracciatoPath);
-  writer.writeString(offsets[15], object.sharepointSiteName);
-  writer.writeString(offsets[16], object.sharepointTracciatoSapPath);
-  writer.writeBool(offsets[17], object.syncOnStartup);
+  writer.writeBool(offsets[2], object.clearBeforeSync);
+  writer.writeString(offsets[3], object.customProxyUrl);
+  writer.writeBool(offsets[4], object.discardIdenticalBolla);
+  writer.writeDateTime(offsets[5], object.lastSyncTime);
+  writer.writeBool(offsets[6], object.proxyAutoConfig);
+  writer.writeBool(offsets[7], object.proxyEnabled);
+  writer.writeString(offsets[8], object.proxyPassword);
+  writer.writeString(offsets[9], object.proxyUsername);
+  writer.writeString(offsets[10], object.sharepointAnagraficaPath);
+  writer.writeString(offsets[11], object.sharepointDocumentLibrary);
+  writer.writeString(offsets[12], object.sharepointEstrattiAmexPath);
+  writer.writeString(offsets[13], object.sharepointEstrattiContoPath);
+  writer.writeString(offsets[14], object.sharepointFolderPath);
+  writer.writeString(offsets[15], object.sharepointScartiTracciatoPath);
+  writer.writeString(offsets[16], object.sharepointSiteName);
+  writer.writeString(offsets[17], object.sharepointTracciatoSapPath);
+  writer.writeBool(offsets[18], object.syncOnStartup);
 }
 
 AppSettings _appSettingsDeserialize(
@@ -177,23 +183,24 @@ AppSettings _appSettingsDeserialize(
   final object = AppSettings();
   object.alignWithRemote = reader.readBool(offsets[0]);
   object.bypassSslVerification = reader.readBool(offsets[1]);
-  object.customProxyUrl = reader.readString(offsets[2]);
-  object.discardIdenticalBolla = reader.readBool(offsets[3]);
+  object.clearBeforeSync = reader.readBool(offsets[2]);
+  object.customProxyUrl = reader.readString(offsets[3]);
+  object.discardIdenticalBolla = reader.readBool(offsets[4]);
   object.id = id;
-  object.lastSyncTime = reader.readDateTimeOrNull(offsets[4]);
-  object.proxyAutoConfig = reader.readBool(offsets[5]);
-  object.proxyEnabled = reader.readBool(offsets[6]);
-  object.proxyPassword = reader.readString(offsets[7]);
-  object.proxyUsername = reader.readString(offsets[8]);
-  object.sharepointAnagraficaPath = reader.readString(offsets[9]);
-  object.sharepointDocumentLibrary = reader.readString(offsets[10]);
-  object.sharepointEstrattiAmexPath = reader.readString(offsets[11]);
-  object.sharepointEstrattiContoPath = reader.readString(offsets[12]);
-  object.sharepointFolderPath = reader.readString(offsets[13]);
-  object.sharepointScartiTracciatoPath = reader.readString(offsets[14]);
-  object.sharepointSiteName = reader.readString(offsets[15]);
-  object.sharepointTracciatoSapPath = reader.readString(offsets[16]);
-  object.syncOnStartup = reader.readBool(offsets[17]);
+  object.lastSyncTime = reader.readDateTimeOrNull(offsets[5]);
+  object.proxyAutoConfig = reader.readBool(offsets[6]);
+  object.proxyEnabled = reader.readBool(offsets[7]);
+  object.proxyPassword = reader.readString(offsets[8]);
+  object.proxyUsername = reader.readString(offsets[9]);
+  object.sharepointAnagraficaPath = reader.readString(offsets[10]);
+  object.sharepointDocumentLibrary = reader.readString(offsets[11]);
+  object.sharepointEstrattiAmexPath = reader.readString(offsets[12]);
+  object.sharepointEstrattiContoPath = reader.readString(offsets[13]);
+  object.sharepointFolderPath = reader.readString(offsets[14]);
+  object.sharepointScartiTracciatoPath = reader.readString(offsets[15]);
+  object.sharepointSiteName = reader.readString(offsets[16]);
+  object.sharepointTracciatoSapPath = reader.readString(offsets[17]);
+  object.syncOnStartup = reader.readBool(offsets[18]);
   return object;
 }
 
@@ -209,17 +216,17 @@ P _appSettingsDeserializeProp<P>(
     case 1:
       return (reader.readBool(offset)) as P;
     case 2:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 3:
-      return (reader.readBool(offset)) as P;
+      return (reader.readString(offset)) as P;
     case 4:
-      return (reader.readDateTimeOrNull(offset)) as P;
-    case 5:
       return (reader.readBool(offset)) as P;
+    case 5:
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 6:
       return (reader.readBool(offset)) as P;
     case 7:
-      return (reader.readString(offset)) as P;
+      return (reader.readBool(offset)) as P;
     case 8:
       return (reader.readString(offset)) as P;
     case 9:
@@ -239,6 +246,8 @@ P _appSettingsDeserializeProp<P>(
     case 16:
       return (reader.readString(offset)) as P;
     case 17:
+      return (reader.readString(offset)) as P;
+    case 18:
       return (reader.readBool(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -353,6 +362,16 @@ extension AppSettingsQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'bypassSslVerification',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterFilterCondition>
+      clearBeforeSyncEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'clearBeforeSync',
         value: value,
       ));
     });
@@ -2069,6 +2088,19 @@ extension AppSettingsQuerySortBy
     });
   }
 
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByClearBeforeSync() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clearBeforeSync', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      sortByClearBeforeSyncDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clearBeforeSync', Sort.desc);
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QAfterSortBy> sortByCustomProxyUrl() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'customProxyUrl', Sort.asc);
@@ -2313,6 +2345,19 @@ extension AppSettingsQuerySortThenBy
       thenByBypassSslVerificationDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bypassSslVerification', Sort.desc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy> thenByClearBeforeSync() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clearBeforeSync', Sort.asc);
+    });
+  }
+
+  QueryBuilder<AppSettings, AppSettings, QAfterSortBy>
+      thenByClearBeforeSyncDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'clearBeforeSync', Sort.desc);
     });
   }
 
@@ -2562,6 +2607,13 @@ extension AppSettingsQueryWhereDistinct
     });
   }
 
+  QueryBuilder<AppSettings, AppSettings, QDistinct>
+      distinctByClearBeforeSync() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'clearBeforeSync');
+    });
+  }
+
   QueryBuilder<AppSettings, AppSettings, QDistinct> distinctByCustomProxyUrl(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2701,6 +2753,12 @@ extension AppSettingsQueryProperty
       bypassSslVerificationProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'bypassSslVerification');
+    });
+  }
+
+  QueryBuilder<AppSettings, bool, QQueryOperations> clearBeforeSyncProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'clearBeforeSync');
     });
   }
 

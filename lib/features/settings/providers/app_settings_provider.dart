@@ -17,6 +17,7 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
       ..alignWithRemote = state.alignWithRemote
       ..syncOnStartup = state.syncOnStartup
       ..lastSyncTime = state.lastSyncTime
+      ..clearBeforeSync = state.clearBeforeSync
       ..sharepointSiteName = state.sharepointSiteName
       ..sharepointFolderPath = state.sharepointFolderPath
       ..sharepointDocumentLibrary = state.sharepointDocumentLibrary
@@ -47,6 +48,7 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
       ..alignWithRemote = value
       ..syncOnStartup = state.syncOnStartup
       ..lastSyncTime = state.lastSyncTime
+      ..clearBeforeSync = state.clearBeforeSync
       ..sharepointSiteName = state.sharepointSiteName
       ..sharepointFolderPath = state.sharepointFolderPath
       ..sharepointDocumentLibrary = state.sharepointDocumentLibrary
@@ -77,6 +79,7 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
       ..alignWithRemote = state.alignWithRemote
       ..syncOnStartup = value
       ..lastSyncTime = state.lastSyncTime
+      ..clearBeforeSync = state.clearBeforeSync
       ..sharepointSiteName = state.sharepointSiteName
       ..sharepointFolderPath = state.sharepointFolderPath
       ..sharepointDocumentLibrary = state.sharepointDocumentLibrary
@@ -107,6 +110,7 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
       ..alignWithRemote = state.alignWithRemote
       ..syncOnStartup = state.syncOnStartup
       ..lastSyncTime = value
+      ..clearBeforeSync = state.clearBeforeSync
       ..sharepointSiteName = state.sharepointSiteName
       ..sharepointFolderPath = state.sharepointFolderPath
       ..sharepointDocumentLibrary = state.sharepointDocumentLibrary
@@ -146,6 +150,7 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
       ..alignWithRemote = state.alignWithRemote
       ..syncOnStartup = state.syncOnStartup
       ..lastSyncTime = state.lastSyncTime
+      ..clearBeforeSync = state.clearBeforeSync
       ..sharepointSiteName = siteName
       ..sharepointFolderPath = folderPath
       ..sharepointDocumentLibrary = documentLibrary
@@ -183,6 +188,7 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
       ..alignWithRemote = state.alignWithRemote
       ..syncOnStartup = state.syncOnStartup
       ..lastSyncTime = state.lastSyncTime
+      ..clearBeforeSync = state.clearBeforeSync
       ..sharepointSiteName = state.sharepointSiteName
       ..sharepointFolderPath = state.sharepointFolderPath
       ..sharepointDocumentLibrary = state.sharepointDocumentLibrary
@@ -197,6 +203,37 @@ class AppSettingsNotifier extends Notifier<AppSettings> {
       ..bypassSslVerification = bypassSslVerification
       ..proxyUsername = proxyUsername
       ..proxyPassword = proxyPassword;
+
+    await isar.writeTxn(() async {
+      await isar.appSettings.put(newSettings);
+    });
+
+    state = newSettings;
+  }
+
+  Future<void> updateClearBeforeSync(bool value) async {
+    final isar = ref.read(isarProvider);
+    final newSettings = AppSettings()
+      ..id = 0
+      ..discardIdenticalBolla = state.discardIdenticalBolla
+      ..alignWithRemote = state.alignWithRemote
+      ..syncOnStartup = state.syncOnStartup
+      ..lastSyncTime = state.lastSyncTime
+      ..clearBeforeSync = value
+      ..sharepointSiteName = state.sharepointSiteName
+      ..sharepointFolderPath = state.sharepointFolderPath
+      ..sharepointDocumentLibrary = state.sharepointDocumentLibrary
+      ..sharepointEstrattiContoPath = state.sharepointEstrattiContoPath
+      ..sharepointTracciatoSapPath = state.sharepointTracciatoSapPath
+      ..sharepointEstrattiAmexPath = state.sharepointEstrattiAmexPath
+      ..sharepointAnagraficaPath = state.sharepointAnagraficaPath
+      ..sharepointScartiTracciatoPath = state.sharepointScartiTracciatoPath
+      ..proxyEnabled = state.proxyEnabled
+      ..proxyAutoConfig = state.proxyAutoConfig
+      ..customProxyUrl = state.customProxyUrl
+      ..bypassSslVerification = state.bypassSslVerification
+      ..proxyUsername = state.proxyUsername
+      ..proxyPassword = state.proxyPassword;
 
     await isar.writeTxn(() async {
       await isar.appSettings.put(newSettings);

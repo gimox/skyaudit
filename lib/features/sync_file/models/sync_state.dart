@@ -33,10 +33,13 @@ class SyncState {
     required this.syncQueue,
   });
 
-  factory SyncState.initial({bool alignWithRemote = true}) {
+  factory SyncState.initial({
+    bool alignWithRemote = true,
+    bool clearBeforeSync = false,
+  }) {
     return SyncState(
       selectedSyncType: 'all',
-      clearBeforeSync: false,
+      clearBeforeSync: clearBeforeSync,
       alignWithRemote: alignWithRemote,
       isSyncing: false,
       syncProgress: 0.0,

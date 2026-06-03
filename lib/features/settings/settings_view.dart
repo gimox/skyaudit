@@ -17,6 +17,8 @@ import 'package:travel_check/features/upload/providers/estratto_amex_provider.da
 import 'package:travel_check/features/upload/models/estratto_amex.dart';
 import 'package:travel_check/features/upload/providers/scarti_ec_sap_provider.dart';
 import 'package:travel_check/features/upload/models/scarti_ec_sap.dart';
+import 'package:travel_check/features/upload/providers/trasferte_sap_provider.dart';
+import 'package:travel_check/features/upload/models/trasferte_sap.dart';
 import 'package:travel_check/features/auth/providers/auth_provider.dart';
 import 'package:travel_check/features/auth/models/auth_state.dart';
 import 'package:travel_check/features/settings/providers/app_settings_provider.dart';
@@ -125,6 +127,8 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         await ref.read(estrattoAmexProvider.notifier).clear();
       } else if (collectionName == 'Scarti EC SAP') {
         await ref.read(scartiEcSapProvider.notifier).clear();
+      } else if (collectionName == 'Trasferte SAP') {
+        await ref.read(trasferteSapProvider.notifier).clear();
       }
 
       if (mounted) {
@@ -155,6 +159,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
         await isar.tracciatoSaps.clear();
         await isar.estrattoAmexs.clear();
         await isar.scartiEcSaps.clear();
+        await isar.trasferteSaps.clear();
       });
       // Aggiorniamo anche lo stato in memoria per le collection caricate
       ref.invalidate(tracciatoContabilesProvider);
@@ -163,6 +168,7 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
       ref.invalidate(tracciatoSapProvider);
       ref.invalidate(estrattoAmexProvider);
       ref.invalidate(scartiEcSapProvider);
+      ref.invalidate(trasferteSapProvider);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -599,6 +605,13 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                     'Collection: Scarti EC SAP',
                     'Elimina tutti i dati caricati dagli scarti Estratto Conto SAP',
                     () => _clearCollection('Scarti EC SAP'),
+                  ),
+                  _buildCollectionTile(
+                    context,
+                    Icons.flight_takeoff_outlined,
+                    'Collection: Trasferte SAP',
+                    'Elimina tutti i dati caricati dalle trasferte SAP',
+                    () => _clearCollection('Trasferte SAP'),
                   ),
                   const Divider(height: 32),
                   _buildHardResetAction(context),

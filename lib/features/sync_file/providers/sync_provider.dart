@@ -29,6 +29,7 @@ class SyncNotifier extends StateNotifier<SyncState> {
 
   SyncNotifier(this._ref) : super(SyncState.initial(
     alignWithRemote: _ref.read(appSettingsProvider).alignWithRemote,
+    clearBeforeSync: _ref.read(appSettingsProvider).clearBeforeSync,
   ));
 
   void setSelectedSyncType(String type) {
@@ -40,6 +41,7 @@ class SyncNotifier extends StateNotifier<SyncState> {
   void setClearBeforeSync(bool val) {
     if (!state.isSyncing) {
       state = state.copyWith(clearBeforeSync: val);
+      _ref.read(appSettingsProvider.notifier).updateClearBeforeSync(val);
     }
   }
 
@@ -440,6 +442,7 @@ class SyncNotifier extends StateNotifier<SyncState> {
 
       if (state.totalFilesFound == 0) {
         await _ref.read(appSettingsProvider.notifier).updateLastSyncTime(DateTime.now());
+        await _ref.read(appSettingsProvider.notifier).updateClearBeforeSync(false);
         state = state.copyWith(
           syncProgress: 1.0,
           syncStep: 'Sincronizzazione completata: nessun nuovo file trovato.',
@@ -503,6 +506,7 @@ class SyncNotifier extends StateNotifier<SyncState> {
       _ref.invalidate(logHistoryProvider);
 
       await _ref.read(appSettingsProvider.notifier).updateLastSyncTime(DateTime.now());
+      await _ref.read(appSettingsProvider.notifier).updateClearBeforeSync(false);
 
       state = state.copyWith(
         syncProgress: 1.0,
@@ -512,6 +516,9 @@ class SyncNotifier extends StateNotifier<SyncState> {
       );
       _log('Sincronizzazione conclusa con successo. Importati ${state.totalRecordsImported} record in totale.');
     } catch (e) {
+      try {
+        await _ref.read(appSettingsProvider.notifier).updateClearBeforeSync(false);
+      } catch (_) {}
       state = state.copyWith(
         isSyncing: false,
         syncStep: 'Errore durante la sincronizzazione: $e',

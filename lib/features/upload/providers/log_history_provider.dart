@@ -10,6 +10,8 @@ import 'package:travel_check/features/upload/providers/tracciato_contabile_provi
 import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
 import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
 import 'package:travel_check/features/upload/providers/estratto_amex_provider.dart';
+import 'package:travel_check/features/upload/models/trasferte_sap.dart';
+import 'package:travel_check/features/upload/providers/trasferte_sap_provider.dart';
 
 import 'package:travel_check/features/upload/models/anagrafica.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
@@ -67,6 +69,12 @@ class LogHistoryNotifier extends Notifier<List<LogHistory>> {
           .filter()
           .logHistoryIdEqualTo(uniqueCode)
           .deleteAll();
+
+      // Delete from TrasferteSap
+      await isar.trasferteSaps
+          .filter()
+          .logHistoryIdEqualTo(uniqueCode)
+          .deleteAll();
     });
 
     // Invalidate main records provider to refresh the UI
@@ -76,6 +84,7 @@ class LogHistoryNotifier extends Notifier<List<LogHistory>> {
     ref.invalidate(estrattoAmexProvider);
     ref.invalidate(anagraficaProvider);
     ref.invalidate(scartiEcSapProvider);
+    ref.invalidate(trasferteSapProvider);
 
     // Refresh state
     final logs = isar.logHistorys.where().anyId().findAllSync();

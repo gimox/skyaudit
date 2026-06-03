@@ -16,6 +16,7 @@ import 'package:travel_check/features/upload/providers/estratto_amex_provider.da
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/features/upload/providers/scarti_ec_sap_provider.dart';
+import 'package:travel_check/features/upload/providers/trasferte_sap_provider.dart';
 class UploadView extends ConsumerStatefulWidget {
   const UploadView({super.key});
 
@@ -30,6 +31,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
   XFile? _selectedAmexFile;
   XFile? _selectedAnagraficaFile;
   XFile? _selectedScartiSapFile;
+  XFile? _selectedTrasferteSapFile;
 
   bool _isDraggingContabile = false;
   bool _isDraggingEstratto = false;
@@ -37,6 +39,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
   bool _isDraggingAmex = false;
   bool _isDraggingAnagrafica = false;
   bool _isDraggingScartiSap = false;
+  bool _isDraggingTrasferteSap = false;
 
   bool _isProcessingContabile = false;
   bool _isProcessingEstratto = false;
@@ -44,6 +47,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
   bool _isProcessingAmex = false;
   bool _isProcessingAnagrafica = false;
   bool _isProcessingScartiSap = false;
+  bool _isProcessingTrasferteSap = false;
 
   Map<String, dynamic>? _lastContabileResult;
   Map<String, dynamic>? _lastEstrattoResult;
@@ -51,6 +55,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
   Map<String, dynamic>? _lastAmexResult;
   Map<String, dynamic>? _lastAnagraficaResult;
   Map<String, dynamic>? _lastScartiSapResult;
+  Map<String, dynamic>? _lastTrasferteSapResult;
   final Set<int> _deletedRecordIds = {};
   int _collisionPage = 0;
   int _collisionPageEstratto = 0;
@@ -65,6 +70,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
     } else if (type == 'amex') {
       extensions = ['xlsx', 'csv'];
     } else if (type == 'anagrafica') {
+      extensions = ['xlsx'];
+    } else if (type == 'trasferteSap') {
       extensions = ['xlsx'];
     } else {
       extensions = ['xlsx'];
@@ -95,6 +102,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
         } else if (type == 'scartiSap') {
           _selectedScartiSapFile = XFile(result.files.single.path!);
           _lastScartiSapResult = null;
+        } else if (type == 'trasferteSap') {
+          _selectedTrasferteSapFile = XFile(result.files.single.path!);
         }
       });
     }
@@ -120,6 +129,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
       } else if (type == 'scartiSap') {
         _selectedScartiSapFile = null;
         _lastScartiSapResult = null;
+      } else if (type == 'trasferteSap') {
+        _selectedTrasferteSapFile = null;
       }
     });
   }
@@ -586,6 +597,61 @@ class _UploadViewState extends ConsumerState<UploadView> {
     }
   }
 
+  Future<void> _processTrasferteSapData() async {
+    if (_selectedTrasferteSapFile == null) return;
+
+    if (!await _checkDuplicateFile(_selectedTrasferteSapFile!)) {
+      return;
+    }
+
+    setState(() {
+      _isProcessingTrasferteSap = true;
+      _lastTrasferteSapResult = null;
+    });
+
+    try {
+      final result = await ref
+          .read(trasferteSapProvider.notifier)
+          .loadFromFile(_selectedTrasferteSapFile!);
+
+      if (mounted) {
+        setState(() {
+          _lastTrasferteSapResult = result;
+        });
+
+        final inserted = result['inserted'] ?? 0;
+        final updated = result['updated'] ?? 0;
+        final total = result['total'] ?? (inserted + updated);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Elaborazione Trasferte SAP completata: $total record totali.\n'
+              '• $inserted nuovi record inseriti\n'
+              '• $updated record esistenti aggiornati',
+            ),
+            backgroundColor: Colors.green.shade700,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+        _selectedTrasferteSapFile = null;
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              'Errore durante l\'elaborazione delle trasferte SAP: $e',
+            ),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _isProcessingTrasferteSap = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Center(
@@ -624,6 +690,17 @@ class _UploadViewState extends ConsumerState<UploadView> {
                             Expanded(child: _buildScartiSapSection()),
                           ],
                         ),
+                        const SizedBox(height: 32),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(child: _buildTrasferteSapSection()),
+                            const SizedBox(width: 24),
+                            const Expanded(child: SizedBox()),
+                            const SizedBox(width: 24),
+                            const Expanded(child: SizedBox()),
+                          ],
+                        ),
                       ],
                     );
                   } else {
@@ -640,6 +717,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
                         _buildAnagraficaSection(),
                         const SizedBox(height: 32),
                         _buildScartiSapSection(),
+                        const SizedBox(height: 32),
+                        _buildTrasferteSapSection(),
                       ],
                     );
                   }
@@ -705,6 +784,14 @@ class _UploadViewState extends ConsumerState<UploadView> {
                     dataType: 'scartiSap',
                   ),
                 ],
+                if (_lastTrasferteSapResult != null) ...[
+                  const SizedBox(height: 24),
+                  _buildDetailedResultCard(
+                    title: 'RISULTATI TRASFERTE SAP',
+                    result: _lastTrasferteSapResult!,
+                    dataType: 'trasferteSap',
+                  ),
+                ],
               ],
             ],
           ),
@@ -746,7 +833,9 @@ class _UploadViewState extends ConsumerState<UploadView> {
                           ? Icons.receipt_long 
                           : (dataType == 'scartiSap' 
                               ? Icons.warning_amber_outlined 
-                              : Icons.account_balance_wallet)),
+                              : (dataType == 'trasferteSap'
+                                  ? Icons.flight_takeoff
+                                  : Icons.account_balance_wallet))),
                   color: SkyTheme.timBlue,
                   size: 24,
                 ),
@@ -1040,6 +1129,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
           _lastAnagraficaResult = null;
         } else if (type == 'scartiSap') {
           _lastScartiSapResult = null;
+        } else if (type == 'trasferteSap') {
+          _lastTrasferteSapResult = null;
         }
       });
 
@@ -1449,6 +1540,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
               _selectedAnagraficaFile = filteredFiles.first;
             } else if (type == 'scartiSap') {
               _selectedScartiSapFile = filteredFiles.first;
+            } else if (type == 'trasferteSap') {
+              _selectedTrasferteSapFile = filteredFiles.first;
             }
           });
         } else {
@@ -1476,6 +1569,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
             _isDraggingAnagrafica = true;
           } else if (type == 'scartiSap') {
             _isDraggingScartiSap = true;
+          } else if (type == 'trasferteSap') {
+            _isDraggingTrasferteSap = true;
           }
         });
       },
@@ -1493,6 +1588,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
             _isDraggingAnagrafica = false;
           } else if (type == 'scartiSap') {
             _isDraggingScartiSap = false;
+          } else if (type == 'trasferteSap') {
+            _isDraggingTrasferteSap = false;
           }
         });
       },
@@ -1529,6 +1626,7 @@ class _UploadViewState extends ConsumerState<UploadView> {
               if (type == 'amex' && !_isProcessingAmex) _pickFile('amex');
               if (type == 'anagrafica' && !_isProcessingAnagrafica) _pickFile('anagrafica');
               if (type == 'scartiSap' && !_isProcessingScartiSap) _pickFile('scartiSap');
+              if (type == 'trasferteSap' && !_isProcessingTrasferteSap) _pickFile('trasferteSap');
             },
             borderRadius: BorderRadius.circular(16),
             child: Center(
@@ -1541,7 +1639,8 @@ class _UploadViewState extends ConsumerState<UploadView> {
                       (type == 'estratto' ? _isProcessingEstratto : 
                       (type == 'sap' ? _isProcessingSap : 
                       (type == 'amex' ? _isProcessingAmex : 
-                      (type == 'anagrafica' ? _isProcessingAnagrafica : _isProcessingScartiSap))))
+                      (type == 'anagrafica' ? _isProcessingAnagrafica : 
+                      (type == 'scartiSap' ? _isProcessingScartiSap : _isProcessingTrasferteSap)))))
                     ),
             ),
           ),
@@ -1673,6 +1772,33 @@ class _UploadViewState extends ConsumerState<UploadView> {
               : null,
           label: 'ELABORA SCARTI TRACCIATO',
           isLoading: _isProcessingScartiSap,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTrasferteSapSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildSectionHeader(
+          'TRASFERTE SAP',
+          'File trasferte SAP (.xlsx)',
+        ),
+        const SizedBox(height: 24),
+        _buildDropZone(
+          type: 'trasferteSap',
+          selectedFile: _selectedTrasferteSapFile,
+          isDragging: _isDraggingTrasferteSap,
+          allowedExtensions: ['xlsx'],
+        ),
+        const SizedBox(height: 24),
+        _buildActionButton(
+          onPressed: (_selectedTrasferteSapFile != null && !_isProcessingTrasferteSap)
+              ? _processTrasferteSapData
+              : null,
+          label: 'ELABORA TRASFERTE SAP',
+          isLoading: _isProcessingTrasferteSap,
         ),
       ],
     );

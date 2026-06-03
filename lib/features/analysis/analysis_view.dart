@@ -10,6 +10,7 @@ import 'package:travel_check/features/settings/providers/dictionary_provider.dar
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
 import 'package:travel_check/features/upload/models/log_history.dart';
+import 'package:travel_check/features/upload/providers/trasferte_sap_provider.dart';
 import 'package:travel_check/shared/widgets/file_selection_dialog.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 
@@ -25,6 +26,14 @@ final sortAscendingProvider = StateProvider<bool>((ref) => false);
 final analysisPageProvider = StateProvider<int>((ref) => 0);
 final tcSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 
+enum ContabileIncrocioFilter {
+  all,
+  matched,
+  notMatched,
+}
+
+final tcIncrocioFilterProvider = StateProvider<ContabileIncrocioFilter>((ref) => ContabileIncrocioFilter.all);
+
 class AnalysisView extends ConsumerStatefulWidget {
   const AnalysisView({super.key});
 
@@ -36,12 +45,14 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
   final _trasfertaController = TextEditingController();
   final _scrollController = ScrollController();
   final _horizontalScrollController = ScrollController();
+  final _statsScrollController = ScrollController();
 
   @override
   void dispose() {
     _trasfertaController.dispose();
     _scrollController.dispose();
     _horizontalScrollController.dispose();
+    _statsScrollController.dispose();
     super.dispose();
   }
 
@@ -58,6 +69,12 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final currentPage = ref.watch(analysisPageProvider);
     final selectedLogHistoryIds = ref.watch(tcSelectedLogHistoryIdsProvider);
     final allLogs = ref.watch(logHistoryProvider);
+    final incrocioFilter = ref.watch(tcIncrocioFilterProvider);
+    final sapRecords = ref.watch(trasferteSapProvider);
+    final sapTrasferte = sapRecords
+        .map((r) => r.numeroTrasferta.trim())
+        .where((t) => t.isNotEmpty)
+        .toSet();
     String? selectedLogFileName;
     if (selectedLogHistoryIds.length == 1) {
       for (final log in allLogs) {
@@ -108,6 +125,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
       selectedTipi.isNotEmpty,
       selectedTrasferta != null,
       selectedLogHistoryIds.isNotEmpty,
+      incrocioFilter != ContabileIncrocioFilter.all,
     ].where((e) => e).length;
 
     // Estrai dati disponibili per i filtri
@@ -187,6 +205,13 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
             return false;
           }
 
+          // Filtro Stato Riscontro
+          if (incrocioFilter != ContabileIncrocioFilter.all) {
+            final isMatched = sapTrasferte.contains(r.numeroTrasferta.trim());
+            if (incrocioFilter == ContabileIncrocioFilter.matched && !isMatched) return false;
+            if (incrocioFilter == ContabileIncrocioFilter.notMatched && isMatched) return false;
+          }
+
           return true;
         }).toList()..sort((a, b) {
           try {
@@ -215,6 +240,23 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final startIndex = (safePage * pageSize).clamp(0, filteredRecords.length);
     final endIndex = (startIndex + pageSize).clamp(0, filteredRecords.length);
     final paginatedRecords = filteredRecords.sublist(startIndex, endIndex);
+
+    final totalFiltered = filteredRecords.length;
+    final uniqueTravelNumbers = filteredRecords.map((r) => r.numeroTrasferta.trim()).where((t) => t.isNotEmpty).toSet();
+    final okTravels = uniqueTravelNumbers.where((t) => sapTrasferte.contains(t)).toSet();
+    final koTravels = uniqueTravelNumbers.where((t) => !sapTrasferte.contains(t)).toSet();
+
+    final okTravelsCount = okTravels.length;
+    final koTravelsCount = koTravels.length;
+    final totalFilteredTravels = uniqueTravelNumbers.length;
+
+    final double totalAmount = filteredRecords.fold(0.0, (sum, r) => sum + (r.isNegative ? -r.importo : r.importo));
+    final double okAmount = filteredRecords
+        .where((r) => okTravels.contains(r.numeroTrasferta.trim()))
+        .fold(0.0, (sum, r) => sum + (r.isNegative ? -r.importo : r.importo));
+    final double koAmount = filteredRecords
+        .where((r) => koTravels.contains(r.numeroTrasferta.trim()))
+        .fold(0.0, (sum, r) => sum + (r.isNegative ? -r.importo : r.importo));
 
 
     return Scaffold(
@@ -344,12 +386,115 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                 : 'File: ${selectedLogHistoryIds.length} selezionati',
                             () => ref.read(tcSelectedLogHistoryIdsProvider.notifier).state = {},
                           ),
+                        if (incrocioFilter != ContabileIncrocioFilter.all)
+                          _buildFilterChip(
+                            incrocioFilter == ContabileIncrocioFilter.matched ? 'Stato: Riscontrati' : 'Stato: Non Riscontrati',
+                            () => ref.read(tcIncrocioFilterProvider.notifier).state = ContabileIncrocioFilter.all,
+                          ),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
                     ),
                   ),
                 ],
               ],
+            ),
+          ),
+          // CARTELLINI STATISTICHE
+          Padding(
+            padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade100.withAlpha(120),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final card1 = _buildSummaryCard(
+                    title: 'TOTALE TRASFERTE',
+                    value: '$totalFilteredTravels',
+                    subtitle: 'Importo: ${_formatAmount(totalAmount)} | Record: $totalFiltered',
+                    icon: Icons.analytics_outlined,
+                    color: SkyTheme.timBlue,
+                    bgLightColor: SkyTheme.timBlue.withAlpha(20),
+                  );
+                  final card2 = _buildSummaryCard(
+                    title: 'RISCONTRATI (OK)',
+                    value: '$okTravelsCount',
+                    subtitle: 'Importo: ${_formatAmount(okAmount)}',
+                    icon: Icons.check_circle_outline,
+                    color: Colors.green.shade700,
+                    bgLightColor: Colors.green.shade50,
+                  );
+                  final card3 = _buildSummaryCard(
+                    title: 'NON RISCONTRATI (KO)',
+                    value: '$koTravelsCount',
+                    subtitle: 'Importo: ${_formatAmount(koAmount)}',
+                    icon: Icons.cancel_outlined,
+                    color: Colors.red.shade700,
+                    bgLightColor: Colors.red.shade50,
+                  );
+
+                  if (constraints.maxWidth >= 950) {
+                    return Row(
+                      children: [
+                        Expanded(child: card1),
+                        const SizedBox(width: 16),
+                        Expanded(child: card2),
+                        const SizedBox(width: 16),
+                        Expanded(child: card3),
+                      ],
+                    );
+                  } else {
+                    return Row(
+                      children: [
+                        IconButton(
+                          onPressed: () {
+                            if (_statsScrollController.hasClients) {
+                              _statsScrollController.animateTo(
+                                (_statsScrollController.offset - 200).clamp(0, _statsScrollController.position.maxScrollExtent),
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.chevron_left_rounded, color: SkyTheme.timBlue),
+                          hoverColor: SkyTheme.timBlue.withAlpha(20),
+                        ),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            controller: _statsScrollController,
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                SizedBox(width: 290, child: card1),
+                                const SizedBox(width: 16),
+                                SizedBox(width: 290, child: card2),
+                                const SizedBox(width: 16),
+                                SizedBox(width: 290, child: card3),
+                              ],
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            if (_statsScrollController.hasClients) {
+                              _statsScrollController.animateTo(
+                                (_statsScrollController.offset + 200).clamp(0, _statsScrollController.position.maxScrollExtent),
+                                duration: const Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            }
+                          },
+                          icon: const Icon(Icons.chevron_right_rounded, color: SkyTheme.timBlue),
+                          hoverColor: SkyTheme.timBlue.withAlpha(20),
+                        ),
+                      ],
+                    );
+                  }
+                },
+              ),
             ),
           ),
           Expanded(
@@ -426,7 +571,15 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                             _buildCell('', 100, alignment: Alignment.center, child: IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record, dictionaryMap), padding: EdgeInsets.zero, constraints: const BoxConstraints())),
                                             _buildCopyableCell(record.cid, 140, typeLabel: 'CID', fontWeight: FontWeight.w500),
                                             _buildCell(anagraficheMap[record.cid.trim()] ?? '', 220, fontWeight: FontWeight.w500),
-                                            _buildCopyableCell(record.numeroTrasferta, 160, typeLabel: 'Trasferta'),
+                                            _buildCopyableCell(
+                                              record.numeroTrasferta,
+                                              160,
+                                              typeLabel: 'Trasferta',
+                                              color: sapTrasferte.contains(record.numeroTrasferta.trim())
+                                                  ? Colors.green.shade800
+                                                  : Colors.red.shade700,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                             _buildCell('${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}', 140, fontWeight: FontWeight.bold, color: record.isNegative ? Colors.red.shade700 : Colors.green.shade800),
                                             _buildCell('', 80, child: Icon(record.isNegative ? Icons.remove_circle_outline : Icons.add_circle_outline, color: record.isNegative ? Colors.red.shade300 : Colors.green.shade300, size: 18)),
                                             _buildCell(dictionaryMap[record.giustificativoSpesa] != null ? '${record.giustificativoSpesa} - ${dictionaryMap[record.giustificativoSpesa]}' : record.giustificativoSpesa, 250, color: dictionaryMap[record.giustificativoSpesa] != null ? SkyTheme.timBlue : null),
@@ -526,6 +679,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     ref.read(selectedSocietaProvider.notifier).state = null;
     ref.read(selectedTipiProvider.notifier).state = [];
     ref.read(tcSelectedLogHistoryIdsProvider.notifier).state = {};
+    ref.read(tcIncrocioFilterProvider.notifier).state = ContabileIncrocioFilter.all;
     ref.read(analysisPageProvider.notifier).state = 0;
     _trasfertaController.clear();
   }
@@ -638,6 +792,18 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                   }
                   ref.read(selectedTipiProvider.notifier).state = newList;
                 }, dictionaryMap: dictionaryMap),
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('STATO RISCONTRO'),
+                const SizedBox(height: 12),
+                _buildChoiceFilter<ContabileIncrocioFilter>(
+                  ref.watch(tcIncrocioFilterProvider),
+                  {
+                    ContabileIncrocioFilter.all: 'Tutti',
+                    ContabileIncrocioFilter.matched: 'Riscontrati',
+                    ContabileIncrocioFilter.notMatched: 'Non Riscontrati',
+                  },
+                  (val) => ref.read(tcIncrocioFilterProvider.notifier).state = val,
+                ),
                 const SizedBox(height: 32),
                 _buildDrawerSectionTitle('FILE CARICATI'),
                 const SizedBox(height: 12),
@@ -1177,5 +1343,127 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
         );
       }
     }
+  }
+
+  String _formatAmount(double amount, [String currency = 'EUR']) {
+    final isNeg = amount < 0;
+    final absVal = amount.abs();
+    final parts = absVal.toStringAsFixed(2).split('.');
+    final whole = parts[0];
+    final decimals = parts[1];
+    
+    final RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+    final String formattedWhole = whole.replaceAllMapped(reg, (Match match) => '${match[1]}.');
+    
+    return '${isNeg ? "-" : ""}$formattedWhole,$decimals $currency';
+  }
+
+  Widget _buildChoiceFilter<T>(
+    T selected,
+    Map<T, String> options,
+    Function(T) onChanged,
+  ) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      padding: const EdgeInsets.all(4),
+      child: Row(
+        children: options.entries.map((entry) {
+          final isSelected = selected == entry.key;
+          return Expanded(
+            child: GestureDetector(
+              onTap: () => onChanged(entry.key),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.symmetric(vertical: 10),
+                decoration: BoxDecoration(
+                  color: isSelected ? SkyTheme.timRed : Colors.transparent,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Center(
+                  child: Text(
+                    entry.value,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected ? Colors.white : Colors.grey.shade700,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildSummaryCard({
+    required String title,
+    required String value,
+    required String subtitle,
+    required IconData icon,
+    required Color color,
+    required Color bgLightColor,
+  }) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: Colors.grey.shade200),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: bgLightColor,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 24),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade500,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  subtitle,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: Colors.grey.shade600,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }

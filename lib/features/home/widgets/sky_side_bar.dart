@@ -60,6 +60,11 @@ class SkySideBar extends StatelessWidget {
                       label: Text('Tracciato SAP'),
                     ),
                     NavigationRailDestination(
+                      icon: Icon(Icons.flight_takeoff_outlined),
+                      selectedIcon: Icon(Icons.flight_takeoff),
+                      label: Text('Trasferte SAP'),
+                    ),
+                    NavigationRailDestination(
                       icon: Icon(Icons.fact_check_outlined),
                       selectedIcon: Icon(Icons.fact_check),
                       label: Text('Controlli Trasferte'),
@@ -157,6 +162,11 @@ class SkySideBar extends StatelessWidget {
             icon: Icon(Icons.analytics_outlined),
             selectedIcon: Icon(Icons.analytics),
             label: Text('Tracciato SAP'),
+          ),
+          const NavigationDrawerDestination(
+            icon: Icon(Icons.flight_takeoff_outlined),
+            selectedIcon: Icon(Icons.flight_takeoff),
+            label: Text('Trasferte SAP'),
           ),
           const NavigationDrawerDestination(
             icon: Icon(Icons.fact_check_outlined),

@@ -10,6 +10,7 @@ class AppSettings {
   bool alignWithRemote = true;
   bool syncOnStartup = true;
   DateTime? lastSyncTime;
+  bool clearBeforeSync = false;
 
   // Remote Sync SharePoint Configuration
   String sharepointSiteName = 'skyaudit';
