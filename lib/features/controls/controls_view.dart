@@ -2301,7 +2301,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         for (final ame in amexForT) {
           final rowData = [
             '  > AMEX', '', ame.cid, ame.bolla, '', '', ame.nomeEsercizio ?? ame.nomeFornitore ?? 'Esercizio AMEX', 
-            'AMEX Transaction', '', ame.dataTransazione, ame.importoLordo ?? 0, '', '', '', '', '', ''
+            'AMEX Transaction', '', _normalizeDate(ame.dataTransazione ?? ''), ame.importoLordo ?? 0, '', '', '', '', '', ''
           ];
           for (var i = 0; i < rowData.length; i++) {
             var cell = sheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
@@ -2418,7 +2418,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         for (final ame in amexForTDetail) {
           final rowData = [
             t, 'AMEX', ame.cid, ame.nomeViaggiatore, ame.bolla, 
-            ame.dataTransazione, ame.nomeEsercizio ?? ame.nomeFornitore ?? '', 'AMEX', 
+            _normalizeDate(ame.dataTransazione ?? ''), ame.nomeEsercizio ?? ame.nomeFornitore ?? '', 'AMEX', 
             ame.importoLordo ?? 0, ''
           ];
           for (var i = 0; i < rowData.length; i++) {
