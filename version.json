@@ -1,15 +1,17 @@
 {
-  "version": "1.0.16",
-  "buildNumber": 17,
+  "version": "1.0.17",
+  "buildNumber": 18,
   "mandatory": false,
   "downloadUrls": {
-    "macos": "https://github.com/gimox/skyaudit/releases/download/v1.0.16/SkyAudit_macOS.dmg",
-    "windows": "https://github.com/gimox/skyaudit/releases/download/v1.0.16/SkyAudit_Windows_Installer.exe",
+    "macos": "https://github.com/gimox/skyaudit/releases/download/v1.0.17/SkyAudit_macOS.dmg",
+    "windows": "https://github.com/gimox/skyaudit/releases/download/v1.0.17/SkyAudit_Windows_Installer.exe",
     "web": ""
   },
   "changelog": [
-    "chore: release v1.0.16+17",
-    "minor fix",
-    "chore: auto-update version.json and appcast.xml to v1.0.15 [skip ci]"
+    "chore: release v1.0.17+18",
+    "scarti",
+    "working on multiapp and scarti",
+    "chore: auto-update version.json and appcast.xml to v1.0.16 [skip ci]",
+    "chore: auto-update version.json and appcast.xml to v1.0.16 [skip ci]"
   ]
 }

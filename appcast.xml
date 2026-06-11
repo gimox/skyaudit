@@ -3,11 +3,11 @@
   <channel>
     <title>SkyAudit</title>
     <item>
-      <title>Version 1.0.16</title>
-      <pubDate>Mon, 08 Jun 2026 14:54:06 GMT</pubDate>
-      <sparkle:version>1.0.16</sparkle:version>
-      <enclosure url="https://github.com/gimox/skyaudit/releases/download/v1.0.16/SkyAudit_macOS.dmg" sparkle:version="1.0.16" sparkle:os="macos" length="0" type="application/octet-stream" />
-      <enclosure url="https://github.com/gimox/skyaudit/releases/download/v1.0.16/SkyAudit_Windows_Installer.exe" sparkle:version="1.0.16" sparkle:os="windows" length="0" type="application/octet-stream" />
+      <title>Version 1.0.17</title>
+      <pubDate>Thu, 11 Jun 2026 14:04:04 GMT</pubDate>
+      <sparkle:version>1.0.17</sparkle:version>
+      <enclosure url="https://github.com/gimox/skyaudit/releases/download/v1.0.17/SkyAudit_macOS.dmg" sparkle:version="1.0.17" sparkle:os="macos" length="0" type="application/octet-stream" />
+      <enclosure url="https://github.com/gimox/skyaudit/releases/download/v1.0.17/SkyAudit_Windows_Installer.exe" sparkle:version="1.0.17" sparkle:os="windows" length="0" type="application/octet-stream" />
     </item>
   </channel>
 </rss>
