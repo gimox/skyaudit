@@ -880,12 +880,37 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        record.localita.isEmpty ? 'Località non specificata' : record.localita,
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: isUltraCompact ? 9 : (isVeryCompact ? 11 : (isCompactList ? 12 : 14)),
-                                        ),
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(
+                                              record.localita.isEmpty ? 'Località non specificata' : record.localita,
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: isUltraCompact ? 9 : (isVeryCompact ? 11 : (isCompactList ? 12 : 14)),
+                                              ),
+                                            ),
+                                          ),
+                                          if (record.isScarto) ...[
+                                            const SizedBox(width: 8),
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: Colors.red.shade50,
+                                                borderRadius: BorderRadius.circular(4),
+                                                border: Border.all(color: Colors.red.shade200, width: 0.5),
+                                              ),
+                                              child: Text(
+                                                'SCARTO',
+                                                style: TextStyle(
+                                                  color: Colors.red.shade800,
+                                                  fontSize: isUltraCompact ? 6 : (isVeryCompact ? 8 : 9),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ],
                                       ),
                                       const SizedBox(height: 2),
                                       Text(
@@ -2341,7 +2366,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       final detailHeaders = [
         'TRASFERTA', 'FONTE', 'CID', 'PASSEGGERO / DETTAGLIO', 'BOLLA', 
         'DATA', 'LOCALITÀ / DESCRIZIONE', 'GIUSTIFICATIVO / SERVIZIO', 
-        'IMPORTO €', 'SOCIETÀ'
+        'IMPORTO €', 'SOCIETÀ', 'SCARTO (SI/NO)'
       ];
       
       for (var i = 0; i < detailHeaders.length; i++) {
@@ -2359,7 +2384,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
             t, 'TRACCIATO', r.cid, '', r.numeroBolla, 
             _normalizeDate(r.dataSpesa), r.localita, 
             '${r.giustificativoSpesa}${dictionaryMap[r.giustificativoSpesa] != null ? " (${dictionaryMap[r.giustificativoSpesa]})" : ""}', 
-            r.isNegative ? -r.importo : r.importo, r.societa
+            r.isNegative ? -r.importo : r.importo, r.societa, r.isScarto ? 'SI' : 'NO'
           ];
           for (var i = 0; i < rowData.length; i++) {
             var cell = detailSheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
@@ -2379,7 +2404,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           final rowData = [
             t, 'E. CONTO', ec.cid, ec.nomePasseggero, ec.bolla, 
             _normalizeDate(ec.dataBolla), ec.itinerario, ec.descrizioneServizio, 
-            ec.totaleServizio, ec.ragioneSociale
+            ec.totaleServizio, ec.ragioneSociale, 'NO'
           ];
           for (var i = 0; i < rowData.length; i++) {
             var cell = detailSheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
@@ -2399,7 +2424,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           final rowData = [
             t, 'SAP', sap.cid, '', sap.cdRichiesta ?? '', 
             _normalizeDate(sap.data), sap.tipoSpesaDescrizione, sap.tipoSpesaCodice, 
-            sap.importo, sap.societaDescrizione
+            sap.importo, sap.societaDescrizione, 'NO'
           ];
           for (var i = 0; i < rowData.length; i++) {
             var cell = detailSheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
@@ -2419,7 +2444,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           final rowData = [
             t, 'AMEX', ame.cid, ame.nomeViaggiatore, ame.bolla, 
             _normalizeDate(ame.dataTransazione ?? ''), ame.nomeEsercizio ?? ame.nomeFornitore ?? '', 'AMEX', 
-            ame.importoLordo ?? 0, ''
+            ame.importoLordo ?? 0, '', 'NO'
           ];
           for (var i = 0; i < rowData.length; i++) {
             var cell = detailSheet.cell(excel_pkg.CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
@@ -3301,6 +3326,13 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                           _buildDetailRow('Numero Bolla', record.numeroBolla),
                           _buildDetailRow('Tipo Attività', record.tipoAttivita),
                           _buildDetailRow('Progressivo', record.progressivo),
+                          if (record.isScarto)
+                            _buildDetailRow(
+                              'Stato Quadratura', 
+                              'SCARTATO (Scarti EC SAP)',
+                              isHighlight: true,
+                              highlightColor: Colors.red.shade700,
+                            ),
                         ]),
                       ],
                     ),

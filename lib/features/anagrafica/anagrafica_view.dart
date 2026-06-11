@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:intl/intl.dart';
+import 'package:universal_io/io.dart';
+import 'package:excel/excel.dart' hide Border;
+import 'package:file_picker/file_picker.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/features/upload/models/anagrafica.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
@@ -140,10 +145,6 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     final filteredByFileRecords = selectedLogHistoryIds.isNotEmpty
         ? allRecords.where((r) => selectedLogHistoryIds.contains(r.importBatch)).toList()
         : allRecords;
-
-    final totalUsers = filteredByFileRecords.length;
-    final validAges = filteredByFileRecords.map((e) => _parseAge(e.dataNascita)).whereType<int>().toList();
-    final double averageAge = validAges.isEmpty ? 0.0 : validAges.reduce((a, b) => a + b) / validAges.length;
 
     DateTime? lastImportDate;
     if (selectedLogHistoryIds.isNotEmpty) {
@@ -300,6 +301,12 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
       return sortAscending ? nomA.compareTo(nomB) : nomB.compareTo(nomA);
     });
 
+    final totalUsers = filteredRecords.length;
+    final malesCount = filteredRecords.where((r) => r.sesso?.toUpperCase() == 'M' || r.sesso?.toLowerCase() == 'maschio').length;
+    final femalesCount = filteredRecords.where((r) => r.sesso?.toUpperCase() == 'F' || r.sesso?.toLowerCase() == 'femmina').length;
+    final validAges = filteredRecords.map((e) => _parseAge(e.dataNascita)).whereType<int>().toList();
+    final double averageAge = validAges.isEmpty ? 0.0 : validAges.reduce((a, b) => a + b) / validAges.length;
+
     final totalPages = (filteredRecords.length / pageSize).ceil();
     final safePage = (currentPage >= totalPages && totalPages > 0) ? 0 : currentPage;
     final startIndex = (safePage * pageSize).clamp(0, filteredRecords.length);
@@ -323,6 +330,15 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
         etaList,
         statusList,
       ),
+      floatingActionButton: filteredRecords.isNotEmpty 
+          ? FloatingActionButton(
+              onPressed: () => _exportToExcel(filteredRecords),
+              backgroundColor: Colors.green.shade700,
+              foregroundColor: Colors.white,
+              tooltip: 'Esporta in Excel',
+              child: const Icon(Icons.table_view_rounded),
+            )
+          : null,
       body: Column(
         children: [
           // HEADER CON RICERCA
@@ -434,6 +450,18 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                       },
                       icon: Icon(sortAscending ? Icons.sort_by_alpha : Icons.sort_by_alpha_outlined),
                       tooltip: 'Ordina per Nominativo',
+                    ),
+                    const SizedBox(width: 12),
+                    OutlinedButton.icon(
+                      onPressed: () => _showComuneDistributionMap(context, filteredRecords),
+                      icon: const Icon(Icons.map_outlined),
+                      label: const Text('Mostra cartina'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        side: const BorderSide(color: SkyTheme.timBlue),
+                        foregroundColor: SkyTheme.timBlue,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Builder(
@@ -555,6 +583,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                   final card1 = _buildSummaryCard(
                     title: 'TOTALE UTENTI',
                     value: '$totalUsers utenti',
+                    subtitle: '$malesCount M / $femalesCount F',
                     icon: Icons.people_outline,
                     color: SkyTheme.timBlue,
                     bgLightColor: SkyTheme.timBlue.withAlpha(20),
@@ -1244,7 +1273,12 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
   double? _parseGrado(String? s) {
     if (s == null) return null;
     final cleaned = s.replaceAll('%', '').replaceAll(',', '.').replaceAll(RegExp(r'\s+'), '');
-    return double.tryParse(cleaned);
+    final val = double.tryParse(cleaned);
+    if (val == null) return null;
+    if (val > 0 && val <= 1.0) {
+      return val * 100.0;
+    }
+    return val;
   }
 
   int? _parseAge(String? dateStr) {
@@ -1873,6 +1907,7 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
     required IconData icon,
     required Color color,
     required Color bgLightColor,
+    String? subtitle,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -1927,6 +1962,16 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
                     ),
                   ),
                 ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Colors.grey.shade600,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
@@ -2012,6 +2057,1069 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
           onSelectedChanged: onSelectedChanged,
         );
       },
+    );
+  }
+
+  Future<void> _exportToExcel(List<Anagrafica> records) async {
+    try {
+      final excel = Excel.createExcel();
+      final sheet = excel['Anagrafica'];
+      excel.setDefaultSheet('Anagrafica');
+
+      sheet.appendRow([
+        TextCellValue('CID'),
+        TextCellValue('Matricola Aziendale UID'),
+        TextCellValue('Nominativo'),
+        TextCellValue('Codice Fiscale'),
+        TextCellValue('Sesso'),
+        TextCellValue('Data Nascita'),
+        TextCellValue('Luogo Nascita'),
+        TextCellValue('Tipo Scuola'),
+        TextCellValue('Formazione'),
+        TextCellValue('Data Assunzione'),
+        TextCellValue('Data Assunzione Gruppo'),
+        TextCellValue('Tipo Dipendente'),
+        TextCellValue('Livello'),
+        TextCellValue('Mansione'),
+        TextCellValue('Posizione'),
+        TextCellValue('Tipo Contratto'),
+        TextCellValue('Orario (Part/Full Time)'),
+        TextCellValue('Status'),
+        TextCellValue('Responsabile SI/NO'),
+        TextCellValue('Società'),
+        TextCellValue('Unità Organizzativa'),
+        TextCellValue('U.O. 3 Des'),
+        TextCellValue('U.O. 4 Des'),
+        TextCellValue('U.O. 5 Des'),
+        TextCellValue('Nominativo Responsabile UO'),
+        TextCellValue('Nominativo Key Account'),
+        TextCellValue('Nominativo Gestore'),
+        TextCellValue('Email'),
+        TextCellValue('Sede Comune'),
+        TextCellValue('Sede Indirizzo'),
+        TextCellValue('Regione'),
+        TextCellValue('Provincia'),
+        TextCellValue('Contratto Solidarietà'),
+        TextCellValue('Grado Occupazione'),
+      ]);
+
+      for (final r in records) {
+        sheet.appendRow([
+          TextCellValue(r.cid ?? ''),
+          TextCellValue(r.matricolaAziendaleUID ?? ''),
+          TextCellValue(r.nominativo ?? ''),
+          TextCellValue(r.codiceFiscale ?? ''),
+          TextCellValue(r.sesso ?? ''),
+          TextCellValue(r.dataNascita ?? ''),
+          TextCellValue(r.luogoNascita ?? ''),
+          TextCellValue(r.tipoScuola ?? ''),
+          TextCellValue(r.formazione ?? ''),
+          TextCellValue(r.dataAssunzione ?? ''),
+          TextCellValue(r.dataAssunzioneGruppo ?? ''),
+          TextCellValue(r.tipoDip ?? ''),
+          TextCellValue(r.livello ?? ''),
+          TextCellValue(r.mansione ?? ''),
+          TextCellValue(r.posizione ?? ''),
+          TextCellValue(r.tipoContratto ?? ''),
+          TextCellValue(r.partTimeFullTime ?? ''),
+          TextCellValue(r.status ?? ''),
+          TextCellValue(r.responsabileSINO ?? ''),
+          TextCellValue(r.societa ?? ''),
+          TextCellValue(r.unitaOrganizzativa ?? ''),
+          TextCellValue(r.unitaOrg3Des ?? ''),
+          TextCellValue(r.unitaOrg4Des ?? ''),
+          TextCellValue(r.unitaOrg5Des ?? ''),
+          TextCellValue(r.nominativoResponsabileUO ?? ''),
+          TextCellValue(r.nominativoKeyAccount ?? ''),
+          TextCellValue(r.nominativoGestore ?? ''),
+          TextCellValue(r.indirizzoMail ?? ''),
+          TextCellValue(r.sedeComune ?? ''),
+          TextCellValue(r.sedeIndirizzo ?? ''),
+          TextCellValue(r.regione ?? ''),
+          TextCellValue(r.provincia ?? ''),
+          TextCellValue(r.contrSolidarieta ?? ''),
+          TextCellValue(r.gradoOccupaz ?? ''),
+        ]);
+      }
+
+      // Applica stili alle intestazioni (TIM Blue con testo bianco grassetto)
+      final headerStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#003399'),
+        fontColorHex: ExcelColor.fromHexString('#FFFFFF'),
+        bold: true,
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      const colCount = 34;
+      for (var col = 0; col < colCount; col++) {
+        final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+        cell.cellStyle = headerStyle;
+      }
+      sheet.setRowHeight(0, 30);
+
+      // Configura larghezze colonne ottimali
+      final widths = [
+        12, // CID
+        22, // Matricola Aziendale UID
+        25, // Nominativo
+        18, // Codice Fiscale
+        8,  // Sesso
+        15, // Data Nascita
+        20, // Luogo Nascita
+        20, // Tipo Scuola
+        25, // Formazione
+        15, // Data Assunzione
+        18, // Data Assunzione Gruppo
+        18, // Tipo Dipendente
+        10, // Livello
+        25, // Mansione
+        20, // Posizione
+        18, // Tipo Contratto
+        22, // Orario (Part/Full Time)
+        12, // Status
+        18, // Responsabile SI/NO
+        12, // Società
+        25, // Unità Organizzativa
+        25, // U.O. 3 Des
+        25, // U.O. 4 Des
+        25, // U.O. 5 Des
+        28, // Nominativo Responsabile UO
+        28, // Nominativo Key Account
+        28, // Nominativo Gestore
+        25, // Email
+        20, // Sede Comune
+        30, // Sede Indirizzo
+        18, // Regione
+        10, // Provincia
+        22, // Contratto Solidarietà
+        18, // Grado Occupazione
+      ];
+
+      for (var col = 0; col < widths.length; col++) {
+        sheet.setColumnWidth(col, widths[col].toDouble());
+      }
+
+      final fileBytes = excel.encode();
+      if (fileBytes == null) return;
+
+      final outputFile = await FilePicker.saveFile(
+        dialogTitle: 'Salva Export Anagrafica',
+        fileName: 'export_anagrafica_${DateTime.now().millisecondsSinceEpoch}.xlsx',
+        type: FileType.custom,
+        allowedExtensions: ['xlsx'],
+      );
+
+      if (outputFile != null) {
+        final file = File(outputFile);
+        await file.writeAsBytes(fileBytes);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Esportazione completata con successo!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Errore durante l\'esportazione: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
+
+  void _showComuneDistributionMap(BuildContext context, List<Anagrafica> records) {
+    final Map<String, int> cityCounts = {};
+    for (final r in records) {
+      final city = r.sedeComune?.trim() ?? '';
+      if (city.isNotEmpty) {
+        final normalizedCity = city[0].toUpperCase() + city.substring(1).toLowerCase();
+        cityCounts[normalizedCity] = (cityCounts[normalizedCity] ?? 0) + 1;
+      }
+    }
+    final totalCount = cityCounts.values.fold(0, (sum, val) => sum + val);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 1000, maxHeight: 700),
+            child: _ComuneDistributionDialogContent(
+              cityCounts: cityCounts,
+              totalCount: totalCount,
+              records: records,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _ComuneDistributionDialogContent extends StatefulWidget {
+  final Map<String, int> cityCounts;
+  final int totalCount;
+  final List<Anagrafica> records;
+
+  const _ComuneDistributionDialogContent({
+    required this.cityCounts,
+    required this.totalCount,
+    required this.records,
+  });
+
+  @override
+  State<_ComuneDistributionDialogContent> createState() => _ComuneDistributionDialogContentState();
+}
+
+class _ComuneDistributionDialogContentState extends State<_ComuneDistributionDialogContent> with SingleTickerProviderStateMixin {
+  String _searchQuery = '';
+  String _employeeSearchQuery = '';
+  String? _hoveredCity;
+  String? _selectedCity;
+  late AnimationController _pulseController;
+  final MapController _mapController = MapController();
+
+  @override
+  void initState() {
+    super.initState();
+    _pulseController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1500),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _pulseController.dispose();
+    super.dispose();
+  }
+
+  static const Map<String, LatLng> _cityCoordinates = {
+    'roma': LatLng(41.9028, 12.4964),
+    'rome': LatLng(41.9028, 12.4964),
+    'milano': LatLng(45.4642, 9.1900),
+    'milan': LatLng(45.4642, 9.1900),
+    'torino': LatLng(45.0703, 7.6869),
+    'turin': LatLng(45.0703, 7.6869),
+    'napoli': LatLng(40.8518, 14.2681),
+    'naples': LatLng(40.8518, 14.2681),
+    'firenze': LatLng(43.7696, 11.2558),
+    'florence': LatLng(43.7696, 11.2558),
+    'bologna': LatLng(44.4949, 11.3426),
+    'venezia': LatLng(45.4408, 12.3155),
+    'venice': LatLng(45.4408, 12.3155),
+    'palermo': LatLng(38.1157, 13.3615),
+    'genova': LatLng(44.4056, 8.9463),
+    'bari': LatLng(41.1171, 16.8719),
+    'catanzaro': LatLng(38.9098, 16.5877),
+    'cagliari': LatLng(39.2238, 9.1217),
+    'perugia': LatLng(43.1107, 12.3908),
+    'ancona': LatLng(43.6158, 13.5189),
+    'potenza': LatLng(40.6404, 15.8056),
+    'campobasso': LatLng(41.5603, 14.6596),
+    'aosta': LatLng(45.7349, 7.3130),
+    'trento': LatLng(46.0748, 11.1217),
+    'trieste': LatLng(45.6495, 13.7768),
+    'l\'aquila': LatLng(42.3489, 13.3980),
+    'laquila': LatLng(42.3489, 13.3980),
+    'verona': LatLng(45.4384, 10.9916),
+    'padova': LatLng(45.4064, 11.8768),
+    'brescia': LatLng(45.5398, 10.2181),
+    'monza': LatLng(45.5845, 9.2744),
+    'bergamo': LatLng(45.6983, 9.6773),
+    'taranto': LatLng(40.4677, 17.2470),
+    'reggio calabria': LatLng(38.1144, 15.6500),
+    'messina': LatLng(38.1938, 15.5540),
+    'catania': LatLng(37.5079, 15.0830),
+    'sassari': LatLng(40.7272, 8.5595),
+    'salerno': LatLng(40.6780, 14.7591),
+    'foggia': LatLng(41.4622, 15.5446),
+    'pescara': LatLng(42.4618, 14.2142),
+    'latina': LatLng(41.4676, 12.9037),
+    'modena': LatLng(44.6471, 10.9252),
+    'parma': LatLng(44.8015, 10.3279),
+    'reggio emilia': LatLng(44.6982, 10.6312),
+    'livorno': LatLng(43.5485, 10.3106),
+    'pisa': LatLng(43.7085, 10.4036),
+    'siena': LatLng(43.3188, 11.3308),
+    'lucca': LatLng(43.8429, 10.5027),
+    'prato': LatLng(43.8777, 11.1022),
+    'ferrara': LatLng(44.8381, 11.6198),
+    'ravenna': LatLng(44.4184, 12.2035),
+    'rimini': LatLng(44.0576, 12.5653),
+    'forli': LatLng(44.2227, 12.0407),
+    'forli`': LatLng(44.2227, 12.0407),
+    'cesena': LatLng(44.1396, 12.2435),
+    'vicenza': LatLng(45.5467, 11.5475),
+    'treviso': LatLng(45.6669, 12.2429),
+    'udine': LatLng(46.0711, 13.2446),
+    'bolzano': LatLng(46.4981, 11.3548),
+    'pavia': LatLng(45.1850, 9.1559),
+    'cremona': LatLng(45.1332, 10.0242),
+    'mantova': LatLng(45.1564, 10.7914),
+    'piacenza': LatLng(45.0526, 9.6930),
+    'novara': LatLng(45.4468, 8.6214),
+    'alessandria': LatLng(44.9129, 8.6151),
+    'asti': LatLng(44.9005, 8.2069),
+    'cuneo': LatLng(44.3833, 7.5417),
+    'como': LatLng(45.8081, 9.0852),
+    'varese': LatLng(45.8190, 8.8250),
+    'lecco': LatLng(45.8559, 9.3977),
+    'lodi': LatLng(45.3139, 9.5032),
+    // Newly Added missing communes from Excel:
+    'affi': LatLng(45.5492, 10.7958),
+    'afragola': LatLng(40.9168, 14.3069),
+    'agrigento': LatLng(37.3111, 13.5765),
+    'albenga': LatLng(44.0483, 8.2127),
+    'aprilia': LatLng(41.5915, 12.6508),
+    'arese': LatLng(45.5539, 9.0776),
+    'assago': LatLng(45.4017, 9.1308),
+    'albano laziale': LatLng(41.7287, 12.6599),
+    'arezzo': LatLng(43.4633, 11.8817),
+    'bassano del grappa': LatLng(45.7663, 11.7342),
+    'beinasco': LatLng(45.0232, 7.5830),
+    'bellinzago lombardo': LatLng(45.5398, 9.4800),
+    'belpasso': LatLng(37.5898, 14.9785),
+    'borgo maggiore rsm': LatLng(43.9431, 12.4473),
+    'borgo maggiore - san marino': LatLng(43.9431, 12.4473),
+    'brindisi': LatLng(40.6327, 17.9417),
+    'brugherio': LatLng(45.5517, 9.3006),
+    'busnago': LatLng(45.6133, 9.4678),
+    'bussolengo': LatLng(45.4746, 10.8497),
+    'belgio': LatLng(50.8503, 4.3517),
+    'brasile': LatLng(-14.2350, -51.9253),
+    'campi bisenzio': LatLng(43.8267, 11.1350),
+    'cantu\'': LatLng(45.7389, 9.1242),
+    'cantu': LatLng(45.7389, 9.1242),
+    'carasco': LatLng(44.3514, 9.3444),
+    'carini': LatLng(38.1332, 13.1813),
+    'carpi': LatLng(44.7838, 10.8856),
+    'carugate': LatLng(45.5492, 9.3422),
+    'casalecchio di reno': LatLng(44.4789, 11.2789),
+    'caselle torinese': LatLng(45.1783, 7.6439),
+    'cassina rizzardi': LatLng(45.7331, 9.0303),
+    'castelfranco veneto': LatLng(45.6722, 11.9272),
+    'castenaso': LatLng(44.5106, 11.4706),
+    'cento': LatLng(44.7278, 11.2886),
+    'chieri': LatLng(45.0084, 7.8227),
+    'chieti': LatLng(42.3510, 14.1675),
+    'chivasso': LatLng(45.1925, 7.8872),
+    'cinisello balsamo': LatLng(45.5594, 9.2239),
+    'cirie\'': LatLng(45.2346, 7.6019),
+    'cirie': LatLng(45.2346, 7.6019),
+    'citta\' sant\'angelo': LatLng(42.5168, 14.1317),
+    'citta sant\'angelo': LatLng(42.5168, 14.1317),
+    'collegno': LatLng(45.0784, 7.5750),
+    'colonnella': LatLng(42.8724, 13.8697),
+    'comacchio': LatLng(44.6936, 12.1852),
+    'concesio': LatLng(45.6025, 10.2183),
+    'conegliano': LatLng(45.8858, 12.2964),
+    'corte franca': LatLng(45.6294, 9.9819),
+    'crema': LatLng(45.3629, 9.6848),
+    'curno': LatLng(45.6917, 9.6139),
+    'curtatone': LatLng(45.1508, 10.7183),
+    'caltanissetta': LatLng(37.4901, 14.0621),
+    'cassinadepecchi': LatLng(45.5186, 9.3625),
+    'cassina de\' pecchi': LatLng(45.5186, 9.3625),
+    'cesano maderno': LatLng(45.6289, 9.1458),
+    'cosenza': LatLng(39.2983, 16.2536),
+    'domagnano rsm': LatLng(43.9511, 12.4702),
+    'erba': LatLng(45.8078, 9.2272),
+    'erbusco': LatLng(45.5919, 9.9861),
+    'faenza': LatLng(44.2858, 11.8822),
+    'fermo': LatLng(43.1610, 13.7184),
+    'fiano romano': LatLng(42.1664, 12.5969),
+    'fiume veneto': LatLng(45.9287, 12.7297),
+    'formia': LatLng(41.2585, 13.6062),
+    'frosinone': LatLng(41.6395, 13.3411),
+    'gadesco pieve delmona': LatLng(45.1611, 10.0917),
+    'giussano': LatLng(45.6953, 9.2131),
+    'grandate': LatLng(45.7761, 9.0600),
+    'gravina di catania': LatLng(37.5619, 15.0608),
+    'grugliasco': LatLng(45.0694, 7.5794),
+    'guidonia montecelio': LatLng(41.9961, 12.7275),
+    'ivrea': LatLng(45.4678, 7.8767),
+    'lentate sul seveso': LatLng(45.6811, 9.1231),
+    'limbiate': LatLng(45.5989, 9.1283),
+    'lonato del garda': LatLng(45.4608, 10.4858),
+    'lugo': LatLng(44.4178, 11.9064),
+    'lagonegro': LatLng(40.1287, 15.7633),
+    'lecce': LatLng(40.3515, 18.1750),
+    'macerata': LatLng(43.3003, 13.4533),
+    'marcianise': LatLng(41.0317, 14.2989),
+    'marcon': LatLng(45.5606, 12.2178),
+    'martignacco': LatLng(46.0950, 13.1367),
+    'massa': LatLng(44.0358, 10.1417),
+    'mazzano': LatLng(45.5200, 10.3667),
+    'melilli': LatLng(37.1814, 15.1278),
+    'merate': LatLng(45.6989, 9.4217),
+    'molfetta': LatLng(41.2003, 16.5969),
+    'moncalieri': LatLng(45.0028, 7.6833),
+    'mondovi\'': LatLng(44.3892, 7.8256),
+    'mondovi': LatLng(44.3892, 7.8256),
+    'montano lucino': LatLng(45.7833, 9.0167),
+    'montebello della battaglia': LatLng(45.0028, 9.1028),
+    'mortara': LatLng(45.2519, 8.7367),
+    'mugnano di napoli': LatLng(40.9083, 14.2083),
+    'mazara del vallo': LatLng(37.6522, 12.5898),
+    'nichelino': LatLng(44.9961, 7.6433),
+    'nola': LatLng(40.9256, 14.5294),
+    'olbia': LatLng(40.9238, 9.4975),
+    'orio al serio': LatLng(45.6692, 9.7042),
+    'orvieto': LatLng(42.7186, 12.1128),
+    'paderno dugnano': LatLng(45.5714, 9.1678),
+    'palazzolo sull\'oglio': LatLng(45.5989, 9.8833),
+    'palazzolo sulloglio': LatLng(45.5989, 9.8833),
+    'parona': LatLng(45.2819, 8.7619),
+    'pavone canavese': LatLng(45.4419, 7.8528),
+    'piantedo': LatLng(46.1344, 9.4319),
+    'pieve fissiraga': LatLng(45.2639, 9.4447),
+    'pinerolo': LatLng(44.8856, 7.3325),
+    'piove di sacco': LatLng(45.2975, 11.9767),
+    'pompei': LatLng(40.7511, 14.5006),
+    'pontecagnano faiano': LatLng(40.6394, 14.8825),
+    'portogruaro': LatLng(45.7761, 12.8364),
+    'pomezia': LatLng(41.6708, 12.5022),
+    'quartucciu': LatLng(39.2522, 9.1764),
+    'ragusa': LatLng(36.9269, 14.7258),
+    'rescaldina': LatLng(45.6200, 8.9556),
+    'rivoli': LatLng(45.0706, 7.5186),
+    'roncadelle': LatLng(45.5300, 10.1500),
+    'rozzano': LatLng(45.3831, 9.1553),
+    'rubano': LatLng(45.4350, 11.7850),
+    's.stef.ticino': LatLng(45.4858, 8.9189),
+    'san giuliano milanese': LatLng(45.3986, 9.2889),
+    'san martino buon albergo': LatLng(45.4222, 11.0989),
+    'san martino siccomario': LatLng(45.1561, 9.1417),
+    'sanremo': LatLng(43.8159, 7.7761),
+    'sant\'angelo lodigiano': LatLng(45.2403, 9.4128),
+    'santangelo lodigiano': LatLng(45.2403, 9.4128),
+    'sarzana': LatLng(44.1119, 9.9608),
+    'savignano sul rubicone': LatLng(44.0903, 12.3967),
+    'savona': LatLng(44.3072, 8.4811),
+    'senigallia': LatLng(43.7169, 13.2189),
+    'seriate': LatLng(45.6847, 9.7214),
+    'serravalle rsm': LatLng(43.9689, 12.4775),
+    'serravalle scrivia': LatLng(44.7231, 8.8592),
+    'sesto san giovanni': LatLng(45.5328, 9.2319),
+    'sestu': LatLng(39.2994, 9.0950),
+    'solbiate olona': LatLng(45.6514, 8.8872),
+    'stezzano': LatLng(45.6517, 9.6531),
+    'settimotorinese': LatLng(45.1400, 7.7667),
+    'settimo torinese': LatLng(45.1400, 7.7667),
+    'taggia': LatLng(43.8436, 7.8486),
+    'teramo': LatLng(42.6586, 13.7044),
+    'torre annunziata': LatLng(40.7578, 14.4444),
+    'tortona': LatLng(44.8967, 8.8661),
+    'terni': LatLng(42.5644, 12.6414),
+    'turkey': LatLng(38.9637, 35.2433),
+    'venaria reale': LatLng(45.1350, 7.6350),
+    'vercelli': LatLng(45.3242, 8.4183),
+    'vigliano biellese': LatLng(45.5606, 8.1067),
+    'vignate': LatLng(45.4961, 9.3739),
+    'villasanta': LatLng(45.6033, 9.3039),
+    'villesse': LatLng(45.8631, 13.4358),
+    'vimodrone': LatLng(45.5153, 9.2858),
+    'rieti': LatLng(42.4045, 12.8567),
+    'l`aquila': LatLng(42.3489, 13.3980),
+    'mazara del vall': LatLng(37.6522, 12.5898),
+  };
+
+  @override
+  Widget build(BuildContext context) {
+    final listEntries = widget.cityCounts.entries.where((e) {
+      return e.key.toLowerCase().contains(_searchQuery.toLowerCase());
+    }).toList()..sort((a, b) => b.value.compareTo(a.value));
+
+    final int maxVal = widget.cityCounts.values.isEmpty 
+        ? 1 
+        : widget.cityCounts.values.reduce((a, b) => a > b ? a : b);
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Expanded(
+            flex: 3,
+            child: Container(
+              color: const Color(0xFF0F172A),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: FlutterMap(
+                      mapController: _mapController,
+                      options: const MapOptions(
+                        initialCenter: LatLng(41.8719, 12.5674),
+                        initialZoom: 6,
+                        maxZoom: 18,
+                        minZoom: 3,
+                      ),
+                      children: [
+                        TileLayer(
+                          urlTemplate: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+                          subdomains: const ['a', 'b', 'c', 'd'],
+                          userAgentPackageName: 'com.skyaudit.app',
+                        ),
+                        AnimatedBuilder(
+                          animation: _pulseController,
+                          builder: (context, child) {
+                            final pulseValue = _pulseController.value;
+                            final markers = widget.cityCounts.entries.map((entry) {
+                              final cityName = entry.key;
+                              final count = entry.value;
+                              final coords = _cityCoordinates[cityName.toLowerCase()];
+                              if (coords == null) return null;
+
+                              final isHovered = _hoveredCity == cityName;
+                              final isSelected = _selectedCity == cityName;
+                              final double relativeSize = maxVal > 0 ? (count / maxVal) : 0.0;
+                              final double pinSize = 12.0 + (relativeSize * 16.0);
+                              final double pulseMultiplier = 1.3 + (pulseValue * 0.5);
+                              final double glowSize = pinSize * (isHovered ? 2.5 : (isSelected ? 2.2 : pulseMultiplier));
+
+                              return Marker(
+                                point: coords,
+                                width: glowSize + 80,
+                                height: glowSize + 40,
+                                alignment: Alignment.center,
+                                child: MouseRegion(
+                                  cursor: SystemMouseCursors.click,
+                                  onEnter: (_) => setState(() => _hoveredCity = cityName),
+                                  onExit: (_) => setState(() => _hoveredCity = null),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _selectedCity = _selectedCity == cityName ? null : cityName;
+                                        _employeeSearchQuery = '';
+                                      });
+                                    },
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      clipBehavior: Clip.none,
+                                      children: [
+                                        Container(
+                                          width: glowSize,
+                                          height: glowSize,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: (isSelected 
+                                                ? SkyTheme.timBlue 
+                                                : (isHovered ? Colors.orange : SkyTheme.timRed))
+                                                .withAlpha(isHovered || isSelected ? 70 : 40),
+                                          ),
+                                        ),
+                                        AnimatedContainer(
+                                          duration: const Duration(milliseconds: 200),
+                                          width: pinSize,
+                                          height: pinSize,
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            color: isSelected 
+                                                ? SkyTheme.timBlue 
+                                                : (isHovered ? Colors.orange : SkyTheme.timRed),
+                                            border: Border.all(color: Colors.white, width: 1.5),
+                                            boxShadow: const [
+                                              BoxShadow(
+                                                color: Colors.black26,
+                                                blurRadius: 4,
+                                                offset: Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        if (isHovered || isSelected || count > (maxVal * 0.3))
+                                          Positioned(
+                                            top: glowSize - 2,
+                                            child: Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: Colors.black87,
+                                                borderRadius: BorderRadius.circular(4),
+                                                border: Border.all(color: Colors.white24, width: 0.5),
+                                              ),
+                                              child: Text(
+                                                '$cityName: $count',
+                                                style: const TextStyle(
+                                                  color: Colors.white,
+                                                  fontSize: 9,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }).whereType<Marker>().toList();
+
+                            return MarkerLayer(markers: markers);
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  Positioned(
+                    top: 24,
+                    left: 24,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withAlpha(220),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(10),
+                            blurRadius: 10,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            'DISTRIBUZIONE GEOGRAFICA',
+                            style: TextStyle(
+                              color: Colors.black87,
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            'Totale sedi tracciate: ${widget.cityCounts.length}',
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 11,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 24,
+                    right: 24,
+                    child: IconButton(
+                      icon: const Icon(Icons.close, color: Colors.white),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                  Positioned(
+                    right: 24,
+                    top: 80,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(50),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            onPressed: () {
+                              final currentZoom = _mapController.camera.zoom;
+                              _mapController.move(_mapController.camera.center, currentZoom + 1);
+                            },
+                            icon: const Icon(Icons.add, color: SkyTheme.timBlue),
+                            tooltip: 'Zoom In',
+                          ),
+                          const Divider(height: 1, indent: 8, endIndent: 8),
+                          IconButton(
+                            onPressed: () {
+                              final currentZoom = _mapController.camera.zoom;
+                              _mapController.move(_mapController.camera.center, currentZoom - 1);
+                            },
+                            icon: const Icon(Icons.remove, color: SkyTheme.timBlue),
+                            tooltip: 'Zoom Out',
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  if (_selectedCity != null || _hoveredCity != null)
+                    Positioned(
+                      bottom: 24,
+                      left: 24,
+                      right: 24,
+                      child: Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF1E293B),
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(color: Colors.white.withAlpha(20)),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withAlpha(80),
+                              blurRadius: 15,
+                              offset: const Offset(0, 8),
+                            ),
+                          ],
+                        ),
+                        child: () {
+                          final activeCity = _selectedCity ?? _hoveredCity!;
+                          final count = widget.cityCounts[activeCity] ?? 0;
+                          final double pct = widget.totalCount > 0 ? (count / widget.totalCount) * 100 : 0.0;
+                          return Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: SkyTheme.timBlue.withAlpha(30),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(Icons.location_on, color: SkyTheme.timBlue, size: 24),
+                              ),
+                              const SizedBox(width: 16),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    activeCity.toUpperCase(),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Sede Comune',
+                                    style: TextStyle(
+                                      color: Colors.grey.shade400,
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '$count dipendenti',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '${pct.toStringAsFixed(1).replaceAll('.', ',')}% del totale filtrato',
+                                    style: TextStyle(
+                                      color: Colors.green.shade400,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          );
+                        }(),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+          Container(
+            width: 380,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(left: BorderSide(color: Colors.grey.shade200)),
+            ),
+            child: _selectedCity != null
+                ? () {
+                    final cityEmployees = widget.records.where((r) {
+                      final matchCity = (r.sedeComune?.trim().toLowerCase() ?? '') == _selectedCity!.toLowerCase();
+                      if (!matchCity) return false;
+                      if (_employeeSearchQuery.isEmpty) return true;
+                      return (r.nominativo?.toLowerCase() ?? '').contains(_employeeSearchQuery.toLowerCase()) ||
+                             (r.cid?.toLowerCase() ?? '').contains(_employeeSearchQuery.toLowerCase());
+                    }).toList()..sort((a, b) => (a.nominativo ?? '').compareTo(b.nominativo ?? ''));
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(12, 16, 20, 16),
+                          child: Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.arrow_back, color: SkyTheme.timBlue),
+                                onPressed: () {
+                                  setState(() {
+                                    _selectedCity = null;
+                                    _employeeSearchQuery = '';
+                                  });
+                                },
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      _selectedCity!.toUpperCase(),
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black87,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                    Text(
+                                      '${cityEmployees.length} dipendenti',
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(height: 1),
+                        Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: TextField(
+                            onChanged: (value) => setState(() => _employeeSearchQuery = value),
+                            decoration: InputDecoration(
+                              hintText: 'Cerca nominativo o CID...',
+                              prefixIcon: const Icon(Icons.search, size: 20),
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                              filled: true,
+                              fillColor: Colors.grey.shade100,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const Divider(height: 1),
+                        Expanded(
+                          child: cityEmployees.isEmpty
+                              ? Center(
+                                  child: Text(
+                                    'Nessun dipendente trovato',
+                                    style: TextStyle(color: Colors.grey.shade500),
+                                  ),
+                                )
+                              : ListView.builder(
+                                  itemCount: cityEmployees.length,
+                                  itemBuilder: (context, index) {
+                                    final emp = cityEmployees[index];
+                                    return Container(
+                                      decoration: BoxDecoration(
+                                        border: Border(bottom: BorderSide(color: Colors.grey.shade100)),
+                                      ),
+                                      child: ListTile(
+                                        leading: CircleAvatar(
+                                          radius: 16,
+                                          backgroundColor: SkyTheme.timBlue.withAlpha(20),
+                                          child: Text(
+                                            emp.nominativo != null && emp.nominativo!.isNotEmpty
+                                                ? emp.nominativo!.trim().split(' ').map((s) => s.isNotEmpty ? s[0] : '').take(2).join().toUpperCase()
+                                                : '?',
+                                            style: const TextStyle(
+                                              color: SkyTheme.timBlue,
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        title: Text(
+                                          emp.nominativo ?? '-',
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                        subtitle: Text(
+                                          'CID: ${emp.cid ?? "-"} | ${emp.societa ?? "-"}',
+                                          style: TextStyle(
+                                            fontSize: 11,
+                                            color: Colors.grey.shade600,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                        ),
+                      ],
+                    );
+                  }()
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 24, 20, 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Dettaglio Sedi',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            TextField(
+                              onChanged: (value) => setState(() => _searchQuery = value),
+                              decoration: InputDecoration(
+                                hintText: 'Cerca comune...',
+                                prefixIcon: const Icon(Icons.search, size: 20),
+                                isDense: true,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                                filled: true,
+                                fillColor: Colors.grey.shade100,
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                  borderSide: BorderSide.none,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Divider(height: 1),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: listEntries.length,
+                          itemBuilder: (context, index) {
+                            final entry = listEntries[index];
+                            final cityName = entry.key;
+                            final count = entry.value;
+                            final double pct = widget.totalCount > 0 ? (count / widget.totalCount) : 0.0;
+                            final hasCoords = _cityCoordinates.containsKey(cityName.toLowerCase());
+
+                            final isSelected = _selectedCity == cityName;
+
+                            return Container(
+                              decoration: BoxDecoration(
+                                color: isSelected ? SkyTheme.timBlue.withAlpha(15) : null,
+                                border: Border(bottom: BorderSide(color: Colors.grey.shade100)),
+                              ),
+                              child: ListTile(
+                                onTap: () {
+                                  setState(() {
+                                    _selectedCity = isSelected ? null : cityName;
+                                    _employeeSearchQuery = '';
+                                  });
+                                },
+                                leading: Icon(
+                                  Icons.location_on_outlined, 
+                                  color: hasCoords ? SkyTheme.timBlue : Colors.grey.shade400,
+                                  size: 20,
+                                ),
+                                title: Row(
+                                  children: [
+                                    Text(
+                                      cityName,
+                                      style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+                                    ),
+                                    if (!hasCoords) ...[
+                                      const SizedBox(width: 6),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                                        decoration: BoxDecoration(
+                                          color: Colors.grey.shade100,
+                                          borderRadius: BorderRadius.circular(4),
+                                        ),
+                                        child: const Text(
+                                          'Non mappato', 
+                                          style: TextStyle(fontSize: 9, color: Colors.grey),
+                                        ),
+                                      ),
+                                    ],
+                                  ],
+                                ),
+                                subtitle: Padding(
+                                  padding: const EdgeInsets.only(top: 6),
+                                  child: LinearProgressIndicator(
+                                    value: pct,
+                                    backgroundColor: Colors.grey.shade100,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      isSelected ? SkyTheme.timBlue : SkyTheme.timBlue.withAlpha(180),
+                                    ),
+                                    minHeight: 4,
+                                    borderRadius: BorderRadius.circular(2),
+                                  ),
+                                ),
+                                trailing: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '$count',
+                                      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+                                    ),
+                                    Text(
+                                      '${(pct * 100).toStringAsFixed(1).replaceAll('.', ',')}%',
+                                      style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        color: Colors.grey.shade50,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Totale filtrato:',
+                              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 12, color: Colors.black54),
+                            ),
+                            Text(
+                              '${widget.totalCount} dipendenti',
+                              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: Colors.black87),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        ],
+      ),
     );
   }
 }

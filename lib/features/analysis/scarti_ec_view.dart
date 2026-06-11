@@ -128,22 +128,16 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
       ..sort();
 
     bool hasMatch(ScartiEcSap rec) {
-      return contabileRecords.any((tc) {
-        final cidMatch = tc.cid.trim().padLeft(8, '0') == rec.cid.trim().padLeft(8, '0');
-        final trasfMatch = tc.numeroTrasferta.trim() == rec.numeroTrasferta.trim();
-        final contabileSignedImporto = (tc.isNegative ? -1.0 : 1.0) * tc.importo;
-        final importoMatch = (contabileSignedImporto - rec.importo).abs() < 0.01;
-        return cidMatch && trasfMatch && importoMatch;
-      });
+      return rec.isMatched;
     }
 
     final totalRecords = allRecords.length;
     final reconciledRecords = allRecords.where(hasMatch).length;
     final waitingRecords = totalRecords - reconciledRecords;
 
-    final totalAmount = allRecords.fold<double>(0.0, (sum, r) => sum + r.importo.abs());
-    final reconciledAmount = allRecords.where(hasMatch).fold<double>(0.0, (sum, r) => sum + r.importo.abs());
-    final waitingAmount = totalAmount - reconciledAmount;
+    final totalAmount = allRecords.fold<double>(0.0, (sum, r) => sum + r.importo);
+    final reconciledAmount = allRecords.where(hasMatch).fold<double>(0.0, (sum, r) => sum + r.importo);
+    final waitingAmount = allRecords.where((r) => !hasMatch(r)).fold<double>(0.0, (sum, r) => sum + r.importo);
 
     // Filtra i record
     final filteredRecords = allRecords.where((r) {
@@ -1423,6 +1417,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
     };
 
     final contabileRecords = ref.read(tracciatoContabilesProvider);
+    final loadingFileName = record.logHistoryId != null ? logHistoryMap[record.logHistoryId] : null;
     
     // 1. Incroci perfetti (CID + Trasferta + Importo)
     final matches = contabileRecords.where((tc) {
@@ -1532,6 +1527,13 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                             isHighlight: true, 
                             highlightColor: record.importo < 0 ? Colors.red.shade700 : Colors.green.shade800
                           ),
+                          _buildDetailRow(
+                            'Stato Quadratura', 
+                            record.isMatched ? 'RISCONTRATO' : 'IN ATTESA',
+                            isHighlight: record.isMatched,
+                            highlightColor: record.isMatched ? Colors.green.shade700 : Colors.orange.shade700,
+                          ),
+                          _buildDetailRow('File Caricamento', loadingFileName ?? '-'),
                           _buildDetailRow('Note Aggiuntive', record.note ?? '-'),
                         ]),
                         const SizedBox(height: 24),
@@ -1968,6 +1970,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
         TextCellValue('Storno'),
         TextCellValue('Data Invio'),
         TextCellValue('Note'),
+        TextCellValue('Incrocio (SI/NO)'),
       ]);
 
       for (final r in records) {
@@ -1982,6 +1985,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
           TextCellValue(r.storno ?? ''),
           TextCellValue(r.dataInvio),
           TextCellValue(r.note ?? ''),
+          TextCellValue(r.isMatched ? 'SI' : 'NO'),
         ]);
       }
 

@@ -8,6 +8,8 @@ import 'package:travel_check/core/db/isar_provider.dart';
 import '../models/scarti_ec_sap.dart';
 import '../models/log_history.dart';
 import 'log_history_provider.dart';
+import '../models/tracciato_contabile.dart';
+import 'tracciato_contabile_provider.dart';
 
 class ScartiEcSapNotifier extends Notifier<List<ScartiEcSap>> {
   @override
@@ -21,6 +23,16 @@ class ScartiEcSapNotifier extends Notifier<List<ScartiEcSap>> {
     final uniqueCode = DateTime.now().millisecondsSinceEpoch.toString();
 
     debugPrint('Caricamento file Scarti EC SAP: ${file.path}');
+
+    // Estrazione anno e mese dalle prime 6 cifre del nome del file (formato yyyyMM)
+    final fileName = file.name;
+    if (fileName.length < 6) {
+      throw Exception('Il nome del file degli scarti deve iniziare con 6 cifre per anno e mese (yyyyMM).');
+    }
+    final yyyyMM = fileName.substring(0, 6);
+    if (!RegExp(r'^\d{6}$').hasMatch(yyyyMM)) {
+      throw Exception('Le prime 6 cifre del nome del file degli scarti devono rappresentare anno e mese (yyyyMM).');
+    }
 
     // Eseguiamo il parsing in un isolate separato per evitare blocchi dell'interfaccia utente (jank)
     final List<Map<String, dynamic>> results = await compute(_parseScartiIsolate, {
@@ -47,8 +59,102 @@ class ScartiEcSapNotifier extends Notifier<List<ScartiEcSap>> {
       );
     }).toList();
 
+    // 1. Carica i record del tracciato contabile corrispondente allo stesso yyyyMM
+    final logs = await isar.logHistorys
+        .filter()
+        .sourceTypeEqualTo('Tracciato Contabile')
+        .findAll();
+    
+    LogHistory? matchingLog;
+    for (final log in logs) {
+      if (log.fileName.contains(yyyyMM)) {
+        matchingLog = log;
+        break;
+      }
+    }
+
+    final List<TracciatoContabile> candidateRecords;
+    if (matchingLog != null) {
+      candidateRecords = await isar.tracciatoContabiles
+          .filter()
+          .logHistoryIdEqualTo(matchingLog.uniqueCode)
+          .findAll();
+    } else {
+      // Fallback: cerca i record tramite dataSpesa che termina con /MM/yyyy
+      final targetSuffix = '/${yyyyMM.substring(4)}/${yyyyMM.substring(0, 4)}';
+      candidateRecords = await isar.tracciatoContabiles
+          .filter()
+          .dataSpesaEndsWith(targetSuffix)
+          .findAll();
+    }
+
+    // 2. Eseguiamo l'abbinamento univoco (1-a-1)
+    final matchedIds = <int>{};
+    final updatedContabileRecords = <TracciatoContabile>[];
+    int matchCount = 0;
+
+    for (final scarto in recordsToSave) {
+      final scartoCid = scarto.cid.trim().padLeft(8, '0');
+      final scartoCleanTrasferta = scarto.numeroTrasferta.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
+      final scartoImporto = scarto.importo;
+
+      TracciatoContabile? bestMatch;
+      for (final candidate in candidateRecords) {
+        if (matchedIds.contains(candidate.id)) continue;
+
+        final candCid = candidate.cid.trim().padLeft(8, '0');
+        final candCleanTrasferta = candidate.numeroTrasferta.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
+        final candImporto = candidate.isNegative ? -candidate.importo : candidate.importo;
+
+        if (scartoCid == candCid &&
+            scartoCleanTrasferta == candCleanTrasferta &&
+            (scartoImporto - candImporto).abs() < 0.005) {
+          bestMatch = candidate;
+          break;
+        }
+      }
+
+      if (bestMatch != null) {
+        matchedIds.add(bestMatch.id);
+        scarto.isMatched = true;
+        
+        final updatedRecord = TracciatoContabile(
+          recordType: bestMatch.recordType,
+          cid: bestMatch.cid,
+          numeroTrasferta: bestMatch.numeroTrasferta,
+          progressivo: bestMatch.progressivo,
+          societa: bestMatch.societa,
+          tipoDipendente: bestMatch.tipoDipendente,
+          giustificativoSpesa: bestMatch.giustificativoSpesa,
+          numeroBolla: bestMatch.numeroBolla,
+          dataSpesa: bestMatch.dataSpesa,
+          localita: bestMatch.localita,
+          dataInizio: bestMatch.dataInizio,
+          oraInizio: bestMatch.oraInizio,
+          dataFine: bestMatch.dataFine,
+          oraFine: bestMatch.oraFine,
+          tipoAttivita: bestMatch.tipoAttivita,
+          importo: bestMatch.importo,
+          valuta: bestMatch.valuta,
+          isNegative: bestMatch.isNegative,
+          logHistoryId: bestMatch.logHistoryId,
+          sourceFileLine: bestMatch.sourceFileLine,
+          isScarto: true,
+          scartoLogHistoryId: uniqueCode,
+        )..id = bestMatch.id;
+
+        updatedContabileRecords.add(updatedRecord);
+        matchCount++;
+      }
+    }
+
+    // 3. Salvataggio e aggiornamenti
     await isar.writeTxn(() async {
       await isar.scartiEcSaps.putAll(recordsToSave);
+      
+      if (updatedContabileRecords.isNotEmpty) {
+        await isar.tracciatoContabiles.putAll(updatedContabileRecords);
+      }
 
       final log = LogHistory(
         fileName: file.name,
@@ -56,7 +162,7 @@ class ScartiEcSapNotifier extends Notifier<List<ScartiEcSap>> {
         uniqueCode: uniqueCode,
         totalRecords: recordsToSave.length,
         insertedRecords: recordsToSave.length,
-        updatedRecords: 0,
+        updatedRecords: matchCount,
         discardedRecords: 0,
         sourceType: 'Scarti EC SAP',
       );
@@ -65,6 +171,7 @@ class ScartiEcSapNotifier extends Notifier<List<ScartiEcSap>> {
 
     state = await isar.scartiEcSaps.where().anyId().findAll();
     ref.invalidate(logHistoryProvider);
+    ref.invalidate(tracciatoContabilesProvider);
 
     return {
       'inserted': recordsToSave.length,

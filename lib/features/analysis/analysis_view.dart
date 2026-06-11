@@ -34,6 +34,14 @@ enum ContabileIncrocioFilter {
 
 final tcIncrocioFilterProvider = StateProvider<ContabileIncrocioFilter>((ref) => ContabileIncrocioFilter.all);
 
+enum ContabileScartoFilter {
+  all,
+  scarti,
+  regolari,
+}
+
+final tcScartoFilterProvider = StateProvider<ContabileScartoFilter>((ref) => ContabileScartoFilter.all);
+
 class AnalysisView extends ConsumerStatefulWidget {
   const AnalysisView({super.key});
 
@@ -70,6 +78,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final selectedLogHistoryIds = ref.watch(tcSelectedLogHistoryIdsProvider);
     final allLogs = ref.watch(logHistoryProvider);
     final incrocioFilter = ref.watch(tcIncrocioFilterProvider);
+    final scartoFilter = ref.watch(tcScartoFilterProvider);
     final sapRecords = ref.watch(trasferteSapProvider);
     final sapTrasferte = sapRecords
         .map((r) => r.numeroTrasferta.trim())
@@ -126,6 +135,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
       selectedTrasferta != null,
       selectedLogHistoryIds.isNotEmpty,
       incrocioFilter != ContabileIncrocioFilter.all,
+      scartoFilter != ContabileScartoFilter.all,
     ].where((e) => e).length;
 
     // Estrai dati disponibili per i filtri
@@ -176,6 +186,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final dictionaryMap = {
       for (final entry in dictionaries) entry.code: entry.value,
     };
+    final logsMap = {for (final log in allLogs) log.uniqueCode: log.fileName};
 
     // Filtra i record
     final filteredRecords =
@@ -210,6 +221,12 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
             final isMatched = sapTrasferte.contains(r.numeroTrasferta.trim());
             if (incrocioFilter == ContabileIncrocioFilter.matched && !isMatched) return false;
             if (incrocioFilter == ContabileIncrocioFilter.notMatched && isMatched) return false;
+          }
+
+          // Filtro Stato Scarto
+          if (scartoFilter != ContabileScartoFilter.all) {
+            if (scartoFilter == ContabileScartoFilter.scarti && !r.isScarto) return false;
+            if (scartoFilter == ContabileScartoFilter.regolari && r.isScarto) return false;
           }
 
           return true;
@@ -257,6 +274,10 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final double koAmount = filteredRecords
         .where((r) => koTravels.contains(r.numeroTrasferta.trim()))
         .fold(0.0, (sum, r) => sum + (r.isNegative ? -r.importo : r.importo));
+
+    final scartiRecords = filteredRecords.where((r) => r.isScarto).toList();
+    final scartiCount = scartiRecords.length;
+    final double scartiAmount = scartiRecords.fold(0.0, (sum, r) => sum + (r.isNegative ? -r.importo : r.importo));
 
 
     return Scaffold(
@@ -357,6 +378,46 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                         ],
                       ),
                     ),
+                    const SizedBox(width: 12),
+                    OutlinedButton.icon(
+                      onPressed: () async {
+                        final messenger = ScaffoldMessenger.of(context);
+                        final navigator = Navigator.of(context);
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (context) => const Center(
+                            child: CircularProgressIndicator(),
+                          ),
+                        );
+                        try {
+                          await ref.read(tracciatoContabilesProvider.notifier).recalculateScarti();
+                          navigator.pop();
+                          messenger.showSnackBar(
+                            const SnackBar(
+                              content: Text('Elaborazione scarti completata con successo!'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                        } catch (e) {
+                          navigator.pop();
+                          messenger.showSnackBar(
+                            SnackBar(
+                              content: Text('Errore durante l\'elaborazione: $e'),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: const Text('Aggiorna Scarti'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        foregroundColor: SkyTheme.timBlue,
+                        side: const BorderSide(color: SkyTheme.timBlue),
+                      ),
+                    ),
                   ],
                 ),
                 if (activeFiltersCount > 0) ...[
@@ -388,8 +449,13 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                           ),
                         if (incrocioFilter != ContabileIncrocioFilter.all)
                           _buildFilterChip(
-                            incrocioFilter == ContabileIncrocioFilter.matched ? 'Stato: Riscontrati' : 'Stato: Non Riscontrati',
+                            incrocioFilter == ContabileIncrocioFilter.matched ? 'Stato: Riscontrati SAP' : 'Stato: Non Riscontrati SAP',
                             () => ref.read(tcIncrocioFilterProvider.notifier).state = ContabileIncrocioFilter.all,
+                          ),
+                        if (scartoFilter != ContabileScartoFilter.all)
+                          _buildFilterChip(
+                            scartoFilter == ContabileScartoFilter.scarti ? 'Stato: Scarti' : 'Stato: Regolari',
+                            () => ref.read(tcScartoFilterProvider.notifier).state = ContabileScartoFilter.all,
                           ),
                         TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
                       ],
@@ -420,7 +486,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                     bgLightColor: SkyTheme.timBlue.withAlpha(20),
                   );
                   final card2 = _buildSummaryCard(
-                    title: 'RISCONTRATI (OK)',
+                    title: 'RISCONTRATI SAP (OK)',
                     value: '$okTravelsCount',
                     subtitle: 'Importo: ${_formatAmount(okAmount)}',
                     icon: Icons.check_circle_outline,
@@ -428,15 +494,23 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                     bgLightColor: Colors.green.shade50,
                   );
                   final card3 = _buildSummaryCard(
-                    title: 'NON RISCONTRATI (KO)',
+                    title: 'NON RISCONTRATI SAP (KO)',
                     value: '$koTravelsCount',
                     subtitle: 'Importo: ${_formatAmount(koAmount)}',
                     icon: Icons.cancel_outlined,
                     color: Colors.red.shade700,
                     bgLightColor: Colors.red.shade50,
                   );
+                  final card4 = _buildSummaryCard(
+                    title: 'TOTALE SCARTI',
+                    value: '$scartiCount',
+                    subtitle: 'Importo: ${_formatAmount(scartiAmount)}',
+                    icon: Icons.warning_amber_rounded,
+                    color: Colors.orange.shade700,
+                    bgLightColor: Colors.orange.shade50,
+                  );
 
-                  if (constraints.maxWidth >= 950) {
+                  if (constraints.maxWidth >= 1200) {
                     return Row(
                       children: [
                         Expanded(child: card1),
@@ -444,6 +518,8 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                         Expanded(child: card2),
                         const SizedBox(width: 16),
                         Expanded(child: card3),
+                        const SizedBox(width: 16),
+                        Expanded(child: card4),
                       ],
                     );
                   } else {
@@ -473,6 +549,8 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                 SizedBox(width: 290, child: card2),
                                 const SizedBox(width: 16),
                                 SizedBox(width: 290, child: card3),
+                                const SizedBox(width: 16),
+                                SizedBox(width: 290, child: card4),
                               ],
                             ),
                           ),
@@ -523,7 +601,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SizedBox(
-                          width: 1870,
+                          width: 1980,
                           child: Column(
                             children: [
                               // HEADER FISSO
@@ -539,6 +617,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                     _buildCell('CID', 140, isHeader: true),
                                     _buildCell('NOMINATIVO', 220, isHeader: true),
                                     _buildCell('TRASFERTA', 160, isHeader: true),
+                                    _buildCell('SCARTO', 110, isHeader: true, alignment: Alignment.center),
                                     _buildCell('IMPORTO', 140, isHeader: true),
                                     _buildCell('SEGNO', 80, isHeader: true),
                                     _buildCell('GIUSTIFICATIVO', 250, isHeader: true),
@@ -568,7 +647,15 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                         ),
                                         child: Row(
                                           children: [
-                                            _buildCell('', 100, alignment: Alignment.center, child: IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record, dictionaryMap), padding: EdgeInsets.zero, constraints: const BoxConstraints())),
+                                            _buildCell('', 100, alignment: Alignment.center, child: IconButton(
+                                              icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), 
+                                              onPressed: () {
+                                                final fileName = record.logHistoryId != null ? logsMap[record.logHistoryId] : null;
+                                                _showRecordDetails(context, record, dictionaryMap, fileName);
+                                              }, 
+                                              padding: EdgeInsets.zero, 
+                                              constraints: const BoxConstraints(),
+                                            )),
                                             _buildCopyableCell(record.cid, 140, typeLabel: 'CID', fontWeight: FontWeight.w500),
                                             _buildCell(anagraficheMap[record.cid.trim()] ?? '', 220, fontWeight: FontWeight.w500),
                                             _buildCopyableCell(
@@ -579,6 +666,27 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                                   ? Colors.green.shade800
                                                   : Colors.red.shade700,
                                               fontWeight: FontWeight.bold,
+                                            ),
+                                            _buildCell(
+                                              '',
+                                              110,
+                                              alignment: Alignment.center,
+                                              child: Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                decoration: BoxDecoration(
+                                                  color: record.isScarto ? Colors.red.shade50 : Colors.green.shade50,
+                                                  borderRadius: BorderRadius.circular(12),
+                                                  border: Border.all(color: record.isScarto ? Colors.red.shade200 : Colors.green.shade200),
+                                                ),
+                                                child: Text(
+                                                  record.isScarto ? 'SCARTO' : 'REGOLARE',
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: record.isScarto ? Colors.red.shade700 : Colors.green.shade700,
+                                                  ),
+                                                ),
+                                              ),
                                             ),
                                             _buildCell('${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}', 140, fontWeight: FontWeight.bold, color: record.isNegative ? Colors.red.shade700 : Colors.green.shade800),
                                             _buildCell('', 80, child: Icon(record.isNegative ? Icons.remove_circle_outline : Icons.add_circle_outline, color: record.isNegative ? Colors.red.shade300 : Colors.green.shade300, size: 18)),
@@ -680,6 +788,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     ref.read(selectedTipiProvider.notifier).state = [];
     ref.read(tcSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(tcIncrocioFilterProvider.notifier).state = ContabileIncrocioFilter.all;
+    ref.read(tcScartoFilterProvider.notifier).state = ContabileScartoFilter.all;
     ref.read(analysisPageProvider.notifier).state = 0;
     _trasfertaController.clear();
   }
@@ -799,10 +908,22 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                   ref.watch(tcIncrocioFilterProvider),
                   {
                     ContabileIncrocioFilter.all: 'Tutti',
-                    ContabileIncrocioFilter.matched: 'Riscontrati',
-                    ContabileIncrocioFilter.notMatched: 'Non Riscontrati',
+                    ContabileIncrocioFilter.matched: 'Riscontrati SAP',
+                    ContabileIncrocioFilter.notMatched: 'Non Riscontrati SAP',
                   },
                   (val) => ref.read(tcIncrocioFilterProvider.notifier).state = val,
+                ),
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('STATO SCARTO'),
+                const SizedBox(height: 12),
+                _buildChoiceFilter<ContabileScartoFilter>(
+                  ref.watch(tcScartoFilterProvider),
+                  {
+                    ContabileScartoFilter.all: 'Tutti',
+                    ContabileScartoFilter.scarti: 'Scarti',
+                    ContabileScartoFilter.regolari: 'Regolari',
+                  },
+                  (val) => ref.read(tcScartoFilterProvider.notifier).state = val,
                 ),
                 const SizedBox(height: 32),
                 _buildDrawerSectionTitle('FILE CARICATI'),
@@ -1119,7 +1240,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     );
   }
 
-  void _showRecordDetails(BuildContext context, TracciatoContabile record, Map<String, String> dictionaryMap) {
+  void _showRecordDetails(BuildContext context, TracciatoContabile record, Map<String, String> dictionaryMap, String? loadingFileName) {
     showDialog(
       context: context,
       builder: (context) {
@@ -1215,6 +1336,13 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                             isHighlight: true,
                             highlightColor: record.isNegative ? Colors.red.shade700 : Colors.green.shade700,
                           ),
+                          _buildDetailRow(
+                            'Stato Quadratura', 
+                            record.isScarto ? 'SCARTATO' : 'REGOLARE',
+                            isHighlight: record.isScarto,
+                            highlightColor: record.isScarto ? Colors.red.shade700 : Colors.green.shade700,
+                          ),
+                          _buildDetailRow('File Caricamento', loadingFileName ?? '-'),
                           _buildDetailRow('Numero Bolla', record.numeroBolla),
                           _buildDetailRow('Tipo Attività', record.tipoAttivita),
                           _buildDetailRow('Progressivo', record.progressivo),
@@ -1334,7 +1462,8 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
         TextCellValue('Importo'),
         TextCellValue('Valuta'),
         TextCellValue('Segno'),
-        TextCellValue('Stato Riscontro'),
+        TextCellValue('Stato Riscontro SAP'),
+        TextCellValue('Scarto (SI/NO)'),
       ]);
 
       // Dati
@@ -1374,12 +1503,13 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
           DoubleCellValue(amountValue),
           TextCellValue(r.valuta),
           TextCellValue(r.isNegative ? 'R' : ''),
-          TextCellValue(isMatched ? 'RISCONTRATO' : 'NON RISCONTRATO'),
+          TextCellValue(isMatched ? 'RISCONTRATO SAP' : 'NON RISCONTRATO SAP'),
+          TextCellValue(r.isScarto ? 'SI' : 'NO'),
         ]);
       }
 
       // Applica stili alle righe
-      const colCount = 23;
+      const colCount = 24;
       for (var col = 0; col < colCount; col++) {
         final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
         cell.cellStyle = headerStyle;
@@ -1427,6 +1557,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
       sheet.setColumnWidth(20, 10); // Valuta
       sheet.setColumnWidth(21, 10); // Segno
       sheet.setColumnWidth(22, 20); // Stato Riscontro
+      sheet.setColumnWidth(23, 18); // Scarto (SI/NO)
 
       final fileBytes = excel.encode();
       if (fileBytes == null) return;

@@ -26,7 +26,7 @@ class AppSettings {
   String sharepointTrasferteSapPath = 'trasferte_sap';
 
   // Network & Proxy Settings
-  bool proxyEnabled = false;
+  bool proxyEnabled = true;
   bool proxyAutoConfig = true;
   String customProxyUrl = '';
   bool bypassSslVerification = true;

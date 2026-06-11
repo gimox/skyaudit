@@ -42,28 +42,33 @@ const ScartiEcSapSchema = CollectionSchema(
       name: r'importo',
       type: IsarType.double,
     ),
-    r'logHistoryId': PropertySchema(
+    r'isMatched': PropertySchema(
       id: 5,
+      name: r'isMatched',
+      type: IsarType.bool,
+    ),
+    r'logHistoryId': PropertySchema(
+      id: 6,
       name: r'logHistoryId',
       type: IsarType.string,
     ),
     r'note': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'note',
       type: IsarType.string,
     ),
     r'numeroTrasferta': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'numeroTrasferta',
       type: IsarType.string,
     ),
     r'spesa': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'spesa',
       type: IsarType.string,
     ),
     r'storno': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'storno',
       type: IsarType.string,
     )
@@ -97,6 +102,19 @@ const ScartiEcSapSchema = CollectionSchema(
           name: r'cid',
           type: IndexType.hash,
           caseSensitive: true,
+        )
+      ],
+    ),
+    r'isMatched': IndexSchema(
+      id: -6584544857258267416,
+      name: r'isMatched',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'isMatched',
+          type: IndexType.value,
+          caseSensitive: false,
         )
       ],
     )
@@ -153,11 +171,12 @@ void _scartiEcSapSerialize(
   writer.writeString(offsets[2], object.descrizioneScarto);
   writer.writeString(offsets[3], object.divisa);
   writer.writeDouble(offsets[4], object.importo);
-  writer.writeString(offsets[5], object.logHistoryId);
-  writer.writeString(offsets[6], object.note);
-  writer.writeString(offsets[7], object.numeroTrasferta);
-  writer.writeString(offsets[8], object.spesa);
-  writer.writeString(offsets[9], object.storno);
+  writer.writeBool(offsets[5], object.isMatched);
+  writer.writeString(offsets[6], object.logHistoryId);
+  writer.writeString(offsets[7], object.note);
+  writer.writeString(offsets[8], object.numeroTrasferta);
+  writer.writeString(offsets[9], object.spesa);
+  writer.writeString(offsets[10], object.storno);
 }
 
 ScartiEcSap _scartiEcSapDeserialize(
@@ -172,11 +191,12 @@ ScartiEcSap _scartiEcSapDeserialize(
     descrizioneScarto: reader.readString(offsets[2]),
     divisa: reader.readString(offsets[3]),
     importo: reader.readDouble(offsets[4]),
-    logHistoryId: reader.readStringOrNull(offsets[5]),
-    note: reader.readStringOrNull(offsets[6]),
-    numeroTrasferta: reader.readString(offsets[7]),
-    spesa: reader.readString(offsets[8]),
-    storno: reader.readStringOrNull(offsets[9]),
+    isMatched: reader.readBoolOrNull(offsets[5]) ?? false,
+    logHistoryId: reader.readStringOrNull(offsets[6]),
+    note: reader.readStringOrNull(offsets[7]),
+    numeroTrasferta: reader.readString(offsets[8]),
+    spesa: reader.readString(offsets[9]),
+    storno: reader.readStringOrNull(offsets[10]),
   );
   object.id = id;
   return object;
@@ -200,14 +220,16 @@ P _scartiEcSapDeserializeProp<P>(
     case 4:
       return (reader.readDouble(offset)) as P;
     case 5:
-      return (reader.readStringOrNull(offset)) as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 6:
       return (reader.readStringOrNull(offset)) as P;
     case 7:
-      return (reader.readString(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 8:
       return (reader.readString(offset)) as P;
     case 9:
+      return (reader.readString(offset)) as P;
+    case 10:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -232,6 +254,14 @@ extension ScartiEcSapQueryWhereSort
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhere> anyIsMatched() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'isMatched'),
+      );
     });
   }
 }
@@ -388,6 +418,51 @@ extension ScartiEcSapQueryWhere
               indexName: r'cid',
               lower: [],
               upper: [cid],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> isMatchedEqualTo(
+      bool isMatched) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'isMatched',
+        value: [isMatched],
+      ));
+    });
+  }
+
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> isMatchedNotEqualTo(
+      bool isMatched) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isMatched',
+              lower: [],
+              upper: [isMatched],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isMatched',
+              lower: [isMatched],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isMatched',
+              lower: [isMatched],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isMatched',
+              lower: [],
+              upper: [isMatched],
               includeUpper: false,
             ));
       }
@@ -1046,6 +1121,16 @@ extension ScartiEcSapQueryFilter
         upper: upper,
         includeUpper: includeUpper,
         epsilon: epsilon,
+      ));
+    });
+  }
+
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
+      isMatchedEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isMatched',
+        value: value,
       ));
     });
   }
@@ -1842,6 +1927,18 @@ extension ScartiEcSapQuerySortBy
     });
   }
 
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy> sortByIsMatched() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMatched', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy> sortByIsMatchedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMatched', Sort.desc);
+    });
+  }
+
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy> sortByLogHistoryId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'logHistoryId', Sort.asc);
@@ -1981,6 +2078,18 @@ extension ScartiEcSapQuerySortThenBy
     });
   }
 
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy> thenByIsMatched() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMatched', Sort.asc);
+    });
+  }
+
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy> thenByIsMatchedDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isMatched', Sort.desc);
+    });
+  }
+
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy> thenByLogHistoryId() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'logHistoryId', Sort.asc);
@@ -2081,6 +2190,12 @@ extension ScartiEcSapQueryWhereDistinct
     });
   }
 
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByIsMatched() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isMatched');
+    });
+  }
+
   QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByLogHistoryId(
       {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
@@ -2154,6 +2269,12 @@ extension ScartiEcSapQueryProperty
   QueryBuilder<ScartiEcSap, double, QQueryOperations> importoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'importo');
+    });
+  }
+
+  QueryBuilder<ScartiEcSap, bool, QQueryOperations> isMatchedProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isMatched');
     });
   }
 

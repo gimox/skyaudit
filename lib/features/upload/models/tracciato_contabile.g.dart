@@ -53,68 +53,78 @@ const TracciatoContabileSchema = CollectionSchema(
       name: r'isNegative',
       type: IsarType.bool,
     ),
-    r'localita': PropertySchema(
+    r'isScarto': PropertySchema(
       id: 7,
+      name: r'isScarto',
+      type: IsarType.bool,
+    ),
+    r'localita': PropertySchema(
+      id: 8,
       name: r'localita',
       type: IsarType.string,
     ),
     r'logHistoryId': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'logHistoryId',
       type: IsarType.string,
     ),
     r'numeroBolla': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'numeroBolla',
       type: IsarType.string,
     ),
     r'numeroTrasferta': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'numeroTrasferta',
       type: IsarType.string,
     ),
     r'oraFine': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'oraFine',
       type: IsarType.string,
     ),
     r'oraInizio': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'oraInizio',
       type: IsarType.string,
     ),
     r'progressivo': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'progressivo',
       type: IsarType.string,
     ),
     r'recordType': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'recordType',
       type: IsarType.string,
     ),
+    r'scartoLogHistoryId': PropertySchema(
+      id: 16,
+      name: r'scartoLogHistoryId',
+      type: IsarType.string,
+    ),
     r'societa': PropertySchema(
-      id: 15,
+      id: 17,
       name: r'societa',
       type: IsarType.string,
     ),
     r'sourceFileLine': PropertySchema(
-      id: 16,
+      id: 18,
       name: r'sourceFileLine',
       type: IsarType.long,
     ),
     r'tipoAttivita': PropertySchema(
-      id: 17,
+      id: 19,
       name: r'tipoAttivita',
       type: IsarType.string,
     ),
     r'tipoDipendente': PropertySchema(
-      id: 18,
+      id: 20,
       name: r'tipoDipendente',
       type: IsarType.string,
     ),
     r'valuta': PropertySchema(
-      id: 19,
+      id: 21,
       name: r'valuta',
       type: IsarType.string,
     )
@@ -133,6 +143,32 @@ const TracciatoContabileSchema = CollectionSchema(
       properties: [
         IndexPropertySchema(
           name: r'numeroBolla',
+          type: IndexType.hash,
+          caseSensitive: true,
+        )
+      ],
+    ),
+    r'isScarto': IndexSchema(
+      id: 7543634069992886417,
+      name: r'isScarto',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'isScarto',
+          type: IndexType.value,
+          caseSensitive: false,
+        )
+      ],
+    ),
+    r'scartoLogHistoryId': IndexSchema(
+      id: -5349957068072733519,
+      name: r'scartoLogHistoryId',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'scartoLogHistoryId',
           type: IndexType.hash,
           caseSensitive: true,
         )
@@ -171,6 +207,12 @@ int _tracciatoContabileEstimateSize(
   bytesCount += 3 + object.oraInizio.length * 3;
   bytesCount += 3 + object.progressivo.length * 3;
   bytesCount += 3 + object.recordType.length * 3;
+  {
+    final value = object.scartoLogHistoryId;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   bytesCount += 3 + object.societa.length * 3;
   bytesCount += 3 + object.tipoAttivita.length * 3;
   bytesCount += 3 + object.tipoDipendente.length * 3;
@@ -191,19 +233,21 @@ void _tracciatoContabileSerialize(
   writer.writeString(offsets[4], object.giustificativoSpesa);
   writer.writeDouble(offsets[5], object.importo);
   writer.writeBool(offsets[6], object.isNegative);
-  writer.writeString(offsets[7], object.localita);
-  writer.writeString(offsets[8], object.logHistoryId);
-  writer.writeString(offsets[9], object.numeroBolla);
-  writer.writeString(offsets[10], object.numeroTrasferta);
-  writer.writeString(offsets[11], object.oraFine);
-  writer.writeString(offsets[12], object.oraInizio);
-  writer.writeString(offsets[13], object.progressivo);
-  writer.writeString(offsets[14], object.recordType);
-  writer.writeString(offsets[15], object.societa);
-  writer.writeLong(offsets[16], object.sourceFileLine);
-  writer.writeString(offsets[17], object.tipoAttivita);
-  writer.writeString(offsets[18], object.tipoDipendente);
-  writer.writeString(offsets[19], object.valuta);
+  writer.writeBool(offsets[7], object.isScarto);
+  writer.writeString(offsets[8], object.localita);
+  writer.writeString(offsets[9], object.logHistoryId);
+  writer.writeString(offsets[10], object.numeroBolla);
+  writer.writeString(offsets[11], object.numeroTrasferta);
+  writer.writeString(offsets[12], object.oraFine);
+  writer.writeString(offsets[13], object.oraInizio);
+  writer.writeString(offsets[14], object.progressivo);
+  writer.writeString(offsets[15], object.recordType);
+  writer.writeString(offsets[16], object.scartoLogHistoryId);
+  writer.writeString(offsets[17], object.societa);
+  writer.writeLong(offsets[18], object.sourceFileLine);
+  writer.writeString(offsets[19], object.tipoAttivita);
+  writer.writeString(offsets[20], object.tipoDipendente);
+  writer.writeString(offsets[21], object.valuta);
 }
 
 TracciatoContabile _tracciatoContabileDeserialize(
@@ -220,19 +264,21 @@ TracciatoContabile _tracciatoContabileDeserialize(
     giustificativoSpesa: reader.readString(offsets[4]),
     importo: reader.readDouble(offsets[5]),
     isNegative: reader.readBool(offsets[6]),
-    localita: reader.readString(offsets[7]),
-    logHistoryId: reader.readStringOrNull(offsets[8]),
-    numeroBolla: reader.readString(offsets[9]),
-    numeroTrasferta: reader.readString(offsets[10]),
-    oraFine: reader.readString(offsets[11]),
-    oraInizio: reader.readString(offsets[12]),
-    progressivo: reader.readString(offsets[13]),
-    recordType: reader.readString(offsets[14]),
-    societa: reader.readString(offsets[15]),
-    sourceFileLine: reader.readLongOrNull(offsets[16]),
-    tipoAttivita: reader.readString(offsets[17]),
-    tipoDipendente: reader.readString(offsets[18]),
-    valuta: reader.readString(offsets[19]),
+    isScarto: reader.readBoolOrNull(offsets[7]) ?? false,
+    localita: reader.readString(offsets[8]),
+    logHistoryId: reader.readStringOrNull(offsets[9]),
+    numeroBolla: reader.readString(offsets[10]),
+    numeroTrasferta: reader.readString(offsets[11]),
+    oraFine: reader.readString(offsets[12]),
+    oraInizio: reader.readString(offsets[13]),
+    progressivo: reader.readString(offsets[14]),
+    recordType: reader.readString(offsets[15]),
+    scartoLogHistoryId: reader.readStringOrNull(offsets[16]),
+    societa: reader.readString(offsets[17]),
+    sourceFileLine: reader.readLongOrNull(offsets[18]),
+    tipoAttivita: reader.readString(offsets[19]),
+    tipoDipendente: reader.readString(offsets[20]),
+    valuta: reader.readString(offsets[21]),
   );
   object.id = id;
   return object;
@@ -260,11 +306,11 @@ P _tracciatoContabileDeserializeProp<P>(
     case 6:
       return (reader.readBool(offset)) as P;
     case 7:
-      return (reader.readString(offset)) as P;
+      return (reader.readBoolOrNull(offset) ?? false) as P;
     case 8:
-      return (reader.readStringOrNull(offset)) as P;
-    case 9:
       return (reader.readString(offset)) as P;
+    case 9:
+      return (reader.readStringOrNull(offset)) as P;
     case 10:
       return (reader.readString(offset)) as P;
     case 11:
@@ -278,12 +324,16 @@ P _tracciatoContabileDeserializeProp<P>(
     case 15:
       return (reader.readString(offset)) as P;
     case 16:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset)) as P;
     case 17:
       return (reader.readString(offset)) as P;
     case 18:
-      return (reader.readString(offset)) as P;
+      return (reader.readLongOrNull(offset)) as P;
     case 19:
+      return (reader.readString(offset)) as P;
+    case 20:
+      return (reader.readString(offset)) as P;
+    case 21:
       return (reader.readString(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -309,6 +359,15 @@ extension TracciatoContabileQueryWhereSort
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhere> anyId() {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(const IdWhereClause.any());
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhere>
+      anyIsScarto() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        const IndexWhereClause.any(indexName: r'isScarto'),
+      );
     });
   }
 }
@@ -422,6 +481,118 @@ extension TracciatoContabileQueryWhere
               indexName: r'numeroBolla',
               lower: [],
               upper: [numeroBolla],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhereClause>
+      isScartoEqualTo(bool isScarto) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'isScarto',
+        value: [isScarto],
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhereClause>
+      isScartoNotEqualTo(bool isScarto) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isScarto',
+              lower: [],
+              upper: [isScarto],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isScarto',
+              lower: [isScarto],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isScarto',
+              lower: [isScarto],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'isScarto',
+              lower: [],
+              upper: [isScarto],
+              includeUpper: false,
+            ));
+      }
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhereClause>
+      scartoLogHistoryIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'scartoLogHistoryId',
+        value: [null],
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhereClause>
+      scartoLogHistoryIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.between(
+        indexName: r'scartoLogHistoryId',
+        lower: [null],
+        includeLower: false,
+        upper: [],
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhereClause>
+      scartoLogHistoryIdEqualTo(String? scartoLogHistoryId) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(IndexWhereClause.equalTo(
+        indexName: r'scartoLogHistoryId',
+        value: [scartoLogHistoryId],
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterWhereClause>
+      scartoLogHistoryIdNotEqualTo(String? scartoLogHistoryId) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'scartoLogHistoryId',
+              lower: [],
+              upper: [scartoLogHistoryId],
+              includeUpper: false,
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'scartoLogHistoryId',
+              lower: [scartoLogHistoryId],
+              includeLower: false,
+              upper: [],
+            ));
+      } else {
+        return query
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'scartoLogHistoryId',
+              lower: [scartoLogHistoryId],
+              includeLower: false,
+              upper: [],
+            ))
+            .addWhereClause(IndexWhereClause.between(
+              indexName: r'scartoLogHistoryId',
+              lower: [],
+              upper: [scartoLogHistoryId],
               includeUpper: false,
             ));
       }
@@ -1238,6 +1409,16 @@ extension TracciatoContabileQueryFilter
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'isNegative',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+      isScartoEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'isScarto',
         value: value,
       ));
     });
@@ -2350,6 +2531,160 @@ extension TracciatoContabileQueryFilter
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+      scartoLogHistoryIdIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'scartoLogHistoryId',
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+      scartoLogHistoryIdIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'scartoLogHistoryId',
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+      scartoLogHistoryIdEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'scartoLogHistoryId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+      scartoLogHistoryIdGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'scartoLogHistoryId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+      scartoLogHistoryIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'scartoLogHistoryId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+      scartoLogHistoryIdBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'scartoLogHistoryId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+      scartoLogHistoryIdStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'scartoLogHistoryId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+      scartoLogHistoryIdEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'scartoLogHistoryId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+      scartoLogHistoryIdContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'scartoLogHistoryId',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+      scartoLogHistoryIdMatches(String pattern, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'scartoLogHistoryId',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+      scartoLogHistoryIdIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'scartoLogHistoryId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
+      scartoLogHistoryIdIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'scartoLogHistoryId',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterFilterCondition>
       societaEqualTo(
     String value, {
     bool caseSensitive = true,
@@ -3075,6 +3410,20 @@ extension TracciatoContabileQuerySortBy
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
+      sortByIsScarto() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isScarto', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
+      sortByIsScartoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isScarto', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
       sortByLocalita() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localita', Sort.asc);
@@ -3183,6 +3532,20 @@ extension TracciatoContabileQuerySortBy
       sortByRecordTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'recordType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
+      sortByScartoLogHistoryId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'scartoLogHistoryId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
+      sortByScartoLogHistoryIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'scartoLogHistoryId', Sort.desc);
     });
   }
 
@@ -3372,6 +3735,20 @@ extension TracciatoContabileQuerySortThenBy
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
+      thenByIsScarto() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isScarto', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
+      thenByIsScartoDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'isScarto', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
       thenByLocalita() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'localita', Sort.asc);
@@ -3480,6 +3857,20 @@ extension TracciatoContabileQuerySortThenBy
       thenByRecordTypeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'recordType', Sort.desc);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
+      thenByScartoLogHistoryId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'scartoLogHistoryId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QAfterSortBy>
+      thenByScartoLogHistoryIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'scartoLogHistoryId', Sort.desc);
     });
   }
 
@@ -3607,6 +3998,13 @@ extension TracciatoContabileQueryWhereDistinct
   }
 
   QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
+      distinctByIsScarto() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'isScarto');
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
       distinctByLocalita({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'localita', caseSensitive: caseSensitive);
@@ -3660,6 +4058,14 @@ extension TracciatoContabileQueryWhereDistinct
       distinctByRecordType({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'recordType', caseSensitive: caseSensitive);
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, TracciatoContabile, QDistinct>
+      distinctByScartoLogHistoryId({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'scartoLogHistoryId',
+          caseSensitive: caseSensitive);
     });
   }
 
@@ -3755,6 +4161,12 @@ extension TracciatoContabileQueryProperty
     });
   }
 
+  QueryBuilder<TracciatoContabile, bool, QQueryOperations> isScartoProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'isScarto');
+    });
+  }
+
   QueryBuilder<TracciatoContabile, String, QQueryOperations>
       localitaProperty() {
     return QueryBuilder.apply(this, (query) {
@@ -3807,6 +4219,13 @@ extension TracciatoContabileQueryProperty
       recordTypeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'recordType');
+    });
+  }
+
+  QueryBuilder<TracciatoContabile, String?, QQueryOperations>
+      scartoLogHistoryIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'scartoLogHistoryId');
     });
   }
 

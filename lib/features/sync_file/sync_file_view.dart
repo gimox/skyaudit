@@ -17,6 +17,7 @@ class SyncFileView extends ConsumerStatefulWidget {
 
 class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerProviderStateMixin {
   late AnimationController _pulseController;
+  int _selectedMainMenuTab = 0;
 
   @override
   void initState() {
@@ -585,8 +586,9 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
     );
   }
 
-  Widget _buildMainDashboardCard(BuildContext context, SyncState syncState) {
+  Widget _buildMainDashboardCard(BuildContext context, SyncState syncState, {Key? key}) {
     return Container(
+      key: key,
       padding: const EdgeInsets.all(28),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -735,6 +737,16 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
     }
 
     final syncState = ref.watch(syncProvider);
+
+    // Sync tab state from provider
+    final syncType = syncState.selectedSyncType;
+    if (syncType == 'all') {
+      _selectedMainMenuTab = 0;
+    } else if (syncType == 'anagrafica') {
+      _selectedMainMenuTab = 2;
+    } else {
+      _selectedMainMenuTab = 1;
+    }
 
     // Listen to isSyncing change to trigger/stop pulse controller
     ref.listen<bool>(
@@ -937,33 +949,14 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
             },
           ),
           const SizedBox(height: 20),
-          Center(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: SegmentedButton<String>(
-                style: SegmentedButton.styleFrom(
-                  selectedBackgroundColor: SkyTheme.timBlue,
-                  selectedForegroundColor: Colors.white,
-                ),
-                segments: const [
-                  ButtonSegment(value: 'all', label: Text('Tutto'), icon: Icon(Icons.all_inclusive)),
-                  ButtonSegment(value: 'contabile', label: Text('Contabili'), icon: Icon(Icons.receipt_long)),
-                  ButtonSegment(value: 'conto', label: Text('Estratti Conto'), icon: Icon(Icons.account_balance_wallet)),
-                  ButtonSegment(value: 'sap', label: Text('SAP'), icon: Icon(Icons.analytics)),
-                  ButtonSegment(value: 'amex', label: Text('AMEX'), icon: Icon(Icons.credit_card)),
-                  ButtonSegment(value: 'scarti', label: Text('Scarti'), icon: Icon(Icons.warning_amber)),
-                  ButtonSegment(value: 'anagrafica', label: Text('Anagrafica'), icon: Icon(Icons.people)),
-                  ButtonSegment(value: 'trasferte_sap', label: Text('Trasferte SAP'), icon: Icon(Icons.flight_takeoff)),
-                ],
-                selected: {syncState.selectedSyncType},
-                onSelectionChanged: syncState.isSyncing
-                    ? null
-                    : (val) {
-                        ref.read(syncProvider.notifier).setSelectedSyncType(val.first);
-                      },
-              ),
-            ),
-          ),
+          _buildMainMenuTabSelector(syncState),
+          if (_selectedMainMenuTab == 1) ...[
+            const SizedBox(height: 16),
+            _buildTravelSubmenu(syncState),
+          ] else if (_selectedMainMenuTab == 2) ...[
+            const SizedBox(height: 16),
+            _buildHroSubmenu(syncState),
+          ],
           const SizedBox(height: 20),
           Expanded(
             child: LayoutBuilder(
@@ -971,13 +964,25 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                 final showConsole = syncState.showAdvancedConsole;
                 final isWide = constraints.maxWidth > 850;
 
+                Widget mainCard;
+                if (_selectedMainMenuTab == 2) {
+                  mainCard = _buildMainDashboardCard(context, syncState, key: const ValueKey<int>(2));
+                } else {
+                  mainCard = _buildMainDashboardCard(context, syncState, key: const ValueKey<int>(0));
+                }
+
+                Widget animatedMainCard = AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: mainCard,
+                );
+
                 if (showConsole && isWide) {
                   return Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         flex: 6,
-                        child: _buildMainDashboardCard(context, syncState),
+                        child: animatedMainCard,
                       ),
                       const SizedBox(width: 24),
                       Expanded(
@@ -992,7 +997,7 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _buildMainDashboardCard(context, syncState),
+                        animatedMainCard,
                         const SizedBox(height: 24),
                         _buildConsoleCard(context, rightPanelContent, height: 350),
                       ],
@@ -1003,13 +1008,13 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                     return Center(
                       child: Container(
                         constraints: const BoxConstraints(maxWidth: 800),
-                        child: _buildMainDashboardCard(context, syncState),
+                        child: animatedMainCard,
                       ),
                     );
                   } else {
                     return SingleChildScrollView(
                       physics: const BouncingScrollPhysics(),
-                      child: _buildMainDashboardCard(context, syncState),
+                      child: animatedMainCard,
                     );
                   }
                 }
@@ -1017,6 +1022,201 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildMainMenuTabSelector(SyncState syncState) {
+    return Center(
+      child: Container(
+        width: 450,
+        height: 50,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: Stack(
+          children: [
+            AnimatedAlign(
+              alignment: _selectedMainMenuTab == 0
+                  ? Alignment.centerLeft
+                  : (_selectedMainMenuTab == 1 ? Alignment.center : Alignment.centerRight),
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOutCubic,
+              child: Container(
+                width: 144,
+                height: 42,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(12),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: syncState.isSyncing
+                        ? null
+                        : () {
+                            setState(() => _selectedMainMenuTab = 0);
+                            ref.read(syncProvider.notifier).setSelectedSyncType('all');
+                          },
+                    child: Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.all_inclusive,
+                            color: _selectedMainMenuTab == 0 ? SkyTheme.timBlue : Colors.grey.shade600,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Tutto',
+                            style: TextStyle(
+                              fontFamily: 'TIMSans',
+                              fontSize: 14,
+                              fontWeight: _selectedMainMenuTab == 0 ? FontWeight.bold : FontWeight.w500,
+                              color: _selectedMainMenuTab == 0 ? SkyTheme.timBlue : Colors.grey.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: syncState.isSyncing
+                        ? null
+                        : () {
+                            setState(() => _selectedMainMenuTab = 1);
+                            ref.read(syncProvider.notifier).setSelectedSyncType('contabile');
+                          },
+                    child: Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.flight_takeoff_outlined,
+                            color: _selectedMainMenuTab == 1 ? SkyTheme.timBlue : Colors.grey.shade600,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Trasferte',
+                            style: TextStyle(
+                              fontFamily: 'TIMSans',
+                              fontSize: 14,
+                              fontWeight: _selectedMainMenuTab == 1 ? FontWeight.bold : FontWeight.w500,
+                              color: _selectedMainMenuTab == 1 ? SkyTheme.timBlue : Colors.grey.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: syncState.isSyncing
+                        ? null
+                        : () {
+                            setState(() => _selectedMainMenuTab = 2);
+                            ref.read(syncProvider.notifier).setSelectedSyncType('anagrafica');
+                          },
+                    child: Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.badge_outlined,
+                            color: _selectedMainMenuTab == 2 ? SkyTheme.timBlue : Colors.grey.shade600,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Gestione HRO',
+                            style: TextStyle(
+                              fontFamily: 'TIMSans',
+                              fontSize: 14,
+                              fontWeight: _selectedMainMenuTab == 2 ? FontWeight.bold : FontWeight.w500,
+                              color: _selectedMainMenuTab == 2 ? SkyTheme.timBlue : Colors.grey.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTravelSubmenu(SyncState syncState) {
+    return Center(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: SegmentedButton<String>(
+          style: SegmentedButton.styleFrom(
+            selectedBackgroundColor: SkyTheme.timBlue,
+            selectedForegroundColor: Colors.white,
+          ),
+          segments: const [
+            ButtonSegment(value: 'contabile', label: Text('Contabili'), icon: Icon(Icons.receipt_long)),
+            ButtonSegment(value: 'conto', label: Text('Estratti Conto'), icon: Icon(Icons.account_balance_wallet)),
+            ButtonSegment(value: 'sap', label: Text('SAP'), icon: Icon(Icons.analytics)),
+            ButtonSegment(value: 'amex', label: Text('AMEX'), icon: Icon(Icons.credit_card)),
+            ButtonSegment(value: 'scarti', label: Text('Scarti'), icon: Icon(Icons.warning_amber)),
+            ButtonSegment(value: 'trasferte_sap', label: Text('Trasferte SAP'), icon: Icon(Icons.flight_takeoff)),
+          ],
+          selected: {syncState.selectedSyncType},
+          onSelectionChanged: syncState.isSyncing
+              ? null
+              : (val) {
+                  ref.read(syncProvider.notifier).setSelectedSyncType(val.first);
+                },
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHroSubmenu(SyncState syncState) {
+    return Center(
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: SegmentedButton<String>(
+          style: SegmentedButton.styleFrom(
+            selectedBackgroundColor: SkyTheme.timBlue,
+            selectedForegroundColor: Colors.white,
+          ),
+          segments: const [
+            ButtonSegment(value: 'anagrafica', label: Text('Anagrafica'), icon: Icon(Icons.badge_outlined)),
+          ],
+          selected: {syncState.selectedSyncType},
+          onSelectionChanged: syncState.isSyncing
+              ? null
+              : (val) {
+                  ref.read(syncProvider.notifier).setSelectedSyncType(val.first);
+                },
+        ),
       ),
     );
   }

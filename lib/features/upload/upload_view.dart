@@ -25,6 +25,7 @@ class UploadView extends ConsumerStatefulWidget {
 }
 
 class _UploadViewState extends ConsumerState<UploadView> {
+  int _selectedTab = 0; // 0 for Trasferte, 1 for Gestione HRO
   XFile? _selectedContabileFile;
   XFile? _selectedEstrattoFile;
   XFile? _selectedSapFile;
@@ -655,150 +656,296 @@ class _UploadViewState extends ConsumerState<UploadView> {
   @override
   Widget build(BuildContext context) {
     return Center(
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.all(32.0),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1000),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 16),
-
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  if (constraints.maxWidth > 800) {
-                    return Column(
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1000),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const SizedBox(height: 32),
+            _buildTabSelector(),
+            const SizedBox(height: 24),
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 300),
+                switchInCurve: Curves.easeInOut,
+                switchOutCurve: Curves.easeInOut,
+                child: _selectedTab == 0
+                    ? SingleChildScrollView(
+                        key: const ValueKey<int>(0),
+                        padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Expanded(child: _buildContabileSection()),
-                            const SizedBox(width: 24),
-                            Expanded(child: _buildEstrattoSection()),
-                            const SizedBox(width: 24),
-                            Expanded(child: _buildSapSection()),
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                if (constraints.maxWidth > 800) {
+                                  return Column(
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(child: _buildContabileSection()),
+                                          const SizedBox(width: 24),
+                                          Expanded(child: _buildEstrattoSection()),
+                                          const SizedBox(width: 24),
+                                          Expanded(child: _buildSapSection()),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 32),
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(child: _buildAmexSection()),
+                                          const SizedBox(width: 24),
+                                          Expanded(child: _buildScartiSapSection()),
+                                          const SizedBox(width: 24),
+                                          Expanded(child: _buildTrasferteSapSection()),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                } else {
+                                  return Column(
+                                    children: [
+                                      _buildContabileSection(),
+                                      const SizedBox(height: 32),
+                                      _buildEstrattoSection(),
+                                      const SizedBox(height: 32),
+                                      _buildSapSection(),
+                                      const SizedBox(height: 32),
+                                      _buildAmexSection(),
+                                      const SizedBox(height: 32),
+                                      _buildScartiSapSection(),
+                                      const SizedBox(height: 32),
+                                      _buildTrasferteSapSection(),
+                                    ],
+                                  );
+                                }
+                              },
+                            ),
+                            if (_lastContabileResult != null || _lastEstrattoResult != null || _lastSapResult != null || _lastAmexResult != null || _lastScartiSapResult != null || _lastTrasferteSapResult != null) ...[
+                              const SizedBox(height: 48),
+                              const Divider(),
+                              const SizedBox(height: 24),
+                              Text(
+                                'DETTAGLI ULTIMA ELABORAZIONE',
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
+                                  color: Colors.grey.shade700,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 24),
+                              if (_lastContabileResult != null) 
+                                _buildDetailedResultCard(
+                                  title: 'RISULTATI FLUSSO CONTABILE',
+                                  result: _lastContabileResult!,
+                                  dataType: 'contabile',
+                                ),
+                              if (_lastEstrattoResult != null) ...[
+                                const SizedBox(height: 24),
+                                _buildDetailedResultCard(
+                                  title: 'RISULTATI ESTRATTO CONTO',
+                                  result: _lastEstrattoResult!,
+                                  dataType: 'estratto',
+                                ),
+                              ],
+                              if (_lastSapResult != null) ...[
+                                const SizedBox(height: 24),
+                                _buildDetailedResultCard(
+                                  title: 'RISULTATI TRACCIATO SAP',
+                                  result: _lastSapResult!,
+                                  dataType: 'sap',
+                                ),
+                              ],
+                              if (_lastAmexResult != null) ...[
+                                const SizedBox(height: 24),
+                                _buildDetailedResultCard(
+                                  title: 'RISULTATI ESTRATTI AMEX',
+                                  result: _lastAmexResult!,
+                                  dataType: 'amex',
+                                ),
+                              ],
+                              if (_lastScartiSapResult != null) ...[
+                                const SizedBox(height: 24),
+                                _buildDetailedResultCard(
+                                  title: 'RISULTATI SCARTI TRACCIATO',
+                                  result: _lastScartiSapResult!,
+                                  dataType: 'scartiSap',
+                                ),
+                              ],
+                              if (_lastTrasferteSapResult != null) ...[
+                                const SizedBox(height: 24),
+                                _buildDetailedResultCard(
+                                  title: 'RISULTATI TRASFERTE SAP',
+                                  result: _lastTrasferteSapResult!,
+                                  dataType: 'trasferteSap',
+                                ),
+                              ],
+                            ],
                           ],
                         ),
-                        const SizedBox(height: 32),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      )
+                    : SingleChildScrollView(
+                        key: const ValueKey<int>(1),
+                        padding: const EdgeInsets.fromLTRB(32, 0, 32, 32),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Expanded(child: _buildAmexSection()),
-                            const SizedBox(width: 24),
-                            Expanded(child: _buildAnagraficaSection()),
-                            const SizedBox(width: 24),
-                            Expanded(child: _buildScartiSapSection()),
+                            LayoutBuilder(
+                              builder: (context, constraints) {
+                                if (constraints.maxWidth > 800) {
+                                  return Column(
+                                    children: [
+                                      Row(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Expanded(child: _buildAnagraficaSection()),
+                                          const SizedBox(width: 24),
+                                          const Expanded(child: SizedBox()),
+                                          const SizedBox(width: 24),
+                                          const Expanded(child: SizedBox()),
+                                        ],
+                                      ),
+                                    ],
+                                  );
+                                } else {
+                                  return _buildAnagraficaSection();
+                                }
+                              },
+                            ),
+                            if (_lastAnagraficaResult != null) ...[
+                              const SizedBox(height: 48),
+                              const Divider(),
+                              const SizedBox(height: 24),
+                              Text(
+                                'DETTAGLI ULTIMA ELABORAZIONE',
+                                style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 1.2,
+                                  color: Colors.grey.shade700,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                              const SizedBox(height: 24),
+                              _buildDetailedResultCard(
+                                title: 'RISULTATI ANAGRAFICA',
+                                result: _lastAnagraficaResult!,
+                                dataType: 'anagrafica',
+                              ),
+                            ],
                           ],
                         ),
-                        const SizedBox(height: 32),
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(child: _buildTrasferteSapSection()),
-                            const SizedBox(width: 24),
-                            const Expanded(child: SizedBox()),
-                            const SizedBox(width: 24),
-                            const Expanded(child: SizedBox()),
-                          ],
-                        ),
-                      ],
-                    );
-                  } else {
-                    return Column(
-                      children: [
-                        _buildContabileSection(),
-                        const SizedBox(height: 32),
-                        _buildEstrattoSection(),
-                        const SizedBox(height: 32),
-                        _buildSapSection(),
-                        const SizedBox(height: 32),
-                        _buildAmexSection(),
-                        const SizedBox(height: 32),
-                        _buildAnagraficaSection(),
-                        const SizedBox(height: 32),
-                        _buildScartiSapSection(),
-                        const SizedBox(height: 32),
-                        _buildTrasferteSapSection(),
-                      ],
-                    );
-                  }
-                },
+                      ),
               ),
-              if (_lastContabileResult != null || _lastEstrattoResult != null || _lastSapResult != null || _lastAmexResult != null || _lastAnagraficaResult != null || _lastScartiSapResult != null) ...[
-                const SizedBox(height: 48),
-                const Divider(),
-                const SizedBox(height: 24),
-                Text(
-                  'DETTAGLI ULTIMA ELABORAZIONE',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 1.2,
-                    color: Colors.grey.shade700,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 24),
-                if (_lastContabileResult != null) 
-                  _buildDetailedResultCard(
-                    title: 'RISULTATI FLUSSO CONTABILE',
-                    result: _lastContabileResult!,
-                    dataType: 'contabile',
-                  ),
-                if (_lastEstrattoResult != null) ...[
-                  const SizedBox(height: 24),
-                  _buildDetailedResultCard(
-                    title: 'RISULTATI ESTRATTO CONTO',
-                    result: _lastEstrattoResult!,
-                    dataType: 'estratto',
-                  ),
-                ],
-                if (_lastSapResult != null) ...[
-                  const SizedBox(height: 24),
-                  _buildDetailedResultCard(
-                    title: 'RISULTATI TRACCIATO SAP',
-                    result: _lastSapResult!,
-                    dataType: 'sap',
-                  ),
-                ],
-                if (_lastAmexResult != null) ...[
-                  const SizedBox(height: 24),
-                  _buildDetailedResultCard(
-                    title: 'RISULTATI ESTRATTI AMEX',
-                    result: _lastAmexResult!,
-                    dataType: 'amex',
-                  ),
-                ],
-                if (_lastAnagraficaResult != null) ...[
-                  const SizedBox(height: 24),
-                  _buildDetailedResultCard(
-                    title: 'RISULTATI ANAGRAFICA',
-                    result: _lastAnagraficaResult!,
-                    dataType: 'anagrafica',
-                  ),
-                ],
-                if (_lastScartiSapResult != null) ...[
-                  const SizedBox(height: 24),
-                  _buildDetailedResultCard(
-                    title: 'RISULTATI SCARTI TRACCIATO',
-                    result: _lastScartiSapResult!,
-                    dataType: 'scartiSap',
-                  ),
-                ],
-                if (_lastTrasferteSapResult != null) ...[
-                  const SizedBox(height: 24),
-                  _buildDetailedResultCard(
-                    title: 'RISULTATI TRASFERTE SAP',
-                    result: _lastTrasferteSapResult!,
-                    dataType: 'trasferteSap',
-                  ),
-                ],
-              ],
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
   }
+
+  Widget _buildTabSelector() {
+    return Center(
+      child: Container(
+        width: 340,
+        height: 50,
+        decoration: BoxDecoration(
+          color: Colors.grey.shade100,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: Stack(
+          children: [
+            AnimatedAlign(
+              alignment: _selectedTab == 0 ? Alignment.centerLeft : Alignment.centerRight,
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeInOutCubic,
+              child: Container(
+                width: 164,
+                height: 42,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(12),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    )
+                  ],
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => setState(() => _selectedTab = 0),
+                    child: Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.flight_takeoff_outlined,
+                            color: _selectedTab == 0 ? SkyTheme.timBlue : Colors.grey.shade600,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Trasferte',
+                            style: TextStyle(
+                              fontFamily: 'TIMSans',
+                              fontSize: 14,
+                              fontWeight: _selectedTab == 0 ? FontWeight.bold : FontWeight.w500,
+                              color: _selectedTab == 0 ? SkyTheme.timBlue : Colors.grey.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () => setState(() => _selectedTab = 1),
+                    child: Center(
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.badge_outlined,
+                            color: _selectedTab == 1 ? SkyTheme.timBlue : Colors.grey.shade600,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            'Gestione HRO',
+                            style: TextStyle(
+                              fontFamily: 'TIMSans',
+                              fontSize: 14,
+                              fontWeight: _selectedTab == 1 ? FontWeight.bold : FontWeight.w500,
+                              color: _selectedTab == 1 ? SkyTheme.timBlue : Colors.grey.shade700,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+
 
   Widget _buildDetailedResultCard({
     required String title,

@@ -70,6 +70,42 @@ class LogHistoryNotifier extends Notifier<List<LogHistory>> {
           .logHistoryIdEqualTo(uniqueCode)
           .deleteAll();
 
+      // Reset matching contabile records scarto status
+      final matchedContabile = await isar.tracciatoContabiles
+          .filter()
+          .scartoLogHistoryIdEqualTo(uniqueCode)
+          .findAll();
+
+      if (matchedContabile.isNotEmpty) {
+        final resetContabile = matchedContabile.map((bestMatch) {
+          return TracciatoContabile(
+            recordType: bestMatch.recordType,
+            cid: bestMatch.cid,
+            numeroTrasferta: bestMatch.numeroTrasferta,
+            progressivo: bestMatch.progressivo,
+            societa: bestMatch.societa,
+            tipoDipendente: bestMatch.tipoDipendente,
+            giustificativoSpesa: bestMatch.giustificativoSpesa,
+            numeroBolla: bestMatch.numeroBolla,
+            dataSpesa: bestMatch.dataSpesa,
+            localita: bestMatch.localita,
+            dataInizio: bestMatch.dataInizio,
+            oraInizio: bestMatch.oraInizio,
+            dataFine: bestMatch.dataFine,
+            oraFine: bestMatch.oraFine,
+            tipoAttivita: bestMatch.tipoAttivita,
+            importo: bestMatch.importo,
+            valuta: bestMatch.valuta,
+            isNegative: bestMatch.isNegative,
+            logHistoryId: bestMatch.logHistoryId,
+            sourceFileLine: bestMatch.sourceFileLine,
+            isScarto: false,
+            scartoLogHistoryId: null,
+          )..id = bestMatch.id;
+        }).toList();
+        await isar.tracciatoContabiles.putAll(resetContabile);
+      }
+
       // Delete from TrasferteSap
       await isar.trasferteSaps
           .filter()

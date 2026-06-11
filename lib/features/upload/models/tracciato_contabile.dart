@@ -27,6 +27,10 @@ class TracciatoContabile {
   final bool isNegative;
   final String? logHistoryId;
   final int? sourceFileLine;
+  @Index()
+  final bool isScarto;
+  @Index()
+  final String? scartoLogHistoryId;
 
   TracciatoContabile({
     required this.recordType,
@@ -49,6 +53,8 @@ class TracciatoContabile {
     required this.isNegative,
     this.logHistoryId,
     this.sourceFileLine,
+    this.isScarto = false,
+    this.scartoLogHistoryId,
   });
 
   static String _formatDate(String yyyymmdd) {
@@ -101,6 +107,7 @@ class TracciatoContabile {
       isNegative: line.substring(165, 166) == 'R',
       logHistoryId: logHistoryId,
       sourceFileLine: sourceFileLine,
+      isScarto: false,
     );
   }
 
@@ -126,6 +133,7 @@ class TracciatoContabile {
       'isNegative': isNegative,
       'logHistoryId': logHistoryId,
       'sourceFileLine': sourceFileLine,
+      'isScarto': isScarto,
     };
   }
 
@@ -151,6 +159,7 @@ class TracciatoContabile {
       isNegative: map['isNegative'] ?? false,
       logHistoryId: map['logHistoryId'],
       sourceFileLine: map['sourceFileLine'] as int?,
+      isScarto: map['isScarto'] ?? false,
     );
   }
 }

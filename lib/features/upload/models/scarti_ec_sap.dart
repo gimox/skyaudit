@@ -28,6 +28,9 @@ class ScartiEcSap {
 
   final String? logHistoryId;
 
+  @Index()
+  bool isMatched;
+
   ScartiEcSap({
     required this.numeroTrasferta,
     required this.cid,
@@ -39,5 +42,6 @@ class ScartiEcSap {
     required this.dataInvio,
     this.note,
     this.logHistoryId,
+    this.isMatched = false,
   });
 }
