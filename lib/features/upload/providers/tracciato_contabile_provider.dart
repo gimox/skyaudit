@@ -128,102 +128,160 @@ class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
 
     // --- INCROCIO CON EVENTUALI SCARTI GIÀ CARICATI PER I MEDESIMI PERIODI ---
     final targetPeriods = <String>{};
-    for (final r in recordsToSave) {
-      final parts = r.dataSpesa.split('/');
-      if (parts.length == 3) {
-        final month = parts[1];
-        final year = parts[2];
-        if (month.length == 2 && year.length == 4) {
-          targetPeriods.add('$year$month');
+    final fileNameMatch = RegExp(r'\d{6}').firstMatch(file.name);
+    if (fileNameMatch != null) {
+      targetPeriods.add(fileNameMatch.group(0)!);
+    } else {
+      for (final r in recordsToSave) {
+        final parts = r.dataSpesa.split('/');
+        if (parts.length == 3) {
+          final month = parts[1];
+          final year = parts[2];
+          if (month.length == 2 && year.length == 4) {
+            targetPeriods.add('$year$month');
+          }
         }
       }
     }
 
     if (targetPeriods.isNotEmpty) {
-      final scartiLogs = await isar.logHistorys
-          .filter()
-          .sourceTypeEqualTo('Scarti EC SAP')
-          .findAll();
-
-      final matchingScartiLogIds = <String>{};
-      for (final period in targetPeriods) {
-        for (final log in scartiLogs) {
-          if (log.fileName.contains(period)) {
-            matchingScartiLogIds.add(log.uniqueCode);
+      final allScartiRecords = await isar.scartiEcSaps.where().anyId().findAll();
+      final List<ScartiEcSap> scartiRecords = [];
+      for (final scarto in allScartiRecords) {
+        final scartoYyyyMm = _getYyyyMmFromDataInvio(scarto.dataInvio);
+        if (scartoYyyyMm != null) {
+          final isPrimaryMatch = targetPeriods.contains(scartoYyyyMm);
+          final isFallbackMatch = _isDayWithin15(scarto.dataInvio) &&
+              targetPeriods.contains(_subtractMonths(scartoYyyyMm, 1));
+          final isFallback2Match = _isDayWithin15(scarto.dataInvio) &&
+              targetPeriods.contains(_subtractMonths(scartoYyyyMm, 2));
+          if (isPrimaryMatch || isFallbackMatch || isFallback2Match) {
+            scartiRecords.add(scarto);
           }
         }
       }
 
-      if (matchingScartiLogIds.isNotEmpty) {
-        final scartiRecords = await isar.scartiEcSaps
+      if (scartiRecords.isNotEmpty) {
+        // Reset status isMatched degli scarti corrispondenti
+        for (final scarto in scartiRecords) {
+          scarto.isMatched = false;
+        }
+
+        final logs = await isar.logHistorys
             .filter()
-            .anyOf(matchingScartiLogIds, (q, String id) => q.logHistoryIdEqualTo(id))
+            .sourceTypeEqualTo('Tracciato Contabile')
             .findAll();
 
-        if (scartiRecords.isNotEmpty) {
-          // Reset status isMatched degli scarti corrispondenti
-          for (final scarto in scartiRecords) {
-            scarto.isMatched = false;
+        final Map<String, String> logPeriodMap = {};
+        for (final log in logs) {
+          final match = RegExp(r'\d{6}').firstMatch(log.fileName);
+          if (match != null) {
+            logPeriodMap[log.uniqueCode] = match.group(0)!;
           }
+        }
+        // Per il file corrente
+        final curMatch = RegExp(r'\d{6}').firstMatch(file.name);
+        if (curMatch != null) {
+          logPeriodMap[uniqueCode] = curMatch.group(0)!;
+        }
 
-          final List<TracciatoContabile> candidateRecords = [];
-          for (final period in targetPeriods) {
-            final targetSuffix = '/${period.substring(4)}/${period.substring(0, 4)}';
-            final periodCandidates = await isar.tracciatoContabiles
-                .filter()
-                .dataSpesaEndsWith(targetSuffix)
-                .findAll();
-            candidateRecords.addAll(periodCandidates);
+        String? getRecordPeriod(TracciatoContabile c) {
+          if (c.logHistoryId != null) {
+            return logPeriodMap[c.logHistoryId];
           }
+          return null;
+        }
 
-          final resetCandidates = <TracciatoContabile>[];
-          for (final c in candidateRecords) {
-            if (c.isScarto && matchingScartiLogIds.contains(c.scartoLogHistoryId)) {
-              final reset = TracciatoContabile(
-                recordType: c.recordType,
-                cid: c.cid,
-                numeroTrasferta: c.numeroTrasferta,
-                progressivo: c.progressivo,
-                societa: c.societa,
-                tipoDipendente: c.tipoDipendente,
-                giustificativoSpesa: c.giustificativoSpesa,
-                numeroBolla: c.numeroBolla,
-                dataSpesa: c.dataSpesa,
-                localita: c.localita,
-                dataInizio: c.dataInizio,
-                oraInizio: c.oraInizio,
-                dataFine: c.dataFine,
-                oraFine: c.oraFine,
-                tipoAttivita: c.tipoAttivita,
-                importo: c.importo,
-                valuta: c.valuta,
-                isNegative: c.isNegative,
-                logHistoryId: c.logHistoryId,
-                sourceFileLine: c.sourceFileLine,
-                isScarto: false,
-                scartoLogHistoryId: null,
-              )..id = c.id;
-              resetCandidates.add(reset);
+        final List<TracciatoContabile> candidateRecords = [];
+        for (final period in targetPeriods) {
+          final matchingLogIds = <String>{};
+          for (final log in logs) {
+            if (log.fileName.contains(period)) {
+              matchingLogIds.add(log.uniqueCode);
+            }
+          }
+          matchingLogIds.add(uniqueCode);
+
+          final periodCandidates = await isar.tracciatoContabiles
+              .filter()
+              .anyOf(matchingLogIds, (q, String id) => q.logHistoryIdEqualTo(id))
+              .findAll();
+          candidateRecords.addAll(periodCandidates);
+
+
+        }
+
+        final resetCandidates = <TracciatoContabile>[];
+        for (final c in candidateRecords) {
+          final scartiLogIds = scartiRecords.map((s) => s.logHistoryId).toSet();
+          if (c.isScarto && scartiLogIds.contains(c.scartoLogHistoryId)) {
+            final reset = TracciatoContabile(
+              recordType: c.recordType,
+              cid: c.cid,
+              numeroTrasferta: c.numeroTrasferta,
+              progressivo: c.progressivo,
+              societa: c.societa,
+              tipoDipendente: c.tipoDipendente,
+              giustificativoSpesa: c.giustificativoSpesa,
+              numeroBolla: c.numeroBolla,
+              dataSpesa: c.dataSpesa,
+              localita: c.localita,
+              dataInizio: c.dataInizio,
+              oraInizio: c.oraInizio,
+              dataFine: c.dataFine,
+              oraFine: c.oraFine,
+              tipoAttivita: c.tipoAttivita,
+              importo: c.importo,
+              valuta: c.valuta,
+              isNegative: c.isNegative,
+              logHistoryId: c.logHistoryId,
+              sourceFileLine: c.sourceFileLine,
+              isScarto: false,
+              scartoLogHistoryId: null,
+            )..id = c.id;
+            resetCandidates.add(reset);
+          }
+        }
+
+        for (final rc in resetCandidates) {
+          final idx = candidateRecords.indexWhere((cand) => cand.id == rc.id);
+          if (idx != -1) {
+            candidateRecords[idx] = rc;
+          }
+        }
+
+        final matchedIds = <int>{};
+        final updatedContabileRecords = List<TracciatoContabile>.from(resetCandidates);
+
+        for (final scarto in scartiRecords) {
+          final scartoCid = scarto.cid.trim().padLeft(8, '0');
+          final scartoCleanTrasferta = scarto.numeroTrasferta.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
+          final scartoImporto = scarto.importo;
+
+          final scartoYyyyMm = _getYyyyMmFromDataInvio(scarto.dataInvio);
+          if (scartoYyyyMm == null) continue;
+
+          TracciatoContabile? bestMatch;
+          final primaryCandidates = candidateRecords.where((c) => getRecordPeriod(c) == scartoYyyyMm);
+          for (final candidate in primaryCandidates) {
+            if (matchedIds.contains(candidate.id)) continue;
+
+            final candCid = candidate.cid.trim().padLeft(8, '0');
+            final candCleanTrasferta = candidate.numeroTrasferta.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
+            final candImporto = candidate.isNegative ? -candidate.importo : candidate.importo;
+
+            if (scartoCid == candCid &&
+                scartoCleanTrasferta == candCleanTrasferta &&
+                (scartoImporto - candImporto).abs() < 0.005) {
+              bestMatch = candidate;
+              break;
             }
           }
 
-          for (final rc in resetCandidates) {
-            final idx = candidateRecords.indexWhere((cand) => cand.id == rc.id);
-            if (idx != -1) {
-              candidateRecords[idx] = rc;
-            }
-          }
-
-          final matchedIds = <int>{};
-          final updatedContabileRecords = List<TracciatoContabile>.from(resetCandidates);
-
-          for (final scarto in scartiRecords) {
-            final scartoCid = scarto.cid.trim().padLeft(8, '0');
-            final scartoCleanTrasferta = scarto.numeroTrasferta.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
-            final scartoImporto = scarto.importo;
-
-            TracciatoContabile? bestMatch;
-            for (final candidate in candidateRecords) {
+          if (bestMatch == null && _isDayWithin15(scarto.dataInvio)) {
+            final prevYyyyMm = _subtractMonths(scartoYyyyMm, 1);
+            final fallbackCandidates = candidateRecords.where((c) => getRecordPeriod(c) == prevYyyyMm);
+            for (final candidate in fallbackCandidates) {
               if (matchedIds.contains(candidate.id)) continue;
 
               final candCid = candidate.cid.trim().padLeft(8, '0');
@@ -237,58 +295,77 @@ class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
                 break;
               }
             }
+          }
 
-            if (bestMatch != null) {
-              matchedIds.add(bestMatch.id);
-              scarto.isMatched = true;
+          if (bestMatch == null && _isDayWithin15(scarto.dataInvio)) {
+            final prev2YyyyMm = _subtractMonths(scartoYyyyMm, 2);
+            final fallback2Candidates = candidateRecords.where((c) => getRecordPeriod(c) == prev2YyyyMm);
+            for (final candidate in fallback2Candidates) {
+              if (matchedIds.contains(candidate.id)) continue;
 
-              final updated = TracciatoContabile(
-                recordType: bestMatch.recordType,
-                cid: bestMatch.cid,
-                numeroTrasferta: bestMatch.numeroTrasferta,
-                progressivo: bestMatch.progressivo,
-                societa: bestMatch.societa,
-                tipoDipendente: bestMatch.tipoDipendente,
-                giustificativoSpesa: bestMatch.giustificativoSpesa,
-                numeroBolla: bestMatch.numeroBolla,
-                dataSpesa: bestMatch.dataSpesa,
-                localita: bestMatch.localita,
-                dataInizio: bestMatch.dataInizio,
-                oraInizio: bestMatch.oraInizio,
-                dataFine: bestMatch.dataFine,
-                oraFine: bestMatch.oraFine,
-                tipoAttivita: bestMatch.tipoAttivita,
-                importo: bestMatch.importo,
-                valuta: bestMatch.valuta,
-                isNegative: bestMatch.isNegative,
-                logHistoryId: bestMatch.logHistoryId,
-                sourceFileLine: bestMatch.sourceFileLine,
-                isScarto: true,
-                scartoLogHistoryId: scarto.logHistoryId,
-              )..id = bestMatch.id;
+              final candCid = candidate.cid.trim().padLeft(8, '0');
+              final candCleanTrasferta = candidate.numeroTrasferta.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
+              final candImporto = candidate.isNegative ? -candidate.importo : candidate.importo;
 
-              final uIdx = updatedContabileRecords.indexWhere((u) => u.id == updated.id);
-              if (uIdx != -1) {
-                updatedContabileRecords[uIdx] = updated;
-              } else {
-                updatedContabileRecords.add(updated);
-              }
-
-              final cIdx = candidateRecords.indexWhere((c) => c.id == updated.id);
-              if (cIdx != -1) {
-                candidateRecords[cIdx] = updated;
+              if (scartoCid == candCid &&
+                  scartoCleanTrasferta == candCleanTrasferta &&
+                  (scartoImporto - candImporto).abs() < 0.005) {
+                bestMatch = candidate;
+                break;
               }
             }
           }
 
-          await isar.writeTxn(() async {
-            if (updatedContabileRecords.isNotEmpty) {
-              await isar.tracciatoContabiles.putAll(updatedContabileRecords);
+          if (bestMatch != null) {
+            matchedIds.add(bestMatch.id);
+            scarto.isMatched = true;
+
+            final updated = TracciatoContabile(
+              recordType: bestMatch.recordType,
+              cid: bestMatch.cid,
+              numeroTrasferta: bestMatch.numeroTrasferta,
+              progressivo: bestMatch.progressivo,
+              societa: bestMatch.societa,
+              tipoDipendente: bestMatch.tipoDipendente,
+              giustificativoSpesa: bestMatch.giustificativoSpesa,
+              numeroBolla: bestMatch.numeroBolla,
+              dataSpesa: bestMatch.dataSpesa,
+              localita: bestMatch.localita,
+              dataInizio: bestMatch.dataInizio,
+              oraInizio: bestMatch.oraInizio,
+              dataFine: bestMatch.dataFine,
+              oraFine: bestMatch.oraFine,
+              tipoAttivita: bestMatch.tipoAttivita,
+              importo: bestMatch.importo,
+              valuta: bestMatch.valuta,
+              isNegative: bestMatch.isNegative,
+              logHistoryId: bestMatch.logHistoryId,
+              sourceFileLine: bestMatch.sourceFileLine,
+              isScarto: true,
+              scartoLogHistoryId: scarto.logHistoryId,
+            )..id = bestMatch.id;
+
+            final uIdx = updatedContabileRecords.indexWhere((u) => u.id == updated.id);
+            if (uIdx != -1) {
+              updatedContabileRecords[uIdx] = updated;
+            } else {
+              updatedContabileRecords.add(updated);
             }
-            await isar.scartiEcSaps.putAll(scartiRecords);
-          });
-          ref.invalidate(scartiEcSapProvider);
+
+            final cIdx = candidateRecords.indexWhere((c) => c.id == updated.id);
+            if (cIdx != -1) {
+              candidateRecords[cIdx] = updated;
+            }
+          }
         }
+
+        await isar.writeTxn(() async {
+          if (updatedContabileRecords.isNotEmpty) {
+            await isar.tracciatoContabiles.putAll(updatedContabileRecords);
+          }
+          await isar.scartiEcSaps.putAll(scartiRecords);
+        });
+        ref.invalidate(scartiEcSapProvider);
       }
     }
 
@@ -369,16 +446,33 @@ class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
       )..id = c.id;
     }).toList();
 
+    // Fetch all Tracciato Contabile logs to map uniqueCode to period yyyyMM
+    final contabileLogs = await isar.logHistorys
+        .filter()
+        .sourceTypeEqualTo('Tracciato Contabile')
+        .findAll();
+
+    final Map<String, String> logPeriodMap = {};
+    for (final log in contabileLogs) {
+      final match = RegExp(r'\d{6}').firstMatch(log.fileName);
+      if (match != null) {
+        logPeriodMap[log.uniqueCode] = match.group(0)!;
+      }
+    }
+
+    String? getRecordPeriod(TracciatoContabile c) {
+      if (c.logHistoryId != null) {
+        return logPeriodMap[c.logHistoryId];
+      }
+      return null;
+    }
+
     // Group contabile records by targetPeriod yyyyMM to optimize candidate searching
     final Map<String, List<TracciatoContabile>> contabileByPeriod = {};
     for (final c in resetRecords) {
-      final parts = c.dataSpesa.split('/');
-      if (parts.length == 3) {
-        final month = parts[1];
-        final year = parts[2];
-        if (month.length == 2 && year.length == 4) {
-          contabileByPeriod.putIfAbsent('$year$month', () => []).add(c);
-        }
+      final period = getRecordPeriod(c);
+      if (period != null) {
+        contabileByPeriod.putIfAbsent(period, () => []).add(c);
       }
     }
 
@@ -386,20 +480,10 @@ class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
 
     // 4. For each scarti file, run matching
     for (final log in scartiLogs) {
-      // Find period yyyyMM from file name
-      final fileName = log.fileName;
-      if (fileName.length < 6) continue;
-      final yyyyMM = fileName.substring(0, 6);
-      if (!RegExp(r'^\d{6}$').hasMatch(yyyyMM)) continue;
-
       // Filter scarti records belonging to this log from allScartiRecords
       final scartiRecords = allScartiRecords.where((s) => s.logHistoryId == log.uniqueCode).toList();
 
       if (scartiRecords.isEmpty) continue;
-
-      // Find candidate contabile records for this period (either matched or reset)
-      final candidateRecords = contabileByPeriod[yyyyMM] ?? [];
-      if (candidateRecords.isEmpty) continue;
 
       final matchedIds = <int>{};
 
@@ -407,6 +491,12 @@ class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
         final scartoCid = scarto.cid.trim().padLeft(8, '0');
         final scartoCleanTrasferta = scarto.numeroTrasferta.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
         final scartoImporto = scarto.importo;
+
+        // Trova l'yyyyMM per questo scarto
+        final scartoYyyyMm = _getYyyyMmFromDataInvio(scarto.dataInvio);
+
+        if (scartoYyyyMm == null) continue;
+        final candidateRecords = contabileByPeriod[scartoYyyyMm] ?? [];
 
         TracciatoContabile? bestMatch;
         for (final candidate in candidateRecords) {
@@ -423,6 +513,48 @@ class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
               (scartoImporto - candImporto).abs() < 0.005) {
             bestMatch = currentCand;
             break;
+          }
+        }
+
+        // Fallback: se non trovato entro i primi 15 giorni del mese, cerca nel mese precedente
+        if (bestMatch == null && _isDayWithin15(scarto.dataInvio)) {
+          final prevYyyyMm = _subtractMonths(scartoYyyyMm, 1);
+          final fallbackCandidates = contabileByPeriod[prevYyyyMm] ?? [];
+          for (final candidate in fallbackCandidates) {
+            if (matchedIds.contains(candidate.id)) continue;
+
+            final candCid = candidate.cid.trim().padLeft(8, '0');
+            final candCleanTrasferta = candidate.numeroTrasferta.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
+            final currentCand = updatedRecordsMap[candidate.id] ?? candidate;
+            final candImporto = currentCand.isNegative ? -currentCand.importo : currentCand.importo;
+
+            if (scartoCid == candCid &&
+                scartoCleanTrasferta == candCleanTrasferta &&
+                (scartoImporto - candImporto).abs() < 0.005) {
+              bestMatch = currentCand;
+              break;
+            }
+          }
+        }
+
+        // Fallback 2: se ancora non trovato entro i primi 15 giorni del mese, cerca a due mesi di distanza
+        if (bestMatch == null && _isDayWithin15(scarto.dataInvio)) {
+          final prev2YyyyMm = _subtractMonths(scartoYyyyMm, 2);
+          final fallback2Candidates = contabileByPeriod[prev2YyyyMm] ?? [];
+          for (final candidate in fallback2Candidates) {
+            if (matchedIds.contains(candidate.id)) continue;
+
+            final candCid = candidate.cid.trim().padLeft(8, '0');
+            final candCleanTrasferta = candidate.numeroTrasferta.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
+            final currentCand = updatedRecordsMap[candidate.id] ?? candidate;
+            final candImporto = currentCand.isNegative ? -currentCand.importo : currentCand.importo;
+
+            if (scartoCid == candCid &&
+                scartoCleanTrasferta == candCleanTrasferta &&
+                (scartoImporto - candImporto).abs() < 0.005) {
+              bestMatch = currentCand;
+              break;
+            }
           }
         }
 
@@ -532,3 +664,37 @@ final tracciatoContabilesProvider =
     NotifierProvider<TracciatoContabilesNotifier, List<TracciatoContabile>>(() {
       return TracciatoContabilesNotifier();
     });
+
+String? _getYyyyMmFromDataInvio(String dataInvio) {
+  final parts = dataInvio.split('/');
+  if (parts.length == 3) {
+    final month = parts[1].padLeft(2, '0');
+    final year = parts[2];
+    if (year.length == 4 && month.length == 2) {
+      return '$year$month';
+    }
+  }
+  return null;
+}
+
+bool _isDayWithin15(String dataInvio) {
+  final parts = dataInvio.split('/');
+  if (parts.isNotEmpty) {
+    final day = int.tryParse(parts[0]);
+    return day != null && day <= 15;
+  }
+  return false;
+}
+
+String _subtractMonths(String yyyyMM, int monthsToSubtract) {
+  int year = int.parse(yyyyMM.substring(0, 4));
+  int month = int.parse(yyyyMM.substring(4, 6));
+  for (int i = 0; i < monthsToSubtract; i++) {
+    month--;
+    if (month == 0) {
+      month = 12;
+      year--;
+    }
+  }
+  return '$year${month.toString().padLeft(2, '0')}';
+}

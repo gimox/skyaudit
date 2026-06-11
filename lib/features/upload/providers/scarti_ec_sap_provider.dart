@@ -24,16 +24,6 @@ class ScartiEcSapNotifier extends Notifier<List<ScartiEcSap>> {
 
     debugPrint('Caricamento file Scarti EC SAP: ${file.path}');
 
-    // Estrazione anno e mese dalle prime 6 cifre del nome del file (formato yyyyMM)
-    final fileName = file.name;
-    if (fileName.length < 6) {
-      throw Exception('Il nome del file degli scarti deve iniziare con 6 cifre per anno e mese (yyyyMM).');
-    }
-    final yyyyMM = fileName.substring(0, 6);
-    if (!RegExp(r'^\d{6}$').hasMatch(yyyyMM)) {
-      throw Exception('Le prime 6 cifre del nome del file degli scarti devono rappresentare anno e mese (yyyyMM).');
-    }
-
     // Eseguiamo il parsing in un isolate separato per evitare blocchi dell'interfaccia utente (jank)
     final List<Map<String, dynamic>> results = await compute(_parseScartiIsolate, {
       'filePath': file.path,
@@ -59,33 +49,45 @@ class ScartiEcSapNotifier extends Notifier<List<ScartiEcSap>> {
       );
     }).toList();
 
-    // 1. Carica i record del tracciato contabile corrispondente allo stesso yyyyMM
+    // 1. Raggruppa i record per yyyyMM estratti dal campo dataInvio
+    final Map<String, List<TracciatoContabile>> candidatesByYyyyMm = {};
+    final Set<String> uniqueYyyyMm = {};
+    
+    for (final scarto in recordsToSave) {
+      final yyyyMM = _getYyyyMmFromDataInvio(scarto.dataInvio);
+      if (yyyyMM != null) {
+        uniqueYyyyMm.add(yyyyMM);
+        if (_isDayWithin15(scarto.dataInvio)) {
+          uniqueYyyyMm.add(_subtractMonths(yyyyMM, 1));
+          uniqueYyyyMm.add(_subtractMonths(yyyyMM, 2));
+        }
+      }
+    }
+
     final logs = await isar.logHistorys
         .filter()
         .sourceTypeEqualTo('Tracciato Contabile')
         .findAll();
-    
-    LogHistory? matchingLog;
-    for (final log in logs) {
-      if (log.fileName.contains(yyyyMM)) {
-        matchingLog = log;
-        break;
-      }
-    }
 
-    final List<TracciatoContabile> candidateRecords;
-    if (matchingLog != null) {
-      candidateRecords = await isar.tracciatoContabiles
-          .filter()
-          .logHistoryIdEqualTo(matchingLog.uniqueCode)
-          .findAll();
-    } else {
-      // Fallback: cerca i record tramite dataSpesa che termina con /MM/yyyy
-      final targetSuffix = '/${yyyyMM.substring(4)}/${yyyyMM.substring(0, 4)}';
-      candidateRecords = await isar.tracciatoContabiles
-          .filter()
-          .dataSpesaEndsWith(targetSuffix)
-          .findAll();
+    for (final yyyyMM in uniqueYyyyMm) {
+      LogHistory? matchingLog;
+      for (final log in logs) {
+        if (log.fileName.contains(yyyyMM)) {
+          matchingLog = log;
+          break;
+        }
+      }
+
+      final List<TracciatoContabile> candidateRecords;
+      if (matchingLog != null) {
+        candidateRecords = await isar.tracciatoContabiles
+            .filter()
+            .logHistoryIdEqualTo(matchingLog.uniqueCode)
+            .findAll();
+      } else {
+        candidateRecords = [];
+      }
+      candidatesByYyyyMm[yyyyMM] = candidateRecords;
     }
 
     // 2. Eseguiamo l'abbinamento univoco (1-a-1)
@@ -98,8 +100,14 @@ class ScartiEcSapNotifier extends Notifier<List<ScartiEcSap>> {
       final scartoCleanTrasferta = scarto.numeroTrasferta.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
       final scartoImporto = scarto.importo;
 
+      // Trova l'yyyyMM per questo scarto
+      final scartoYyyyMm = _getYyyyMmFromDataInvio(scarto.dataInvio);
+
+      if (scartoYyyyMm == null) continue;
+      final candidates = candidatesByYyyyMm[scartoYyyyMm] ?? [];
+
       TracciatoContabile? bestMatch;
-      for (final candidate in candidateRecords) {
+      for (final candidate in candidates) {
         if (matchedIds.contains(candidate.id)) continue;
 
         final candCid = candidate.cid.trim().padLeft(8, '0');
@@ -111,6 +119,46 @@ class ScartiEcSapNotifier extends Notifier<List<ScartiEcSap>> {
             (scartoImporto - candImporto).abs() < 0.005) {
           bestMatch = candidate;
           break;
+        }
+      }
+
+      // Fallback: se non trovato entro i primi 15 giorni del mese, cerca nel mese precedente
+      if (bestMatch == null && _isDayWithin15(scarto.dataInvio)) {
+        final prevYyyyMm = _subtractMonths(scartoYyyyMm, 1);
+        final prevCandidates = candidatesByYyyyMm[prevYyyyMm] ?? [];
+        for (final candidate in prevCandidates) {
+          if (matchedIds.contains(candidate.id)) continue;
+
+          final candCid = candidate.cid.trim().padLeft(8, '0');
+          final candCleanTrasferta = candidate.numeroTrasferta.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
+          final candImporto = candidate.isNegative ? -candidate.importo : candidate.importo;
+
+          if (scartoCid == candCid &&
+              scartoCleanTrasferta == candCleanTrasferta &&
+              (scartoImporto - candImporto).abs() < 0.005) {
+            bestMatch = candidate;
+            break;
+          }
+        }
+      }
+
+      // Fallback 2: se ancora non trovato entro i primi 15 giorni del mese, cerca a due mesi di distanza
+      if (bestMatch == null && _isDayWithin15(scarto.dataInvio)) {
+        final prev2YyyyMm = _subtractMonths(scartoYyyyMm, 2);
+        final prev2Candidates = candidatesByYyyyMm[prev2YyyyMm] ?? [];
+        for (final candidate in prev2Candidates) {
+          if (matchedIds.contains(candidate.id)) continue;
+
+          final candCid = candidate.cid.trim().padLeft(8, '0');
+          final candCleanTrasferta = candidate.numeroTrasferta.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
+          final candImporto = candidate.isNegative ? -candidate.importo : candidate.importo;
+
+          if (scartoCid == candCid &&
+              scartoCleanTrasferta == candCleanTrasferta &&
+              (scartoImporto - candImporto).abs() < 0.005) {
+            bestMatch = candidate;
+            break;
+          }
         }
       }
 
@@ -376,3 +424,37 @@ Future<List<Map<String, dynamic>>> _parseScartiIsolate(Map<String, dynamic> para
 final scartiEcSapProvider = NotifierProvider<ScartiEcSapNotifier, List<ScartiEcSap>>(() {
   return ScartiEcSapNotifier();
 });
+
+String? _getYyyyMmFromDataInvio(String dataInvio) {
+  final parts = dataInvio.split('/');
+  if (parts.length == 3) {
+    final month = parts[1].padLeft(2, '0');
+    final year = parts[2];
+    if (year.length == 4 && month.length == 2) {
+      return '$year$month';
+    }
+  }
+  return null;
+}
+
+bool _isDayWithin15(String dataInvio) {
+  final parts = dataInvio.split('/');
+  if (parts.isNotEmpty) {
+    final day = int.tryParse(parts[0]);
+    return day != null && day <= 15;
+  }
+  return false;
+}
+
+String _subtractMonths(String yyyyMM, int monthsToSubtract) {
+  int year = int.parse(yyyyMM.substring(0, 4));
+  int month = int.parse(yyyyMM.substring(4, 6));
+  for (int i = 0; i < monthsToSubtract; i++) {
+    month--;
+    if (month == 0) {
+      month = 12;
+      year--;
+    }
+  }
+  return '$year${month.toString().padLeft(2, '0')}';
+}

@@ -82,7 +82,7 @@ void main() {
       expect(updatedContabile[2], true);
       expect(updatedContabile[3], isNull); // 3rd contabile record remains untouched
     });
-   group('Importo sign matching tests', () {
+    group('Importo sign matching tests', () {
       test('Matches positive and negative importo correctly', () {
         final scartoStorno = -50.0;
         final tcStornoNegative = true;
@@ -90,6 +90,39 @@ void main() {
         final tcSignedImporto = tcStornoNegative ? -tcStornoImporto : tcStornoImporto;
 
         expect((scartoStorno - tcSignedImporto).abs() < 0.01, true);
+      });
+    });
+
+    group('2-month fallback logic simulation', () {
+      String subtractMonths(String yyyyMM, int monthsToSubtract) {
+        int year = int.parse(yyyyMM.substring(0, 4));
+        int month = int.parse(yyyyMM.substring(4, 6));
+        for (int i = 0; i < monthsToSubtract; i++) {
+          month--;
+          if (month == 0) {
+            month = 12;
+            year--;
+          }
+        }
+        return '$year${month.toString().padLeft(2, '0')}';
+      }
+
+      bool isDayWithin15(String dataInvio) {
+        final parts = dataInvio.split('/');
+        if (parts.isNotEmpty) {
+          final day = int.tryParse(parts[0]);
+          return day != null && day <= 15;
+        }
+        return false;
+      }
+
+      test('Correctly matches record from 2 months prior if within first 15 days', () {
+        final dataInvio = '05/04/2026';
+        final yyyyMM = '202604';
+        
+        expect(isDayWithin15(dataInvio), true);
+        expect(subtractMonths(yyyyMM, 1), '202603');
+        expect(subtractMonths(yyyyMM, 2), '202602');
       });
     });
   });

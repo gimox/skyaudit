@@ -82,7 +82,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
   @override
   Widget build(BuildContext context) {
-    final allRecords = ref.watch(tracciatoContabilesProvider);
+    final allRecords = ref.watch(tracciatoContabilesProvider).where((r) => !r.isScarto).toList();
     final allEstrattiConto = ref.watch(estrattoContoProvider);
     final allSapRecords = ref.watch(tracciatoSapProvider);
     final allAmexRecords = ref.watch(estrattoAmexProvider);
@@ -2575,7 +2575,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     Map<String, String> dictionaryMap
   ) {
     // Re-use options calculation or pass them
-    final allTracciato = ref.watch(tracciatoContabilesProvider);
+    final allTracciato = ref.watch(tracciatoContabilesProvider).where((r) => !r.isScarto).toList();
     final societaOptions = allTracciato.map((e) => e.societa).toSet().toList()..sort();
     final tipoDipendenteOptions = allTracciato.map((e) => e.tipoDipendente).toSet().toList()..sort();
     final allLogs = ref.watch(logHistoryProvider);

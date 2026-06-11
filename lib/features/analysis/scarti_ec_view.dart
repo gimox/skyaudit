@@ -1410,29 +1410,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
       for (final log in logHistories) log.uniqueCode: log.fileName,
     };
 
-    final anagrafiche = ref.read(anagraficaProvider);
-    final anagraficaMap = {
-      for (final a in anagrafiche)
-        if (a.cid != null) a.cid!.trim().padLeft(8, '0'): a.nominativo
-    };
-
-    final contabileRecords = ref.read(tracciatoContabilesProvider);
     final loadingFileName = record.logHistoryId != null ? logHistoryMap[record.logHistoryId] : null;
-    
-    // 1. Incroci perfetti (CID + Trasferta + Importo)
-    final matches = contabileRecords.where((tc) {
-      final cidMatch = tc.cid.trim().padLeft(8, '0') == record.cid.trim().padLeft(8, '0');
-      final trasfMatch = tc.numeroTrasferta.trim() == record.numeroTrasferta.trim();
-      final contabileSignedImporto = (tc.isNegative ? -1.0 : 1.0) * tc.importo;
-      final importoMatch = (contabileSignedImporto - record.importo).abs() < 0.01;
-      return cidMatch && trasfMatch && importoMatch;
-    }).toList();
-
-    // 2. Tutti i riscontri per numero trasferta (anche se con CID o Importo differenti)
-    final allTrasfMatches = contabileRecords.where((tc) {
-      return tc.numeroTrasferta.trim().isNotEmpty && 
-             tc.numeroTrasferta.trim() == record.numeroTrasferta.trim();
-    }).toList();
 
     showDialog(
       context: context,
@@ -1536,16 +1514,6 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                           _buildDetailRow('File Caricamento', loadingFileName ?? '-'),
                           _buildDetailRow('Note Aggiuntive', record.note ?? '-'),
                         ]),
-                        const SizedBox(height: 24),
-                        _buildCrossReferencedSection(
-                          context, 
-                          record,
-                          matches, 
-                          allTrasfMatches, 
-                          prepagatiMap, 
-                          logHistoryMap,
-                          anagraficaMap,
-                        ),
                       ],
                     ),
                   ),
