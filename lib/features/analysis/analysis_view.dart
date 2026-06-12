@@ -96,7 +96,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final anagrafiche = ref.watch(anagraficaProvider);
     final anagraficheMap = {
       for (var a in anagrafiche)
-        if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
+        if (a.cid != null) a.cid!.trim().padLeft(8, '0'): (a.nominativo ?? '').trim()
     };
     const pageSize = 50;
 
@@ -201,7 +201,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
           if (selectedYear != null && year != selectedYear) return false;
           if (selectedTrasferta != null) {
             final query = selectedTrasferta.toLowerCase();
-            final name = anagraficheMap[r.cid.trim()] ?? '';
+            final name = anagraficheMap[r.cid.trim().padLeft(8, '0')] ?? '';
             if (!r.numeroTrasferta.toLowerCase().contains(query) &&
                 !r.cid.toLowerCase().contains(query) &&
                 !r.numeroBolla.toLowerCase().contains(query) &&
@@ -338,7 +338,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                             Expanded(
                               child: TextField(
                                 controller: _trasfertaController,
-                                decoration: const InputDecoration(hintText: 'Cerca per trasferta, CID o bolla...', border: InputBorder.none, isDense: true),
+                                decoration: const InputDecoration(hintText: 'Cerca per trasferta, CID, nominativo o bolla...', border: InputBorder.none, isDense: true),
                                 style: const TextStyle(fontSize: 14),
                                 onChanged: (value) {
                                   ref.read(selectedTrasfertaProvider.notifier).state = value.isEmpty ? null : value;
@@ -657,7 +657,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                               constraints: const BoxConstraints(),
                                             )),
                                             _buildCopyableCell(record.cid, 140, typeLabel: 'CID', fontWeight: FontWeight.w500),
-                                            _buildCell(anagraficheMap[record.cid.trim()] ?? '', 220, fontWeight: FontWeight.w500),
+                                            _buildCell(anagraficheMap[record.cid.trim().padLeft(8, '0')] ?? '', 220, fontWeight: FontWeight.w500),
                                             _buildCopyableCell(
                                               record.numeroTrasferta,
                                               160,
@@ -1389,11 +1389,11 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
       final anagrafiche = ref.read(anagraficaProvider);
       final anagraficheMap = {
         for (var a in anagrafiche)
-          if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
+          if (a.cid != null) a.cid!.trim().padLeft(8, '0'): (a.nominativo ?? '').trim()
       };
       final unitaOrgMap = {
         for (var a in anagrafiche)
-          if (a.cid != null) a.cid!.trim(): a.unitaOrganizzativa ?? ''
+          if (a.cid != null) a.cid!.trim().padLeft(8, '0'): (a.unitaOrganizzativa ?? '').trim()
       };
 
       final dictionaries = ref.read(dictionaryProvider);
@@ -1482,8 +1482,8 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
 
         sheet.appendRow([
           TextCellValue(r.cid),
-          TextCellValue(anagraficheMap[r.cid.trim()] ?? ''),
-          TextCellValue(unitaOrgMap[r.cid.trim()] ?? ''),
+          TextCellValue(anagraficheMap[r.cid.trim().padLeft(8, '0')] ?? ''),
+          TextCellValue(unitaOrgMap[r.cid.trim().padLeft(8, '0')] ?? ''),
           TextCellValue(r.numeroTrasferta),
           TextCellValue(r.progressivo),
           TextCellValue(r.societa),

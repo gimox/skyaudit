@@ -24,6 +24,7 @@ final scSelectedSpesaProvider = StateProvider<Set<String>>((ref) => {});
 final scSortAscendingProvider = StateProvider<bool>((ref) => false);
 final scPageProvider = StateProvider<int>((ref) => 0);
 final scSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
+final scSelectedSocietaProvider = StateProvider<Set<String>>((ref) => {});
 
 enum ScartiIncrocioFilter { all, matched, notMatched }
 final scIncrocioFilterProvider = StateProvider<ScartiIncrocioFilter>((ref) => ScartiIncrocioFilter.all);
@@ -60,6 +61,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
     final startDate = ref.watch(scStartDateProvider);
     final endDate = ref.watch(scEndDateProvider);
     final selectedSpese = ref.watch(scSelectedSpesaProvider);
+    final selectedSocieta = ref.watch(scSelectedSocietaProvider);
     final sortAscending = ref.watch(scSortAscendingProvider);
     final currentPage = ref.watch(scPageProvider);
     final selectedLogHistoryIds = ref.watch(scSelectedLogHistoryIdsProvider);
@@ -80,6 +82,13 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
         .map((tc) => tc.numeroTrasferta.trim())
         .where((t) => t.isNotEmpty)
         .toSet();
+    final allAnagrafica = ref.watch(anagraficaProvider);
+    final anagraficaMap = {for (var a in allAnagrafica) (a.cid ?? '').trim().padLeft(8, '0'): (a.nominativo ?? '').trim()};
+    final anagraficaSocietaMap = {for (var a in allAnagrafica) (a.cid ?? '').trim().padLeft(8, '0'): (a.societa ?? '').trim()};
+    final dictionaries = ref.watch(dictionaryProvider);
+    final dictionaryMap = {
+      for (final entry in dictionaries) entry.code.trim().toUpperCase(): entry.value,
+    };
     const pageSize = 50;
 
     if (allRecords.isEmpty) {
@@ -114,14 +123,22 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
       startDate != null,
       endDate != null,
       selectedSpese.isNotEmpty,
+      selectedSocieta.isNotEmpty,
       incrocioFilter != ScartiIncrocioFilter.all,
       trasfertaFilter != ScTrasfertaPresenzaFilter.all,
       selectedLogHistoryIds.isNotEmpty,
     ].where((e) => e).length;
-
+    
     // Estrai giustificativi di spesa disponibili per il filtro
     final availableSpese = allRecords
         .map((r) => r.spesa)
+        .where((s) => s.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+    
+    final availableSocieta = allRecords
+        .map((r) => anagraficaSocietaMap[r.cid.trim().padLeft(8, '0')] ?? '')
         .where((s) => s.isNotEmpty)
         .toSet()
         .toList()
@@ -131,21 +148,15 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
       return rec.isMatched;
     }
 
-    final totalRecords = allRecords.length;
-    final reconciledRecords = allRecords.where(hasMatch).length;
-    final waitingRecords = totalRecords - reconciledRecords;
-
-    final totalAmount = allRecords.fold<double>(0.0, (sum, r) => sum + r.importo);
-    final reconciledAmount = allRecords.where(hasMatch).fold<double>(0.0, (sum, r) => sum + r.importo);
-    final waitingAmount = allRecords.where((r) => !hasMatch(r)).fold<double>(0.0, (sum, r) => sum + r.importo);
-
     // Filtra i record
     final filteredRecords = allRecords.where((r) {
       if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) return false;
       if (selectedQuery != null) {
         final query = selectedQuery.toLowerCase();
+        final nominativo = anagraficaMap[r.cid.trim().padLeft(8, '0')] ?? '';
         if (!r.numeroTrasferta.toLowerCase().contains(query) &&
             !r.cid.toLowerCase().contains(query) &&
+            !nominativo.toLowerCase().contains(query) &&
             !r.descrizioneScarto.toLowerCase().contains(query)) {
           return false;
         }
@@ -168,6 +179,12 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
       // Filtro Tipo Spesa
       if (selectedSpese.isNotEmpty && !selectedSpese.contains(r.spesa)) return false;
       
+      // Filtro Società
+      if (selectedSocieta.isNotEmpty) {
+        final companyCode = anagraficaSocietaMap[r.cid.trim().padLeft(8, '0')] ?? '';
+        if (!selectedSocieta.contains(companyCode)) return false;
+      }
+      
       // Filtro Incrocio
       if (incrocioFilter == ScartiIncrocioFilter.matched && !hasMatch(r)) {
         return false;
@@ -189,6 +206,14 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
         return sortAscending ? a.cid.compareTo(b.cid) : b.cid.compareTo(a.cid);
       });
 
+    final totalRecords = filteredRecords.length;
+    final reconciledRecords = filteredRecords.where(hasMatch).length;
+    final waitingRecords = totalRecords - reconciledRecords;
+
+    final totalAmount = filteredRecords.fold<double>(0.0, (sum, r) => sum + r.importo);
+    final reconciledAmount = filteredRecords.where(hasMatch).fold<double>(0.0, (sum, r) => sum + r.importo);
+    final waitingAmount = filteredRecords.where((r) => !hasMatch(r)).fold<double>(0.0, (sum, r) => sum + r.importo);
+
     final totalPages = (filteredRecords.length / pageSize).ceil();
     final safePage = (currentPage >= totalPages && totalPages > 0) ? 0 : currentPage;
     final startIndex = (safePage * pageSize).clamp(0, filteredRecords.length);
@@ -197,7 +222,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      endDrawer: _buildFilterDrawer(context, ref, availableSpese),
+      endDrawer: _buildFilterDrawer(context, ref, availableSpese, availableSocieta, dictionaryMap),
       floatingActionButton: filteredRecords.isNotEmpty 
           ? FloatingActionButton(
               onPressed: () => _exportToExcel(filteredRecords),
@@ -246,7 +271,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                               child: TextField(
                                 controller: _searchController,
                                 decoration: const InputDecoration(
-                                  hintText: 'Cerca per trasferta, CID o descrizione scarto...', 
+                                  hintText: 'Cerca per trasferta, CID, nominativo o descrizione scarto...', 
                                   border: InputBorder.none, 
                                   isDense: true
                                 ),
@@ -313,6 +338,14 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                           final next = Set<String>.from(current)..remove(spesa);
                           ref.read(scSelectedSpesaProvider.notifier).state = next;
                         })),
+                        ...selectedSocieta.map((soc) {
+                          final label = dictionaryMap[soc.toUpperCase()] ?? soc;
+                          return _buildFilterChip(label, () {
+                            final current = ref.read(scSelectedSocietaProvider);
+                            final next = Set<String>.from(current)..remove(soc);
+                            ref.read(scSelectedSocietaProvider.notifier).state = next;
+                          });
+                        }),
                          if (incrocioFilter != ScartiIncrocioFilter.all)
                           _buildFilterChip(
                             incrocioFilter == ScartiIncrocioFilter.matched
@@ -468,7 +501,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SizedBox(
-                          width: 1320,
+                          width: 1690,
                           child: Column(
                             children: [
                           // INTESTAZIONE TABELLA (HEADER FISSO)
@@ -481,7 +514,9 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                             child: Row(
                               children: [
                                 _buildCell('AZIONI', 120, isHeader: true, alignment: Alignment.center),
-                                _buildCell('CID', 120, isHeader: true),
+                                _buildCell('CID', 140, isHeader: true),
+                                _buildCell('NOMINATIVO', 200, isHeader: true),
+                                _buildCell('SOCIETÀ', 150, isHeader: true),
                                 _buildCell('TRASFERTA', 150, isHeader: true),
                                 _buildCell('SPESA', 100, isHeader: true),
                                 _buildCell('IMPORTO', 120, isHeader: true),
@@ -503,6 +538,14 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                                 itemCount: paginatedRecords.length,
                                 itemBuilder: (context, index) {
                                   final record = paginatedRecords[index];
+                                  final nominativo = anagraficaMap[record.cid.trim().padLeft(8, '0')] ?? '';
+                                  final companyCode = anagraficaSocietaMap[record.cid.trim().padLeft(8, '0')] ?? '';
+                                  final companyDesc = companyCode.isNotEmpty 
+                                      ? (dictionaryMap[companyCode.toUpperCase()] ?? companyCode) 
+                                      : '';
+                                  final displayCompany = companyDesc.isNotEmpty 
+                                      ? (companyCode != companyDesc ? '$companyCode - $companyDesc' : companyCode)
+                                      : '-';
                                   return Container(
                                     decoration: BoxDecoration(
                                       color: index % 2 == 0 ? Colors.white : Colors.grey.shade50.withAlpha(120), 
@@ -530,7 +573,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                                         )),
                                         _buildCell(
                                           record.cid,
-                                          120,
+                                          140,
                                           child: Row(
                                             children: [
                                               Expanded(
@@ -566,6 +609,14 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                                               ),
                                             ],
                                           ),
+                                        ),
+                                        _buildCell(
+                                          nominativo.isNotEmpty ? nominativo : 'Nominativo non trovato',
+                                          200,
+                                        ),
+                                        _buildCell(
+                                          displayCompany,
+                                          150,
                                         ),
                                         _buildCell(
                                           record.numeroTrasferta,
@@ -743,6 +794,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
     ref.read(scStartDateProvider.notifier).state = null;
     ref.read(scEndDateProvider.notifier).state = null;
     ref.read(scSelectedSpesaProvider.notifier).state = {};
+    ref.read(scSelectedSocietaProvider.notifier).state = {};
     ref.read(scIncrocioFilterProvider.notifier).state = ScartiIncrocioFilter.all;
     ref.read(scTrasfertaPresenzaFilterProvider.notifier).state = ScTrasfertaPresenzaFilter.all;
     ref.read(scSelectedLogHistoryIdsProvider.notifier).state = {};
@@ -764,7 +816,13 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
     );
   }
 
-  Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, List<String> availableSpese) {
+  Widget _buildFilterDrawer(
+    BuildContext context, 
+    WidgetRef ref, 
+    List<String> availableSpese,
+    List<String> availableSocieta,
+    Map<String, String> dictionaryMap,
+  ) {
     final allLogs = ref.watch(logHistoryProvider);
     final ecLogs = allLogs.where((log) => log.sourceType == 'Scarti EC SAP').toList();
     return Drawer(
@@ -867,6 +925,26 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                   icon: Icons.receipt_long_outlined,
                 ),
                 const SizedBox(height: 32),
+                _buildDrawerSectionTitle('SOCIETÀ'),
+                const SizedBox(height: 12),
+                _buildChipsMultiSelectFilter(
+                  'Seleziona società',
+                  ref.watch(scSelectedSocietaProvider),
+                  availableSocieta,
+                  (val) {
+                    final current = ref.read(scSelectedSocietaProvider);
+                    final next = Set<String>.from(current);
+                    if (next.contains(val)) {
+                      next.remove(val);
+                    } else {
+                      next.add(val);
+                    }
+                    ref.read(scSelectedSocietaProvider.notifier).state = next;
+                  },
+                  icon: Icons.business_outlined,
+                  labelMap: dictionaryMap,
+                ),
+                const SizedBox(height: 32),
                 _buildDrawerSectionTitle('STATO RISCONTRO / INCROCIO'),
                 const SizedBox(height: 12),
                 _buildChoiceFilter<ScartiIncrocioFilter>(
@@ -947,6 +1025,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
     List<String> options,
     Function(String) onToggle, {
     IconData? icon,
+    Map<String, String>? labelMap,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -966,10 +1045,11 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
           runSpacing: 8,
           children: options.map((option) {
             final isSelected = selectedValues.contains(option);
+            final displayLabel = labelMap != null ? (labelMap[option] ?? option) : option;
             
             return FilterChip(
               label: Text(
-                option, 
+                displayLabel, 
                 style: TextStyle(
                   fontSize: 12, 
                   color: isSelected ? Colors.white : Colors.black87,
@@ -1412,6 +1492,27 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
 
     final loadingFileName = record.logHistoryId != null ? logHistoryMap[record.logHistoryId] : null;
 
+    final allAnagrafica = ref.read(anagraficaProvider);
+    final anagraficaMap = {
+      for (var a in allAnagrafica) (a.cid ?? '').trim().padLeft(8, '0'): (a.nominativo ?? '').trim()
+    };
+    final anagraficaSocietaMap = {
+      for (var a in allAnagrafica) (a.cid ?? '').trim().padLeft(8, '0'): (a.societa ?? '').trim()
+    };
+    final dictMap = {
+      for (final d in dictionaries) d.code.trim().toUpperCase(): d.value
+    };
+    final nominativo = anagraficaMap[record.cid.trim().padLeft(8, '0')] ?? '';
+    final cidWithNominativo = nominativo.isNotEmpty ? '${record.cid} - $nominativo' : record.cid;
+
+    final companyCode = anagraficaSocietaMap[record.cid.trim().padLeft(8, '0')] ?? '';
+    final companyDesc = companyCode.isNotEmpty 
+        ? (dictMap[companyCode.toUpperCase()] ?? companyCode) 
+        : '';
+    final displayCompany = companyDesc.isNotEmpty 
+        ? (companyCode != companyDesc ? '$companyCode - $companyDesc' : companyCode)
+        : '-';
+
     showDialog(
       context: context,
       builder: (context) {
@@ -1460,7 +1561,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'CID: ${record.cid}',
+                              'CID: ${record.cid}${nominativo.isNotEmpty ? " - $nominativo" : ""}',
                               style: TextStyle(
                                 color: Colors.white.withAlpha(200),
                                 fontSize: 13,
@@ -1488,6 +1589,8 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                       children: [
                         _buildDetailSection('Anagrafica & Trasferta', Icons.person_outline, SkyTheme.timRed, [
                           _buildDetailRow('CID', record.cid),
+                          _buildDetailRow('Nominativo', nominativo.isNotEmpty ? nominativo : 'Nominativo non trovato'),
+                          _buildDetailRow('Società', displayCompany),
                           _buildDetailRow('Numero Trasferta', record.numeroTrasferta),
                         ]),
                         const SizedBox(height: 24),
@@ -1927,10 +2030,24 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
       final sheet = excel['ScartiEcSap'];
       excel.delete('Sheet1');
 
+      final anagrafiche = ref.read(anagraficaProvider);
+      final anagraficheMap = {
+        for (var a in anagrafiche) (a.cid ?? '').trim().padLeft(8, '0'): (a.nominativo ?? '').trim()
+      };
+      final anagraficaSocietaMap = {
+        for (var a in anagrafiche) (a.cid ?? '').trim().padLeft(8, '0'): (a.societa ?? '').trim()
+      };
+      final dictionaries = ref.read(dictionaryProvider);
+      final dictMap = {
+        for (final entry in dictionaries) entry.code.trim().toUpperCase(): entry.value
+      };
+
       sheet.appendRow([
         TextCellValue('ID'),
-        TextCellValue('Numero Trasferta'),
         TextCellValue('CID'),
+        TextCellValue('Nominativo'),
+        TextCellValue('Società'),
+        TextCellValue('Numero Trasferta'),
         TextCellValue('Descrizione Scarto'),
         TextCellValue('Spesa'),
         TextCellValue('Importo'),
@@ -1942,10 +2059,21 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
       ]);
 
       for (final r in records) {
+        final nominativo = anagraficheMap[r.cid.trim().padLeft(8, '0')] ?? '';
+        final companyCode = anagraficaSocietaMap[r.cid.trim().padLeft(8, '0')] ?? '';
+        final companyDesc = companyCode.isNotEmpty 
+            ? (dictMap[companyCode.toUpperCase()] ?? companyCode) 
+            : '';
+        final displayCompany = companyDesc.isNotEmpty 
+            ? (companyCode != companyDesc ? '$companyCode - $companyDesc' : companyCode)
+            : '-';
+
         sheet.appendRow([
           IntCellValue(r.id),
-          TextCellValue(r.numeroTrasferta),
           TextCellValue(r.cid),
+          TextCellValue(nominativo),
+          TextCellValue(displayCompany),
+          TextCellValue(r.numeroTrasferta),
           TextCellValue(r.descrizioneScarto),
           TextCellValue(r.spesa),
           DoubleCellValue(r.importo),
@@ -1955,6 +2083,83 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
           TextCellValue(r.note ?? ''),
           TextCellValue(r.isMatched ? 'SI' : 'NO'),
         ]);
+      }
+
+      // STILI
+      final headerStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#C4121A'), // TIM Red
+        fontColorHex: ExcelColor.fromHexString('#FFFFFF'),
+        bold: true,
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final matchedStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#D4EDDA'), // Light green
+        fontColorHex: ExcelColor.fromHexString('#155724'), // Dark green
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final matchedCenterStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#D4EDDA'),
+        fontColorHex: ExcelColor.fromHexString('#155724'),
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final matchedAmountStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#D4EDDA'),
+        fontColorHex: ExcelColor.fromHexString('#155724'),
+        horizontalAlign: HorizontalAlign.Right,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final waitingStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#FFF3CD'), // Light orange
+        fontColorHex: ExcelColor.fromHexString('#856404'), // Dark orange
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final waitingCenterStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#FFF3CD'),
+        fontColorHex: ExcelColor.fromHexString('#856404'),
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final waitingAmountStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#FFF3CD'),
+        fontColorHex: ExcelColor.fromHexString('#856404'),
+        horizontalAlign: HorizontalAlign.Right,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      const colCount = 13;
+      for (var col = 0; col < colCount; col++) {
+        final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+        cell.cellStyle = headerStyle;
+      }
+      sheet.setRowHeight(0, 30);
+
+      int rowIndex = 1;
+      for (final r in records) {
+        sheet.setRowHeight(rowIndex, 22);
+        final isMatched = r.isMatched;
+        final rowStyle = isMatched ? matchedStyle : waitingStyle;
+        final centerStyle = isMatched ? matchedCenterStyle : waitingCenterStyle;
+        final amountStyle = isMatched ? matchedAmountStyle : waitingAmountStyle;
+
+        for (var col = 0; col < colCount; col++) {
+          final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: rowIndex));
+          if (col == 7) { // Importo
+            cell.cellStyle = amountStyle;
+          } else if (col == 0 || col == 1 || col == 4 || col == 8 || col == 10 || col == 12) { // ID, CID, Trasferta, Divisa, Data Invio, Incrocio
+            cell.cellStyle = centerStyle;
+          } else {
+            cell.cellStyle = rowStyle;
+          }
+        }
+        rowIndex++;
       }
 
       final fileBytes = excel.encode();

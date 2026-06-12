@@ -70,6 +70,12 @@ const List<SidebarItemData> travelItems = [
     icon: Icons.map_outlined,
     selectedIcon: Icons.map,
   ),
+  SidebarItemData(
+    index: 15,
+    title: 'Trasferte Scartate',
+    icon: Icons.block_outlined,
+    selectedIcon: Icons.block,
+  ),
 ];
 
 const SidebarItemData anagraficaItem = SidebarItemData(
@@ -137,14 +143,14 @@ class _SkySideBarState extends State<SkySideBar> {
   @override
   void initState() {
     super.initState();
-    _isTravelExpanded = widget.selectedIndex >= 0 && widget.selectedIndex <= 8;
+    _isTravelExpanded = (widget.selectedIndex >= 0 && widget.selectedIndex <= 8) || widget.selectedIndex == 15;
     _isHroExpanded = widget.selectedIndex == 9;
   }
 
   @override
   void didUpdateWidget(covariant SkySideBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final isTravelSelected = widget.selectedIndex >= 0 && widget.selectedIndex <= 8;
+    final isTravelSelected = (widget.selectedIndex >= 0 && widget.selectedIndex <= 8) || widget.selectedIndex == 15;
     final isHroSelected = widget.selectedIndex == 9;
 
     if (isTravelSelected && !_isTravelExpanded) {
@@ -357,6 +363,7 @@ class _SkySideBarState extends State<SkySideBar> {
   }
 
   Widget buildExpanded(BuildContext context) {
+    final isTravelSelected = (widget.selectedIndex >= 0 && widget.selectedIndex <= 8) || widget.selectedIndex == 15;
     return Container(
       color: Colors.white,
       child: ListView(
@@ -389,15 +396,15 @@ class _SkySideBarState extends State<SkySideBar> {
               },
               shape: const Border(),
               collapsedShape: const Border(),
-              iconColor: widget.selectedIndex >= 0 && widget.selectedIndex <= 8
+              iconColor: isTravelSelected
                   ? SkyTheme.timBlue
                   : Colors.grey.shade700,
-              collapsedIconColor: widget.selectedIndex >= 0 && widget.selectedIndex <= 8
+              collapsedIconColor: isTravelSelected
                   ? SkyTheme.timBlue
                   : Colors.grey.shade700,
               leading: Icon(
                 Icons.flight_takeoff_outlined,
-                color: widget.selectedIndex >= 0 && widget.selectedIndex <= 8
+                color: isTravelSelected
                     ? SkyTheme.timBlue
                     : Colors.grey.shade700,
               ),
@@ -406,10 +413,10 @@ class _SkySideBarState extends State<SkySideBar> {
                 style: TextStyle(
                   fontFamily: 'TIMSans',
                   fontSize: 14,
-                  fontWeight: widget.selectedIndex >= 0 && widget.selectedIndex <= 8
+                  fontWeight: isTravelSelected
                       ? FontWeight.bold
                       : FontWeight.w500,
-                  color: widget.selectedIndex >= 0 && widget.selectedIndex <= 8
+                  color: isTravelSelected
                       ? SkyTheme.timBlue
                       : Colors.grey.shade800,
                 ),
@@ -514,7 +521,7 @@ class _SkySideBarState extends State<SkySideBar> {
   Widget buildCollapsed(BuildContext context) {
     final GlobalKey travelKey = GlobalKey();
     final GlobalKey hroKey = GlobalKey();
-    final bool isTravelSelected = widget.selectedIndex >= 0 && widget.selectedIndex <= 8;
+    final bool isTravelSelected = (widget.selectedIndex >= 0 && widget.selectedIndex <= 8) || widget.selectedIndex == 15;
     final bool isHroSelected = widget.selectedIndex == 9;
 
     return Container(
