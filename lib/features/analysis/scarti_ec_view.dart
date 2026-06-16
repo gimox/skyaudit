@@ -25,6 +25,7 @@ final scSortAscendingProvider = StateProvider<bool>((ref) => false);
 final scPageProvider = StateProvider<int>((ref) => 0);
 final scSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final scSelectedSocietaProvider = StateProvider<Set<String>>((ref) => {});
+final scSelectedImportoProvider = StateProvider<String?>((ref) => null);
 
 enum ScartiIncrocioFilter { all, matched, notMatched }
 final scIncrocioFilterProvider = StateProvider<ScartiIncrocioFilter>((ref) => ScartiIncrocioFilter.all);
@@ -41,6 +42,7 @@ class ScartiEcView extends ConsumerStatefulWidget {
 
 class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
   final _searchController = TextEditingController();
+  final _importoController = TextEditingController();
   final _scrollController = ScrollController();
   final _horizontalScrollController = ScrollController();
   final _statsScrollController = ScrollController();
@@ -48,6 +50,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
   @override
   void dispose() {
     _searchController.dispose();
+    _importoController.dispose();
     _scrollController.dispose();
     _horizontalScrollController.dispose();
     _statsScrollController.dispose();
@@ -62,10 +65,12 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
     final endDate = ref.watch(scEndDateProvider);
     final selectedSpese = ref.watch(scSelectedSpesaProvider);
     final selectedSocieta = ref.watch(scSelectedSocietaProvider);
+    final selectedImporto = ref.watch(scSelectedImportoProvider);
     final sortAscending = ref.watch(scSortAscendingProvider);
     final currentPage = ref.watch(scPageProvider);
     final selectedLogHistoryIds = ref.watch(scSelectedLogHistoryIdsProvider);
     final allLogs = ref.watch(logHistoryProvider);
+    final logsMap = {for (final log in allLogs) log.uniqueCode: log.fileName};
     String? selectedLogFileName;
     if (selectedLogHistoryIds.length == 1) {
       for (final log in allLogs) {
@@ -124,6 +129,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
       endDate != null,
       selectedSpese.isNotEmpty,
       selectedSocieta.isNotEmpty,
+      selectedImporto != null,
       incrocioFilter != ScartiIncrocioFilter.all,
       trasfertaFilter != ScTrasfertaPresenzaFilter.all,
       selectedLogHistoryIds.isNotEmpty,
@@ -178,6 +184,15 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
       
       // Filtro Tipo Spesa
       if (selectedSpese.isNotEmpty && !selectedSpese.contains(r.spesa)) return false;
+      
+      // Filtro Importo
+      if (selectedImporto != null) {
+        final query = selectedImporto.replaceAll(' ', '').replaceAll(',', '.');
+        final importoStr = r.importo.toStringAsFixed(2);
+        if (!importoStr.contains(query)) {
+          return false;
+        }
+      }
       
       // Filtro Società
       if (selectedSocieta.isNotEmpty) {
@@ -328,6 +343,11 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                           _buildFilterChip('Cerca: "$selectedQuery"', () {
                             ref.read(scSelectedQueryProvider.notifier).state = null;
                             _searchController.clear();
+                          }),
+                        if (selectedImporto != null)
+                          _buildFilterChip('Importo: "$selectedImporto"', () {
+                            ref.read(scSelectedImportoProvider.notifier).state = null;
+                            _importoController.clear();
                           }),
                         if (startDate != null)
                           _buildFilterChip('Dal: ${startDate.day}/${startDate.month}/${startDate.year}', () => ref.read(scStartDateProvider.notifier).state = null),
@@ -501,7 +521,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SizedBox(
-                          width: 1690,
+                          width: 1890,
                           child: Column(
                             children: [
                           // INTESTAZIONE TABELLA (HEADER FISSO)
@@ -523,6 +543,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                                 _buildCell('DIVISA', 80, isHeader: true),
                                 _buildCell('INCROCIO', 120, isHeader: true, alignment: Alignment.center),
                                 _buildCell('STORNO', 100, isHeader: true),
+                                _buildCell('FILE IMPORTAZIONE', 200, isHeader: true),
                                 _buildCell('DATA INVIO', 130, isHeader: true),
                                 _buildCell('DESCRIZIONE SCARTO', 280, isHeader: true),
                               ],
@@ -705,6 +726,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                                           ),
                                         ),
                                         _buildCell(record.storno ?? '-', 100, color: record.storno != null ? Colors.orange.shade800 : null),
+                                        _buildCell(record.logHistoryId != null ? (logsMap[record.logHistoryId] ?? '') : '', 200),
                                         _buildCell(record.dataInvio, 130),
                                         _buildCell(record.descrizioneScarto, 280),
                                       ],
@@ -795,11 +817,13 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
     ref.read(scEndDateProvider.notifier).state = null;
     ref.read(scSelectedSpesaProvider.notifier).state = {};
     ref.read(scSelectedSocietaProvider.notifier).state = {};
+    ref.read(scSelectedImportoProvider.notifier).state = null;
     ref.read(scIncrocioFilterProvider.notifier).state = ScartiIncrocioFilter.all;
     ref.read(scTrasfertaPresenzaFilterProvider.notifier).state = ScTrasfertaPresenzaFilter.all;
     ref.read(scSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(scPageProvider.notifier).state = 0;
     _searchController.clear();
+    _importoController.clear();
   }
 
   Widget _buildFilterChip(String label, VoidCallback onDeleted) {
@@ -905,6 +929,10 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                   ref.watch(scEndDateProvider),
                   (val) => ref.read(scEndDateProvider.notifier).state = val,
                 ),
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('VALORI'),
+                const SizedBox(height: 12),
+                _buildImportoFilterField(context, ref),
                 const SizedBox(height: 32),
                 _buildDrawerSectionTitle('CATEGORIE DI SPESA'),
                 const SizedBox(height: 12),
@@ -1012,6 +1040,39 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
                   )
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImportoFilterField(BuildContext context, WidgetRef ref) {
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.euro_symbol_rounded, color: Colors.grey, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TextField(
+              controller: _importoController,
+              decoration: const InputDecoration(
+                hintText: 'Filtra per importo...',
+                border: InputBorder.none,
+                isDense: true,
+              ),
+              style: const TextStyle(fontSize: 14),
+              onChanged: (value) {
+                ref.read(scSelectedImportoProvider.notifier).state = value.isEmpty ? null : value;
+                ref.read(scPageProvider.notifier).state = 0;
+              },
             ),
           ),
         ],
@@ -2030,6 +2091,9 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
       final sheet = excel['ScartiEcSap'];
       excel.delete('Sheet1');
 
+      final allLogs = ref.read(logHistoryProvider);
+      final logsMap = {for (final log in allLogs) log.uniqueCode: log.fileName};
+
       final anagrafiche = ref.read(anagraficaProvider);
       final anagraficheMap = {
         for (var a in anagrafiche) (a.cid ?? '').trim().padLeft(8, '0'): (a.nominativo ?? '').trim()
@@ -2053,6 +2117,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
         TextCellValue('Importo'),
         TextCellValue('Divisa'),
         TextCellValue('Storno'),
+        TextCellValue('File Importazione'),
         TextCellValue('Data Invio'),
         TextCellValue('Note'),
         TextCellValue('Incrocio (SI/NO)'),
@@ -2079,6 +2144,7 @@ class _ScartiEcViewState extends ConsumerState<ScartiEcView> {
           DoubleCellValue(r.importo),
           TextCellValue(r.divisa),
           TextCellValue(r.storno ?? ''),
+          TextCellValue(r.logHistoryId != null ? (logsMap[r.logHistoryId] ?? '') : ''),
           TextCellValue(r.dataInvio),
           TextCellValue(r.note ?? ''),
           TextCellValue(r.isMatched ? 'SI' : 'NO'),

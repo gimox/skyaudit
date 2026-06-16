@@ -251,15 +251,16 @@ Future<List<Map<String, dynamic>>> _parseScartiIsolate(Map<String, dynamic> para
   final List<Map<String, dynamic>> results = [];
   
   for (var table in excel.tables.keys) {
-    final sheet = excel.tables[table]!;
-    if (sheet.maxRows <= 1) continue;
+    final sheet = excel.tables[table];
+    if (sheet == null || sheet.maxRows <= 1) continue;
 
     // Rileva se è il nuovo formato (almeno 15 colonne)
     final bool isNewFormat = sheet.maxColumns >= 15;
 
     for (int i = 1; i < sheet.maxRows; i++) {
+      if (i >= sheet.rows.length) continue;
       final row = sheet.rows[i];
-      if (row.isEmpty) continue;
+      if (row == null || row.isEmpty) continue;
 
       // Helper per stringhe
       String getString(int index) {

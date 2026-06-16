@@ -25,6 +25,7 @@ final selectedTipiProvider = StateProvider<List<String>>((ref) => []);
 final sortAscendingProvider = StateProvider<bool>((ref) => false);
 final analysisPageProvider = StateProvider<int>((ref) => 0);
 final tcSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
+final selectedImportoProvider = StateProvider<String?>((ref) => null);
 
 enum ContabileIncrocioFilter {
   all,
@@ -51,6 +52,7 @@ class AnalysisView extends ConsumerStatefulWidget {
 
 class _AnalysisViewState extends ConsumerState<AnalysisView> {
   final _trasfertaController = TextEditingController();
+  final _importoController = TextEditingController();
   final _scrollController = ScrollController();
   final _horizontalScrollController = ScrollController();
   final _statsScrollController = ScrollController();
@@ -58,6 +60,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
   @override
   void dispose() {
     _trasfertaController.dispose();
+    _importoController.dispose();
     _scrollController.dispose();
     _horizontalScrollController.dispose();
     _statsScrollController.dispose();
@@ -73,6 +76,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final selectedTrasferta = ref.watch(selectedTrasfertaProvider);
     final selectedSocieta = ref.watch(selectedSocietaProvider);
     final selectedTipi = ref.watch(selectedTipiProvider);
+    final selectedImporto = ref.watch(selectedImportoProvider);
     final sortAscending = ref.watch(sortAscendingProvider);
     final currentPage = ref.watch(analysisPageProvider);
     final selectedLogHistoryIds = ref.watch(tcSelectedLogHistoryIdsProvider);
@@ -133,6 +137,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
       selectedSocieta != null,
       selectedTipi.isNotEmpty,
       selectedTrasferta != null,
+      selectedImporto != null,
       selectedLogHistoryIds.isNotEmpty,
       incrocioFilter != ContabileIncrocioFilter.all,
       scartoFilter != ContabileScartoFilter.all,
@@ -214,6 +219,14 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
           }
           if (selectedTipi.isNotEmpty && !selectedTipi.contains(r.tipoDipendente)) {
             return false;
+          }
+          if (selectedImporto != null) {
+            final query = selectedImporto.replaceAll(' ', '').replaceAll(',', '.');
+            final importoStr = r.importo.toStringAsFixed(2);
+            final formattedImporto = '${r.isNegative ? "-" : ""}$importoStr';
+            if (!formattedImporto.contains(query) && !importoStr.contains(query)) {
+              return false;
+            }
           }
 
           // Filtro Stato Riscontro
@@ -432,6 +445,11 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                             ref.read(selectedTrasfertaProvider.notifier).state = null;
                             _trasfertaController.clear();
                           }),
+                        if (selectedImporto != null)
+                          _buildFilterChip('Importo: "$selectedImporto"', () {
+                            ref.read(selectedImportoProvider.notifier).state = null;
+                            _importoController.clear();
+                          }),
                         if (selectedYear != null) _buildFilterChip('Anno: $selectedYear', () => ref.read(selectedYearProvider.notifier).state = null),
                         if (selectedMonth != null) _buildFilterChip('Mese: ${monthNames[selectedMonth]}', () => ref.read(selectedMonthProvider.notifier).state = null),
                         if (selectedSocieta != null) _buildFilterChip('Società: $selectedSocieta', () => ref.read(selectedSocietaProvider.notifier).state = null),
@@ -601,7 +619,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SizedBox(
-                          width: 1980,
+                          width: 2180,
                           child: Column(
                             children: [
                               // HEADER FISSO
@@ -622,6 +640,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                     _buildCell('SEGNO', 80, isHeader: true),
                                     _buildCell('GIUSTIFICATIVO', 250, isHeader: true),
                                     _buildCell('BOLLA', 150, isHeader: true),
+                                    _buildCell('FILE IMPORTAZIONE', 200, isHeader: true),
                                     _buildCell('SOCIETÀ', 100, isHeader: true),
                                     _buildCell('DATA SPESA', 120, isHeader: true),
                                     _buildCell('DATA INIZIO', 120, isHeader: true),
@@ -692,6 +711,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                                             _buildCell('', 80, child: Icon(record.isNegative ? Icons.remove_circle_outline : Icons.add_circle_outline, color: record.isNegative ? Colors.red.shade300 : Colors.green.shade300, size: 18)),
                                             _buildCell(dictionaryMap[record.giustificativoSpesa] != null ? '${record.giustificativoSpesa} - ${dictionaryMap[record.giustificativoSpesa]}' : record.giustificativoSpesa, 250, color: dictionaryMap[record.giustificativoSpesa] != null ? SkyTheme.timBlue : null),
                                             _buildCopyableCell(record.numeroBolla, 150, typeLabel: 'Bolla'),
+                                            _buildCell(record.logHistoryId != null ? (logsMap[record.logHistoryId] ?? '') : '', 200),
                                             _buildCell(dictionaryMap[record.societa] != null ? '${record.societa} - ${dictionaryMap[record.societa]}' : record.societa, 100, color: dictionaryMap[record.societa] != null ? SkyTheme.timBlue : null),
                                             _buildCell(record.dataSpesa, 120),
                                             _buildCell(record.dataInizio, 120),
@@ -786,11 +806,13 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     ref.read(selectedTrasfertaProvider.notifier).state = null;
     ref.read(selectedSocietaProvider.notifier).state = null;
     ref.read(selectedTipiProvider.notifier).state = [];
+    ref.read(selectedImportoProvider.notifier).state = null;
     ref.read(tcSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(tcIncrocioFilterProvider.notifier).state = ContabileIncrocioFilter.all;
     ref.read(tcScartoFilterProvider.notifier).state = ContabileScartoFilter.all;
     ref.read(analysisPageProvider.notifier).state = 0;
     _trasfertaController.clear();
+    _importoController.clear();
   }
 
   Widget _buildFilterChip(String label, VoidCallback onDeleted) {
@@ -888,6 +910,10 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                 const SizedBox(height: 16),
                 _buildFilterDropdown<String?>('Seleziona Mese', ref.watch(selectedMonthProvider), monthNames.keys.toList(), (val) => ref.read(selectedMonthProvider.notifier).state = val, icon: Icons.calendar_month, labelMapper: (val) => monthNames[val] ?? val ?? ''),
                 const SizedBox(height: 32),
+                _buildDrawerSectionTitle('VALORI'),
+                const SizedBox(height: 12),
+                _buildImportoFilterField(context, ref),
+                const SizedBox(height: 32),
                 _buildDrawerSectionTitle('ANAGRAFICA'),
                 const SizedBox(height: 12),
                 _buildFilterDropdown<String?>('Società', ref.watch(selectedSocietaProvider), societa, (val) => ref.read(selectedSocietaProvider.notifier).state = val, icon: Icons.business),
@@ -949,6 +975,39 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                 const SizedBox(width: 12),
                 Expanded(child: ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), backgroundColor: SkyTheme.timBlue, foregroundColor: Colors.white), child: const Text('APPLICA'))),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildImportoFilterField(BuildContext context, WidgetRef ref) {
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.euro_symbol_rounded, color: Colors.grey, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TextField(
+              controller: _importoController,
+              decoration: const InputDecoration(
+                hintText: 'Filtra per importo...',
+                border: InputBorder.none,
+                isDense: true,
+              ),
+              style: const TextStyle(fontSize: 14),
+              onChanged: (value) {
+                ref.read(selectedImportoProvider.notifier).state = value.isEmpty ? null : value;
+                ref.read(analysisPageProvider.notifier).state = 0;
+              },
             ),
           ),
         ],
@@ -1407,6 +1466,9 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
           .where((t) => t.isNotEmpty)
           .toSet();
 
+      final allLogs = ref.read(logHistoryProvider);
+      final logsMap = {for (final log in allLogs) log.uniqueCode: log.fileName};
+
       // STILI
       final headerStyle = CellStyle(
         backgroundColorHex: ExcelColor.fromHexString('#003399'), // TIM Blue
@@ -1464,6 +1526,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
         TextCellValue('Segno'),
         TextCellValue('Stato Riscontro SAP'),
         TextCellValue('Scarto (SI/NO)'),
+        TextCellValue('Nome File Ingresso'),
       ]);
 
       // Dati
@@ -1479,6 +1542,10 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
 
         final giustCode = r.giustificativoSpesa.trim().toUpperCase();
         final giustDesc = dictMap[giustCode] ?? '';
+
+        final inputFileName = (r.logHistoryId != null ? logsMap[r.logHistoryId] : null) ??
+            (r.scartoLogHistoryId != null ? logsMap[r.scartoLogHistoryId] : null) ??
+            '';
 
         sheet.appendRow([
           TextCellValue(r.cid),
@@ -1505,11 +1572,12 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
           TextCellValue(r.isNegative ? 'R' : ''),
           TextCellValue(isMatched ? 'RISCONTRATO SAP' : 'NON RISCONTRATO SAP'),
           TextCellValue(r.isScarto ? 'SI' : 'NO'),
+          TextCellValue(inputFileName),
         ]);
       }
 
       // Applica stili alle righe
-      const colCount = 24;
+      const colCount = 25;
       for (var col = 0; col < colCount; col++) {
         final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
         cell.cellStyle = headerStyle;
@@ -1558,6 +1626,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
       sheet.setColumnWidth(21, 10); // Segno
       sheet.setColumnWidth(22, 20); // Stato Riscontro
       sheet.setColumnWidth(23, 18); // Scarto (SI/NO)
+      sheet.setColumnWidth(24, 30); // Nome File Ingresso
 
       final fileBytes = excel.encode();
       if (fileBytes == null) return;

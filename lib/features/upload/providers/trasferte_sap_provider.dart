@@ -109,8 +109,8 @@ Future<List<Map<String, dynamic>>> _parseTrasferteSapIsolate(
 
   if (excel.tables.isEmpty) return [];
   final sheetName = excel.tables.keys.first;
-  final sheet = excel.tables[sheetName]!;
-  if (sheet.maxRows <= 1) return [];
+  final sheet = excel.tables[sheetName];
+  if (sheet == null || sheet.maxRows <= 1) return [];
 
   String cleanQuotes(String s) {
     s = s.trim();
@@ -231,8 +231,9 @@ Future<List<Map<String, dynamic>>> _parseTrasferteSapIsolate(
   final Map<String, Map<String, dynamic>> resultsMap = {};
 
   for (int rowIndex = 1; rowIndex < sheet.maxRows; rowIndex++) {
+    if (rowIndex >= sheet.rows.length) continue;
     final row = sheet.rows[rowIndex];
-    if (row.isEmpty) continue;
+    if (row == null || row.isEmpty) continue;
 
     String val(int? index) {
       if (index == null || index < 0 || index >= row.length) return '';

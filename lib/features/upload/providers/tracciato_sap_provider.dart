@@ -110,12 +110,13 @@ Future<List<Map<String, dynamic>>> _parseSapIsolate(Map<String, dynamic> params)
   final List<Map<String, dynamic>> results = [];
   
   for (var table in excel.tables.keys) {
-    final sheet = excel.tables[table]!;
-    if (sheet.maxRows <= 1) continue;
+    final sheet = excel.tables[table];
+    if (sheet == null || sheet.maxRows <= 1) continue;
 
     for (int i = 1; i < sheet.maxRows; i++) {
+      if (i >= sheet.rows.length) continue;
       final row = sheet.rows[i];
-      if (row.isEmpty) continue;
+      if (row == null || row.isEmpty) continue;
 
       // Helper to get string safely
       String getString(int index) {

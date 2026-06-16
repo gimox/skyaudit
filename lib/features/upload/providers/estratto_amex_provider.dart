@@ -139,8 +139,8 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
     excel = Excel.decodeBytes(bytes);
     if (excel.tables.isEmpty) return [];
     final sheetName = excel.tables.keys.first;
-    sheet = excel.tables[sheetName]!;
-    if (sheet.maxRows <= 1) return [];
+    sheet = excel.tables[sheetName];
+    if (sheet == null || sheet.maxRows <= 1) return [];
   }
 
   final List<Map<String, dynamic>> results = [];
@@ -267,6 +267,7 @@ Future<List<Map<String, dynamic>>> _parseAmexIsolate(
   final int totalRows = isCsv ? csvRows.length : sheet!.rows.length;
 
   for (int rowIndex = 1; rowIndex < totalRows; rowIndex++) {
+    if (!isCsv && rowIndex >= sheet!.rows.length) continue;
     final excelRow = isCsv ? null : sheet!.rows[rowIndex];
     final csvRow = isCsv ? csvRows[rowIndex] : null;
 

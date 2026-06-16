@@ -183,7 +183,10 @@ Future<List<Map<String, dynamic>>> _parseAnagraficaIsolate(Map<String, dynamic> 
     final excel = Excel.decodeBytes(bytes);
     
     var sheetName = excel.tables.keys.contains('Anagrafica') ? 'Anagrafica' : excel.tables.keys.first;
-    final sheet = excel.tables[sheetName]!;
+    final sheet = excel.tables[sheetName];
+    if (sheet == null) {
+      throw Exception('Foglio "Anagrafica" non trovato.');
+    }
     
     debugPrint('Isolate: Foglio $sheetName trovato. Righe: ${sheet.maxRows}, Colonne: ${sheet.maxColumns}');
     
@@ -195,7 +198,7 @@ Future<List<Map<String, dynamic>>> _parseAnagraficaIsolate(Map<String, dynamic> 
       rowIndex++;
       if (rowIndex == 1) continue; // Salta intestazione
 
-      if (row.isEmpty) continue;
+      if (row == null || row.isEmpty) continue;
 
       String getString(int index) {
         if (index < 0 || index >= row.length) return '';

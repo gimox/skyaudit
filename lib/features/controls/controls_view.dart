@@ -559,7 +559,205 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                   totaleTrasferta += r.isNegative ? -r.importo : r.importo;
                 }
 
-                final ecForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
+                // 1-to-1 matching for AMEX
+                final amexForThisT = allAmexRecords.where((ame) => ame.numeroTrasferta == numeroTrasferta).toList();
+                final Map<int, EstrattoAmex> tracciatoToAmexMatch = {};
+                final Set<int> matchedAmexIds = {};
+                
+                // Pass 1: exact/close amount matches and exact bolla for AMEX
+                for (final record in recordsTrasferta) {
+                  final recordImporto = record.isNegative ? -record.importo : record.importo;
+                  EstrattoAmex? bestAmexMatch;
+                  for (final ame in amexForThisT) {
+                    if (matchedAmexIds.contains(ame.id)) continue;
+                    final bollaMatch = ame.bolla != null && _cleanBolla(ame.bolla!) == _cleanBolla(record.numeroBolla);
+                    final importoMatch = ((ame.importoLordo ?? 0.0) - recordImporto).abs() < 0.015;
+                    if (bollaMatch && importoMatch) {
+                      bestAmexMatch = ame;
+                      break;
+                    }
+                  }
+                  if (bestAmexMatch != null) {
+                    tracciatoToAmexMatch[record.id] = bestAmexMatch;
+                    matchedAmexIds.add(bestAmexMatch.id);
+                  }
+                }
+
+                // Pass 2: exact/close amount matches and fuzzy bolla for AMEX
+                for (final record in recordsTrasferta) {
+                  if (tracciatoToAmexMatch.containsKey(record.id)) continue;
+                  final recordImporto = record.isNegative ? -record.importo : record.importo;
+                  EstrattoAmex? bestAmexMatch;
+                  for (final ame in amexForThisT) {
+                    if (matchedAmexIds.contains(ame.id)) continue;
+                    final bollaMatch = ame.bolla != null && _fuzzyBollaMatch(ame.bolla!, record.numeroBolla);
+                    final importoMatch = ((ame.importoLordo ?? 0.0) - recordImporto).abs() < 0.015;
+                    if (bollaMatch && importoMatch) {
+                      bestAmexMatch = ame;
+                      break;
+                    }
+                  }
+                  if (bestAmexMatch != null) {
+                    tracciatoToAmexMatch[record.id] = bestAmexMatch;
+                    matchedAmexIds.add(bestAmexMatch.id);
+                  }
+                }
+
+                // Pass 3: exact/close amount matches only (within the same trip)
+                for (final record in recordsTrasferta) {
+                  if (tracciatoToAmexMatch.containsKey(record.id)) continue;
+                  final recordImporto = record.isNegative ? -record.importo : record.importo;
+                  EstrattoAmex? bestAmexMatch;
+                  for (final ame in amexForThisT) {
+                    if (matchedAmexIds.contains(ame.id)) continue;
+                    final importoMatch = ((ame.importoLordo ?? 0.0) - recordImporto).abs() < 0.015;
+                    if (importoMatch) {
+                      bestAmexMatch = ame;
+                      break;
+                    }
+                  }
+                  if (bestAmexMatch != null) {
+                    tracciatoToAmexMatch[record.id] = bestAmexMatch;
+                    matchedAmexIds.add(bestAmexMatch.id);
+                  }
+                }
+                
+                // Pass 4: remaining matches by exact bolla only for AMEX (discrepancies in amount)
+                for (final record in recordsTrasferta) {
+                  if (tracciatoToAmexMatch.containsKey(record.id)) continue;
+                  EstrattoAmex? bestAmexMatch;
+                  for (final ame in amexForThisT) {
+                    if (matchedAmexIds.contains(ame.id)) continue;
+                    final bollaMatch = ame.bolla != null && _cleanBolla(ame.bolla!) == _cleanBolla(record.numeroBolla);
+                    if (bollaMatch) {
+                      bestAmexMatch = ame;
+                      break;
+                    }
+                  }
+                  if (bestAmexMatch != null) {
+                    tracciatoToAmexMatch[record.id] = bestAmexMatch;
+                    matchedAmexIds.add(bestAmexMatch.id);
+                  }
+                }
+
+                // Pass 5: remaining matches by fuzzy bolla only for AMEX (discrepancies in amount)
+                for (final record in recordsTrasferta) {
+                  if (tracciatoToAmexMatch.containsKey(record.id)) continue;
+                  EstrattoAmex? bestAmexMatch;
+                  for (final ame in amexForThisT) {
+                    if (matchedAmexIds.contains(ame.id)) continue;
+                    final bollaMatch = ame.bolla != null && _fuzzyBollaMatch(ame.bolla!, record.numeroBolla);
+                    if (bollaMatch) {
+                      bestAmexMatch = ame;
+                      break;
+                    }
+                  }
+                  if (bestAmexMatch != null) {
+                    tracciatoToAmexMatch[record.id] = bestAmexMatch;
+                    matchedAmexIds.add(bestAmexMatch.id);
+                  }
+                }
+
+                // 1-to-1 matching for EC
+                final ecForThisT = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
+                final Map<int, EstrattoConto> tracciatoToEcMatch = {};
+                final Set<int> matchedEcIds = {};
+                
+                // Pass 1: exact/close amount matches and exact bolla for EC
+                for (final record in recordsTrasferta) {
+                  final recordImporto = record.isNegative ? -record.importo : record.importo;
+                  EstrattoConto? bestEcMatch;
+                  for (final ec in ecForThisT) {
+                    if (matchedEcIds.contains(ec.id)) continue;
+                    final bollaMatch = _cleanBolla(ec.bolla) == _cleanBolla(record.numeroBolla);
+                    final importoMatch = (ec.totaleServizio - recordImporto).abs() < 0.015;
+                    if (bollaMatch && importoMatch) {
+                      bestEcMatch = ec;
+                      break;
+                    }
+                  }
+                  if (bestEcMatch != null) {
+                    tracciatoToEcMatch[record.id] = bestEcMatch;
+                    matchedEcIds.add(bestEcMatch.id);
+                  }
+                }
+
+                // Pass 2: exact/close amount matches and fuzzy bolla for EC
+                for (final record in recordsTrasferta) {
+                  if (tracciatoToEcMatch.containsKey(record.id)) continue;
+                  final recordImporto = record.isNegative ? -record.importo : record.importo;
+                  EstrattoConto? bestEcMatch;
+                  for (final ec in ecForThisT) {
+                    if (matchedEcIds.contains(ec.id)) continue;
+                    final bollaMatch = _fuzzyBollaMatch(ec.bolla, record.numeroBolla);
+                    final importoMatch = (ec.totaleServizio - recordImporto).abs() < 0.015;
+                    if (bollaMatch && importoMatch) {
+                      bestEcMatch = ec;
+                      break;
+                    }
+                  }
+                  if (bestEcMatch != null) {
+                    tracciatoToEcMatch[record.id] = bestEcMatch;
+                    matchedEcIds.add(bestEcMatch.id);
+                  }
+                }
+
+                // Pass 3: exact/close amount matches only (within the same trip)
+                for (final record in recordsTrasferta) {
+                  if (tracciatoToEcMatch.containsKey(record.id)) continue;
+                  final recordImporto = record.isNegative ? -record.importo : record.importo;
+                  EstrattoConto? bestEcMatch;
+                  for (final ec in ecForThisT) {
+                    if (matchedEcIds.contains(ec.id)) continue;
+                    final importoMatch = (ec.totaleServizio - recordImporto).abs() < 0.015;
+                    if (importoMatch) {
+                      bestEcMatch = ec;
+                      break;
+                    }
+                  }
+                  if (bestEcMatch != null) {
+                    tracciatoToEcMatch[record.id] = bestEcMatch;
+                    matchedEcIds.add(bestEcMatch.id);
+                  }
+                }
+                
+                // Pass 4: remaining matches by exact bolla only for EC (discrepancies in amount)
+                for (final record in recordsTrasferta) {
+                  if (tracciatoToEcMatch.containsKey(record.id)) continue;
+                  EstrattoConto? bestEcMatch;
+                  for (final ec in ecForThisT) {
+                    if (matchedEcIds.contains(ec.id)) continue;
+                    final bollaMatch = _cleanBolla(ec.bolla) == _cleanBolla(record.numeroBolla);
+                    if (bollaMatch) {
+                      bestEcMatch = ec;
+                      break;
+                    }
+                  }
+                  if (bestEcMatch != null) {
+                    tracciatoToEcMatch[record.id] = bestEcMatch;
+                    matchedEcIds.add(bestEcMatch.id);
+                  }
+                }
+
+                // Pass 5: remaining matches by fuzzy bolla only for EC (discrepancies in amount)
+                for (final record in recordsTrasferta) {
+                  if (tracciatoToEcMatch.containsKey(record.id)) continue;
+                  EstrattoConto? bestEcMatch;
+                  for (final ec in ecForThisT) {
+                    if (matchedEcIds.contains(ec.id)) continue;
+                    final bollaMatch = _fuzzyBollaMatch(ec.bolla, record.numeroBolla);
+                    if (bollaMatch) {
+                      bestEcMatch = ec;
+                      break;
+                    }
+                  }
+                  if (bestEcMatch != null) {
+                    tracciatoToEcMatch[record.id] = bestEcMatch;
+                    matchedEcIds.add(bestEcMatch.id);
+                  }
+                }
+
+                final ecForTrasferta = ecForThisT;
                 final totaleEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
 
                 final sapForTrasferta = allSapRecords.where((sap) => sap.numeroTrasferta == numeroTrasferta).toList();
@@ -857,10 +1055,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                           ),
                     children: [
                       ...recordsTrasferta.expand<Widget>((record) {
-                        final matchingEC = allEstrattiConto.where(
-                          (ec) => ec.bolla == record.numeroBolla,
-                        ).toList();
-                        final hasMatch = matchingEC.isNotEmpty;
+                        final matchedEC = tracciatoToEcMatch[record.id];
+                        final matchedAmex = tracciatoToAmexMatch[record.id];
+                        final hasMatch = matchedEC != null;
 
                         return [
                           // RIGA TRACCIATO CONTABILE
@@ -965,7 +1162,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                               margin: EdgeInsets.only(
                                 left: isUltraCompact ? 2 : (isVeryCompact ? 4 : (isCompactList ? 12 : 20)),
                                 bottom: isUltraCompact ? 1 : (isVeryCompact ? 1 : (isCompactList ? 4 : 8)),
-                                right: 0,
+                                  right: 0,
                               ),
                               padding: EdgeInsets.symmetric(
                                 horizontal: horizontalPadding,
@@ -996,7 +1193,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          matchingEC.first.descrizioneServizio,
+                                          matchedEC!.descrizioneServizio,
                                           style: TextStyle(
                                             fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 11 : 12)), 
                                             color: Colors.grey.shade700, 
@@ -1005,16 +1202,16 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         Text(
-                                          'CID: ${_formatCidWithName(matchingEC.first.cid, anagraficaMap)}',
+                                          'CID: ${_formatCidWithName(matchedEC.cid, anagraficaMap)}',
                                           style: TextStyle(
                                             fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
-                                            color: (hasCidMismatch && matchingEC.first.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade500,
-                                            fontWeight: (hasCidMismatch && matchingEC.first.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
+                                            color: (hasCidMismatch && matchedEC.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade500,
+                                            fontWeight: (hasCidMismatch && matchedEC.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
                                           ),
                                         ),
                                         const SizedBox(height: 1),
                                         Text(
-                                          'Bolla: ${matchingEC.first.bolla}',
+                                          'Bolla: ${matchedEC.bolla}',
                                           style: TextStyle(
                                             fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
                                             color: Colors.grey.shade500,
@@ -1032,7 +1229,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                         Builder(
                                           builder: (context) {
                                             final tracciatoVal = record.isNegative ? -record.importo : record.importo;
-                                            final ecVal = matchingEC.first.totaleServizio;
+                                            final ecVal = matchedEC.totaleServizio;
                                             final isIdentical = (tracciatoVal - ecVal).abs() < 0.001;
 
                                             return Text(
@@ -1048,7 +1245,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                         SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
                                         IconButton(
                                           icon: Icon(Icons.receipt_long_outlined, color: Colors.purple, size: isUltraCompact ? 10 : (isVeryCompact ? 12 : (isCompactList ? 16 : 18))),
-                                          onPressed: () => _showECRecordDetails(context, matchingEC.first),
+                                          onPressed: () => _showECRecordDetails(context, matchedEC),
                                           tooltip: 'Dettaglio Estratto Conto',
                                           constraints: const BoxConstraints(),
                                           padding: EdgeInsets.all(isUltraCompact ? 1 : (isVeryCompact ? 2 : 8)),
@@ -1085,101 +1282,102 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                               ),
                             ),
                           // RIGA AMEX (se presente per bolla)
-                          ...allAmexRecords.where((ame) => ame.numeroTrasferta == numeroTrasferta && ame.bolla == record.numeroBolla).map((matchingAmex) => Container(
-                            margin: EdgeInsets.only(
-                              left: isUltraCompact ? 2 : (isVeryCompact ? 4 : (isCompactList ? 12 : 20)),
-                              bottom: isUltraCompact ? 1 : (isVeryCompact ? 1 : (isCompactList ? 4 : 8)),
-                              right: 0,
-                            ),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: horizontalPadding,
-                              vertical: recordVerticalPadding,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.orange.shade50.withAlpha(100),
-                              borderRadius: const BorderRadius.all(Radius.circular(8)),
-                              border: Border.all(color: Colors.orange.shade100.withAlpha(100)),
-                            ),
-                            child: Row(
-                              children: [
-                                Icon(Icons.credit_card_outlined, size: isUltraCompact ? 8 : (isVeryCompact ? 10 : (isCompactList ? 14 : 16)), color: Colors.orange.shade700),
-                                SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
-                                Text(
-                                  'AMEX',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.orange.shade700,
-                                    fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 11 : 12)),
+                          if (matchedAmex != null)
+                            Container(
+                              margin: EdgeInsets.only(
+                                left: isUltraCompact ? 2 : (isVeryCompact ? 4 : (isCompactList ? 12 : 20)),
+                                bottom: isUltraCompact ? 1 : (isVeryCompact ? 1 : (isCompactList ? 4 : 8)),
+                                right: 0,
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: horizontalPadding,
+                                vertical: recordVerticalPadding,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.orange.shade50.withAlpha(100),
+                                borderRadius: const BorderRadius.all(Radius.circular(8)),
+                                border: Border.all(color: Colors.orange.shade100.withAlpha(100)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.credit_card_outlined, size: isUltraCompact ? 8 : (isVeryCompact ? 10 : (isCompactList ? 14 : 16)), color: Colors.orange.shade700),
+                                  SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
+                                  Text(
+                                    'AMEX',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.orange.shade700,
+                                      fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 11 : 12)),
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: isUltraCompact ? 3 : (isVeryCompact ? 6 : 12)),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        matchingAmex.nomeEsercizio ?? matchingAmex.nomeFornitore ?? 'Esercizio non specificato',
-                                        style: TextStyle(
-                                          fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 11 : 12)), 
-                                          color: Colors.grey.shade700, 
-                                          fontWeight: FontWeight.w500,
+                                  SizedBox(width: isUltraCompact ? 3 : (isVeryCompact ? 6 : 12)),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          matchedAmex.nomeEsercizio ?? matchedAmex.nomeFornitore ?? 'Esercizio non specificato',
+                                          style: TextStyle(
+                                            fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 11 : 12)), 
+                                            color: Colors.grey.shade700, 
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      Text(
-                                        'CID: ${_formatCidWithName(matchingAmex.cid ?? "", anagraficaMap)} • Data: ${matchingAmex.dataTransazione ?? "-"}',
-                                        style: TextStyle(
-                                          fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
-                                          color: (hasCidMismatch && matchingAmex.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade500,
-                                          fontWeight: (hasCidMismatch && matchingAmex.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
+                                        Text(
+                                          'CID: ${_formatCidWithName(matchedAmex.cid ?? "", anagraficaMap)} • Data: ${matchedAmex.dataTransazione ?? "-"}',
+                                          style: TextStyle(
+                                            fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
+                                            color: (hasCidMismatch && matchedAmex.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade500,
+                                            fontWeight: (hasCidMismatch && matchedAmex.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(height: 1),
-                                      Text(
-                                        'Bolla: ${matchingAmex.bolla ?? "-"}',
-                                        style: TextStyle(
-                                          fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
-                                          color: Colors.grey.shade500,
+                                        const SizedBox(height: 1),
+                                        Text(
+                                          'Bolla: ${matchedAmex.bolla ?? "-"}',
+                                          style: TextStyle(
+                                            fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
+                                            color: Colors.grey.shade500,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                SizedBox(
-                                  width: trailingWidth,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.end,
-                                    children: [
-                                      Builder(
-                                        builder: (context) {
-                                          final tracciatoVal = record.isNegative ? -record.importo : record.importo;
-                                          final amexVal = matchingAmex.importoLordo ?? 0;
-                                          final isIdentical = (tracciatoVal - amexVal).abs() < 0.001;
+                                  SizedBox(
+                                    width: trailingWidth,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.end,
+                                      children: [
+                                        Builder(
+                                          builder: (context) {
+                                            final tracciatoVal = record.isNegative ? -record.importo : record.importo;
+                                            final amexVal = matchedAmex.importoLordo ?? 0.0;
+                                            final isIdentical = (tracciatoVal - amexVal).abs() < 0.015;
 
-                                          return Text(
-                                            '${amexVal.toStringAsFixed(2)} €',
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: isIdentical ? Colors.green.shade800 : Colors.red.shade700,
-                                              fontSize: isUltraCompact ? 9 : (isVeryCompact ? 10 : (isCompactList ? 11 : 13)),
-                                            ),
-                                          );
-                                        },
-                                      ),
-                                      SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
-                                      IconButton(
-                                        icon: Icon(Icons.credit_card_outlined, color: Colors.orange, size: isUltraCompact ? 10 : (isVeryCompact ? 12 : (isCompactList ? 16 : 18))),
-                                        onPressed: () => _showAmexRecordDetails(context, matchingAmex),
-                                        tooltip: 'Dettaglio AMEX',
-                                        constraints: const BoxConstraints(),
-                                        padding: EdgeInsets.all(isUltraCompact ? 1 : (isVeryCompact ? 2 : 8)),
-                                      ),
-                                    ],
+                                            return Text(
+                                              '${amexVal.toStringAsFixed(2)} €',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                color: isIdentical ? Colors.green.shade800 : Colors.red.shade700,
+                                                fontSize: isUltraCompact ? 9 : (isVeryCompact ? 10 : (isCompactList ? 11 : 13)),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                        SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
+                                        IconButton(
+                                          icon: Icon(Icons.credit_card_outlined, color: Colors.orange, size: isUltraCompact ? 10 : (isVeryCompact ? 12 : (isCompactList ? 16 : 18))),
+                                          onPressed: () => _showAmexRecordDetails(context, matchedAmex),
+                                          tooltip: 'Dettaglio AMEX',
+                                          constraints: const BoxConstraints(),
+                                          padding: EdgeInsets.all(isUltraCompact ? 1 : (isVeryCompact ? 2 : 8)),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          )),
                         ];
                       }),
                       // SEZIONE RECORD SAP
@@ -1295,10 +1493,10 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                       // SEZIONE RECORD AMEX
                       Builder(
                         builder: (context) {
-                          // Solo i record AMEX che NON hanno un match per bolla in questa trasferta
+                          // Solo i record AMEX che NON hanno un match in questa trasferta
                           final amexForTrasferta = allAmexRecords.where((ame) => 
                             ame.numeroTrasferta == numeroTrasferta && 
-                            !recordsTrasferta.any((r) => r.numeroBolla == ame.bolla)
+                            !matchedAmexIds.contains(ame.id)
                           ).toList();
                           if (amexForTrasferta.isEmpty) return const SizedBox.shrink();
 
@@ -1409,10 +1607,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                       // Sezione per EC senza match nel Tracciato
                       Builder(
                         builder: (context) {
-                          final bolleInTracciato = recordsTrasferta.map((r) => r.numeroBolla).toSet();
                           final orphansForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
                           final orphanedEC = orphansForTrasferta.where((ec) => 
-                            !bolleInTracciato.contains(ec.bolla)
+                            !matchedEcIds.contains(ec.id)
                           ).toList();
 
                           if (orphanedEC.isEmpty) return const SizedBox.shrink();
@@ -1424,14 +1621,14 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                 padding: EdgeInsets.fromLTRB(isVeryCompact ? 12 : 16, isVeryCompact ? 4 : (isCompactList ? 10 : 16), isVeryCompact ? 12 : 16, isVeryCompact ? 1 : (isCompactList ? 4 : 8)),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.info_outline, size: isVeryCompact ? 10 : (isCompactList ? 14 : 16), color: Colors.orange.shade800),
+                                    Icon(Icons.info_outline, size: isVeryCompact ? 10 : (isCompactList ? 14 : 16), color: Colors.purple.shade800),
                                     SizedBox(width: isVeryCompact ? 4 : 8),
                                     Text(
                                       'Record Estratto Conto senza corrispondenza nel Tracciato',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: isVeryCompact ? 9 : (isCompactList ? 11 : 12),
-                                        color: Colors.orange.shade800,
+                                        color: Colors.purple.shade800,
                                       ),
                                     ),
                                   ],
@@ -1448,19 +1645,19 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                   vertical: isVeryCompact ? 2 : (isCompactList ? 4 : 8),
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.orange.shade50.withAlpha(100),
+                                  color: Colors.purple.shade50.withAlpha(100),
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.orange.shade100),
+                                  border: Border.all(color: Colors.purple.shade100),
                                 ),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.account_balance_wallet_outlined, size: isVeryCompact ? 10 : (isCompactList ? 14 : 16), color: Colors.orange.shade700),
+                                    Icon(Icons.account_balance_wallet_outlined, size: isVeryCompact ? 10 : (isCompactList ? 14 : 16), color: Colors.purple.shade700),
                                     SizedBox(width: isVeryCompact ? 4 : 8),
                                     Text(
                                       'EC SOLO',
                                       style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.orange.shade700,
+                                        color: Colors.purple.shade700,
                                         fontSize: isVeryCompact ? 9 : (isCompactList ? 11 : 12),
                                       ),
                                     ),
@@ -1499,13 +1696,13 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                             '${ec.totaleServizio.toStringAsFixed(2)} €',
                                             style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.orange.shade700,
+                                              color: Colors.purple.shade700,
                                               fontSize: isVeryCompact ? 10 : (isCompactList ? 11 : 13),
                                             ),
                                           ),
                                           SizedBox(width: isVeryCompact ? 4 : 8),
                                           IconButton(
-                                            icon: Icon(Icons.receipt_long_outlined, color: Colors.orange, size: isVeryCompact ? 12 : (isCompactList ? 16 : 18)),
+                                            icon: Icon(Icons.receipt_long_outlined, color: Colors.purple, size: isVeryCompact ? 12 : (isCompactList ? 16 : 18)),
                                             onPressed: () => _showECRecordDetails(context, ec),
                                             tooltip: 'Dettaglio Estratto Conto',
                                             constraints: const BoxConstraints(),
@@ -3577,5 +3774,31 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       return '$cleanCid - $name';
     }
     return cleanCid;
+  }
+
+  String _cleanBolla(String bolla) {
+    String s = bolla.replaceAll(RegExp(r'[\s\-/.]'), '').trim().toUpperCase();
+    if (bolla.contains('/')) {
+      final parts = bolla.split('/');
+      if (parts.length == 2 && parts[0].length == 2) {
+        s = '${parts[0]}0${parts[1]}';
+      }
+    }
+    if (RegExp(r'^\d+$').hasMatch(s)) {
+      s = s.padRight(12, '0');
+    }
+    return s;
+  }
+
+  bool _fuzzyBollaMatch(String b1, String b2) {
+    final cb1 = _cleanBolla(b1);
+    final cb2 = _cleanBolla(b2);
+    if (cb1 == cb2) return true;
+    if (RegExp(r'^\d+$').hasMatch(cb1) && RegExp(r'^\d+$').hasMatch(cb2)) {
+      if (cb1.length >= 10 && cb2.length >= 10) {
+        return cb1.substring(0, 10) == cb2.substring(0, 10);
+      }
+    }
+    return false;
   }
 }

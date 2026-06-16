@@ -178,11 +178,15 @@ Future<List<Map<String, dynamic>>> _parseExcelIsolate(Map<String, dynamic> param
     throw Exception('Foglio "Document" non trovato.');
   }
 
-  final sheet = excel.tables[documentSheetName]!;
+  final sheet = excel.tables[documentSheetName];
+  if (sheet == null) {
+    throw Exception('Foglio "Document" non trovato.');
+  }
 
   for (var i = 1; i < sheet.maxRows; i++) {
+    if (i >= sheet.rows.length) continue;
     final row = sheet.rows[i];
-    if (row.isEmpty) continue;
+    if (row == null || row.isEmpty) continue;
 
     String val(int index) {
       if (index >= row.length) return '';

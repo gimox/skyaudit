@@ -90,6 +90,48 @@ class SyncNotifier extends StateNotifier<SyncState> {
     }
 
     _log('[$syncName] Inizio elaborazione file: ${file.name}...');
+    
+    // Rimuove eventuali importazioni precedenti dello stesso file per evitare duplicati
+    String sourceType = '';
+    if (syncType == 'contabile') {
+      sourceType = 'Tracciato Contabile';
+    } else if (syncType == 'conto') {
+      sourceType = 'Estratto Conto';
+    } else if (syncType == 'sap') {
+      sourceType = 'Tracciato SAP';
+    } else if (syncType == 'amex') {
+      sourceType = 'Estratto AMEX';
+    } else if (syncType == 'anagrafica') {
+      sourceType = 'Anagrafica';
+    } else if (syncType == 'scarti') {
+      sourceType = 'Scarti EC SAP';
+    } else if (syncType == 'trasferte_sap') {
+      sourceType = 'Trasferte SAP';
+    }
+
+    final existingFileLogs = await isar.logHistorys.filter()
+        .fileNameEqualTo(file.name)
+        .and()
+        .sourceTypeEqualTo(sourceType)
+        .findAll();
+
+    if (existingFileLogs.isNotEmpty) {
+      _log('[$syncName] Rilevata importazione precedente di ${file.name}. Rimozione vecchi record in corso...');
+      await isar.writeTxn(() async {
+        for (final log in existingFileLogs) {
+          final uniqueCode = log.uniqueCode;
+          await isar.logHistorys.filter().uniqueCodeEqualTo(uniqueCode).deleteAll();
+          await isar.tracciatoContabiles.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+          await isar.tracciatoSaps.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+          await isar.estrattoContos.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+          await isar.estrattoAmexs.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+          await isar.anagraficas.filter().importBatchEqualTo(uniqueCode).deleteAll();
+          await isar.scartiEcSaps.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+          await isar.trasferteSaps.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+        }
+      });
+    }
+
     state = state.copyWith(
       currentFile: file.name,
       currentFileStatus: 'Scaricamento...',
@@ -398,15 +440,49 @@ class SyncNotifier extends StateNotifier<SyncState> {
                 }
               });
               _log('[$syncName] Allineamento completato: rimossi record per ${logsToDelete.length} file.');
-              
-              // Ricarica la lista dei log locali dopo l'eliminazione
-              existingLogs.clear();
-              existingLogs.addAll(await isar.logHistorys.filter()
-                  .sourceTypeEqualTo(sourceType)
-                  .or()
-                  .sourceTypeEqualTo(sourceType == 'Tracciato Contabile' ? 'contabile' : sourceType)
-                  .findAll());
             }
+
+            // Identifica e rimuove log duplicati per lo stesso file remoto (tiene solo il più recente)
+            final Map<String, List<LogHistory>> logsByFileName = {};
+            for (final log in existingLogs) {
+              if (remoteFileNames.contains(log.fileName)) {
+                logsByFileName.putIfAbsent(log.fileName, () => []).add(log);
+              }
+            }
+
+            final List<LogHistory> duplicateLogsToDelete = [];
+            logsByFileName.forEach((fileName, fileLogList) {
+              if (fileLogList.length > 1) {
+                fileLogList.sort((a, b) => b.date.compareTo(a.date)); // Ordina decrescente (più recente per primo)
+                duplicateLogsToDelete.addAll(fileLogList.sublist(1));
+              }
+            });
+
+            if (duplicateLogsToDelete.isNotEmpty) {
+              _log('[$syncName] Allineamento con SharePoint: rilevate ${duplicateLogsToDelete.length} importazioni duplicate. Rimozione duplicati obsoleti in corso...');
+              await isar.writeTxn(() async {
+                for (final log in duplicateLogsToDelete) {
+                  _log('[$syncName] Rimozione duplicato obsoleto per il file: ${log.fileName} (Codice: ${log.uniqueCode})...');
+                  final uniqueCode = log.uniqueCode;
+                  await isar.logHistorys.filter().uniqueCodeEqualTo(uniqueCode).deleteAll();
+                  await isar.tracciatoContabiles.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                  await isar.tracciatoSaps.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                  await isar.estrattoContos.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                  await isar.estrattoAmexs.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                  await isar.anagraficas.filter().importBatchEqualTo(uniqueCode).deleteAll();
+                  await isar.scartiEcSaps.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                  await isar.trasferteSaps.filter().logHistoryIdEqualTo(uniqueCode).deleteAll();
+                }
+              });
+            }
+
+            // Ricarica la lista dei log locali dopo l'eliminazione dei non presenti e dei duplicati
+            existingLogs.clear();
+            existingLogs.addAll(await isar.logHistorys.filter()
+                .sourceTypeEqualTo(sourceType)
+                .or()
+                .sourceTypeEqualTo(sourceType == 'Tracciato Contabile' ? 'contabile' : sourceType)
+                .findAll());
           }
 
           List<SharePointFile> filesToQueue = sharepointFiles;
@@ -424,15 +500,8 @@ class SyncNotifier extends StateNotifier<SyncState> {
             int importedRecordsCount = 0;
             
             if (fileLogs.isNotEmpty && !state.clearBeforeSync) {
-              fileLogs.sort((a, b) => b.date.compareTo(a.date));
-              final lastLog = fileLogs.first;
-              
-              // Il file è considerato già importato solo se non è stato modificato su SharePoint
-              // dopo la sua ultima importazione locale (+5 secondi di tolleranza)
-              if (!file.lastModified.isAfter(lastLog.date.add(const Duration(seconds: 5)))) {
-                isAlreadyImported = true;
-                importedRecordsCount = lastLog.insertedRecords;
-              }
+              isAlreadyImported = true;
+              importedRecordsCount = fileLogs.first.insertedRecords;
             }
             
             tempQueue.add({
