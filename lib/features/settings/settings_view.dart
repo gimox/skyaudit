@@ -1853,43 +1853,37 @@ class _SettingsViewState extends ConsumerState<SettingsView> {
                   style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: Colors.black87),
                 ),
                 const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: RadioListTile<bool>(
-                        contentPadding: EdgeInsets.zero,
-                        title: const Text('Automatica (Rete/PAC)', style: TextStyle(fontSize: 14)),
-                        subtitle: const Text('Rileva il proxy dal sistema o file PAC', style: TextStyle(fontSize: 11)),
-                        value: true,
-                        groupValue: _proxyAutoConfig!,
-                        activeColor: SkyTheme.timBlue,
-                        onChanged: (val) {
-                          if (val != null) {
-                            setState(() {
-                              _proxyAutoConfig = val;
-                            });
-                          }
-                        },
+                RadioGroup<bool>(
+                  groupValue: _proxyAutoConfig!,
+                  onChanged: (val) {
+                    if (val != null) {
+                      setState(() {
+                        _proxyAutoConfig = val;
+                      });
+                    }
+                  },
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: RadioListTile<bool>(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Automatica (Rete/PAC)', style: TextStyle(fontSize: 14)),
+                          subtitle: const Text('Rileva il proxy dal sistema o file PAC', style: TextStyle(fontSize: 11)),
+                          value: true,
+                          activeColor: SkyTheme.timBlue,
+                        ),
                       ),
-                    ),
-                    Expanded(
-                      child: RadioListTile<bool>(
-                        contentPadding: EdgeInsets.zero,
-                        title: const Text('Manuale', style: TextStyle(fontSize: 14)),
-                        subtitle: const Text('Specifica host, porta e credenziali', style: TextStyle(fontSize: 11)),
-                        value: false,
-                        groupValue: _proxyAutoConfig!,
-                        activeColor: SkyTheme.timBlue,
-                        onChanged: (val) {
-                          if (val != null) {
-                            setState(() {
-                              _proxyAutoConfig = val;
-                            });
-                          }
-                        },
+                      Expanded(
+                        child: RadioListTile<bool>(
+                          contentPadding: EdgeInsets.zero,
+                          title: const Text('Manuale', style: TextStyle(fontSize: 14)),
+                          subtitle: const Text('Specifica host, porta e credenziali', style: TextStyle(fontSize: 11)),
+                          value: false,
+                          activeColor: SkyTheme.timBlue,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
                 if (!_proxyAutoConfig!) ...[
                   const SizedBox(height: 20),

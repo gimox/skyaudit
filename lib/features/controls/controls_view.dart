@@ -1258,7 +1258,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          matchedEC!.descrizioneServizio,
+                                          matchedEC.descrizioneServizio,
                                           style: TextStyle(
                                             fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 11 : 12)), 
                                             color: Colors.grey.shade700, 

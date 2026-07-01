@@ -186,7 +186,7 @@ Future<List<Map<String, dynamic>>> _parseExcelIsolate(Map<String, dynamic> param
   for (var i = 1; i < sheet.maxRows; i++) {
     if (i >= sheet.rows.length) continue;
     final row = sheet.rows[i];
-    if (row == null || row.isEmpty) continue;
+    if (row.isEmpty) continue;
 
     String val(int index) {
       if (index >= row.length) return '';

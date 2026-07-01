@@ -142,9 +142,6 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
       }
     }
 
-    final filteredByFileRecords = selectedLogHistoryIds.isNotEmpty
-        ? allRecords.where((r) => selectedLogHistoryIds.contains(r.importBatch)).toList()
-        : allRecords;
 
     DateTime? lastImportDate;
     if (selectedLogHistoryIds.isNotEmpty) {

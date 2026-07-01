@@ -198,7 +198,7 @@ Future<List<Map<String, dynamic>>> _parseAnagraficaIsolate(Map<String, dynamic> 
       rowIndex++;
       if (rowIndex == 1) continue; // Salta intestazione
 
-      if (row == null || row.isEmpty) continue;
+      if (row.isEmpty) continue;
 
       String getString(int index) {
         if (index < 0 || index >= row.length) return '';

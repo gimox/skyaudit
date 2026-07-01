@@ -166,7 +166,7 @@ Future<List<Map<String, dynamic>>> _parseTrasferteSapIsolate(
     return fieldToColIndex[field] ?? (fallbackIndex < headers.length ? fallbackIndex : null);
   }
 
-  String _normalizeExcelDate(String dateStr) {
+  String normalizeExcelDate(String dateStr) {
     if (dateStr.trim().isEmpty) return '';
     final d = dateStr.trim();
     try {
@@ -199,7 +199,7 @@ Future<List<Map<String, dynamic>>> _parseTrasferteSapIsolate(
     }
   }
 
-  String _normalizeExcelTime(String timeStr) {
+  String normalizeExcelTime(String timeStr) {
     if (timeStr.trim().isEmpty) return '';
     var t = timeStr.trim();
     try {
@@ -233,7 +233,7 @@ Future<List<Map<String, dynamic>>> _parseTrasferteSapIsolate(
   for (int rowIndex = 1; rowIndex < sheet.maxRows; rowIndex++) {
     if (rowIndex >= sheet.rows.length) continue;
     final row = sheet.rows[rowIndex];
-    if (row == null || row.isEmpty) continue;
+    if (row.isEmpty) continue;
 
     String val(int? index) {
       if (index == null || index < 0 || index >= row.length) return '';
@@ -265,10 +265,10 @@ Future<List<Map<String, dynamic>>> _parseTrasferteSapIsolate(
     resultsMap[numeroTrasferta] = {
       'cid': cid,
       'numeroTrasferta': numeroTrasferta,
-      'dataInizioTrasferta': _normalizeExcelDate(val(getIndex('dataInizioTrasferta', 2))),
-      'oraInizioTrasferta': _normalizeExcelTime(val(getIndex('oraInizioTrasferta', 3))),
-      'dataFineTrasferta': _normalizeExcelDate(val(getIndex('dataFineTrasferta', 4))),
-      'oraFineTrasferta': _normalizeExcelTime(val(getIndex('oraFineTrasferta', 5))),
+      'dataInizioTrasferta': normalizeExcelDate(val(getIndex('dataInizioTrasferta', 2))),
+      'oraInizioTrasferta': normalizeExcelTime(val(getIndex('oraInizioTrasferta', 3))),
+      'dataFineTrasferta': normalizeExcelDate(val(getIndex('dataFineTrasferta', 4))),
+      'oraFineTrasferta': normalizeExcelTime(val(getIndex('oraFineTrasferta', 5))),
     };
   }
 

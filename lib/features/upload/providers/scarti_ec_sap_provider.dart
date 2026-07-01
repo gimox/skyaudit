@@ -260,7 +260,7 @@ Future<List<Map<String, dynamic>>> _parseScartiIsolate(Map<String, dynamic> para
     for (int i = 1; i < sheet.maxRows; i++) {
       if (i >= sheet.rows.length) continue;
       final row = sheet.rows[i];
-      if (row == null || row.isEmpty) continue;
+      if (row.isEmpty) continue;
 
       // Helper per stringhe
       String getString(int index) {

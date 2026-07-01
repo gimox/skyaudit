@@ -116,7 +116,7 @@ Future<List<Map<String, dynamic>>> _parseSapIsolate(Map<String, dynamic> params)
     for (int i = 1; i < sheet.maxRows; i++) {
       if (i >= sheet.rows.length) continue;
       final row = sheet.rows[i];
-      if (row == null || row.isEmpty) continue;
+      if (row.isEmpty) continue;
 
       // Helper to get string safely
       String getString(int index) {

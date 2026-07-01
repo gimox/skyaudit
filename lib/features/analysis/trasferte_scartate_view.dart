@@ -89,15 +89,6 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
     super.dispose();
   }
 
-  bool _hasActiveFilters() {
-    return _statusFilter != ReinseritoFilter.all ||
-        _selectedSociete.isNotEmpty ||
-        _selectedSpese.isNotEmpty ||
-        _selectedTipiDip.isNotEmpty ||
-        _startDate != null ||
-        _endDate != null;
-  }
-
   String _formatAmount(double amount, [String currency = 'EUR']) {
     final isNeg = amount < 0;
     final absVal = amount.abs();
@@ -150,63 +141,6 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
     );
   }
 
-  Widget _buildFilterSection(String title, Widget child) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          title,
-          style: TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.bold,
-            color: Colors.grey.shade500,
-            letterSpacing: 1.0,
-            fontFamily: 'TIMSans',
-          ),
-        ),
-        const SizedBox(height: 8),
-        child,
-      ],
-    );
-  }
-
-  Widget _buildChoiceChip(String label, bool isSelected, VoidCallback onTap) {
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (_) => onTap(),
-      labelStyle: TextStyle(
-        fontSize: 12,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        color: isSelected ? Colors.white : Colors.black87,
-        fontFamily: 'TIMSans',
-      ),
-      selectedColor: SkyTheme.timBlue,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      side: BorderSide(color: isSelected ? SkyTheme.timBlue : Colors.grey.shade300),
-    );
-  }
-
-  Widget _buildFilterChip(String label, bool isSelected, VoidCallback onTap) {
-    return FilterChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (_) => onTap(),
-      labelStyle: TextStyle(
-        fontSize: 11,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-        color: isSelected ? SkyTheme.timRed : Colors.grey.shade800,
-        fontFamily: 'TIMSans',
-      ),
-      selectedColor: SkyTheme.timRed.withAlpha(25),
-      checkmarkColor: SkyTheme.timRed,
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      side: BorderSide(color: isSelected ? SkyTheme.timRed : Colors.grey.shade300),
-    );
-  }
 
   Widget _buildActiveFilterChip(String label, VoidCallback onDelete) {
     return Padding(

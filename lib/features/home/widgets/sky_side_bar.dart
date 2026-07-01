@@ -135,8 +135,8 @@ class SkySideBar extends StatefulWidget {
 }
 
 class _SkySideBarState extends State<SkySideBar> {
-  final ExpansionTileController _travelExpansionController = ExpansionTileController();
-  final ExpansionTileController _hroExpansionController = ExpansionTileController();
+  final ExpansibleController _travelExpansionController = ExpansibleController();
+  final ExpansibleController _hroExpansionController = ExpansibleController();
   bool _isTravelExpanded = false;
   bool _isHroExpanded = false;
 
@@ -145,6 +145,13 @@ class _SkySideBarState extends State<SkySideBar> {
     super.initState();
     _isTravelExpanded = (widget.selectedIndex >= 0 && widget.selectedIndex <= 8) || widget.selectedIndex == 15;
     _isHroExpanded = widget.selectedIndex == 9;
+  }
+
+  @override
+  void dispose() {
+    _travelExpansionController.dispose();
+    _hroExpansionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -286,12 +293,12 @@ class _SkySideBarState extends State<SkySideBar> {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
-        hoverColor: SkyTheme.timBlue.withOpacity(0.04),
-        splashColor: SkyTheme.timBlue.withOpacity(0.1),
+        hoverColor: SkyTheme.timBlue.withValues(alpha: 0.04),
+        splashColor: SkyTheme.timBlue.withValues(alpha: 0.1),
         child: Container(
           decoration: BoxDecoration(
             color: isSelected
-                ? SkyTheme.timBlue.withOpacity(0.08)
+                ? SkyTheme.timBlue.withValues(alpha: 0.08)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
           ),
@@ -338,14 +345,14 @@ class _SkySideBarState extends State<SkySideBar> {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(12),
-          hoverColor: SkyTheme.timBlue.withOpacity(0.04),
-          splashColor: SkyTheme.timBlue.withOpacity(0.1),
+          hoverColor: SkyTheme.timBlue.withValues(alpha: 0.04),
+          splashColor: SkyTheme.timBlue.withValues(alpha: 0.1),
           child: Container(
             width: 56,
             height: 56,
             decoration: BoxDecoration(
               color: isSelected
-                  ? SkyTheme.timBlue.withOpacity(0.08)
+                  ? SkyTheme.timBlue.withValues(alpha: 0.08)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
             ),
