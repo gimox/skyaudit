@@ -26,6 +26,7 @@ final sortAscendingProvider = StateProvider<bool>((ref) => false);
 final analysisPageProvider = StateProvider<int>((ref) => 0);
 final tcSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final selectedImportoProvider = StateProvider<String?>((ref) => null);
+final excludeCidProvider = StateProvider<String?>((ref) => null);
 
 enum ContabileIncrocioFilter {
   all,
@@ -53,6 +54,7 @@ class AnalysisView extends ConsumerStatefulWidget {
 class _AnalysisViewState extends ConsumerState<AnalysisView> {
   final _trasfertaController = TextEditingController();
   final _importoController = TextEditingController();
+  final _excludeCidController = TextEditingController();
   final _scrollController = ScrollController();
   final _horizontalScrollController = ScrollController();
   final _statsScrollController = ScrollController();
@@ -61,6 +63,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
   void dispose() {
     _trasfertaController.dispose();
     _importoController.dispose();
+    _excludeCidController.dispose();
     _scrollController.dispose();
     _horizontalScrollController.dispose();
     _statsScrollController.dispose();
@@ -77,6 +80,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final selectedSocieta = ref.watch(selectedSocietaProvider);
     final selectedTipi = ref.watch(selectedTipiProvider);
     final selectedImporto = ref.watch(selectedImportoProvider);
+    final excludeCid = ref.watch(excludeCidProvider);
     final sortAscending = ref.watch(sortAscendingProvider);
     final currentPage = ref.watch(analysisPageProvider);
     final selectedLogHistoryIds = ref.watch(tcSelectedLogHistoryIdsProvider);
@@ -138,6 +142,7 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
       selectedTipi.isNotEmpty,
       selectedTrasferta != null,
       selectedImporto != null,
+      excludeCid != null && excludeCid.trim().isNotEmpty,
       selectedLogHistoryIds.isNotEmpty,
       incrocioFilter != ContabileIncrocioFilter.all,
       scartoFilter != ContabileScartoFilter.all,
@@ -225,6 +230,14 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
             final importoStr = r.importo.toStringAsFixed(2);
             final formattedImporto = '${r.isNegative ? "-" : ""}$importoStr';
             if (!formattedImporto.contains(query) && !importoStr.contains(query)) {
+              return false;
+            }
+          }
+          if (excludeCid != null && excludeCid.trim().isNotEmpty) {
+            final excludeQuery = excludeCid.trim().toLowerCase();
+            final cleanCid = r.cid.trim().toLowerCase();
+            final paddedCid = r.cid.trim().padLeft(8, '0').toLowerCase();
+            if (cleanCid.contains(excludeQuery) || paddedCid.contains(excludeQuery)) {
               return false;
             }
           }
@@ -449,6 +462,11 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                           _buildFilterChip('Importo: "$selectedImporto"', () {
                             ref.read(selectedImportoProvider.notifier).state = null;
                             _importoController.clear();
+                          }),
+                        if (excludeCid != null && excludeCid.trim().isNotEmpty)
+                          _buildFilterChip('Escludi CID: "$excludeCid"', () {
+                            ref.read(excludeCidProvider.notifier).state = null;
+                            _excludeCidController.clear();
                           }),
                         if (selectedYear != null) _buildFilterChip('Anno: $selectedYear', () => ref.read(selectedYearProvider.notifier).state = null),
                         if (selectedMonth != null) _buildFilterChip('Mese: ${monthNames[selectedMonth]}', () => ref.read(selectedMonthProvider.notifier).state = null),
@@ -807,12 +825,14 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     ref.read(selectedSocietaProvider.notifier).state = null;
     ref.read(selectedTipiProvider.notifier).state = [];
     ref.read(selectedImportoProvider.notifier).state = null;
+    ref.read(excludeCidProvider.notifier).state = null;
     ref.read(tcSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(tcIncrocioFilterProvider.notifier).state = ContabileIncrocioFilter.all;
     ref.read(tcScartoFilterProvider.notifier).state = ContabileScartoFilter.all;
     ref.read(analysisPageProvider.notifier).state = 0;
     _trasfertaController.clear();
     _importoController.clear();
+    _excludeCidController.clear();
   }
 
   Widget _buildFilterChip(String label, VoidCallback onDeleted) {
@@ -916,6 +936,8 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
                 const SizedBox(height: 32),
                 _buildDrawerSectionTitle('ANAGRAFICA'),
                 const SizedBox(height: 12),
+                _buildExcludeCidFilterField(context, ref),
+                const SizedBox(height: 16),
                 _buildFilterDropdown<String?>('Società', ref.watch(selectedSocietaProvider), societa, (val) => ref.read(selectedSocietaProvider.notifier).state = val, icon: Icons.business),
                 const SizedBox(height: 16),
                 _buildMultiSelectFilter('Tipo Dipendente', selectedTipi, tipi, (val) {
@@ -1010,6 +1032,48 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
               },
             ),
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildExcludeCidFilterField(BuildContext context, WidgetRef ref) {
+    return Container(
+      height: 48,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      decoration: BoxDecoration(
+        color: Colors.grey.shade100,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+      child: Row(
+        children: [
+          const Icon(Icons.person_off_outlined, color: Colors.grey, size: 20),
+          const SizedBox(width: 12),
+          Expanded(
+            child: TextField(
+              controller: _excludeCidController,
+              decoration: const InputDecoration(
+                hintText: 'Escludi CID...',
+                border: InputBorder.none,
+                isDense: true,
+              ),
+              style: const TextStyle(fontSize: 14),
+              onChanged: (value) {
+                ref.read(excludeCidProvider.notifier).state = value.trim().isEmpty ? null : value;
+                ref.read(analysisPageProvider.notifier).state = 0;
+              },
+            ),
+          ),
+          if (_excludeCidController.text.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.clear, size: 18, color: Colors.grey),
+              onPressed: () {
+                _excludeCidController.clear();
+                ref.read(excludeCidProvider.notifier).state = null;
+                ref.read(analysisPageProvider.notifier).state = 0;
+              },
+            ),
         ],
       ),
     );
