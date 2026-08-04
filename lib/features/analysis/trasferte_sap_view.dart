@@ -12,6 +12,7 @@ import 'package:travel_check/features/upload/providers/tracciato_contabile_provi
 import 'package:travel_check/core/theme/app_theme.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/shared/widgets/file_selection_dialog.dart';
+import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
 
 // Filter providers for Trasferte SAP
 final tsSelectedQueryProvider = StateProvider<String?>((ref) => null);
@@ -21,6 +22,7 @@ final tsSortAscendingProvider = StateProvider<bool>((ref) => false);
 final tsPageProvider = StateProvider<int>((ref) => 0);
 final tsSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final tsSelectedContabileLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
+final tsSelectedSocietaProvider = StateProvider<Set<String>>((ref) => {});
 
 class TrasferteSapView extends ConsumerStatefulWidget {
   const TrasferteSapView({super.key});
@@ -54,8 +56,24 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     final currentPage = ref.watch(tsPageProvider);
     final selectedLogHistoryIds = ref.watch(tsSelectedLogHistoryIdsProvider);
     final selectedContabileLogHistoryIds = ref.watch(tsSelectedContabileLogHistoryIdsProvider);
+    final selectedSocieta = ref.watch(tsSelectedSocietaProvider);
     final allLogs = ref.watch(logHistoryProvider);
     final contabileRecords = ref.watch(tracciatoContabilesProvider);
+    final allAnagrafica = ref.watch(anagraficaProvider);
+    final dictionaries = ref.watch(dictionaryProvider);
+    final dictionaryMap = {for (var d in dictionaries) d.code.trim().toUpperCase(): d.value.trim()};
+
+    final anagraficaSocietaMap = {
+      for (var a in allAnagrafica)
+        if (a.cid != null && a.societa != null)
+          (a.cid ?? '').trim().padLeft(8, '0'): (a.societa ?? '').trim()
+    };
+
+    final contabileSocietaMap = {
+      for (var tc in contabileRecords)
+        if (tc.numeroTrasferta.trim().isNotEmpty && tc.societa.trim().isNotEmpty)
+          tc.numeroTrasferta.trim(): tc.societa.trim()
+    };
 
     final filteredContabileRecords = selectedContabileLogHistoryIds.isEmpty
         ? contabileRecords
@@ -111,6 +129,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
       endDate != null,
       selectedLogHistoryIds.isNotEmpty,
       selectedContabileLogHistoryIds.isNotEmpty,
+      selectedSocieta.isNotEmpty,
     ].where((e) => e).length;
 
     // Calcolo statistiche generali
@@ -119,6 +138,10 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     // Filtra i record
     final filteredRecords = allRecords.where((r) {
       if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) return false;
+      if (selectedSocieta.isNotEmpty) {
+        final rSocieta = contabileSocietaMap[r.numeroTrasferta.trim()] ?? anagraficaSocietaMap[r.cid.trim().padLeft(8, '0')] ?? '';
+        if (!selectedSocieta.contains(rSocieta)) return false;
+      }
       if (selectedQuery != null) {
         final query = selectedQuery.toLowerCase();
         if (!r.numeroTrasferta.toLowerCase().contains(query) &&
@@ -294,6 +317,11 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                               );
                             },
                           ),
+                        if (selectedSocieta.isNotEmpty)
+                          _buildFilterChip(
+                            'Società: ${selectedSocieta.map((s) => dictionaryMap[s.toUpperCase()] != null ? "$s (${dictionaryMap[s.toUpperCase()]})" : s).join(", ")}',
+                            () => ref.read(tsSelectedSocietaProvider.notifier).state = {},
+                          ),
                         TextButton(
                           onPressed: () => _resetAllFilters(ref), 
                           child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))
@@ -431,7 +459,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SizedBox(
-                          width: 1010,
+                          width: 1170,
                           child: Column(
                             children: [
                               Container(
@@ -444,6 +472,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                                   children: [
                                     _buildCell('AZIONI', 120, isHeader: true, alignment: Alignment.center),
                                     _buildCell('CID DIPENDENTE', 150, isHeader: true),
+                                    _buildCell('SOCIETÀ', 160, isHeader: true),
                                     _buildCell('NUMERO TRASFERTA', 180, isHeader: true),
                                     _buildCell('DATA INIZIO', 160, isHeader: true),
                                     _buildCell('ORA INIZIO', 120, isHeader: true),
@@ -461,6 +490,11 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                                     itemCount: paginatedRecords.length,
                                     itemBuilder: (context, index) {
                                       final record = paginatedRecords[index];
+                                      final rSocieta = contabileSocietaMap[record.numeroTrasferta.trim()] ?? anagraficaSocietaMap[record.cid.trim().padLeft(8, '0')] ?? '-';
+                                      final displaySocieta = rSocieta != '-' && dictionaryMap[rSocieta.toUpperCase()] != null 
+                                          ? '$rSocieta (${dictionaryMap[rSocieta.toUpperCase()]})' 
+                                          : rSocieta;
+
                                       return Container(
                                         decoration: BoxDecoration(
                                           color: index % 2 == 0 ? Colors.white : Colors.grey.shade50.withAlpha(120), 
@@ -524,6 +558,12 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                                                   ),
                                                 ],
                                               ),
+                                            ),
+                                            _buildCell(
+                                              displaySocieta,
+                                              160,
+                                              color: rSocieta != '-' ? SkyTheme.timBlue : Colors.grey,
+                                              fontWeight: rSocieta != '-' ? FontWeight.bold : FontWeight.normal,
                                             ),
                                             _buildCell(
                                               record.numeroTrasferta,
@@ -658,6 +698,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     ref.read(tsEndDateProvider.notifier).state = null;
     ref.read(tsSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(tsSelectedContabileLogHistoryIdsProvider.notifier).state = {};
+    ref.read(tsSelectedSocietaProvider.notifier).state = {};
     ref.read(tsPageProvider.notifier).state = 0;
     _searchController.clear();
   }
@@ -680,6 +721,38 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     final allLogs = ref.watch(logHistoryProvider);
     final sapLogs = allLogs.where((log) => log.sourceType == 'Trasferte SAP').toList();
     final contabileLogs = allLogs.where((log) => log.sourceType == 'Tracciato Contabile' || log.sourceType == 'contabile').toList();
+    
+    final allRecords = ref.watch(trasferteSapProvider);
+    final allAnagrafica = ref.watch(anagraficaProvider);
+    final contabileRecords = ref.watch(tracciatoContabilesProvider);
+    final dictionaries = ref.watch(dictionaryProvider);
+    final dictionaryMap = {for (var d in dictionaries) d.code.trim().toUpperCase(): d.value.trim()};
+
+    final anagraficaSocietaMap = {
+      for (var a in allAnagrafica)
+        if (a.cid != null && a.societa != null)
+          (a.cid ?? '').trim().padLeft(8, '0'): (a.societa ?? '').trim()
+    };
+
+    final contabileSocietaMap = {
+      for (var tc in contabileRecords)
+        if (tc.numeroTrasferta.trim().isNotEmpty && tc.societa.trim().isNotEmpty)
+          tc.numeroTrasferta.trim(): tc.societa.trim()
+    };
+
+    final availableSocietaSet = <String>{};
+    for (final r in allRecords) {
+      final soc = contabileSocietaMap[r.numeroTrasferta.trim()] ?? anagraficaSocietaMap[r.cid.trim().padLeft(8, '0')];
+      if (soc != null && soc.isNotEmpty) {
+        availableSocietaSet.add(soc);
+      }
+    }
+    if (availableSocietaSet.isEmpty) {
+      availableSocietaSet.addAll(anagraficaSocietaMap.values.where((s) => s.isNotEmpty));
+      availableSocietaSet.addAll(contabileSocietaMap.values.where((s) => s.isNotEmpty));
+    }
+    final availableSocieta = availableSocietaSet.toList()..sort();
+
     return Drawer(
       width: 350,
       child: Column(
@@ -744,6 +817,20 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                       ref.read(tsEndDateProvider.notifier).state = date;
                       ref.read(tsPageProvider.notifier).state = 0;
                     },
+                  ),
+                  const SizedBox(height: 24),
+                  _buildDrawerSectionTitle('SOCIETÀ'),
+                  const SizedBox(height: 12),
+                  _buildMultiSelectFilter(
+                    'Società',
+                    ref.watch(tsSelectedSocietaProvider),
+                    availableSocieta,
+                    (next) {
+                      ref.read(tsSelectedSocietaProvider.notifier).state = next;
+                      ref.read(tsPageProvider.notifier).state = 0;
+                    },
+                    icon: Icons.business,
+                    dictionary: dictionaryMap,
                   ),
                   const SizedBox(height: 24),
                   _buildDrawerSectionTitle('FILE TRASFERTE SAP'),
@@ -929,6 +1016,26 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     final nominativo = anagraficaMap[record.cid.trim().padLeft(8, '0')] ?? 'Dipendente Sconosciuto';
     final fileName = logHistoryMap[record.logHistoryId] ?? 'Caricamento Manuale';
 
+    final contabileRecords = ref.read(tracciatoContabilesProvider);
+    final contabileSocietaMap = {
+      for (var tc in contabileRecords)
+        if (tc.numeroTrasferta.trim().isNotEmpty && tc.societa.trim().isNotEmpty)
+          tc.numeroTrasferta.trim(): tc.societa.trim()
+    };
+    final allAnagrafica = ref.read(anagraficaProvider);
+    final anagraficaSocietaMap = {
+      for (var a in allAnagrafica)
+        if (a.cid != null && a.societa != null)
+          (a.cid ?? '').trim().padLeft(8, '0'): (a.societa ?? '').trim()
+    };
+    final dictionaries = ref.read(dictionaryProvider);
+    final dictionaryMap = {for (var d in dictionaries) d.code.trim().toUpperCase(): d.value.trim()};
+
+    final rSocieta = contabileSocietaMap[record.numeroTrasferta.trim()] ?? anagraficaSocietaMap[record.cid.trim().padLeft(8, '0')] ?? '-';
+    final displaySocieta = rSocieta != '-' && dictionaryMap[rSocieta.toUpperCase()] != null 
+        ? '$rSocieta (${dictionaryMap[rSocieta.toUpperCase()]})' 
+        : rSocieta;
+
     showDialog(
       context: context,
       builder: (context) {
@@ -989,6 +1096,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                           _buildDetailSection('Informazioni Dipendente', Icons.person_outline, SkyTheme.timBlue, [
                             _buildDetailRow('CID Dipendente', record.cid),
                             _buildDetailRow('Nominativo', nominativo),
+                            _buildDetailRow('Società', displaySocieta),
                           ]),
                           const SizedBox(height: 20),
                           _buildDetailSection('Periodo Trasferta', Icons.calendar_month_outlined, Colors.green, [
@@ -1164,9 +1272,25 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
       final sheet = excel['TrasferteSap'];
       excel.delete('Sheet1'); // Rimuovi default sheet
 
+      final contabileRecords = ref.read(tracciatoContabilesProvider);
+      final contabileSocietaMap = {
+        for (var tc in contabileRecords)
+          if (tc.numeroTrasferta.trim().isNotEmpty && tc.societa.trim().isNotEmpty)
+            tc.numeroTrasferta.trim(): tc.societa.trim()
+      };
+      final allAnagrafica = ref.read(anagraficaProvider);
+      final anagraficaSocietaMap = {
+        for (var a in allAnagrafica)
+          if (a.cid != null && a.societa != null)
+            (a.cid ?? '').trim().padLeft(8, '0'): (a.societa ?? '').trim()
+      };
+      final dictionaries = ref.read(dictionaryProvider);
+      final dictionaryMap = {for (var d in dictionaries) d.code.trim().toUpperCase(): d.value.trim()};
+
       // Header
       sheet.appendRow([
         TextCellValue('CID'),
+        TextCellValue('Società'),
         TextCellValue('Numero Trasferta'),
         TextCellValue('Data Inizio'),
         TextCellValue('Ora Inizio'),
@@ -1176,8 +1300,14 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
 
       // Rows
       for (final r in records) {
+        final rSocieta = contabileSocietaMap[r.numeroTrasferta.trim()] ?? anagraficaSocietaMap[r.cid.trim().padLeft(8, '0')] ?? '-';
+        final displaySocieta = rSocieta != '-' && dictionaryMap[rSocieta.toUpperCase()] != null 
+            ? '$rSocieta (${dictionaryMap[rSocieta.toUpperCase()]})' 
+            : rSocieta;
+
         sheet.appendRow([
           TextCellValue(r.cid),
+          TextCellValue(displaySocieta),
           TextCellValue(r.numeroTrasferta),
           TextCellValue(r.dataInizioTrasferta),
           TextCellValue(r.oraInizioTrasferta),
@@ -1298,6 +1428,145 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
           onSelectedChanged: onSelectedChanged,
         );
       },
+    );
+  }
+
+  Widget _buildMultiSelectFilter(
+    String label,
+    Set<String> selectedValues,
+    List<String> options,
+    Function(Set<String>) onChanged, {
+    IconData? icon,
+    Map<String, String>? dictionary,
+  }) {
+    final selectedCount = selectedValues.length;
+    String displayText = 'Tutte le società';
+    if (selectedCount == 1) {
+      final val = selectedValues.first;
+      displayText = dictionary != null && dictionary[val] != null
+          ? '$val - ${dictionary[val]}'
+          : val;
+    } else if (selectedCount > 1) {
+      displayText = '$selectedCount società selezionate';
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 18, color: Colors.grey),
+              const SizedBox(width: 8),
+            ],
+            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+          ],
+        ),
+        const SizedBox(height: 8),
+        InkWell(
+          onTap: () async {
+            final results = await showDialog<Set<String>>(
+              context: context,
+              builder: (context) {
+                Set<String> tempSelected = Set.from(selectedValues);
+                return StatefulBuilder(
+                  builder: (context, setModalState) {
+                    return AlertDialog(
+                      title: Text('Seleziona $label'),
+                      content: SizedBox(
+                        width: 350,
+                        height: 400,
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                TextButton(
+                                  onPressed: () => setModalState(() => tempSelected = Set.from(options)),
+                                  child: const Text('Tutti'),
+                                ),
+                                TextButton(
+                                  onPressed: () => setModalState(() => tempSelected.clear()),
+                                  child: const Text('Reset'),
+                                ),
+                              ],
+                            ),
+                            Expanded(
+                              child: options.isEmpty
+                                  ? const Center(child: Text('Nessuna società disponibile'))
+                                  : ListView.builder(
+                                      itemCount: options.length,
+                                      itemBuilder: (context, index) {
+                                        final option = options[index];
+                                        final displayLabel = dictionary != null && dictionary[option] != null
+                                            ? '$option - ${dictionary[option]}'
+                                            : option;
+                                        return CheckboxListTile(
+                                          title: Text(displayLabel, style: const TextStyle(fontSize: 14)),
+                                          value: tempSelected.contains(option),
+                                          onChanged: (val) {
+                                            setModalState(() {
+                                              if (val == true) {
+                                                tempSelected.add(option);
+                                              } else {
+                                                tempSelected.remove(option);
+                                              }
+                                            });
+                                          },
+                                        );
+                                      },
+                                    ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('ANNULLA'),
+                        ),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(context, tempSelected),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: SkyTheme.timRed,
+                            foregroundColor: Colors.white,
+                          ),
+                          child: const Text('CONFERMA'),
+                        ),
+                      ],
+                    );
+                  },
+                );
+              },
+            );
+            if (results != null) {
+              onChanged(results);
+            }
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            decoration: BoxDecoration(
+              color: Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: Colors.grey.shade300),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    displayText,
+                    style: TextStyle(
+                      color: selectedCount == 0 ? Colors.grey : Colors.black87,
+                      fontSize: 14,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+                const Icon(Icons.arrow_drop_down, color: Colors.grey),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

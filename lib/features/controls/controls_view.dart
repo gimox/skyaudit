@@ -38,6 +38,7 @@ final controlsSortAscendingProvider = StateProvider<bool>((ref) => false);
 final controlsPageProvider = StateProvider<int>((ref) => 0);
 final controlsExpandAllProvider = StateProvider<bool>((ref) => true);
 final controlsShowOnlyOrphansProvider = StateProvider<bool>((ref) => false);
+final controlsShowOnlySapOrphansProvider = StateProvider<bool>((ref) => false);
 final controlsMatchStatusProvider = StateProvider<String?>((ref) => null); // null, 'match', 'diff'
 final controlsMinDiffProvider = StateProvider<double?>((ref) => null);
 final controlsMaxDiffProvider = StateProvider<double?>((ref) => null);
@@ -81,14 +82,25 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     super.dispose();
   }
 
+  String _cleanT(String? s) {
+    if (s == null) return '';
+    return s.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
+  }
+
   @override
   Widget build(BuildContext context) {
     final allRecords = ref.watch(tracciatoContabilesProvider).where((r) => !r.isScarto).toList();
     final allEstrattiConto = ref.watch(estrattoContoProvider);
-    final allSapRecords = ref.watch(tracciatoSapProvider);
+    final rawSapRecords = ref.watch(tracciatoSapProvider);
+    final allLogs = ref.watch(logHistoryProvider);
+    final sapLogs = allLogs.where((log) => log.sourceType == 'Tracciato SAP').toList()
+      ..sort((a, b) => b.date.compareTo(a.date));
+    final String? latestSapLogId = sapLogs.isNotEmpty ? sapLogs.first.uniqueCode : null;
+    final List<TracciatoSap> allSapRecords = latestSapLogId != null
+        ? rawSapRecords.where((sap) => sap.logHistoryId == latestSapLogId).toList()
+        : rawSapRecords;
     final allAmexRecords = ref.watch(estrattoAmexProvider);
     final selectedLogHistoryIds = ref.watch(controlsSelectedLogHistoryIdsProvider);
-    final allLogs = ref.watch(logHistoryProvider);
     String? selectedLogFileName;
     if (selectedLogHistoryIds.length == 1) {
       for (final log in allLogs) {
@@ -140,7 +152,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     if (searchQuery.isNotEmpty) {
       final query = searchQuery.toLowerCase();
       trasferte = trasferte.where((t) {
-        final records = groupedRecords[t]!;
+        final records = groupedRecords[t] ?? [];
         
         // Verifica numero trasferta
         if (t.toLowerCase().contains(query)) {
@@ -173,30 +185,33 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         selectedSocieta.isNotEmpty ||
         selectedTipo.isNotEmpty) {
       trasferte = trasferte.where((t) {
-        final firstRecord = groupedRecords[t]!.first;
+        final records = groupedRecords[t] ?? [];
+        final sapForT = allSapRecords.where((sap) => _cleanT(sap.numeroTrasferta) == _cleanT(t)).toList();
+        final societa = records.isNotEmpty ? records.first.societa : (sapForT.isNotEmpty ? sapForT.first.societaCodice : '');
+        final tipo = records.isNotEmpty ? records.first.tipoDipendente : (sapForT.isNotEmpty ? sapForT.first.tipoDipendente : '');
 
-        if (selectedSocieta.isNotEmpty &&
-            !selectedSocieta.contains(firstRecord.societa)) {
+        if (selectedSocieta.isNotEmpty && !selectedSocieta.contains(societa)) {
           return false;
         }
 
-        if (selectedTipo.isNotEmpty &&
-            !selectedTipo.contains(firstRecord.tipoDipendente)) {
+        if (selectedTipo.isNotEmpty && !selectedTipo.contains(tipo)) {
           return false;
         }
 
         if (startDate != null || endDate != null) {
+          final dataStr = records.isNotEmpty ? records.first.dataFine : (sapForT.isNotEmpty ? sapForT.first.data : '');
           try {
-            final parts = firstRecord.dataFine.split('/');
-            if (parts.length != 3) return false;
-            final recordDate = DateTime(
-              int.parse(parts[2]),
-              int.parse(parts[1]),
-              int.parse(parts[0]),
-            );
+            final parts = dataStr.split(RegExp(r'[./-]'));
+            if (parts.length == 3) {
+              final recordDate = DateTime(
+                int.parse(parts[2]),
+                int.parse(parts[1]),
+                int.parse(parts[0]),
+              );
 
-            if (startDate != null && recordDate.isBefore(startDate)) return false;
-            if (endDate != null && recordDate.isAfter(endDate)) return false;
+              if (startDate != null && recordDate.isBefore(startDate)) return false;
+              if (endDate != null && recordDate.isAfter(endDate)) return false;
+            }
           } catch (_) {
             return false;
           }
@@ -221,6 +236,16 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       }).toList();
     }
 
+    final showOnlySapOrphans = ref.watch(controlsShowOnlySapOrphansProvider);
+    if (showOnlySapOrphans) {
+      final contabileCleanSet = filteredAllRecords.map((r) => _cleanT(r.numeroTrasferta)).toSet();
+      final orphanSapSet = allSapRecords
+          .where((sap) => _cleanT(sap.numeroTrasferta).isNotEmpty && !contabileCleanSet.contains(_cleanT(sap.numeroTrasferta)))
+          .map((sap) => sap.numeroTrasferta)
+          .toSet();
+      trasferte = orphanSapSet.toList();
+    }
+
     final matchStatusFilter = ref.watch(controlsMatchStatusProvider);
     final minDiff = ref.watch(controlsMinDiffProvider);
     final maxDiff = ref.watch(controlsMaxDiffProvider);
@@ -228,7 +253,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
     if (matchStatusFilter != null || minDiff != null || maxDiff != null || cidMismatchFilter) {
       trasferte = trasferte.where((t) {
-        final recordsTrasferta = groupedRecords[t]!;
+        final recordsTrasferta = groupedRecords[t] ?? [];
         double tTracciato = 0;
         for (var r in recordsTrasferta) {
           tTracciato += r.isNegative ? -r.importo : r.importo;
@@ -238,7 +263,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         final tEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
         final isMatchingEC = (tTracciato - tEC).abs() < 0.001;
 
-        final sapForTrasferta = allSapRecords.where((sap) => sap.numeroTrasferta == t).toList();
+        final sapForTrasferta = allSapRecords.where((sap) => _cleanT(sap.numeroTrasferta) == _cleanT(t)).toList();
         final tSap = sapForTrasferta.fold<double>(0, (sum, sap) => sum + sap.importo);
         final isMatchingSap = (tTracciato - tSap).abs() < 0.001;
 
@@ -284,7 +309,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     final showMultipleHotelsOnly = ref.watch(controlsMultipleHotelsProvider);
     if (showMultipleHotelsOnly) {
       trasferte = trasferte.where((t) {
-        final recordsTrasferta = groupedRecords[t]!;
+        final recordsTrasferta = groupedRecords[t] ?? [];
         final hotelCount = recordsTrasferta.where((r) {
           final code = r.giustificativoSpesa.trim().toUpperCase();
           final desc = (dictionaryMap[r.giustificativoSpesa] ?? '').toLowerCase();
@@ -298,10 +323,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
     double globalTracciato = 0;
     double globalEC = 0;
-    double globalSap = 0;
     double globalAmex = 0;
     for (final t in trasferte) {
-      final records = groupedRecords[t]!;
+      final records = groupedRecords[t] ?? [];
       for (final r in records) {
         globalTracciato += r.isNegative ? -r.importo : r.importo;
       }
@@ -309,15 +333,12 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       for (final ec in ecForT) {
         globalEC += ec.totaleServizio;
       }
-      final sapForT = allSapRecords.where((sap) => sap.numeroTrasferta == t);
-      for (final sap in sapForT) {
-        globalSap += sap.importo;
-      }
       final amexForT = allAmexRecords.where((ame) => ame.numeroTrasferta == t);
       for (final ame in amexForT) {
         globalAmex += ame.importoLordo ?? 0;
       }
     }
+    final double globalSap = allSapRecords.fold<double>(0.0, (sum, sap) => sum + sap.importo);
 
     final totalPages = (trasferte.length / pageSize).ceil();
     // Protezione per evitare RangeError se i filtri riducono il numero di pagine
@@ -338,6 +359,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       maxDiff != null,
       matchStatusFilter != null,
       ref.watch(controlsShowOnlyOrphansProvider),
+      ref.watch(controlsShowOnlySapOrphansProvider),
       cidMismatchFilter,
       showMultipleHotelsOnly,
       searchQuery.isNotEmpty,
@@ -520,7 +542,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                 () => ref.read(controlsMatchStatusProvider.notifier).state = null
                               ),
                             if (ref.watch(controlsShowOnlyOrphansProvider))
-                              _buildFilterChip('Solo Orfani', () => ref.read(controlsShowOnlyOrphansProvider.notifier).state = false),
+                              _buildFilterChip('Solo Orfani E.C.', () => ref.read(controlsShowOnlyOrphansProvider.notifier).state = false),
+                            if (ref.watch(controlsShowOnlySapOrphansProvider))
+                              _buildFilterChip('Solo Orfani SAP', () => ref.read(controlsShowOnlySapOrphansProvider.notifier).state = false),
                             
                             if (ref.watch(controlsCidMismatchProvider))
                               _buildFilterChip('CID Differenti', () => ref.read(controlsCidMismatchProvider.notifier).state = false),
@@ -571,8 +595,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 final double recordVerticalPadding = isUltraCompact ? 1.5 : (isVeryCompact ? 2.0 : (isCompactList ? 6.0 : 12.0));
 
                 final numeroTrasferta = paginatedTrasferte[index];
-                final recordsTrasferta = groupedRecords[numeroTrasferta]!;
-                final firstRecord = recordsTrasferta.first;
+                final recordsTrasferta = groupedRecords[numeroTrasferta] ?? [];
+                final firstRecord = recordsTrasferta.isNotEmpty ? recordsTrasferta.first : null;
 
                 double totaleTrasferta = 0.0;
                 for (var r in recordsTrasferta) {
@@ -780,8 +804,14 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 final ecForTrasferta = ecForThisT;
                 final totaleEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
 
-                final sapForTrasferta = allSapRecords.where((sap) => sap.numeroTrasferta == numeroTrasferta).toList();
+                final sapForTrasferta = allSapRecords.where((sap) => _cleanT(sap.numeroTrasferta) == _cleanT(numeroTrasferta)).toList();
                 final totaleSap = sapForTrasferta.fold<double>(0, (sum, sap) => sum + sap.importo);
+
+                final displayCid = firstRecord?.cid ?? (sapForTrasferta.isNotEmpty ? sapForTrasferta.first.cid : '-');
+                final displayDataInizio = firstRecord?.dataInizio ?? (sapForTrasferta.isNotEmpty ? sapForTrasferta.first.data : '-');
+                final displayDataFine = firstRecord?.dataFine ?? (sapForTrasferta.isNotEmpty ? sapForTrasferta.first.data : '-');
+                final displaySocieta = firstRecord?.societa ?? (sapForTrasferta.isNotEmpty ? sapForTrasferta.first.societaCodice : '-');
+                final displayTipo = firstRecord?.tipoDipendente ?? (sapForTrasferta.isNotEmpty ? sapForTrasferta.first.tipoDipendente : '-');
 
                 final amexForTrasferta = allAmexRecords.where((ame) => ame.numeroTrasferta == numeroTrasferta).toList();
                 final totaleAmex = amexForTrasferta.fold<double>(0, (sum, ame) => sum + (ame.importoLordo ?? 0));
@@ -900,7 +930,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                               ],
                             ),
                             Text(
-                              '|  CID: ${_formatCidWithName(firstRecord.cid, anagraficaMap)}',
+                              '|  CID: ${_formatCidWithName(displayCid, anagraficaMap)}',
                               style: TextStyle(
                                 fontSize: isUltraCompact ? 8.5 : (isVeryCompact ? 10 : (isCompactList ? 11 : 13)),
                                 fontWeight: FontWeight.w500,
@@ -1069,7 +1099,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Cid prevalente: ${firstRecord.cid}',
+                              'Cid prevalente: $displayCid',
                               style: TextStyle(
                                 fontSize: isUltraCompact ? 8.5 : (isVeryCompact ? 10 : (isCompactList ? 11 : 12)),
                                 color: hasCidMismatch ? Colors.red.shade700 : Colors.grey.shade700,
@@ -1082,10 +1112,10 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                               child: InkWell(
                                 borderRadius: BorderRadius.circular(4),
                                 onTap: () {
-                                  Clipboard.setData(ClipboardData(text: firstRecord.cid));
+                                  Clipboard.setData(ClipboardData(text: displayCid));
                                   ScaffoldMessenger.of(context).showSnackBar(
                                     SnackBar(
-                                      content: Text('CID prevalente ${firstRecord.cid} copiato negli appunti'),
+                                      content: Text('CID prevalente $displayCid copiato negli appunti'),
                                       duration: const Duration(seconds: 1),
                                       backgroundColor: SkyTheme.timBlue,
                                     ),
@@ -1107,8 +1137,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                     ),
                     subtitle: Text(
                       isUltraCompact
-                          ? '${recordsTrasferta.length} rec • ${firstRecord.dataInizio} - ${firstRecord.dataFine} • Soc: ${firstRecord.societa} • Tipo: ${firstRecord.tipoDipendente}'
-                          : '${recordsTrasferta.length} record • Dal ${firstRecord.dataInizio} al ${firstRecord.dataFine} • Società: ${firstRecord.societa}${dictionaryMap[firstRecord.societa] != null ? " (${dictionaryMap[firstRecord.societa]})" : ""} • Tipo: ${firstRecord.tipoDipendente}${dictionaryMap[firstRecord.tipoDipendente] != null ? " (${dictionaryMap[firstRecord.tipoDipendente]})" : ""}',
+                          ? '${recordsTrasferta.length} rec • $displayDataInizio - $displayDataFine • Soc: $displaySocieta • Tipo: $displayTipo'
+                          : '${recordsTrasferta.length} record • Dal $displayDataInizio al $displayDataFine • Società: $displaySocieta${dictionaryMap[displaySocieta] != null ? " (${dictionaryMap[displaySocieta]})" : ""} • Tipo: $displayTipo${dictionaryMap[displayTipo] != null ? " (${dictionaryMap[displayTipo]})" : ""}',
                       style: TextStyle(fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 11 : 12))),
                     ),
                     leading: isUltraCompact
@@ -1179,8 +1209,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                         'CID: ${_formatCidWithName(record.cid, anagraficaMap)}',
                                         style: TextStyle(
                                           fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
-                                          color: (hasCidMismatch && record.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade600,
-                                          fontWeight: (hasCidMismatch && record.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
+                                          color: (hasCidMismatch && record.cid != displayCid) ? Colors.red : Colors.grey.shade600,
+                                          fontWeight: (hasCidMismatch && record.cid != displayCid) ? FontWeight.bold : FontWeight.normal,
                                         ),
                                       ),
                                       const SizedBox(height: 1),
@@ -1270,8 +1300,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                           'CID: ${_formatCidWithName(matchedEC.cid, anagraficaMap)}',
                                           style: TextStyle(
                                             fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
-                                            color: (hasCidMismatch && matchedEC.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade500,
-                                            fontWeight: (hasCidMismatch && matchedEC.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
+                                            color: (hasCidMismatch && matchedEC.cid != displayCid) ? Colors.red : Colors.grey.shade500,
+                                            fontWeight: (hasCidMismatch && matchedEC.cid != displayCid) ? FontWeight.bold : FontWeight.normal,
                                           ),
                                         ),
                                         const SizedBox(height: 1),
@@ -1393,8 +1423,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                           'CID: ${_formatCidWithName(matchedAmex.cid ?? "", anagraficaMap)} • Data: ${matchedAmex.dataTransazione ?? "-"}',
                                           style: TextStyle(
                                             fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
-                                            color: (hasCidMismatch && matchedAmex.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade500,
-                                            fontWeight: (hasCidMismatch && matchedAmex.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
+                                            color: (hasCidMismatch && matchedAmex.cid != displayCid) ? Colors.red : Colors.grey.shade500,
+                                            fontWeight: (hasCidMismatch && matchedAmex.cid != displayCid) ? FontWeight.bold : FontWeight.normal,
                                           ),
                                         ),
                                         const SizedBox(height: 1),
@@ -1448,7 +1478,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                       // SEZIONE RECORD SAP
                       Builder(
                         builder: (context) {
-                          final sapForTrasferta = allSapRecords.where((sap) => sap.numeroTrasferta == numeroTrasferta).toList();
+                          final sapForTrasferta = allSapRecords.where((sap) => _cleanT(sap.numeroTrasferta) == _cleanT(numeroTrasferta)).toList();
                           if (sapForTrasferta.isEmpty) return const SizedBox.shrink();
 
                           return Column(
@@ -1512,8 +1542,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                             'CID: ${_formatCidWithName(sap.cid, anagraficaMap)}',
                                             style: TextStyle(
                                               fontSize: isVeryCompact ? 8 : (isCompactList ? 9 : 10), 
-                                              color: (hasCidMismatch && sap.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade600,
-                                              fontWeight: (hasCidMismatch && sap.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
+                                              color: (hasCidMismatch && sap.cid != displayCid) ? Colors.red : Colors.grey.shade600,
+                                              fontWeight: (hasCidMismatch && sap.cid != displayCid) ? FontWeight.bold : FontWeight.normal,
                                             ),
                                           ),
                                           const SizedBox(height: 1),
@@ -1626,8 +1656,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                             'CID: ${_formatCidWithName(amex.cid ?? "", anagraficaMap)} • Bolla: ${amex.bolla ?? "-"}',
                                             style: TextStyle(
                                               fontSize: isVeryCompact ? 8 : (isCompactList ? 9 : 10), 
-                                              color: (hasCidMismatch && amex.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade600,
-                                              fontWeight: (hasCidMismatch && amex.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
+                                              color: (hasCidMismatch && amex.cid != displayCid) ? Colors.red : Colors.grey.shade600,
+                                              fontWeight: (hasCidMismatch && amex.cid != displayCid) ? FontWeight.bold : FontWeight.normal,
                                             ),
                                           ),
                                           const SizedBox(height: 1),
@@ -1740,8 +1770,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                             'CID: ${_formatCidWithName(ec.cid, anagraficaMap)}',
                                             style: TextStyle(
                                               fontSize: isVeryCompact ? 8 : (isCompactList ? 9 : 10), 
-                                              color: (hasCidMismatch && ec.cid != firstRecord.cid) ? Colors.red : Colors.grey.shade500,
-                                              fontWeight: (hasCidMismatch && ec.cid != firstRecord.cid) ? FontWeight.bold : FontWeight.normal,
+                                              color: (hasCidMismatch && ec.cid != displayCid) ? Colors.red : Colors.grey.shade500,
+                                              fontWeight: (hasCidMismatch && ec.cid != displayCid) ? FontWeight.bold : FontWeight.normal,
                                             ),
                                           ),
                                           const SizedBox(height: 1),
@@ -2480,11 +2510,13 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
       int currentRow = 1;
       for (final t in trasferte) {
-        final records = groupedRecords[t]!;
-        final first = records.first;
+        final records = groupedRecords[t] ?? [];
+        final sapForT = allSapRecords.where((sap) => _cleanT(sap.numeroTrasferta) == _cleanT(t)).toList();
+        final cid = records.isNotEmpty ? records.first.cid : (sapForT.isNotEmpty ? sapForT.first.cid : '');
+        final dataInizio = records.isNotEmpty ? records.first.dataInizio : (sapForT.isNotEmpty ? sapForT.first.data : '');
+        final dataFine = records.isNotEmpty ? records.first.dataFine : (sapForT.isNotEmpty ? sapForT.first.data : '');
+        final societa = records.isNotEmpty ? records.first.societa : (sapForT.isNotEmpty ? sapForT.first.societaCodice : '');
         final ecForT = allEstrattiConto.where((ec) => ec.numeroTrasferta == t).toList();
-        final sapForT = allSapRecords.where((sap) => sap.numeroTrasferta == t).toList();
-        
         final amexForT = allAmexRecords.where((ame) => ame.numeroTrasferta == t).toList();
         
         double totTracciato = 0;
@@ -2505,10 +2537,10 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
         // RIGA TRASFERTA (RIEPILOGO)
         final tripHeaderRow = [
-          'TRASFERTA', t, 'CID: ${_formatCidWithName(first.cid, anagraficaMap)}', '', 
-          _normalizeDate(first.dataInizio), _normalizeDate(first.dataFine),
+          'TRASFERTA', t, 'CID: ${_formatCidWithName(cid, anagraficaMap)}', '', 
+          _normalizeDate(dataInizio), _normalizeDate(dataFine),
           'E.C.: ${isMatchingEC ? "OK" : "KO"} | SAP: ${isMatchingSap ? "OK" : "KO"} | AMEX: ${isMatchingAmex ? "OK" : "KO"}',
-          '', first.societa, '', totTracciato, diffEC, diffSap, diffAmex,
+          '', societa, '', totTracciato, diffEC, diffSap, diffAmex,
           isMatchingEC ? 'NO' : 'SI',
           isMatchingSap ? 'NO' : 'SI',
           isMatchingAmex ? 'NO' : 'SI'
@@ -2641,7 +2673,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       int dRow = 1;
       for (final t in trasferte) {
         // Records Tracciato
-        for (final r in groupedRecords[t]!) {
+        for (final r in groupedRecords[t] ?? []) {
            final rowData = [
             t, 'TRACCIATO', r.cid, '', r.numeroBolla, 
             _normalizeDate(r.dataSpesa), r.localita, 
@@ -2681,7 +2713,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         }
 
         // Records SAP
-        final sapForT = allSapRecords.where((sap) => sap.numeroTrasferta == t).toList();
+        final sapForT = allSapRecords.where((sap) => _cleanT(sap.numeroTrasferta) == _cleanT(t)).toList();
         for (final sap in sapForT) {
           final rowData = [
             t, 'SAP', sap.cid, '', sap.cdRichiesta ?? '', 
@@ -2825,6 +2857,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     ref.read(controlsMaxDiffProvider.notifier).state = null;
     ref.read(controlsMatchStatusProvider.notifier).state = null;
     ref.read(controlsShowOnlyOrphansProvider.notifier).state = false;
+    ref.read(controlsShowOnlySapOrphansProvider.notifier).state = false;
     ref.read(controlsSelectedLogHistoryIdsProvider.notifier).state = {};
 
     _searchController.clear();
@@ -3041,9 +3074,17 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 ),
                 const SizedBox(height: 16),
                 SwitchListTile(
-                  title: const Text('Solo Record Orfani', style: TextStyle(fontSize: 14)),
+                  title: const Text('Solo Record Orfani E.C.', style: TextStyle(fontSize: 14)),
                   value: ref.watch(controlsShowOnlyOrphansProvider),
                   onChanged: (v) => ref.read(controlsShowOnlyOrphansProvider.notifier).state = v,
+                  activeThumbColor: SkyTheme.timBlue,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                SwitchListTile(
+                  title: const Text('Solo Orfani SAP', style: TextStyle(fontSize: 14)),
+                  subtitle: const Text('Mostra spese SAP assenti nel Tracciato Contabile', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                  value: ref.watch(controlsShowOnlySapOrphansProvider),
+                  onChanged: (v) => ref.read(controlsShowOnlySapOrphansProvider.notifier).state = v,
                   activeThumbColor: SkyTheme.timBlue,
                   contentPadding: EdgeInsets.zero,
                 ),
