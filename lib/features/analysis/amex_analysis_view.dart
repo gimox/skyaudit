@@ -60,6 +60,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     final endDate = ref.watch(amexEndDateProvider);
     final selectedLogHistoryIds = ref.watch(amexSelectedLogHistoryIdsProvider);
     final allLogs = ref.watch(logHistoryProvider);
+    final logsMap = {for (var log in allLogs) log.uniqueCode: log.fileName};
     String? selectedLogFileName;
     if (selectedLogHistoryIds.length == 1) {
       for (final log in allLogs) {
@@ -462,7 +463,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SizedBox(
-                          width: 1780,
+                          width: 1980,
                           child: Column(
                             children: [
                           // HEADER FISSO
@@ -482,6 +483,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                 _buildCell('NUMERO CONTO', 220, isHeader: true),
                                 _buildCell('VIAGGIATORE', 200, isHeader: true),
                                 _buildCell('BOLLA', 150, isHeader: true),
+                                _buildCell('FILE IMPORTAZIONE', 200, isHeader: true),
                                 _buildCell('FORNITORE', 250, isHeader: true),
                                 _buildCell('DATA TRANS.', 120, isHeader: true),
                               ],
@@ -524,6 +526,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                         _buildCopyableCell(record.numeroConto ?? '-', 220, typeLabel: 'Numero Conto'),
                                         _buildCopyableCell(record.nomeViaggiatore ?? '-', 200, typeLabel: 'Viaggiatore'),
                                         _buildCell(record.bolla ?? '-', 150),
+                                        _buildCell(record.logHistoryId != null ? (logsMap[record.logHistoryId] ?? '-') : '-', 200),
                                         _buildCell(record.nomeFornitore ?? '-', 250),
                                         _buildCell(record.dataTransazione ?? '-', 120),
                                       ],
@@ -1175,6 +1178,8 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
       for (var d in dictionaries)
         if (d.category == 'conto') d.code: d.value
     };
+    final allLogs = ref.read(logHistoryProvider);
+    final logsMap = {for (var log in allLogs) log.uniqueCode: log.fileName};
     showDialog(
       context: context,
       builder: (context) {
@@ -1256,6 +1261,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                           _buildDetailRow('Numero Trasferta', record.numeroTrasferta ?? '-', copyable: true),
                           _buildDetailRow('Bolla (Trasformata)', record.bolla ?? '-', copyable: true),
                           _buildDetailRow('Bolla Originale', record.bollaOriginale ?? '-', copyable: true),
+                          _buildDetailRow('File Importazione', record.logHistoryId != null ? (logsMap[record.logHistoryId] ?? '-') : '-'),
                           _buildDetailRow('Nome Viaggiatore', record.nomeViaggiatore ?? '-'),
                           _buildDetailRow('Conto', record.conto ?? '-'),
                           _buildDetailRow('Numero di conto', record.numeroConto ?? '-', copyable: true),
@@ -1289,6 +1295,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                         ]),
                         const SizedBox(height: 24),
                         _buildDetailSection('ALTRI RIFERIMENTI', Icons.tag_outlined, Colors.grey, [
+                          _buildDetailRow('File Importazione', record.logHistoryId != null ? (logsMap[record.logHistoryId] ?? '-') : '-'),
                           _buildDetailRow('Rif. Viaggio 1', record.rifViaggio1 ?? '-'),
                           _buildDetailRow('Rif. Viaggio 2', record.rifViaggio2 ?? '-'),
                           _buildDetailRow('Rif. Viaggio 3', record.rifViaggio3 ?? '-'),
@@ -1388,53 +1395,176 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
   }
 
   Future<void> _exportToExcel(List<EstrattoAmex> records) async {
-    final anagrafiche = ref.read(anagraficaProvider);
-    final anagraficheMap = {
-      for (var a in anagrafiche)
-        if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
-    };
-    final excel = Excel.createExcel();
-    final Sheet sheet = excel['Estratti_AMEX'];
-    
-    // Headers
-    sheet.appendRow([
-      TextCellValue('CID'),
-      TextCellValue('NOMINATIVO'),
-      TextCellValue('TRASFERTA'),
-      TextCellValue('VIAGGIATORE'),
-      TextCellValue('BOLLA'),
-      TextCellValue('FORNITORE'),
-      TextCellValue('DATA TRANS.'),
-      TextCellValue('IMPORTO'),
-      TextCellValue('VALUTA'),
-    ]);
+    try {
+      final excel = Excel.createExcel();
+      final sheet = excel['Estratti_AMEX'];
+      excel.delete('Sheet1');
 
-    for (var r in records) {
+      final anagrafiche = ref.read(anagraficaProvider);
+      final anagraficheMap = {
+        for (var a in anagrafiche)
+          if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
+      };
+
+      final allLogs = ref.read(logHistoryProvider);
+      final logsMap = {for (var log in allLogs) log.uniqueCode: log.fileName};
+
+      final contabileRecords = ref.read(tracciatoContabilesProvider);
+      final contabileTrasferte = contabileRecords
+          .map((tc) => tc.numeroTrasferta.trim())
+          .where((t) => t.isNotEmpty)
+          .toSet();
+
+      final dictionaries = ref.read(dictionaryProvider);
+      final contoDictionaryMap = {
+        for (var d in dictionaries)
+          if (d.category == 'conto') d.code: d.value
+      };
+
+      // Headers
       sheet.appendRow([
-        TextCellValue(r.cid ?? ''),
-        TextCellValue(anagraficheMap[r.cid?.trim()] ?? ''),
-        TextCellValue(r.numeroTrasferta ?? ''),
-        TextCellValue(r.nomeViaggiatore ?? ''),
-        TextCellValue(r.bolla ?? ''),
-        TextCellValue(r.nomeFornitore ?? ''),
-        TextCellValue(r.dataTransazione ?? ''),
-        DoubleCellValue(r.importoLordo ?? 0.0),
-        TextCellValue(r.valuta ?? ''),
+        TextCellValue('CID'),
+        TextCellValue('NOMINATIVO'),
+        TextCellValue('TRASFERTA'),
+        TextCellValue('IMPORTO'),
+        TextCellValue('NUMERO CONTO'),
+        TextCellValue('NOME CONTO'),
+        TextCellValue('VIAGGIATORE'),
+        TextCellValue('BOLLA'),
+        TextCellValue('FILE IMPORTAZIONE'),
+        TextCellValue('FORNITORE'),
+        TextCellValue('DATA TRANS.'),
+        TextCellValue('VALUTA'),
+        TextCellValue('RISCONTRO (TRACCIATO CONTABILE)'),
       ]);
-    }
 
-    final String? outputFile = await FilePicker.saveFile(
-      dialogTitle: 'Salva export Excel',
-      fileName: 'export_amex_${DateTime.now().millisecondsSinceEpoch}.xlsx',
-      type: FileType.custom,
-      allowedExtensions: ['xlsx'],
-    );
+      for (var r in records) {
+        final isMatched = r.numeroTrasferta != null && contabileTrasferte.contains(r.numeroTrasferta!.trim());
+        final nomeConto = r.numeroConto != null ? (contoDictionaryMap[r.numeroConto?.trim()] ?? contoDictionaryMap[r.numeroConto] ?? '') : '';
+        sheet.appendRow([
+          TextCellValue(r.cid ?? ''),
+          TextCellValue(anagraficheMap[r.cid?.trim()] ?? ''),
+          TextCellValue(r.numeroTrasferta ?? ''),
+          DoubleCellValue(r.importoLordo ?? 0.0),
+          TextCellValue(r.numeroConto ?? ''),
+          TextCellValue(nomeConto),
+          TextCellValue(r.nomeViaggiatore ?? ''),
+          TextCellValue(r.bolla ?? ''),
+          TextCellValue(r.logHistoryId != null ? (logsMap[r.logHistoryId] ?? '') : ''),
+          TextCellValue(r.nomeFornitore ?? ''),
+          TextCellValue(r.dataTransazione ?? ''),
+          TextCellValue(r.valuta ?? ''),
+          TextCellValue(isMatched ? 'PRESENTI' : 'IN ATTESA'),
+        ]);
+      }
 
-    if (outputFile != null) {
-      final file = File(outputFile);
-      await file.writeAsBytes(excel.encode()!);
+      // STILI (Simili a Scarti Tracciato)
+      final headerStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#C4121A'), // TIM Red
+        fontColorHex: ExcelColor.fromHexString('#FFFFFF'),
+        bold: true,
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final matchedStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#D4EDDA'), // Light green
+        fontColorHex: ExcelColor.fromHexString('#155724'), // Dark green
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final matchedCenterStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#D4EDDA'),
+        fontColorHex: ExcelColor.fromHexString('#155724'),
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final matchedAmountStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#D4EDDA'),
+        fontColorHex: ExcelColor.fromHexString('#155724'),
+        horizontalAlign: HorizontalAlign.Right,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final waitingStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#FFF3CD'), // Light orange
+        fontColorHex: ExcelColor.fromHexString('#856404'), // Dark orange
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final waitingCenterStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#FFF3CD'),
+        fontColorHex: ExcelColor.fromHexString('#856404'),
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final waitingAmountStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#FFF3CD'),
+        fontColorHex: ExcelColor.fromHexString('#856404'),
+        horizontalAlign: HorizontalAlign.Right,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      const colCount = 13;
+      for (var col = 0; col < colCount; col++) {
+        final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+        cell.cellStyle = headerStyle;
+      }
+      sheet.setRowHeight(0, 30);
+
+      int rowIndex = 1;
+      for (final r in records) {
+        sheet.setRowHeight(rowIndex, 22);
+        final isMatched = r.numeroTrasferta != null && contabileTrasferte.contains(r.numeroTrasferta!.trim());
+        final rowStyle = isMatched ? matchedStyle : waitingStyle;
+        final centerStyle = isMatched ? matchedCenterStyle : waitingCenterStyle;
+        final amountStyle = isMatched ? matchedAmountStyle : waitingAmountStyle;
+
+        for (var col = 0; col < colCount; col++) {
+          final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: rowIndex));
+          if (col == 3) { // Importo
+            cell.cellStyle = amountStyle;
+          } else if (col == 0 || col == 2 || col == 4 || col == 8 || col == 10 || col == 11 || col == 12) { // CID, Trasferta, Numero Conto, File, Data, Valuta, Riscontro
+            cell.cellStyle = centerStyle;
+          } else {
+            cell.cellStyle = rowStyle;
+          }
+        }
+        rowIndex++;
+      }
+
+      final fileBytes = excel.encode();
+      if (fileBytes == null) return;
+
+      final outputFile = await FilePicker.saveFile(
+        dialogTitle: 'Salva export Excel Estratti AMEX',
+        fileName: 'export_amex_${DateTime.now().millisecondsSinceEpoch}.xlsx',
+        type: FileType.custom,
+        allowedExtensions: ['xlsx'],
+      );
+
+      if (outputFile != null) {
+        final file = File(outputFile);
+        await file.writeAsBytes(fileBytes);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Esportazione Estratti AMEX completata con successo!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Export completato con successo')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Errore durante l\'esportazione: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     }
   }

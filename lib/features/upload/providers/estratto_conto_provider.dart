@@ -174,6 +174,10 @@ Future<List<Map<String, dynamic>>> _parseExcelIsolate(Map<String, dynamic> param
     }
   }
 
+  if (documentSheetName == null && excel.tables.keys.isNotEmpty) {
+    documentSheetName = excel.tables.keys.first;
+  }
+
   if (documentSheetName == null) {
     throw Exception('Foglio "Document" non trovato.');
   }
