@@ -42,6 +42,7 @@ final controlsMatchStatusProvider = StateProvider<String?>((ref) => null); // nu
 final controlsMinDiffProvider = StateProvider<double?>((ref) => null);
 final controlsMaxDiffProvider = StateProvider<double?>((ref) => null);
 final controlsCidMismatchProvider = StateProvider<bool>((ref) => false);
+final controlsMultipleHotelsProvider = StateProvider<bool>((ref) => false);
 
 class ControlsView extends ConsumerStatefulWidget {
   const ControlsView({super.key});
@@ -110,6 +111,11 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
     final allAnagrafica = ref.watch(anagraficaProvider);
     final anagraficaMap = {for (var a in allAnagrafica) (a.cid ?? '').trim(): (a.nominativo ?? '').trim()};
+
+    final dictionaries = ref.watch(dictionaryProvider);
+    final dictionaryMap = {
+      for (final entry in dictionaries) entry.code: entry.value,
+    };
 
     final isCompactList = MediaQuery.of(context).size.width < 1100;
 
@@ -275,6 +281,19 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       }).toList();
     }
 
+    final showMultipleHotelsOnly = ref.watch(controlsMultipleHotelsProvider);
+    if (showMultipleHotelsOnly) {
+      trasferte = trasferte.where((t) {
+        final recordsTrasferta = groupedRecords[t]!;
+        final hotelCount = recordsTrasferta.where((r) {
+          final code = r.giustificativoSpesa.trim().toUpperCase();
+          final desc = (dictionaryMap[r.giustificativoSpesa] ?? '').toLowerCase();
+          return code.contains('ALP') || desc.contains('alloggio') || desc.contains('hotel');
+        }).length;
+        return hotelCount > 1;
+      }).toList();
+    }
+
     trasferte.sort((a, b) => sortAscending ? a.compareTo(b) : b.compareTo(a));
 
     double globalTracciato = 0;
@@ -309,10 +328,6 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     final endIndex = (startIndex + pageSize).clamp(0, trasferte.length);
     final paginatedTrasferte = trasferte.sublist(startIndex, endIndex);
 
-    final dictionaries = ref.watch(dictionaryProvider);
-    final dictionaryMap = {
-      for (final entry in dictionaries) entry.code: entry.value,
-    };
 
     final activeFiltersCount = [
       startDate != null,
@@ -323,6 +338,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       maxDiff != null,
       matchStatusFilter != null,
       ref.watch(controlsShowOnlyOrphansProvider),
+      cidMismatchFilter,
+      showMultipleHotelsOnly,
       searchQuery.isNotEmpty,
       selectedLogHistoryIds.isNotEmpty,
     ].where((e) => e).length;
@@ -507,6 +524,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             
                             if (ref.watch(controlsCidMismatchProvider))
                               _buildFilterChip('CID Differenti', () => ref.read(controlsCidMismatchProvider.notifier).state = false),
+                            
+                            if (ref.watch(controlsMultipleHotelsProvider))
+                              _buildFilterChip(' >1 Tracciato Hotel', () => ref.read(controlsMultipleHotelsProvider.notifier).state = false),
                             
                             if (selectedLogHistoryIds.isNotEmpty)
                               _buildFilterChip(
@@ -781,6 +801,13 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 }
                 final bool hasCidMismatch = allCids.length > 1;
 
+                final hotelRecordsCount = recordsTrasferta.where((r) {
+                  final code = r.giustificativoSpesa.trim().toUpperCase();
+                  final desc = (dictionaryMap[r.giustificativoSpesa] ?? '').toLowerCase();
+                  return code.contains('ALP') || desc.contains('alloggio') || desc.contains('hotel');
+                }).length;
+                final bool hasMultipleHotels = hotelRecordsCount > 1;
+
                 final isMatching = (totaleTrasferta - totaleEC).abs() < 0.001;
                 
                 final statusBgColor = isMatching ? Colors.purple.shade50 : Colors.red.shade50;
@@ -834,6 +861,17 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                     color: statusTextColor,
                                   ),
                                 ),
+                                if (hasMultipleHotels) ...[
+                                  const SizedBox(width: 4),
+                                  Tooltip(
+                                    message: 'Ha $hotelRecordsCount tracciati hotel',
+                                    child: Icon(
+                                      Icons.hotel,
+                                      size: isUltraCompact ? 12 : (isVeryCompact ? 14 : (isCompactList ? 16 : 18)),
+                                      color: Colors.amber.shade900,
+                                    ),
+                                  ),
+                                ],
                                 const SizedBox(width: 6),
                                 Material(
                                   color: Colors.transparent,
@@ -996,6 +1034,33 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                       ),
                                     ),
                                   ],
+                                ),
+                              ),
+                            // BADGE MOLTEPLICI HOTEL (Ambra/Arancione scuro)
+                            if (hasMultipleHotels)
+                              Tooltip(
+                                message: 'Trasferta con $hotelRecordsCount tracciati hotel',
+                                child: Container(
+                                  padding: badgePadding,
+                                  decoration: BoxDecoration(
+                                    color: Colors.amber.shade900,
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.hotel, size: badgeIconSize, color: Colors.white),
+                                      const SizedBox(width: 4),
+                                      Text(
+                                        isUltraCompact ? '>1 HOTEL' : '>1 TRACCIATO HOTEL ($hotelRecordsCount)',
+                                        style: TextStyle(
+                                          fontSize: badgeFontSize,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                           ],
@@ -2755,6 +2820,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     ref.read(controlsPageProvider.notifier).state = 0;
     ref.read(controlsShowOnlyOrphansProvider.notifier).state = false;
     ref.read(controlsCidMismatchProvider.notifier).state = false;
+    ref.read(controlsMultipleHotelsProvider.notifier).state = false;
     ref.read(controlsMinDiffProvider.notifier).state = null;
     ref.read(controlsMaxDiffProvider.notifier).state = null;
     ref.read(controlsMatchStatusProvider.notifier).state = null;
@@ -2985,6 +3051,14 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                   title: const Text('CID Differenti', style: TextStyle(fontSize: 14)),
                   value: ref.watch(controlsCidMismatchProvider),
                   onChanged: (v) => ref.read(controlsCidMismatchProvider.notifier).state = v,
+                  activeThumbColor: SkyTheme.timBlue,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                SwitchListTile(
+                  title: const Text('Più di un Tracciato Hotel', style: TextStyle(fontSize: 14)),
+                  subtitle: const Text('Mostra solo trasferte con 2+ tracciati hotel', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                  value: ref.watch(controlsMultipleHotelsProvider),
+                  onChanged: (v) => ref.read(controlsMultipleHotelsProvider.notifier).state = v,
                   activeThumbColor: SkyTheme.timBlue,
                   contentPadding: EdgeInsets.zero,
                 ),
