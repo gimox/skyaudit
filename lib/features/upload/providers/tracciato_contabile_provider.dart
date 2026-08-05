@@ -15,9 +15,13 @@ class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
   @override
   List<TracciatoContabile> build() {
     final isar = ref.watch(isarProvider);
-    // Caricamento iniziale dal database - Isar è molto veloce, ma findAllSync
-    // può bloccare la UI se i record sono centinaia di migliaia.
-    return isar.tracciatoContabiles.where().anyId().findAllSync();
+    _loadInitialData(isar);
+    return [];
+  }
+
+  Future<void> _loadInitialData(Isar isar) async {
+    final records = await isar.tracciatoContabiles.where().anyId().findAll();
+    state = records;
   }
 
   Future<Map<String, dynamic>> loadFromFile(XFile file) async {

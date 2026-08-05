@@ -82,9 +82,12 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     super.dispose();
   }
 
+  static final RegExp _leadingZerosRegex = RegExp(r'^0+');
+  static final RegExp _dateRegex = RegExp(r'[./-]');
+
   String _cleanT(String? s) {
     if (s == null) return '';
-    return s.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
+    return s.trim().split('.')[0].replaceAll(_leadingZerosRegex, '');
   }
 
   @override
@@ -177,6 +180,32 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       }).toList();
     }
 
+    final Map<String, List<TracciatoSap>> sapMapByCleanedT = {};
+    for (int i = 0; i < allSapRecords.length; i++) {
+      final s = allSapRecords[i];
+      final key = _cleanT(s.numeroTrasferta);
+      if (key.isNotEmpty) {
+        sapMapByCleanedT.putIfAbsent(key, () => []).add(s);
+      }
+    }
+
+    final Map<String, List<EstrattoConto>> ecMapByT = {};
+    for (int i = 0; i < allEstrattiConto.length; i++) {
+      final ec = allEstrattiConto[i];
+      if (ec.numeroTrasferta.isNotEmpty) {
+        ecMapByT.putIfAbsent(ec.numeroTrasferta, () => []).add(ec);
+      }
+    }
+
+    final Map<String, List<EstrattoAmex>> amexMapByT = {};
+    for (int i = 0; i < allAmexRecords.length; i++) {
+      final ame = allAmexRecords[i];
+      final numTr = ame.numeroTrasferta;
+      if (numTr != null && numTr.isNotEmpty) {
+        amexMapByT.putIfAbsent(numTr, () => []).add(ame);
+      }
+    }
+
     final startDate = ref.watch(controlsStartDateProvider);
     final endDate = ref.watch(controlsEndDateProvider);
 
@@ -186,7 +215,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         selectedTipo.isNotEmpty) {
       trasferte = trasferte.where((t) {
         final records = groupedRecords[t] ?? [];
-        final sapForT = allSapRecords.where((sap) => _cleanT(sap.numeroTrasferta) == _cleanT(t)).toList();
+        final sapForT = sapMapByCleanedT[_cleanT(t)] ?? const [];
         final societa = records.isNotEmpty ? records.first.societa : (sapForT.isNotEmpty ? sapForT.first.societaCodice : '');
         final tipo = records.isNotEmpty ? records.first.tipoDipendente : (sapForT.isNotEmpty ? sapForT.first.tipoDipendente : '');
 
@@ -201,7 +230,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         if (startDate != null || endDate != null) {
           final dataStr = records.isNotEmpty ? records.first.dataFine : (sapForT.isNotEmpty ? sapForT.first.data : '');
           try {
-            final parts = dataStr.split(RegExp(r'[./-]'));
+            final parts = dataStr.split(_dateRegex);
             if (parts.length == 3) {
               final recordDate = DateTime(
                 int.parse(parts[2]),
@@ -226,11 +255,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       trasferte = trasferte.where((t) {
         final recordsTrasferta = groupedRecords[t]!;
         final bolleInTracciato = recordsTrasferta.map((r) => r.numeroBolla).toSet();
+        final ecForT = ecMapByT[t] ?? const [];
         
-        final orphans = allEstrattiConto.where((ec) => 
-          ec.numeroTrasferta == t && 
-          !bolleInTracciato.contains(ec.bolla)
-        );
+        final orphans = ecForT.where((ec) => !bolleInTracciato.contains(ec.bolla));
         
         return orphans.isNotEmpty;
       }).toList();
@@ -259,15 +286,15 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           tTracciato += r.isNegative ? -r.importo : r.importo;
         }
 
-        final ecForTrasferta = allEstrattiConto.where((ec) => ec.numeroTrasferta == t).toList();
+        final ecForTrasferta = ecMapByT[t] ?? const [];
         final tEC = ecForTrasferta.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
         final isMatchingEC = (tTracciato - tEC).abs() < 0.001;
 
-        final sapForTrasferta = allSapRecords.where((sap) => _cleanT(sap.numeroTrasferta) == _cleanT(t)).toList();
+        final sapForTrasferta = sapMapByCleanedT[_cleanT(t)] ?? const [];
         final tSap = sapForTrasferta.fold<double>(0, (sum, sap) => sum + sap.importo);
         final isMatchingSap = (tTracciato - tSap).abs() < 0.001;
 
-        final amexForTrasferta = allAmexRecords.where((ame) => ame.numeroTrasferta == t).toList();
+        final amexForTrasferta = amexMapByT[t] ?? const [];
         final tAmex = amexForTrasferta.fold<double>(0, (sum, ame) => sum + (ame.importoLordo ?? 0));
         final isMatchingAmex = (tTracciato - tAmex).abs() < 0.001;
 
@@ -297,7 +324,6 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           }
           if (cids.length <= 1) return false;
         }
-
 
         if (minDiff != null && (tTracciato - tEC).abs() < minDiff) return false;
         if (maxDiff != null && (tTracciato - tEC).abs() > maxDiff) return false;
@@ -329,11 +355,11 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       for (final r in records) {
         globalTracciato += r.isNegative ? -r.importo : r.importo;
       }
-      final ecForT = allEstrattiConto.where((ec) => ec.numeroTrasferta == t);
+      final ecForT = ecMapByT[t] ?? const [];
       for (final ec in ecForT) {
         globalEC += ec.totaleServizio;
       }
-      final amexForT = allAmexRecords.where((ame) => ame.numeroTrasferta == t);
+      final amexForT = amexMapByT[t] ?? const [];
       for (final ame in amexForT) {
         globalAmex += ame.importoLordo ?? 0;
       }

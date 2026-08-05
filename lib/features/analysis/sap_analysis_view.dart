@@ -27,6 +27,23 @@ final sapSortAscendingProvider = StateProvider<bool>((ref) => false);
 enum SapTrasfertaPresenzaFilter { all, present, notPresent }
 final sapTrasfertaPresenzaFilterProvider = StateProvider<SapTrasfertaPresenzaFilter>((ref) => SapTrasfertaPresenzaFilter.all);
 
+final _sapDateRegex = RegExp(r'[./-]');
+
+String _getSapSortKey(String data) {
+  if (data.length >= 10 && data[2] == '/' && data[5] == '/') {
+    return '${data.substring(6, 10)}${data.substring(3, 5)}${data.substring(0, 2)}';
+  }
+  final parts = data.split(_sapDateRegex);
+  if (parts.length == 3) {
+    if (parts[0].length == 4) {
+      return '${parts[0]}${parts[1].padLeft(2, '0')}${parts[2].padLeft(2, '0')}';
+    } else {
+      return '${parts[2].padLeft(4, '0')}${parts[1].padLeft(2, '0')}${parts[0].padLeft(2, '0')}';
+    }
+  }
+  return data;
+}
+
 class SapAnalysisView extends ConsumerStatefulWidget {
   const SapAnalysisView({super.key});
 
@@ -118,14 +135,18 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       selectedLogHistoryIds.isNotEmpty,
     ].where((e) => e).length;
 
-    // Estrai anni disponibili (formato data SAP potrebbe variare, assumiamo DD.MM.YYYY o simile)
-    final availableYears = allRecords.map((r) {
-      final parts = r.data.split(RegExp(r'[./-]'));
-      if (parts.length == 3) return parts[2];
-      return '';
-    }).where((y) => y.isNotEmpty).toSet().toList()..sort();
-
-    final availableSocieta = allRecords.map((r) => r.societaCodice).where((s) => s.isNotEmpty).toSet().toList()..sort();
+    final Set<String> yearSet = {};
+    final Set<String> societaSet = {};
+    for (int i = 0; i < allRecords.length; i++) {
+      final r = allRecords[i];
+      if (r.societaCodice.isNotEmpty) societaSet.add(r.societaCodice);
+      final parts = r.data.split(_sapDateRegex);
+      if (parts.length == 3 && parts[2].isNotEmpty) {
+        yearSet.add(parts[2]);
+      }
+    }
+    final availableYears = yearSet.toList()..sort();
+    final availableSocieta = societaSet.toList()..sort();
 
     const monthNames = {
       '01': 'Gennaio', '02': 'Febbraio', '03': 'Marzo', '04': 'Aprile',
@@ -133,54 +154,44 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       '09': 'Settembre', '10': 'Ottobre', '11': 'Novembre', '12': 'Dicembre',
     };
 
-    final filteredRecords = allRecords.where((r) {
-      if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) return false;
-      final parts = r.data.split(RegExp(r'[./-]'));
+    final filteredRecords = <TracciatoSap>[];
+    for (int i = 0; i < allRecords.length; i++) {
+      final r = allRecords[i];
+      if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) continue;
+      
+      final parts = r.data.split(_sapDateRegex);
       String? month, year;
       if (parts.length == 3) {
         month = parts[1].padLeft(2, '0');
         year = parts[2];
       }
 
-      if (selectedMonth != null && month != selectedMonth) {
-        return false;
-      }
-      if (selectedYear != null && year != selectedYear) {
-        return false;
-      }
+      if (selectedMonth != null && month != selectedMonth) continue;
+      if (selectedYear != null && year != selectedYear) continue;
       if (selectedTrasferta != null) {
         final query = selectedTrasferta.toLowerCase();
         if (!r.numeroTrasferta.toLowerCase().contains(query) && 
             !r.cid.toLowerCase().contains(query) &&
             !(r.cdRichiesta?.toLowerCase().contains(query) ?? false)) {
-          return false;
+          continue;
         }
       }
-      if (selectedSocieta.isNotEmpty && !selectedSocieta.contains(r.societaCodice)) {
-        return false;
-      }
-      if (selectedRichiesta != null && r.cdRichiesta != null && !r.cdRichiesta!.contains(selectedRichiesta)) {
-        return false;
-      }
+      if (selectedSocieta.isNotEmpty && !selectedSocieta.contains(r.societaCodice)) continue;
+      if (selectedRichiesta != null && r.cdRichiesta != null && !r.cdRichiesta!.contains(selectedRichiesta)) continue;
 
-      // Filtro Presenza in Tracciato Contabile
       if (trasfertaFilter != SapTrasfertaPresenzaFilter.all) {
         final isPresent = contabileTrasferte.contains(r.numeroTrasferta.trim());
-        if (trasfertaFilter == SapTrasfertaPresenzaFilter.present && !isPresent) return false;
-        if (trasfertaFilter == SapTrasfertaPresenzaFilter.notPresent && isPresent) return false;
+        if (trasfertaFilter == SapTrasfertaPresenzaFilter.present && !isPresent) continue;
+        if (trasfertaFilter == SapTrasfertaPresenzaFilter.notPresent && isPresent) continue;
       }
 
-      return true;
-    }).toList()..sort((a, b) {
-      try {
-        final pA = a.data.split('/');
-        final dA = DateTime(int.parse(pA[2]), int.parse(pA[1]), int.parse(pA[0]));
-        final pB = b.data.split('/');
-        final dB = DateTime(int.parse(pB[2]), int.parse(pB[1]), int.parse(pB[0]));
-        return sortAscending ? dA.compareTo(dB) : dB.compareTo(dA);
-      } catch (_) {
-        return sortAscending ? a.data.compareTo(b.data) : b.data.compareTo(a.data);
-      }
+      filteredRecords.add(r);
+    }
+
+    filteredRecords.sort((a, b) {
+      final keyA = _getSapSortKey(a.data);
+      final keyB = _getSapSortKey(b.data);
+      return sortAscending ? keyA.compareTo(keyB) : keyB.compareTo(keyA);
     });
 
     final totalPages = (filteredRecords.length / pageSize).ceil();
@@ -190,21 +201,32 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     final paginatedRecords = filteredRecords.sublist(startIndex, endIndex);
 
     final totalFiltered = filteredRecords.length;
-    final uniqueTravelNumbers = filteredRecords.map((r) => r.numeroTrasferta.trim()).where((t) => t.isNotEmpty).toSet();
-    final okTravels = uniqueTravelNumbers.where((t) => contabileTrasferte.contains(t)).toSet();
-    final koTravels = uniqueTravelNumbers.where((t) => !contabileTrasferte.contains(t)).toSet();
+    double totalAmount = 0.0;
+    double okAmount = 0.0;
+    double koAmount = 0.0;
+    final Set<String> uniqueTravelNumbers = {};
+    final Set<String> okTravels = {};
+    final Set<String> koTravels = {};
+
+    for (int i = 0; i < filteredRecords.length; i++) {
+      final r = filteredRecords[i];
+      totalAmount += r.importo;
+      final t = r.numeroTrasferta.trim();
+      if (t.isNotEmpty) {
+        uniqueTravelNumbers.add(t);
+        if (contabileTrasferte.contains(t)) {
+          okTravels.add(t);
+          okAmount += r.importo;
+        } else {
+          koTravels.add(t);
+          koAmount += r.importo;
+        }
+      }
+    }
 
     final okTravelsCount = okTravels.length;
     final koTravelsCount = koTravels.length;
     final totalFilteredTravels = uniqueTravelNumbers.length;
-
-    final double totalAmount = filteredRecords.fold(0.0, (sum, r) => sum + r.importo);
-    final double okAmount = filteredRecords
-        .where((r) => okTravels.contains(r.numeroTrasferta.trim()))
-        .fold(0.0, (sum, r) => sum + r.importo);
-    final double koAmount = filteredRecords
-        .where((r) => koTravels.contains(r.numeroTrasferta.trim()))
-        .fold(0.0, (sum, r) => sum + r.importo);
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,

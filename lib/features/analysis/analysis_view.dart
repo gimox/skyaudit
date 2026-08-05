@@ -44,6 +44,17 @@ enum ContabileScartoFilter {
 
 final tcScartoFilterProvider = StateProvider<ContabileScartoFilter>((ref) => ContabileScartoFilter.all);
 
+String _getTcSortKey(String dataSpesa) {
+  if (dataSpesa.length >= 10 && dataSpesa[2] == '/' && dataSpesa[5] == '/') {
+    return '${dataSpesa.substring(6, 10)}${dataSpesa.substring(3, 5)}${dataSpesa.substring(0, 2)}';
+  }
+  final parts = dataSpesa.split('/');
+  if (parts.length == 3) {
+    return '${parts[2].padLeft(4, '0')}${parts[1].padLeft(2, '0')}${parts[0].padLeft(2, '0')}';
+  }
+  return dataSpesa;
+}
+
 class AnalysisView extends ConsumerStatefulWidget {
   const AnalysisView({super.key});
 
@@ -257,25 +268,11 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
 
           return true;
         }).toList()..sort((a, b) {
-          try {
-            final partsA = a.dataSpesa.split('/');
-            final dateA = DateTime(
-              int.parse(partsA[2]),
-              int.parse(partsA[1]),
-              int.parse(partsA[0]),
-            );
-            final partsB = b.dataSpesa.split('/');
-            final dateB = DateTime(
-              int.parse(partsB[2]),
-              int.parse(partsB[1]),
-              int.parse(partsB[0]),
-            );
-            return sortAscending
-                ? dateA.compareTo(dateB)
-                : dateB.compareTo(dateA);
-          } catch (e) {
-            return 0;
-          }
+          final keyA = _getTcSortKey(a.dataSpesa);
+          final keyB = _getTcSortKey(b.dataSpesa);
+          return sortAscending
+              ? keyA.compareTo(keyB)
+              : keyB.compareTo(keyA);
         });
 
     final totalPages = (filteredRecords.length / pageSize).ceil();

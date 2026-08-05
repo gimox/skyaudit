@@ -13,7 +13,13 @@ class EstrattoContoNotifier extends Notifier<List<EstrattoConto>> {
   @override
   List<EstrattoConto> build() {
     final isar = ref.watch(isarProvider);
-    return isar.estrattoContos.where().anyId().findAllSync();
+    _loadInitialData(isar);
+    return [];
+  }
+
+  Future<void> _loadInitialData(Isar isar) async {
+    final records = await isar.estrattoContos.where().anyId().findAll();
+    state = records;
   }
 
   Future<Map<String, dynamic>> loadFromFile(XFile file) async {

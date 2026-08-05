@@ -13,7 +13,13 @@ class TracciatoSapNotifier extends Notifier<List<TracciatoSap>> {
   @override
   List<TracciatoSap> build() {
     final isar = ref.watch(isarProvider);
-    return isar.tracciatoSaps.where().anyId().findAllSync();
+    _loadInitialData(isar);
+    return [];
+  }
+
+  Future<void> _loadInitialData(Isar isar) async {
+    final records = await isar.tracciatoSaps.where().anyId().findAll();
+    state = records;
   }
 
   Future<Map<String, dynamic>> loadFromFile(XFile file) async {
