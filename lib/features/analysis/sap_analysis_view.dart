@@ -19,6 +19,7 @@ final sapMonthProvider = StateProvider<String?>((ref) => null);
 final sapYearProvider = StateProvider<String?>((ref) => null);
 final sapTrasfertaProvider = StateProvider<String?>((ref) => null);
 final sapSocietaProvider = StateProvider<Set<String>>((ref) => {});
+final sapTipoDipendenteProvider = StateProvider<Set<String>>((ref) => {});
 final sapRichiestaProvider = StateProvider<String?>((ref) => null);
 final sapSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final sapPageProvider = StateProvider<int>((ref) => 0);
@@ -75,6 +76,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     final selectedTrasferta = ref.watch(sapTrasfertaProvider);
     final selectedRichiesta = ref.watch(sapRichiestaProvider);
     final selectedSocieta = ref.watch(sapSocietaProvider);
+    final selectedTipoDipendente = ref.watch(sapTipoDipendenteProvider);
     final selectedLogHistoryIds = ref.watch(sapSelectedLogHistoryIdsProvider);
     final allLogs = ref.watch(logHistoryProvider);
     String? selectedLogFileName;
@@ -129,6 +131,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       selectedMonth != null,
       selectedYear != null,
       selectedSocieta.isNotEmpty,
+      selectedTipoDipendente.isNotEmpty,
       selectedTrasferta != null,
       selectedRichiesta != null,
       trasfertaFilter != SapTrasfertaPresenzaFilter.all,
@@ -137,9 +140,11 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
 
     final Set<String> yearSet = {};
     final Set<String> societaSet = {};
+    final Set<String> tipoDipendenteSet = {};
     for (int i = 0; i < allRecords.length; i++) {
       final r = allRecords[i];
       if (r.societaCodice.isNotEmpty) societaSet.add(r.societaCodice);
+      if (r.tipoDipendente.isNotEmpty) tipoDipendenteSet.add(r.tipoDipendente);
       final parts = r.data.split(_sapDateRegex);
       if (parts.length == 3 && parts[2].isNotEmpty) {
         yearSet.add(parts[2]);
@@ -147,6 +152,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     }
     final availableYears = yearSet.toList()..sort();
     final availableSocieta = societaSet.toList()..sort();
+    final availableTipoDipendente = tipoDipendenteSet.toList()..sort();
 
     const monthNames = {
       '01': 'Gennaio', '02': 'Febbraio', '03': 'Marzo', '04': 'Aprile',
@@ -177,6 +183,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
         }
       }
       if (selectedSocieta.isNotEmpty && !selectedSocieta.contains(r.societaCodice)) continue;
+      if (selectedTipoDipendente.isNotEmpty && !selectedTipoDipendente.contains(r.tipoDipendente)) continue;
       if (selectedRichiesta != null && r.cdRichiesta != null && !r.cdRichiesta!.contains(selectedRichiesta)) continue;
 
       if (trasfertaFilter != SapTrasfertaPresenzaFilter.all) {
@@ -230,7 +237,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      endDrawer: _buildFilterDrawer(context, ref, availableYears, availableSocieta),
+      endDrawer: _buildFilterDrawer(context, ref, availableYears, availableSocieta, availableTipoDipendente),
       floatingActionButton: filteredRecords.isNotEmpty 
           ? FloatingActionButton(
               onPressed: () => _exportToExcel(filteredRecords),
@@ -350,6 +357,14 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                           return _buildFilterChip('Società: $label', () {
                             final next = Set<String>.from(selectedSocieta)..remove(soc);
                             ref.read(sapSocietaProvider.notifier).state = next;
+                          });
+                        }),
+                        ...selectedTipoDipendente.map((tipo) {
+                          final tipoDesc = dictionaryMap[tipo];
+                          final label = tipoDesc != null ? '$tipo - $tipoDesc' : tipo;
+                          return _buildFilterChip('Tipo Dip.: $label', () {
+                            final next = Set<String>.from(selectedTipoDipendente)..remove(tipo);
+                            ref.read(sapTipoDipendenteProvider.notifier).state = next;
                           });
                         }),
                         if (trasfertaFilter != SapTrasfertaPresenzaFilter.all)
@@ -651,6 +666,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     ref.read(sapYearProvider.notifier).state = null;
     ref.read(sapMonthProvider.notifier).state = null;
     ref.read(sapSocietaProvider.notifier).state = {};
+    ref.read(sapTipoDipendenteProvider.notifier).state = {};
     ref.read(sapRichiestaProvider.notifier).state = null;
     ref.read(sapSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(sapTrasfertaPresenzaFilterProvider.notifier).state = SapTrasfertaPresenzaFilter.all;
@@ -713,7 +729,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     );
   }
 
-  Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, List<String> years, List<String> societa) {
+  Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, List<String> years, List<String> societa, List<String> tipiDipendente) {
     final monthNames = {
       '01': 'Gennaio', '02': 'Febbraio', '03': 'Marzo', '04': 'Aprile',
       '05': 'Maggio', '06': 'Giugno', '07': 'Luglio', '08': 'Agosto',
@@ -810,6 +826,24 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                     ref.read(sapSocietaProvider.notifier).state = next;
                   },
                   icon: Icons.business,
+                  dictionaryMap: dictionaryMap,
+                ),
+                const SizedBox(height: 24),
+                _buildChipsMultiSelectFilter(
+                  'Tipo Dipendente',
+                  ref.watch(sapTipoDipendenteProvider),
+                  tipiDipendente,
+                  (val) {
+                    final current = ref.read(sapTipoDipendenteProvider);
+                    final next = Set<String>.from(current);
+                    if (next.contains(val)) {
+                      next.remove(val);
+                    } else {
+                      next.add(val);
+                    }
+                    ref.read(sapTipoDipendenteProvider.notifier).state = next;
+                  },
+                  icon: Icons.badge_outlined,
                   dictionaryMap: dictionaryMap,
                 ),
                 const SizedBox(height: 24),
