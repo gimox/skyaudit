@@ -230,18 +230,46 @@ class _AnagraficaViewState extends ConsumerState<AnagraficaView> {
       selectedLogHistoryIds.isNotEmpty,
     ].where((e) => e).length;
 
-    // Estrattori valori unici per i filtri
-    final livelliList = allRecords.map((e) => e.livello ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
-    final gradiList = allRecords.map((e) => e.gradoOccupaz ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
-    final etaList = allRecords.map((e) => _parseAge(e.dataNascita)).whereType<int>().toSet().toList()..sort();
-    final solidarietaList = allRecords.map((e) => e.contrSolidarieta ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
-    final societaList = allRecords.map((e) => e.societa ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
-    final comuniList = allRecords.map((e) => e.sedeComune ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
-    final provinceList = allRecords.map((e) => e.provincia ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
-    final partFullList = allRecords.map((e) => e.partTimeFullTime ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
-    final responsabiliList = allRecords.map((e) => e.nominativoResponsabileUO ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
-    final gestoriList = allRecords.map((e) => e.nominativoGestore ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
-    final statusList = allRecords.map((e) => e.status ?? '').where((e) => e.isNotEmpty).toSet().toList()..sort();
+    // Estrattori valori unici per i filtri (ottimizzato in singolo passaggio)
+    final Set<String> livelliSet = {};
+    final Set<String> gradiSet = {};
+    final Set<int> etaSet = {};
+    final Set<String> solidarietaSet = {};
+    final Set<String> societaSet = {};
+    final Set<String> comuniSet = {};
+    final Set<String> provinceSet = {};
+    final Set<String> partFullSet = {};
+    final Set<String> responsabiliSet = {};
+    final Set<String> gestoriSet = {};
+    final Set<String> statusSet = {};
+
+    for (int i = 0; i < allRecords.length; i++) {
+      final e = allRecords[i];
+      if (e.livello != null && e.livello!.isNotEmpty) livelliSet.add(e.livello!);
+      if (e.gradoOccupaz != null && e.gradoOccupaz!.isNotEmpty) gradiSet.add(e.gradoOccupaz!);
+      final age = _parseAge(e.dataNascita);
+      if (age != null) etaSet.add(age);
+      if (e.contrSolidarieta != null && e.contrSolidarieta!.isNotEmpty) solidarietaSet.add(e.contrSolidarieta!);
+      if (e.societa != null && e.societa!.isNotEmpty) societaSet.add(e.societa!);
+      if (e.sedeComune != null && e.sedeComune!.isNotEmpty) comuniSet.add(e.sedeComune!);
+      if (e.provincia != null && e.provincia!.isNotEmpty) provinceSet.add(e.provincia!);
+      if (e.partTimeFullTime != null && e.partTimeFullTime!.isNotEmpty) partFullSet.add(e.partTimeFullTime!);
+      if (e.nominativoResponsabileUO != null && e.nominativoResponsabileUO!.isNotEmpty) responsabiliSet.add(e.nominativoResponsabileUO!);
+      if (e.nominativoGestore != null && e.nominativoGestore!.isNotEmpty) gestoriSet.add(e.nominativoGestore!);
+      if (e.status != null && e.status!.isNotEmpty) statusSet.add(e.status!);
+    }
+
+    final livelliList = livelliSet.toList()..sort();
+    final gradiList = gradiSet.toList()..sort();
+    final etaList = etaSet.toList()..sort();
+    final solidarietaList = solidarietaSet.toList()..sort();
+    final societaList = societaSet.toList()..sort();
+    final comuniList = comuniSet.toList()..sort();
+    final provinceList = provinceSet.toList()..sort();
+    final partFullList = partFullSet.toList()..sort();
+    final responsabiliList = responsabiliSet.toList()..sort();
+    final gestoriList = gestoriSet.toList()..sort();
+    final statusList = statusSet.toList()..sort();
 
     // Filtra i record
     final filteredRecords = allRecords.where((r) {

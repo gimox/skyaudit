@@ -13,7 +13,13 @@ class AnagraficaNotifier extends Notifier<List<Anagrafica>> {
   @override
   List<Anagrafica> build() {
     final isar = ref.watch(isarProvider);
-    return isar.anagraficas.where().anyId().findAllSync();
+    _loadInitialData(isar);
+    return [];
+  }
+
+  Future<void> _loadInitialData(Isar isar) async {
+    final records = await isar.anagraficas.where().anyId().findAll();
+    state = records;
   }
 
   Future<Map<String, dynamic>> loadFromFile(XFile file) async {

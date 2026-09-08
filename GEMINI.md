@@ -26,10 +26,16 @@
   - UI State: Persistent quick-filters header, highly accessible.
 - **Design Pattern:** Enterprise dashboard, precise alignments, clean padding. Standard Material 3 implementation.
 
-## 3. DATABASE (ISAR) PROTOCOL
+## 3. DATABASE (ISAR) PROTOCOL & PERFORMANCE OPTIMIZATION
 - **Local DB Management Section:** Every new Isar Collection MUST explicitly implement:
   1. A clear UI trigger inside "GESTIONE DATABASE LOCALE" settings to wipe/reset that specific collection.
   2. A corresponding Riverpod Provider to broadcast state updates and force UI re-renders upon deletion or modification.
+- **Async Database Operations:** NEVER use synchronous blocking database queries (e.g., `findAllSync()`) in Riverpod Notifier `build()` methods or screen loading. Always use asynchronous reads (`findAll()`) to ensure zero main-thread UI freezing.
+- **$O(1)$ Map Indexing:** NEVER perform nested linear searches (`.where()`) over collections inside UI `build()` or calculation loops. Always pre-index record relations into `Map<String, List<T>>` for $O(1)$ constant-time lookup.
+- **Fast Sorting & Single-Pass Extraction:**
+  1. Avoid `DateTime` object instantiations and regex `split()` calls inside `.sort()` comparators. Use positional comparison keys (e.g. `YYYYMMDD`).
+  2. Combine metric extractions and unique filter option lists in a single `for` loop pass over collections rather than chaining multiple array methods.
+- **Data Quality & Integrity:** All performance optimizations MUST guarantee 100% data fidelity, exact decimal calculations, and complete filter accuracy.
 
 ## 4. TXT PARSING LOGIC & CHARACTER INDEXING
 - **Source:** *.TXT Fixed-Width Contable File.
