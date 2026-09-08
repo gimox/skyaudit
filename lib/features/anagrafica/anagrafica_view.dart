@@ -2591,7 +2591,7 @@ class _ComuneDistributionDialogContentState extends State<_ComuneDistributionDia
                       ),
                       children: [
                         TileLayer(
-                          urlTemplate: 'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png',
+                          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                           subdomains: const ['a', 'b', 'c', 'd'],
                           userAgentPackageName: 'com.skyaudit.app',
                         ),
