@@ -69,6 +69,12 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
           (a.cid ?? '').trim().padLeft(8, '0'): (a.societa ?? '').trim()
     };
 
+    final anagraficaMap = {
+      for (var a in allAnagrafica)
+        if (a.cid != null)
+          (a.cid ?? '').trim().padLeft(8, '0'): (a.nominativo ?? '').trim()
+    };
+
     final contabileSocietaMap = {
       for (var tc in contabileRecords)
         if (tc.numeroTrasferta.trim().isNotEmpty && tc.societa.trim().isNotEmpty)
@@ -144,8 +150,10 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
       }
       if (selectedQuery != null) {
         final query = selectedQuery.toLowerCase();
+        final nominativo = (anagraficaMap[r.cid.trim().padLeft(8, '0')] ?? '').toLowerCase();
         if (!r.numeroTrasferta.toLowerCase().contains(query) &&
-            !r.cid.toLowerCase().contains(query)) {
+            !r.cid.toLowerCase().contains(query) &&
+            !nominativo.contains(query)) {
           return false;
         }
       }
@@ -232,7 +240,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                               child: TextField(
                                 controller: _searchController,
                                 decoration: const InputDecoration(
-                                  hintText: 'Cerca per trasferta o CID dipendente...', 
+                                  hintText: 'Cerca per trasferta, CID o nominativo...', 
                                   border: InputBorder.none, 
                                   isDense: true
                                 ),
@@ -459,7 +467,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SizedBox(
-                          width: 1170,
+                          width: 1400,
                           child: Column(
                             children: [
                               Container(
@@ -472,6 +480,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                                   children: [
                                     _buildCell('AZIONI', 120, isHeader: true, alignment: Alignment.center),
                                     _buildCell('CID DIPENDENTE', 150, isHeader: true),
+                                    _buildCell('NOMINATIVO', 220, isHeader: true),
                                     _buildCell('SOCIETÀ', 160, isHeader: true),
                                     _buildCell('NUMERO TRASFERTA', 180, isHeader: true),
                                     _buildCell('DATA INIZIO', 160, isHeader: true),
@@ -558,6 +567,11 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                                                   ),
                                                 ],
                                               ),
+                                            ),
+                                            _buildCell(
+                                              anagraficaMap[record.cid.trim().padLeft(8, '0')] ?? '',
+                                              220,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                             _buildCell(
                                               displaySocieta,
@@ -1284,12 +1298,18 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
           if (a.cid != null && a.societa != null)
             (a.cid ?? '').trim().padLeft(8, '0'): (a.societa ?? '').trim()
       };
+      final anagraficaMap = {
+        for (var a in allAnagrafica)
+          if (a.cid != null)
+            (a.cid ?? '').trim().padLeft(8, '0'): (a.nominativo ?? '').trim()
+      };
       final dictionaries = ref.read(dictionaryProvider);
       final dictionaryMap = {for (var d in dictionaries) d.code.trim().toUpperCase(): d.value.trim()};
 
       // Header
       sheet.appendRow([
         TextCellValue('CID'),
+        TextCellValue('Nominativo'),
         TextCellValue('Società'),
         TextCellValue('Numero Trasferta'),
         TextCellValue('Data Inizio'),
@@ -1307,6 +1327,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
 
         sheet.appendRow([
           TextCellValue(r.cid),
+          TextCellValue(anagraficaMap[r.cid.trim().padLeft(8, '0')] ?? ''),
           TextCellValue(displaySocieta),
           TextCellValue(r.numeroTrasferta),
           TextCellValue(r.dataInizioTrasferta),

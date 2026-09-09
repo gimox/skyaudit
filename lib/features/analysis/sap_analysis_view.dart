@@ -10,6 +10,7 @@ import 'package:travel_check/features/settings/providers/dictionary_provider.dar
 import 'package:travel_check/core/theme/app_theme.dart';
 
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
 import 'package:travel_check/features/upload/models/log_history.dart';
 import 'package:travel_check/shared/widgets/file_selection_dialog.dart';
@@ -98,6 +99,11 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
         .map((tc) => tc.numeroTrasferta.trim())
         .where((t) => t.isNotEmpty)
         .toSet();
+    final anagrafiche = ref.watch(anagraficaProvider);
+    final anagraficaMap = {
+      for (var a in anagrafiche)
+        if (a.cid != null) a.cid!.trim().padLeft(8, '0'): (a.nominativo ?? '').trim()
+    };
     const pageSize = 50;
 
     if (allRecords.isEmpty) {
@@ -176,8 +182,13 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       if (selectedYear != null && year != selectedYear) continue;
       if (selectedTrasferta != null) {
         final query = selectedTrasferta.toLowerCase();
+        final nominativoSap = r.nomeDipendente.toLowerCase();
+        final nominativoAnagrafica =
+            (anagraficaMap[r.cid.trim().padLeft(8, '0')] ?? '').toLowerCase();
         if (!r.numeroTrasferta.toLowerCase().contains(query) && 
             !r.cid.toLowerCase().contains(query) &&
+            !nominativoSap.contains(query) &&
+            !nominativoAnagrafica.contains(query) &&
             !(r.cdRichiesta?.toLowerCase().contains(query) ?? false)) {
           continue;
         }
@@ -240,7 +251,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       endDrawer: _buildFilterDrawer(context, ref, availableYears, availableSocieta, availableTipoDipendente),
       floatingActionButton: filteredRecords.isNotEmpty 
           ? FloatingActionButton(
-              onPressed: () => _exportToExcel(filteredRecords),
+              onPressed: () => _exportToExcel(filteredRecords, anagraficaMap),
               backgroundColor: Colors.green.shade700,
               foregroundColor: Colors.white,
               tooltip: 'Esporta in Excel',
@@ -292,7 +303,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                               child: TextField(
                                 controller: _trasfertaController,
                                 decoration: const InputDecoration(
-                                  hintText: 'Cerca per trasferta, CID o richiesta...', 
+                                  hintText: 'Cerca per trasferta, CID, nominativo o richiesta...', 
                                   border: InputBorder.none, 
                                   isDense: true
                                 ),
@@ -514,7 +525,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SizedBox(
-                          width: 1200,
+                          width: 1420,
                           child: Column(
                             children: [
                               // HEADER FISSO
@@ -528,6 +539,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                                   children: [
                                     _buildCell('AZIONI', 100, isHeader: true, alignment: Alignment.center),
                                     _buildCell('CID', 140, isHeader: true),
+                                    _buildCell('NOMINATIVO', 220, isHeader: true),
                                     _buildCell('TRASFERTA', 160, isHeader: true),
                                     _buildCell('DATA', 120, isHeader: true),
                                     _buildCell('IMPORTO', 140, isHeader: true),
@@ -558,12 +570,20 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                                             _buildCell('', 100, alignment: Alignment.center, child: Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
-                                                IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+                                                IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record, anagraficaMap), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
                                                 const SizedBox(width: 8),
                                                 IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), onPressed: () => _deleteRecord(context, ref, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
                                               ],
                                             )),
                                             _buildCopyableCell(record.cid, 140, typeLabel: 'CID', fontWeight: FontWeight.w500),
+                                            _buildCopyableCell(
+                                              record.nomeDipendente.trim().isNotEmpty
+                                                  ? record.nomeDipendente.trim()
+                                                  : (anagraficaMap[record.cid.trim().padLeft(8, '0')] ?? ''),
+                                              220,
+                                              typeLabel: 'Nominativo',
+                                              fontWeight: FontWeight.w500,
+                                            ),
                                             _buildCopyableCell(
                                               record.numeroTrasferta,
                                               160,
@@ -1188,10 +1208,13 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     );
   }
 
-  void _showRecordDetails(BuildContext context, TracciatoSap record) {
+  void _showRecordDetails(BuildContext context, TracciatoSap record, [Map<String, String>? anagraficaMap]) {
     showDialog(
       context: context,
       builder: (context) {
+        final nominativo = record.nomeDipendente.trim().isNotEmpty
+            ? record.nomeDipendente
+            : ((anagraficaMap != null ? anagraficaMap[record.cid.trim().padLeft(8, '0')] : null) ?? '-');
         return Dialog(
           backgroundColor: Colors.grey.shade50,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
@@ -1265,7 +1288,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                       children: [
                         _buildDetailSection('Dipendente', Icons.person_outline, Colors.green.shade700, [
                           _buildDetailRow('CID', record.cid),
-                          _buildDetailRow('Nome', record.nomeDipendente),
+                          _buildDetailRow('Nome', nominativo),
                           _buildDetailRow('Tipo', record.tipoDipendente),
                           _buildDetailRow('Classe Retr.', record.classeRetributiva),
                         ]),
@@ -1324,7 +1347,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
 
 
 
-  Future<void> _exportToExcel(List<TracciatoSap> records) async {
+  Future<void> _exportToExcel(List<TracciatoSap> records, [Map<String, String>? anagraficaMap]) async {
     try {
       final excel = Excel.createExcel();
       final sheet = excel['SAP'];
@@ -1344,9 +1367,12 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       ]);
 
       for (final r in records) {
+        final nome = r.nomeDipendente.trim().isNotEmpty
+            ? r.nomeDipendente
+            : ((anagraficaMap != null ? anagraficaMap[r.cid.trim().padLeft(8, '0')] : null) ?? '');
         sheet.appendRow([
           TextCellValue(r.cid),
-          TextCellValue(r.nomeDipendente),
+          TextCellValue(nome),
           TextCellValue(r.societaCodice),
           TextCellValue(r.societaDescrizione),
           TextCellValue(r.numeroTrasferta),
