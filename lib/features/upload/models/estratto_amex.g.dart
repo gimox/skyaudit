@@ -37,26 +37,14 @@ const EstrattoAmexSchema = CollectionSchema(
       name: r'allocazionePagamento',
       type: IsarType.string,
     ),
-    r'bolla': PropertySchema(
-      id: 4,
-      name: r'bolla',
-      type: IsarType.string,
-    ),
+    r'bolla': PropertySchema(id: 4, name: r'bolla', type: IsarType.string),
     r'bollaOriginale': PropertySchema(
       id: 5,
       name: r'bollaOriginale',
       type: IsarType.string,
     ),
-    r'cid': PropertySchema(
-      id: 6,
-      name: r'cid',
-      type: IsarType.string,
-    ),
-    r'cittaSE': PropertySchema(
-      id: 7,
-      name: r'cittaSE',
-      type: IsarType.string,
-    ),
+    r'cid': PropertySchema(id: 6, name: r'cid', type: IsarType.string),
+    r'cittaSE': PropertySchema(id: 7, name: r'cittaSE', type: IsarType.string),
     r'classeViaggio': PropertySchema(
       id: 8,
       name: r'classeViaggio',
@@ -92,11 +80,7 @@ const EstrattoAmexSchema = CollectionSchema(
       name: r'contestata',
       type: IsarType.string,
     ),
-    r'conto': PropertySchema(
-      id: 15,
-      name: r'conto',
-      type: IsarType.string,
-    ),
+    r'conto': PropertySchema(id: 15, name: r'conto', type: IsarType.string),
     r'dataAperturaRichiesta': PropertySchema(
       id: 16,
       name: r'dataAperturaRichiesta',
@@ -242,51 +226,15 @@ const EstrattoAmexSchema = CollectionSchema(
       name: r'numeroTrasferta',
       type: IsarType.string,
     ),
-    r'ordine': PropertySchema(
-      id: 45,
-      name: r'ordine',
-      type: IsarType.string,
-    ),
-    r'pnrNo': PropertySchema(
-      id: 46,
-      name: r'pnrNo',
-      type: IsarType.string,
-    ),
-    r'rif1': PropertySchema(
-      id: 47,
-      name: r'rif1',
-      type: IsarType.string,
-    ),
-    r'rif2': PropertySchema(
-      id: 48,
-      name: r'rif2',
-      type: IsarType.string,
-    ),
-    r'rif3': PropertySchema(
-      id: 49,
-      name: r'rif3',
-      type: IsarType.string,
-    ),
-    r'rif4': PropertySchema(
-      id: 50,
-      name: r'rif4',
-      type: IsarType.string,
-    ),
-    r'rif5': PropertySchema(
-      id: 51,
-      name: r'rif5',
-      type: IsarType.string,
-    ),
-    r'rif6': PropertySchema(
-      id: 52,
-      name: r'rif6',
-      type: IsarType.string,
-    ),
-    r'rif7': PropertySchema(
-      id: 53,
-      name: r'rif7',
-      type: IsarType.string,
-    ),
+    r'ordine': PropertySchema(id: 45, name: r'ordine', type: IsarType.string),
+    r'pnrNo': PropertySchema(id: 46, name: r'pnrNo', type: IsarType.string),
+    r'rif1': PropertySchema(id: 47, name: r'rif1', type: IsarType.string),
+    r'rif2': PropertySchema(id: 48, name: r'rif2', type: IsarType.string),
+    r'rif3': PropertySchema(id: 49, name: r'rif3', type: IsarType.string),
+    r'rif4': PropertySchema(id: 50, name: r'rif4', type: IsarType.string),
+    r'rif5': PropertySchema(id: 51, name: r'rif5', type: IsarType.string),
+    r'rif6': PropertySchema(id: 52, name: r'rif6', type: IsarType.string),
+    r'rif7': PropertySchema(id: 53, name: r'rif7', type: IsarType.string),
     r'rifEstrattoContoCarta': PropertySchema(
       id: 54,
       name: r'rifEstrattoContoCarta',
@@ -327,11 +275,7 @@ const EstrattoAmexSchema = CollectionSchema(
       name: r'sourceFileLine',
       type: IsarType.long,
     ),
-    r'stato': PropertySchema(
-      id: 62,
-      name: r'stato',
-      type: IsarType.string,
-    ),
+    r'stato': PropertySchema(id: 62, name: r'stato', type: IsarType.string),
     r'statoRichiesta': PropertySchema(
       id: 63,
       name: r'statoRichiesta',
@@ -352,22 +296,15 @@ const EstrattoAmexSchema = CollectionSchema(
       name: r'ufficioViaggi',
       type: IsarType.string,
     ),
-    r'valuta': PropertySchema(
-      id: 67,
-      name: r'valuta',
-      type: IsarType.string,
-    ),
+    r'valuta': PropertySchema(id: 67, name: r'valuta', type: IsarType.string),
     r'valutaTransazione': PropertySchema(
       id: 68,
       name: r'valutaTransazione',
       type: IsarType.string,
     ),
-    r'vettore': PropertySchema(
-      id: 69,
-      name: r'vettore',
-      type: IsarType.string,
-    )
+    r'vettore': PropertySchema(id: 69, name: r'vettore', type: IsarType.string),
   },
+
   estimateSize: _estrattoAmexEstimateSize,
   serialize: _estrattoAmexSerialize,
   deserialize: _estrattoAmexDeserialize,
@@ -384,7 +321,7 @@ const EstrattoAmexSchema = CollectionSchema(
           name: r'cid',
           type: IndexType.hash,
           caseSensitive: true,
-        )
+        ),
       ],
     ),
     r'numeroTrasferta': IndexSchema(
@@ -397,7 +334,7 @@ const EstrattoAmexSchema = CollectionSchema(
           name: r'numeroTrasferta',
           type: IndexType.hash,
           caseSensitive: true,
-        )
+        ),
       ],
     ),
     r'bolla': IndexSchema(
@@ -410,16 +347,17 @@ const EstrattoAmexSchema = CollectionSchema(
           name: r'bolla',
           type: IndexType.hash,
           caseSensitive: true,
-        )
+        ),
       ],
-    )
+    ),
   },
   links: {},
   embeddedSchemas: {},
+
   getId: _estrattoAmexGetId,
   getLinks: _estrattoAmexGetLinks,
   attach: _estrattoAmexAttach,
-  version: '3.1.0+1',
+  version: '3.3.2',
 );
 
 int _estrattoAmexEstimateSize(
@@ -1135,7 +1073,10 @@ List<IsarLinkBase<dynamic>> _estrattoAmexGetLinks(EstrattoAmex object) {
 }
 
 void _estrattoAmexAttach(
-    IsarCollection<dynamic> col, Id id, EstrattoAmex object) {
+  IsarCollection<dynamic> col,
+  Id id,
+  EstrattoAmex object,
+) {
   object.id = id;
 }
 
@@ -1152,15 +1093,13 @@ extension EstrattoAmexQueryWhere
     on QueryBuilder<EstrattoAmex, EstrattoAmex, QWhereClause> {
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause> idNotEqualTo(
-      Id id) {
+    Id id,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -1183,8 +1122,9 @@ extension EstrattoAmexQueryWhere
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause> idGreaterThan(
-      Id id,
-      {bool include = false}) {
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -1192,8 +1132,10 @@ extension EstrattoAmexQueryWhere
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause> idLessThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause> idLessThan(
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -1208,208 +1150,241 @@ extension EstrattoAmexQueryWhere
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause> cidIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'cid',
-        value: [null],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'cid', value: [null]),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause> cidIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'cid',
-        lower: [null],
-        includeLower: false,
-        upper: [],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'cid',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause> cidEqualTo(
-      String? cid) {
+    String? cid,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'cid',
-        value: [cid],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'cid', value: [cid]),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause> cidNotEqualTo(
-      String? cid) {
+    String? cid,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'cid',
-              lower: [],
-              upper: [cid],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'cid',
-              lower: [cid],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cid',
+                lower: [],
+                upper: [cid],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cid',
+                lower: [cid],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'cid',
-              lower: [cid],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'cid',
-              lower: [],
-              upper: [cid],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cid',
+                lower: [cid],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cid',
+                lower: [],
+                upper: [cid],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause>
-      numeroTrasfertaIsNull() {
+  numeroTrasfertaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'numeroTrasferta',
-        value: [null],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'numeroTrasferta', value: [null]),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause>
-      numeroTrasfertaIsNotNull() {
+  numeroTrasfertaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'numeroTrasferta',
-        lower: [null],
-        includeLower: false,
-        upper: [],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'numeroTrasferta',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause>
-      numeroTrasfertaEqualTo(String? numeroTrasferta) {
+  numeroTrasfertaEqualTo(String? numeroTrasferta) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'numeroTrasferta',
-        value: [numeroTrasferta],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'numeroTrasferta',
+          value: [numeroTrasferta],
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause>
-      numeroTrasfertaNotEqualTo(String? numeroTrasferta) {
+  numeroTrasfertaNotEqualTo(String? numeroTrasferta) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroTrasferta',
-              lower: [],
-              upper: [numeroTrasferta],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroTrasferta',
-              lower: [numeroTrasferta],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroTrasferta',
+                lower: [],
+                upper: [numeroTrasferta],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroTrasferta',
+                lower: [numeroTrasferta],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroTrasferta',
-              lower: [numeroTrasferta],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroTrasferta',
-              lower: [],
-              upper: [numeroTrasferta],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroTrasferta',
+                lower: [numeroTrasferta],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroTrasferta',
+                lower: [],
+                upper: [numeroTrasferta],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause> bollaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'bolla',
-        value: [null],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'bolla', value: [null]),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause> bollaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'bolla',
-        lower: [null],
-        includeLower: false,
-        upper: [],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'bolla',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause> bollaEqualTo(
-      String? bolla) {
+    String? bolla,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'bolla',
-        value: [bolla],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'bolla', value: [bolla]),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterWhereClause> bollaNotEqualTo(
-      String? bolla) {
+    String? bolla,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'bolla',
-              lower: [],
-              upper: [bolla],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'bolla',
-              lower: [bolla],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'bolla',
+                lower: [],
+                upper: [bolla],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'bolla',
+                lower: [bolla],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'bolla',
-              lower: [bolla],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'bolla',
-              lower: [],
-              upper: [bolla],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'bolla',
+                lower: [bolla],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'bolla',
+                lower: [],
+                upper: [bolla],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
@@ -1418,71 +1393,74 @@ extension EstrattoAmexQueryWhere
 extension EstrattoAmexQueryFilter
     on QueryBuilder<EstrattoAmex, EstrattoAmex, QFilterCondition> {
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoDestinazioneIsNull() {
+  aeroportoDestinazioneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'aeroportoDestinazione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'aeroportoDestinazione'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoDestinazioneIsNotNull() {
+  aeroportoDestinazioneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'aeroportoDestinazione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'aeroportoDestinazione'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoDestinazioneEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  aeroportoDestinazioneEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'aeroportoDestinazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'aeroportoDestinazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoDestinazioneGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'aeroportoDestinazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoDestinazioneLessThan(
+  aeroportoDestinazioneGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'aeroportoDestinazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'aeroportoDestinazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoDestinazioneBetween(
+  aeroportoDestinazioneLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'aeroportoDestinazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  aeroportoDestinazioneBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1490,154 +1468,161 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'aeroportoDestinazione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'aeroportoDestinazione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoDestinazioneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  aeroportoDestinazioneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'aeroportoDestinazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'aeroportoDestinazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoDestinazioneEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  aeroportoDestinazioneEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'aeroportoDestinazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'aeroportoDestinazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoDestinazioneContains(String value, {bool caseSensitive = true}) {
+  aeroportoDestinazioneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'aeroportoDestinazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'aeroportoDestinazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoDestinazioneMatches(String pattern,
-          {bool caseSensitive = true}) {
+  aeroportoDestinazioneMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'aeroportoDestinazione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'aeroportoDestinazione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoDestinazioneIsEmpty() {
+  aeroportoDestinazioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'aeroportoDestinazione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'aeroportoDestinazione', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoDestinazioneIsNotEmpty() {
+  aeroportoDestinazioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'aeroportoDestinazione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'aeroportoDestinazione',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoPartenzaIsNull() {
+  aeroportoPartenzaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'aeroportoPartenza',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'aeroportoPartenza'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoPartenzaIsNotNull() {
+  aeroportoPartenzaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'aeroportoPartenza',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'aeroportoPartenza'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoPartenzaEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  aeroportoPartenzaEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'aeroportoPartenza',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'aeroportoPartenza',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoPartenzaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'aeroportoPartenza',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoPartenzaLessThan(
+  aeroportoPartenzaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'aeroportoPartenza',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'aeroportoPartenza',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoPartenzaBetween(
+  aeroportoPartenzaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'aeroportoPartenza',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  aeroportoPartenzaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1645,153 +1630,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'aeroportoPartenza',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'aeroportoPartenza',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoPartenzaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  aeroportoPartenzaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'aeroportoPartenza',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'aeroportoPartenza',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoPartenzaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  aeroportoPartenzaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'aeroportoPartenza',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'aeroportoPartenza',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoPartenzaContains(String value, {bool caseSensitive = true}) {
+  aeroportoPartenzaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'aeroportoPartenza',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'aeroportoPartenza',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoPartenzaMatches(String pattern, {bool caseSensitive = true}) {
+  aeroportoPartenzaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'aeroportoPartenza',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'aeroportoPartenza',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoPartenzaIsEmpty() {
+  aeroportoPartenzaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'aeroportoPartenza',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'aeroportoPartenza', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      aeroportoPartenzaIsNotEmpty() {
+  aeroportoPartenzaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'aeroportoPartenza',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'aeroportoPartenza', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      agenziaViaggiIsNull() {
+  agenziaViaggiIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'agenziaViaggi',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'agenziaViaggi'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      agenziaViaggiIsNotNull() {
+  agenziaViaggiIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'agenziaViaggi',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'agenziaViaggi'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      agenziaViaggiEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  agenziaViaggiEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'agenziaViaggi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'agenziaViaggi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      agenziaViaggiGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'agenziaViaggi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      agenziaViaggiLessThan(
+  agenziaViaggiGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'agenziaViaggi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'agenziaViaggi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      agenziaViaggiBetween(
+  agenziaViaggiLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'agenziaViaggi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  agenziaViaggiBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1799,153 +1789,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'agenziaViaggi',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'agenziaViaggi',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      agenziaViaggiStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  agenziaViaggiStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'agenziaViaggi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'agenziaViaggi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      agenziaViaggiEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  agenziaViaggiEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'agenziaViaggi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'agenziaViaggi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      agenziaViaggiContains(String value, {bool caseSensitive = true}) {
+  agenziaViaggiContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'agenziaViaggi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'agenziaViaggi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      agenziaViaggiMatches(String pattern, {bool caseSensitive = true}) {
+  agenziaViaggiMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'agenziaViaggi',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'agenziaViaggi',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      agenziaViaggiIsEmpty() {
+  agenziaViaggiIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'agenziaViaggi',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'agenziaViaggi', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      agenziaViaggiIsNotEmpty() {
+  agenziaViaggiIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'agenziaViaggi',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'agenziaViaggi', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      allocazionePagamentoIsNull() {
+  allocazionePagamentoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'allocazionePagamento',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'allocazionePagamento'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      allocazionePagamentoIsNotNull() {
+  allocazionePagamentoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'allocazionePagamento',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'allocazionePagamento'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      allocazionePagamentoEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  allocazionePagamentoEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'allocazionePagamento',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'allocazionePagamento',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      allocazionePagamentoGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'allocazionePagamento',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      allocazionePagamentoLessThan(
+  allocazionePagamentoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'allocazionePagamento',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'allocazionePagamento',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      allocazionePagamentoBetween(
+  allocazionePagamentoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'allocazionePagamento',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  allocazionePagamentoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1953,102 +1948,107 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'allocazionePagamento',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'allocazionePagamento',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      allocazionePagamentoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  allocazionePagamentoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'allocazionePagamento',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'allocazionePagamento',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      allocazionePagamentoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  allocazionePagamentoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'allocazionePagamento',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'allocazionePagamento',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      allocazionePagamentoContains(String value, {bool caseSensitive = true}) {
+  allocazionePagamentoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'allocazionePagamento',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'allocazionePagamento',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      allocazionePagamentoMatches(String pattern, {bool caseSensitive = true}) {
+  allocazionePagamentoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'allocazionePagamento',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'allocazionePagamento',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      allocazionePagamentoIsEmpty() {
+  allocazionePagamentoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'allocazionePagamento',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'allocazionePagamento', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      allocazionePagamentoIsNotEmpty() {
+  allocazionePagamentoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'allocazionePagamento',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'allocazionePagamento',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaIsNull() {
+  bollaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'bolla',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'bolla'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaIsNotNull() {
+  bollaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'bolla',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'bolla'),
+      );
     });
   }
 
@@ -2057,27 +2057,31 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'bolla',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'bolla',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaGreaterThan(
+  bollaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'bolla',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'bolla',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -2087,12 +2091,14 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'bolla',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'bolla',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -2104,28 +2110,29 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'bolla',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'bolla',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  bollaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'bolla',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'bolla',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -2134,124 +2141,133 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'bolla',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'bolla',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> bollaContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'bolla',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'bolla',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> bollaMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'bolla',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'bolla',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'bolla',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaOriginaleIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'bollaOriginale',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaOriginaleIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'bollaOriginale',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaOriginaleEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'bollaOriginale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'bolla',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaOriginaleGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  bollaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'bollaOriginale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'bolla', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaOriginaleLessThan(
+  bollaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'bolla', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  bollaOriginaleIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'bollaOriginale'),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  bollaOriginaleIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'bollaOriginale'),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  bollaOriginaleEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'bollaOriginale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  bollaOriginaleGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'bollaOriginale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'bollaOriginale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaOriginaleBetween(
+  bollaOriginaleLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'bollaOriginale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  bollaOriginaleBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -2259,101 +2275,103 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'bollaOriginale',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'bollaOriginale',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaOriginaleStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  bollaOriginaleStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'bollaOriginale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'bollaOriginale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaOriginaleEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  bollaOriginaleEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'bollaOriginale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'bollaOriginale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaOriginaleContains(String value, {bool caseSensitive = true}) {
+  bollaOriginaleContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'bollaOriginale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'bollaOriginale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaOriginaleMatches(String pattern, {bool caseSensitive = true}) {
+  bollaOriginaleMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'bollaOriginale',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'bollaOriginale',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaOriginaleIsEmpty() {
+  bollaOriginaleIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'bollaOriginale',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'bollaOriginale', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      bollaOriginaleIsNotEmpty() {
+  bollaOriginaleIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'bollaOriginale',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'bollaOriginale', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> cidIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cid',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'cid'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cidIsNotNull() {
+  cidIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cid',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'cid'),
+      );
     });
   }
 
@@ -2362,27 +2380,31 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cidGreaterThan(
+  cidGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -2392,12 +2414,14 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -2409,14 +2433,16 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'cid',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'cid',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -2425,11 +2451,13 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -2438,123 +2466,132 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> cidContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> cidMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'cid',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'cid',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> cidIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'cid', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cidIsNotEmpty() {
+  cidIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'cid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'cid', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cittaSEIsNull() {
+  cittaSEIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cittaSE',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'cittaSE'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cittaSEIsNotNull() {
+  cittaSEIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cittaSE',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'cittaSE'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cittaSEEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  cittaSEEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cittaSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'cittaSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cittaSEGreaterThan(
+  cittaSEGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'cittaSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'cittaSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cittaSELessThan(
+  cittaSELessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'cittaSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'cittaSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cittaSEBetween(
+  cittaSEBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -2562,153 +2599,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'cittaSE',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'cittaSE',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cittaSEStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  cittaSEStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'cittaSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'cittaSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cittaSEEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  cittaSEEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'cittaSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'cittaSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cittaSEContains(String value, {bool caseSensitive = true}) {
+  cittaSEContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'cittaSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'cittaSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cittaSEMatches(String pattern, {bool caseSensitive = true}) {
+  cittaSEMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'cittaSE',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'cittaSE',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cittaSEIsEmpty() {
+  cittaSEIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cittaSE',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'cittaSE', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      cittaSEIsNotEmpty() {
+  cittaSEIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'cittaSE',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'cittaSE', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      classeViaggioIsNull() {
+  classeViaggioIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'classeViaggio',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'classeViaggio'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      classeViaggioIsNotNull() {
+  classeViaggioIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'classeViaggio',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'classeViaggio'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      classeViaggioEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  classeViaggioEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'classeViaggio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'classeViaggio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      classeViaggioGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'classeViaggio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      classeViaggioLessThan(
+  classeViaggioGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'classeViaggio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'classeViaggio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      classeViaggioBetween(
+  classeViaggioLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'classeViaggio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  classeViaggioBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -2716,153 +2758,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'classeViaggio',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'classeViaggio',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      classeViaggioStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  classeViaggioStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'classeViaggio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'classeViaggio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      classeViaggioEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  classeViaggioEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'classeViaggio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'classeViaggio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      classeViaggioContains(String value, {bool caseSensitive = true}) {
+  classeViaggioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'classeViaggio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'classeViaggio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      classeViaggioMatches(String pattern, {bool caseSensitive = true}) {
+  classeViaggioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'classeViaggio',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'classeViaggio',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      classeViaggioIsEmpty() {
+  classeViaggioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'classeViaggio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'classeViaggio', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      classeViaggioIsNotEmpty() {
+  classeViaggioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'classeViaggio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'classeViaggio', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceMercatoIsNull() {
+  codiceMercatoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'codiceMercato',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'codiceMercato'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceMercatoIsNotNull() {
+  codiceMercatoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'codiceMercato',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'codiceMercato'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceMercatoEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  codiceMercatoEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceMercato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'codiceMercato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceMercatoGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'codiceMercato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceMercatoLessThan(
+  codiceMercatoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'codiceMercato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'codiceMercato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceMercatoBetween(
+  codiceMercatoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'codiceMercato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  codiceMercatoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -2870,153 +2917,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'codiceMercato',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'codiceMercato',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceMercatoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceMercatoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'codiceMercato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'codiceMercato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceMercatoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceMercatoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'codiceMercato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'codiceMercato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceMercatoContains(String value, {bool caseSensitive = true}) {
+  codiceMercatoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'codiceMercato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'codiceMercato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceMercatoMatches(String pattern, {bool caseSensitive = true}) {
+  codiceMercatoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'codiceMercato',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'codiceMercato',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceMercatoIsEmpty() {
+  codiceMercatoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceMercato',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'codiceMercato', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceMercatoIsNotEmpty() {
+  codiceMercatoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'codiceMercato',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'codiceMercato', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreIsNull() {
+  codiceSettoreIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'codiceSettore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'codiceSettore'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreIsNotNull() {
+  codiceSettoreIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'codiceSettore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'codiceSettore'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  codiceSettoreEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceSettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'codiceSettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'codiceSettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreLessThan(
+  codiceSettoreGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'codiceSettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'codiceSettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreBetween(
+  codiceSettoreLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'codiceSettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  codiceSettoreBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -3024,153 +3076,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'codiceSettore',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'codiceSettore',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceSettoreStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'codiceSettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'codiceSettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceSettoreEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'codiceSettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'codiceSettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreContains(String value, {bool caseSensitive = true}) {
+  codiceSettoreContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'codiceSettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'codiceSettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreMatches(String pattern, {bool caseSensitive = true}) {
+  codiceSettoreMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'codiceSettore',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'codiceSettore',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreIsEmpty() {
+  codiceSettoreIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceSettore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'codiceSettore', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreIsNotEmpty() {
+  codiceSettoreIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'codiceSettore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'codiceSettore', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreSEIsNull() {
+  codiceSettoreSEIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'codiceSettoreSE',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'codiceSettoreSE'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreSEIsNotNull() {
+  codiceSettoreSEIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'codiceSettoreSE',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'codiceSettoreSE'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreSEEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  codiceSettoreSEEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceSettoreSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'codiceSettoreSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreSEGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'codiceSettoreSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreSELessThan(
+  codiceSettoreSEGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'codiceSettoreSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'codiceSettoreSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreSEBetween(
+  codiceSettoreSELessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'codiceSettoreSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  codiceSettoreSEBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -3178,153 +3235,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'codiceSettoreSE',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'codiceSettoreSE',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreSEStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceSettoreSEStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'codiceSettoreSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'codiceSettoreSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreSEEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceSettoreSEEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'codiceSettoreSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'codiceSettoreSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreSEContains(String value, {bool caseSensitive = true}) {
+  codiceSettoreSEContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'codiceSettoreSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'codiceSettoreSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreSEMatches(String pattern, {bool caseSensitive = true}) {
+  codiceSettoreSEMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'codiceSettoreSE',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'codiceSettoreSE',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreSEIsEmpty() {
+  codiceSettoreSEIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceSettoreSE',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'codiceSettoreSE', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceSettoreSEIsNotEmpty() {
+  codiceSettoreSEIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'codiceSettoreSE',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'codiceSettoreSE', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceTipoTransazioneIsNull() {
+  codiceTipoTransazioneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'codiceTipoTransazione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'codiceTipoTransazione'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceTipoTransazioneIsNotNull() {
+  codiceTipoTransazioneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'codiceTipoTransazione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'codiceTipoTransazione'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceTipoTransazioneEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  codiceTipoTransazioneEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceTipoTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'codiceTipoTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceTipoTransazioneGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'codiceTipoTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceTipoTransazioneLessThan(
+  codiceTipoTransazioneGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'codiceTipoTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'codiceTipoTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceTipoTransazioneBetween(
+  codiceTipoTransazioneLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'codiceTipoTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  codiceTipoTransazioneBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -3332,154 +3394,161 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'codiceTipoTransazione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'codiceTipoTransazione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceTipoTransazioneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceTipoTransazioneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'codiceTipoTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'codiceTipoTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceTipoTransazioneEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceTipoTransazioneEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'codiceTipoTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'codiceTipoTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceTipoTransazioneContains(String value, {bool caseSensitive = true}) {
+  codiceTipoTransazioneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'codiceTipoTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'codiceTipoTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceTipoTransazioneMatches(String pattern,
-          {bool caseSensitive = true}) {
+  codiceTipoTransazioneMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'codiceTipoTransazione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'codiceTipoTransazione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceTipoTransazioneIsEmpty() {
+  codiceTipoTransazioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceTipoTransazione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'codiceTipoTransazione', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceTipoTransazioneIsNotEmpty() {
+  codiceTipoTransazioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'codiceTipoTransazione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'codiceTipoTransazione',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceVettoreIsNull() {
+  codiceVettoreIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'codiceVettore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'codiceVettore'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceVettoreIsNotNull() {
+  codiceVettoreIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'codiceVettore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'codiceVettore'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceVettoreEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  codiceVettoreEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceVettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'codiceVettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceVettoreGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'codiceVettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceVettoreLessThan(
+  codiceVettoreGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'codiceVettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'codiceVettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceVettoreBetween(
+  codiceVettoreLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'codiceVettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  codiceVettoreBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -3487,153 +3556,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'codiceVettore',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'codiceVettore',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceVettoreStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceVettoreStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'codiceVettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'codiceVettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceVettoreEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceVettoreEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'codiceVettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'codiceVettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceVettoreContains(String value, {bool caseSensitive = true}) {
+  codiceVettoreContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'codiceVettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'codiceVettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceVettoreMatches(String pattern, {bool caseSensitive = true}) {
+  codiceVettoreMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'codiceVettore',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'codiceVettore',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceVettoreIsEmpty() {
+  codiceVettoreIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceVettore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'codiceVettore', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      codiceVettoreIsNotEmpty() {
+  codiceVettoreIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'codiceVettore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'codiceVettore', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contestataIsNull() {
+  contestataIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'contestata',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'contestata'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contestataIsNotNull() {
+  contestataIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'contestata',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'contestata'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contestataEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  contestataEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'contestata',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'contestata',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contestataGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'contestata',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contestataLessThan(
+  contestataGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'contestata',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'contestata',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contestataBetween(
+  contestataLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'contestata',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  contestataBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -3641,102 +3715,104 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'contestata',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'contestata',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contestataStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  contestataStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'contestata',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'contestata',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contestataEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  contestataEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'contestata',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'contestata',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contestataContains(String value, {bool caseSensitive = true}) {
+  contestataContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'contestata',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'contestata',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contestataMatches(String pattern, {bool caseSensitive = true}) {
+  contestataMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'contestata',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'contestata',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contestataIsEmpty() {
+  contestataIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'contestata',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'contestata', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contestataIsNotEmpty() {
+  contestataIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'contestata',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'contestata', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contoIsNull() {
+  contoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'conto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'conto'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contoIsNotNull() {
+  contoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'conto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'conto'),
+      );
     });
   }
 
@@ -3745,27 +3821,31 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'conto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'conto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contoGreaterThan(
+  contoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'conto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'conto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -3775,12 +3855,14 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'conto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'conto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -3792,28 +3874,29 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'conto',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'conto',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  contoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'conto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'conto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -3822,124 +3905,133 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'conto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'conto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> contoContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'conto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'conto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> contoMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'conto',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contoIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'conto',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      contoIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'conto',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataAperturaRichiestaIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'dataAperturaRichiesta',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataAperturaRichiestaIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'dataAperturaRichiesta',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataAperturaRichiestaEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataAperturaRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'conto',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataAperturaRichiestaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  contoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataAperturaRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'conto', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataAperturaRichiestaLessThan(
+  contoIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'conto', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  dataAperturaRichiestaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'dataAperturaRichiesta'),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  dataAperturaRichiestaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'dataAperturaRichiesta'),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  dataAperturaRichiestaEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataAperturaRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  dataAperturaRichiestaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataAperturaRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataAperturaRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataAperturaRichiestaBetween(
+  dataAperturaRichiestaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataAperturaRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  dataAperturaRichiestaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -3947,154 +4039,161 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataAperturaRichiesta',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataAperturaRichiesta',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataAperturaRichiestaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataAperturaRichiestaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataAperturaRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataAperturaRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataAperturaRichiestaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataAperturaRichiestaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataAperturaRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataAperturaRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataAperturaRichiestaContains(String value, {bool caseSensitive = true}) {
+  dataAperturaRichiestaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataAperturaRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataAperturaRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataAperturaRichiestaMatches(String pattern,
-          {bool caseSensitive = true}) {
+  dataAperturaRichiestaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataAperturaRichiesta',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataAperturaRichiesta',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataAperturaRichiestaIsEmpty() {
+  dataAperturaRichiestaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataAperturaRichiesta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataAperturaRichiesta', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataAperturaRichiestaIsNotEmpty() {
+  dataAperturaRichiestaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataAperturaRichiesta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'dataAperturaRichiesta',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataChiusuraRichiestaIsNull() {
+  dataChiusuraRichiestaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'dataChiusuraRichiesta',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'dataChiusuraRichiesta'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataChiusuraRichiestaIsNotNull() {
+  dataChiusuraRichiestaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'dataChiusuraRichiesta',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'dataChiusuraRichiesta'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataChiusuraRichiestaEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  dataChiusuraRichiestaEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataChiusuraRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataChiusuraRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataChiusuraRichiestaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataChiusuraRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataChiusuraRichiestaLessThan(
+  dataChiusuraRichiestaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataChiusuraRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataChiusuraRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataChiusuraRichiestaBetween(
+  dataChiusuraRichiestaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataChiusuraRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  dataChiusuraRichiestaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -4102,154 +4201,161 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataChiusuraRichiesta',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataChiusuraRichiesta',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataChiusuraRichiestaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataChiusuraRichiestaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataChiusuraRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataChiusuraRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataChiusuraRichiestaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataChiusuraRichiestaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataChiusuraRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataChiusuraRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataChiusuraRichiestaContains(String value, {bool caseSensitive = true}) {
+  dataChiusuraRichiestaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataChiusuraRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataChiusuraRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataChiusuraRichiestaMatches(String pattern,
-          {bool caseSensitive = true}) {
+  dataChiusuraRichiestaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataChiusuraRichiesta',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataChiusuraRichiesta',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataChiusuraRichiestaIsEmpty() {
+  dataChiusuraRichiestaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataChiusuraRichiesta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataChiusuraRichiesta', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataChiusuraRichiestaIsNotEmpty() {
+  dataChiusuraRichiestaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataChiusuraRichiesta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'dataChiusuraRichiesta',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataEstrattoContoIsNull() {
+  dataEstrattoContoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'dataEstrattoConto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'dataEstrattoConto'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataEstrattoContoIsNotNull() {
+  dataEstrattoContoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'dataEstrattoConto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'dataEstrattoConto'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataEstrattoContoEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  dataEstrattoContoEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataEstrattoContoGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataEstrattoContoLessThan(
+  dataEstrattoContoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataEstrattoContoBetween(
+  dataEstrattoContoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  dataEstrattoContoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -4257,153 +4363,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataEstrattoConto',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataEstrattoConto',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataEstrattoContoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataEstrattoContoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataEstrattoContoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataEstrattoContoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataEstrattoContoContains(String value, {bool caseSensitive = true}) {
+  dataEstrattoContoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataEstrattoContoMatches(String pattern, {bool caseSensitive = true}) {
+  dataEstrattoContoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataEstrattoConto',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataEstrattoConto',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataEstrattoContoIsEmpty() {
+  dataEstrattoContoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataEstrattoConto',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataEstrattoConto', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataEstrattoContoIsNotEmpty() {
+  dataEstrattoContoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataEstrattoConto',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'dataEstrattoConto', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataPartenzaIsNull() {
+  dataPartenzaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'dataPartenza',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'dataPartenza'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataPartenzaIsNotNull() {
+  dataPartenzaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'dataPartenza',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'dataPartenza'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataPartenzaEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  dataPartenzaEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataPartenza',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataPartenza',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataPartenzaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataPartenza',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataPartenzaLessThan(
+  dataPartenzaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataPartenza',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataPartenza',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataPartenzaBetween(
+  dataPartenzaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataPartenza',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  dataPartenzaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -4411,153 +4522,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataPartenza',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataPartenza',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataPartenzaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataPartenzaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataPartenza',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataPartenza',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataPartenzaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataPartenzaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataPartenza',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataPartenza',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataPartenzaContains(String value, {bool caseSensitive = true}) {
+  dataPartenzaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataPartenza',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataPartenza',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataPartenzaMatches(String pattern, {bool caseSensitive = true}) {
+  dataPartenzaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataPartenza',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataPartenza',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataPartenzaIsEmpty() {
+  dataPartenzaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataPartenza',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataPartenza', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataPartenzaIsNotEmpty() {
+  dataPartenzaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataPartenza',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'dataPartenza', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataProcessazioneIsNull() {
+  dataProcessazioneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'dataProcessazione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'dataProcessazione'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataProcessazioneIsNotNull() {
+  dataProcessazioneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'dataProcessazione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'dataProcessazione'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataProcessazioneEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  dataProcessazioneEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataProcessazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataProcessazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataProcessazioneGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataProcessazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataProcessazioneLessThan(
+  dataProcessazioneGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataProcessazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataProcessazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataProcessazioneBetween(
+  dataProcessazioneLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataProcessazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  dataProcessazioneBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -4565,153 +4681,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataProcessazione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataProcessazione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataProcessazioneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataProcessazioneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataProcessazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataProcessazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataProcessazioneEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataProcessazioneEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataProcessazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataProcessazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataProcessazioneContains(String value, {bool caseSensitive = true}) {
+  dataProcessazioneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataProcessazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataProcessazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataProcessazioneMatches(String pattern, {bool caseSensitive = true}) {
+  dataProcessazioneMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataProcessazione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataProcessazione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataProcessazioneIsEmpty() {
+  dataProcessazioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataProcessazione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataProcessazione', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataProcessazioneIsNotEmpty() {
+  dataProcessazioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataProcessazione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'dataProcessazione', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataScadenzaPagamentoIsNull() {
+  dataScadenzaPagamentoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'dataScadenzaPagamento',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'dataScadenzaPagamento'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataScadenzaPagamentoIsNotNull() {
+  dataScadenzaPagamentoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'dataScadenzaPagamento',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'dataScadenzaPagamento'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataScadenzaPagamentoEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  dataScadenzaPagamentoEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataScadenzaPagamento',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataScadenzaPagamento',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataScadenzaPagamentoGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataScadenzaPagamento',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataScadenzaPagamentoLessThan(
+  dataScadenzaPagamentoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataScadenzaPagamento',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataScadenzaPagamento',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataScadenzaPagamentoBetween(
+  dataScadenzaPagamentoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataScadenzaPagamento',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  dataScadenzaPagamentoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -4719,154 +4840,161 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataScadenzaPagamento',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataScadenzaPagamento',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataScadenzaPagamentoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataScadenzaPagamentoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataScadenzaPagamento',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataScadenzaPagamento',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataScadenzaPagamentoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataScadenzaPagamentoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataScadenzaPagamento',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataScadenzaPagamento',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataScadenzaPagamentoContains(String value, {bool caseSensitive = true}) {
+  dataScadenzaPagamentoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataScadenzaPagamento',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataScadenzaPagamento',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataScadenzaPagamentoMatches(String pattern,
-          {bool caseSensitive = true}) {
+  dataScadenzaPagamentoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataScadenzaPagamento',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataScadenzaPagamento',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataScadenzaPagamentoIsEmpty() {
+  dataScadenzaPagamentoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataScadenzaPagamento',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataScadenzaPagamento', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataScadenzaPagamentoIsNotEmpty() {
+  dataScadenzaPagamentoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataScadenzaPagamento',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'dataScadenzaPagamento',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataTransazioneIsNull() {
+  dataTransazioneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'dataTransazione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'dataTransazione'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataTransazioneIsNotNull() {
+  dataTransazioneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'dataTransazione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'dataTransazione'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataTransazioneEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  dataTransazioneEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataTransazioneGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataTransazioneLessThan(
+  dataTransazioneGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataTransazioneBetween(
+  dataTransazioneLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  dataTransazioneBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -4874,153 +5002,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataTransazione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataTransazione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataTransazioneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataTransazioneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataTransazioneEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataTransazioneEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataTransazioneContains(String value, {bool caseSensitive = true}) {
+  dataTransazioneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataTransazioneMatches(String pattern, {bool caseSensitive = true}) {
+  dataTransazioneMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataTransazione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataTransazione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataTransazioneIsEmpty() {
+  dataTransazioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataTransazione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataTransazione', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      dataTransazioneIsNotEmpty() {
+  dataTransazioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataTransazione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'dataTransazione', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      debitCreditCodeIsNull() {
+  debitCreditCodeIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'debitCreditCode',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'debitCreditCode'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      debitCreditCodeIsNotNull() {
+  debitCreditCodeIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'debitCreditCode',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'debitCreditCode'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      debitCreditCodeEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  debitCreditCodeEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'debitCreditCode',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'debitCreditCode',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      debitCreditCodeGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'debitCreditCode',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      debitCreditCodeLessThan(
+  debitCreditCodeGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'debitCreditCode',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'debitCreditCode',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      debitCreditCodeBetween(
+  debitCreditCodeLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'debitCreditCode',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  debitCreditCodeBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -5028,153 +5161,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'debitCreditCode',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'debitCreditCode',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      debitCreditCodeStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  debitCreditCodeStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'debitCreditCode',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'debitCreditCode',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      debitCreditCodeEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  debitCreditCodeEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'debitCreditCode',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'debitCreditCode',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      debitCreditCodeContains(String value, {bool caseSensitive = true}) {
+  debitCreditCodeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'debitCreditCode',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'debitCreditCode',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      debitCreditCodeMatches(String pattern, {bool caseSensitive = true}) {
+  debitCreditCodeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'debitCreditCode',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'debitCreditCode',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      debitCreditCodeIsEmpty() {
+  debitCreditCodeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'debitCreditCode',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'debitCreditCode', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      debitCreditCodeIsNotEmpty() {
+  debitCreditCodeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'debitCreditCode',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'debitCreditCode', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      fatturaAgenziaViaggioIsNull() {
+  fatturaAgenziaViaggioIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'fatturaAgenziaViaggio',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'fatturaAgenziaViaggio'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      fatturaAgenziaViaggioIsNotNull() {
+  fatturaAgenziaViaggioIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'fatturaAgenziaViaggio',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'fatturaAgenziaViaggio'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      fatturaAgenziaViaggioEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  fatturaAgenziaViaggioEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'fatturaAgenziaViaggio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'fatturaAgenziaViaggio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      fatturaAgenziaViaggioGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'fatturaAgenziaViaggio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      fatturaAgenziaViaggioLessThan(
+  fatturaAgenziaViaggioGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'fatturaAgenziaViaggio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'fatturaAgenziaViaggio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      fatturaAgenziaViaggioBetween(
+  fatturaAgenziaViaggioLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'fatturaAgenziaViaggio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  fatturaAgenziaViaggioBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -5182,95 +5320,99 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'fatturaAgenziaViaggio',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'fatturaAgenziaViaggio',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      fatturaAgenziaViaggioStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  fatturaAgenziaViaggioStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'fatturaAgenziaViaggio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'fatturaAgenziaViaggio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      fatturaAgenziaViaggioEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  fatturaAgenziaViaggioEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'fatturaAgenziaViaggio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'fatturaAgenziaViaggio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      fatturaAgenziaViaggioContains(String value, {bool caseSensitive = true}) {
+  fatturaAgenziaViaggioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'fatturaAgenziaViaggio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'fatturaAgenziaViaggio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      fatturaAgenziaViaggioMatches(String pattern,
-          {bool caseSensitive = true}) {
+  fatturaAgenziaViaggioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'fatturaAgenziaViaggio',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'fatturaAgenziaViaggio',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      fatturaAgenziaViaggioIsEmpty() {
+  fatturaAgenziaViaggioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'fatturaAgenziaViaggio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'fatturaAgenziaViaggio', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      fatturaAgenziaViaggioIsNotEmpty() {
+  fatturaAgenziaViaggioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'fatturaAgenziaViaggio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'fatturaAgenziaViaggio',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> idEqualTo(
-      Id value) {
+    Id value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
@@ -5279,11 +5421,13 @@ extension EstrattoAmexQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -5292,11 +5436,13 @@ extension EstrattoAmexQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -5307,82 +5453,87 @@ extension EstrattoAmexQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idRegioneIsNull() {
+  idRegioneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'idRegione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'idRegione'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idRegioneIsNotNull() {
+  idRegioneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'idRegione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'idRegione'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idRegioneEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  idRegioneEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'idRegione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'idRegione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idRegioneGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'idRegione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idRegioneLessThan(
+  idRegioneGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'idRegione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'idRegione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idRegioneBetween(
+  idRegioneLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'idRegione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  idRegioneBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -5390,153 +5541,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'idRegione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'idRegione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idRegioneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  idRegioneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'idRegione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'idRegione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idRegioneEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  idRegioneEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'idRegione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'idRegione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idRegioneContains(String value, {bool caseSensitive = true}) {
+  idRegioneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'idRegione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'idRegione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idRegioneMatches(String pattern, {bool caseSensitive = true}) {
+  idRegioneMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'idRegione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'idRegione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idRegioneIsEmpty() {
+  idRegioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'idRegione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'idRegione', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idRegioneIsNotEmpty() {
+  idRegioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'idRegione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'idRegione', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idTransazioneIsNull() {
+  idTransazioneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'idTransazione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'idTransazione'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idTransazioneIsNotNull() {
+  idTransazioneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'idTransazione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'idTransazione'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idTransazioneEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  idTransazioneEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'idTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'idTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idTransazioneGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'idTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idTransazioneLessThan(
+  idTransazioneGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'idTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'idTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idTransazioneBetween(
+  idTransazioneLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'idTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  idTransazioneBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -5544,153 +5700,163 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'idTransazione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'idTransazione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idTransazioneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  idTransazioneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'idTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'idTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idTransazioneEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  idTransazioneEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'idTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'idTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idTransazioneContains(String value, {bool caseSensitive = true}) {
+  idTransazioneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'idTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'idTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idTransazioneMatches(String pattern, {bool caseSensitive = true}) {
+  idTransazioneMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'idTransazione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'idTransazione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idTransazioneIsEmpty() {
+  idTransazioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'idTransazione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'idTransazione', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      idTransazioneIsNotEmpty() {
+  idTransazioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'idTransazione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'idTransazione', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      identificativoEstrattoContoIsNull() {
+  identificativoEstrattoContoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'identificativoEstrattoConto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'identificativoEstrattoConto'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      identificativoEstrattoContoIsNotNull() {
+  identificativoEstrattoContoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'identificativoEstrattoConto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(
+          property: r'identificativoEstrattoConto',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      identificativoEstrattoContoEqualTo(
+  identificativoEstrattoContoEqualTo(
     String? value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'identificativoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'identificativoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      identificativoEstrattoContoGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'identificativoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      identificativoEstrattoContoLessThan(
+  identificativoEstrattoContoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'identificativoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'identificativoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      identificativoEstrattoContoBetween(
+  identificativoEstrattoContoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'identificativoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  identificativoEstrattoContoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -5698,155 +5864,179 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'identificativoEstrattoConto',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'identificativoEstrattoConto',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      identificativoEstrattoContoStartsWith(
+  identificativoEstrattoContoStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'identificativoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'identificativoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      identificativoEstrattoContoEndsWith(
+  identificativoEstrattoContoEndsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'identificativoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'identificativoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      identificativoEstrattoContoContains(String value,
-          {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'identificativoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      identificativoEstrattoContoMatches(String pattern,
-          {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'identificativoEstrattoConto',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      identificativoEstrattoContoIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'identificativoEstrattoConto',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      identificativoEstrattoContoIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'identificativoEstrattoConto',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoAllocatoIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'importoAllocato',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoAllocatoIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'importoAllocato',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoAllocatoEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
+  identificativoEstrattoContoContains(
+    String value, {
+    bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'importoAllocato',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'identificativoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoAllocatoGreaterThan(
+  identificativoEstrattoContoMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'identificativoEstrattoConto',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  identificativoEstrattoContoIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'identificativoEstrattoConto',
+          value: '',
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  identificativoEstrattoContoIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'identificativoEstrattoConto',
+          value: '',
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  importoAllocatoIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'importoAllocato'),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  importoAllocatoIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'importoAllocato'),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  importoAllocatoEqualTo(double? value, {double epsilon = Query.epsilon}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'importoAllocato',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  importoAllocatoGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'importoAllocato',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'importoAllocato',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoAllocatoLessThan(
+  importoAllocatoLessThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'importoAllocato',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'importoAllocato',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoAllocatoBetween(
+  importoAllocatoBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -5854,83 +6044,92 @@ extension EstrattoAmexQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'importoAllocato',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'importoAllocato',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoLordoIsNull() {
+  importoLordoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'importoLordo',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'importoLordo'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoLordoIsNotNull() {
+  importoLordoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'importoLordo',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'importoLordo'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoLordoEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  importoLordoEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'importoLordo',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'importoLordo',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoLordoGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'importoLordo',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoLordoLessThan(
+  importoLordoGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'importoLordo',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'importoLordo',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoLordoBetween(
+  importoLordoLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'importoLordo',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  importoLordoBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -5938,83 +6137,92 @@ extension EstrattoAmexQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'importoLordo',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'importoLordo',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoNettoIsNull() {
+  importoNettoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'importoNetto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'importoNetto'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoNettoIsNotNull() {
+  importoNettoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'importoNetto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'importoNetto'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoNettoEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  importoNettoEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'importoNetto',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'importoNetto',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoNettoGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'importoNetto',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoNettoLessThan(
+  importoNettoGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'importoNetto',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'importoNetto',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoNettoBetween(
+  importoNettoLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'importoNetto',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  importoNettoBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -6022,83 +6230,92 @@ extension EstrattoAmexQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'importoNetto',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'importoNetto',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoNonAllocatoIsNull() {
+  importoNonAllocatoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'importoNonAllocato',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'importoNonAllocato'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoNonAllocatoIsNotNull() {
+  importoNonAllocatoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'importoNonAllocato',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'importoNonAllocato'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoNonAllocatoEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  importoNonAllocatoEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'importoNonAllocato',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'importoNonAllocato',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoNonAllocatoGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'importoNonAllocato',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoNonAllocatoLessThan(
+  importoNonAllocatoGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'importoNonAllocato',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'importoNonAllocato',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      importoNonAllocatoBetween(
+  importoNonAllocatoLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'importoNonAllocato',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  importoNonAllocatoBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -6106,83 +6323,89 @@ extension EstrattoAmexQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'importoNonAllocato',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'importoNonAllocato',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      indicatorIsNull() {
+  indicatorIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'indicator',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'indicator'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      indicatorIsNotNull() {
+  indicatorIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'indicator',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'indicator'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      indicatorEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  indicatorEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'indicator',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'indicator',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      indicatorGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'indicator',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      indicatorLessThan(
+  indicatorGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'indicator',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'indicator',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      indicatorBetween(
+  indicatorLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'indicator',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  indicatorBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -6190,153 +6413,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'indicator',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'indicator',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      indicatorStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  indicatorStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'indicator',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'indicator',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      indicatorEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  indicatorEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'indicator',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'indicator',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      indicatorContains(String value, {bool caseSensitive = true}) {
+  indicatorContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'indicator',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'indicator',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      indicatorMatches(String pattern, {bool caseSensitive = true}) {
+  indicatorMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'indicator',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'indicator',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      indicatorIsEmpty() {
+  indicatorIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'indicator',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'indicator', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      indicatorIsNotEmpty() {
+  indicatorIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'indicator',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'indicator', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inizialiPasseggeroIsNull() {
+  inizialiPasseggeroIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'inizialiPasseggero',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'inizialiPasseggero'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inizialiPasseggeroIsNotNull() {
+  inizialiPasseggeroIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'inizialiPasseggero',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'inizialiPasseggero'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inizialiPasseggeroEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  inizialiPasseggeroEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'inizialiPasseggero',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'inizialiPasseggero',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inizialiPasseggeroGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'inizialiPasseggero',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inizialiPasseggeroLessThan(
+  inizialiPasseggeroGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'inizialiPasseggero',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'inizialiPasseggero',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inizialiPasseggeroBetween(
+  inizialiPasseggeroLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'inizialiPasseggero',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  inizialiPasseggeroBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -6344,153 +6572,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'inizialiPasseggero',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'inizialiPasseggero',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inizialiPasseggeroStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  inizialiPasseggeroStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'inizialiPasseggero',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'inizialiPasseggero',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inizialiPasseggeroEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  inizialiPasseggeroEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'inizialiPasseggero',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'inizialiPasseggero',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inizialiPasseggeroContains(String value, {bool caseSensitive = true}) {
+  inizialiPasseggeroContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'inizialiPasseggero',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'inizialiPasseggero',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inizialiPasseggeroMatches(String pattern, {bool caseSensitive = true}) {
+  inizialiPasseggeroMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'inizialiPasseggero',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'inizialiPasseggero',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inizialiPasseggeroIsEmpty() {
+  inizialiPasseggeroIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'inizialiPasseggero',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'inizialiPasseggero', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inizialiPasseggeroIsNotEmpty() {
+  inizialiPasseggeroIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'inizialiPasseggero',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'inizialiPasseggero', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inoltrareIsNull() {
+  inoltrareIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'inoltrare',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'inoltrare'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inoltrareIsNotNull() {
+  inoltrareIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'inoltrare',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'inoltrare'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inoltrareEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  inoltrareEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'inoltrare',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'inoltrare',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inoltrareGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'inoltrare',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inoltrareLessThan(
+  inoltrareGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'inoltrare',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'inoltrare',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inoltrareBetween(
+  inoltrareLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'inoltrare',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  inoltrareBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -6498,153 +6731,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'inoltrare',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'inoltrare',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inoltrareStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  inoltrareStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'inoltrare',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'inoltrare',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inoltrareEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  inoltrareEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'inoltrare',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'inoltrare',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inoltrareContains(String value, {bool caseSensitive = true}) {
+  inoltrareContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'inoltrare',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'inoltrare',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inoltrareMatches(String pattern, {bool caseSensitive = true}) {
+  inoltrareMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'inoltrare',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'inoltrare',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inoltrareIsEmpty() {
+  inoltrareIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'inoltrare',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'inoltrare', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      inoltrareIsNotEmpty() {
+  inoltrareIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'inoltrare',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'inoltrare', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      logHistoryIdIsNull() {
+  logHistoryIdIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'logHistoryId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'logHistoryId'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      logHistoryIdIsNotNull() {
+  logHistoryIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'logHistoryId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'logHistoryId'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      logHistoryIdEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  logHistoryIdEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      logHistoryIdGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      logHistoryIdLessThan(
+  logHistoryIdGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      logHistoryIdBetween(
+  logHistoryIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  logHistoryIdBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -6652,153 +6890,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'logHistoryId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'logHistoryId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      logHistoryIdStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  logHistoryIdStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      logHistoryIdEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  logHistoryIdEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      logHistoryIdContains(String value, {bool caseSensitive = true}) {
+  logHistoryIdContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      logHistoryIdMatches(String pattern, {bool caseSensitive = true}) {
+  logHistoryIdMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'logHistoryId',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'logHistoryId',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      logHistoryIdIsEmpty() {
+  logHistoryIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'logHistoryId',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'logHistoryId', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      logHistoryIdIsNotEmpty() {
+  logHistoryIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'logHistoryId',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'logHistoryId', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeEsercizioIsNull() {
+  nomeEsercizioIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nomeEsercizio',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nomeEsercizio'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeEsercizioIsNotNull() {
+  nomeEsercizioIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nomeEsercizio',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nomeEsercizio'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeEsercizioEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  nomeEsercizioEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nomeEsercizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'nomeEsercizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeEsercizioGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nomeEsercizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeEsercizioLessThan(
+  nomeEsercizioGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nomeEsercizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nomeEsercizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeEsercizioBetween(
+  nomeEsercizioLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nomeEsercizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  nomeEsercizioBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -6806,153 +7049,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nomeEsercizio',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nomeEsercizio',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeEsercizioStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nomeEsercizioStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'nomeEsercizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'nomeEsercizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeEsercizioEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nomeEsercizioEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'nomeEsercizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'nomeEsercizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeEsercizioContains(String value, {bool caseSensitive = true}) {
+  nomeEsercizioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'nomeEsercizio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'nomeEsercizio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeEsercizioMatches(String pattern, {bool caseSensitive = true}) {
+  nomeEsercizioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'nomeEsercizio',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'nomeEsercizio',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeEsercizioIsEmpty() {
+  nomeEsercizioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nomeEsercizio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nomeEsercizio', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeEsercizioIsNotEmpty() {
+  nomeEsercizioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'nomeEsercizio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'nomeEsercizio', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeFornitoreIsNull() {
+  nomeFornitoreIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nomeFornitore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nomeFornitore'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeFornitoreIsNotNull() {
+  nomeFornitoreIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nomeFornitore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nomeFornitore'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeFornitoreEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  nomeFornitoreEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nomeFornitore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'nomeFornitore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeFornitoreGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nomeFornitore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeFornitoreLessThan(
+  nomeFornitoreGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nomeFornitore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nomeFornitore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeFornitoreBetween(
+  nomeFornitoreLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nomeFornitore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  nomeFornitoreBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -6960,153 +7208,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nomeFornitore',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nomeFornitore',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeFornitoreStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nomeFornitoreStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'nomeFornitore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'nomeFornitore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeFornitoreEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nomeFornitoreEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'nomeFornitore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'nomeFornitore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeFornitoreContains(String value, {bool caseSensitive = true}) {
+  nomeFornitoreContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'nomeFornitore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'nomeFornitore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeFornitoreMatches(String pattern, {bool caseSensitive = true}) {
+  nomeFornitoreMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'nomeFornitore',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'nomeFornitore',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeFornitoreIsEmpty() {
+  nomeFornitoreIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nomeFornitore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nomeFornitore', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeFornitoreIsNotEmpty() {
+  nomeFornitoreIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'nomeFornitore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'nomeFornitore', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeViaggiatoreIsNull() {
+  nomeViaggiatoreIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nomeViaggiatore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nomeViaggiatore'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeViaggiatoreIsNotNull() {
+  nomeViaggiatoreIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nomeViaggiatore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nomeViaggiatore'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeViaggiatoreEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  nomeViaggiatoreEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nomeViaggiatore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'nomeViaggiatore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeViaggiatoreGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nomeViaggiatore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeViaggiatoreLessThan(
+  nomeViaggiatoreGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nomeViaggiatore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nomeViaggiatore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeViaggiatoreBetween(
+  nomeViaggiatoreLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nomeViaggiatore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  nomeViaggiatoreBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -7114,153 +7367,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nomeViaggiatore',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nomeViaggiatore',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeViaggiatoreStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nomeViaggiatoreStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'nomeViaggiatore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'nomeViaggiatore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeViaggiatoreEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nomeViaggiatoreEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'nomeViaggiatore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'nomeViaggiatore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeViaggiatoreContains(String value, {bool caseSensitive = true}) {
+  nomeViaggiatoreContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'nomeViaggiatore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'nomeViaggiatore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeViaggiatoreMatches(String pattern, {bool caseSensitive = true}) {
+  nomeViaggiatoreMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'nomeViaggiatore',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'nomeViaggiatore',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeViaggiatoreIsEmpty() {
+  nomeViaggiatoreIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nomeViaggiatore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nomeViaggiatore', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      nomeViaggiatoreIsNotEmpty() {
+  nomeViaggiatoreIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'nomeViaggiatore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'nomeViaggiatore', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEIsNull() {
+  numFatturaSEIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'numFatturaSE',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'numFatturaSE'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEIsNotNull() {
+  numFatturaSEIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'numFatturaSE',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'numFatturaSE'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  numFatturaSEEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numFatturaSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'numFatturaSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'numFatturaSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSELessThan(
+  numFatturaSEGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'numFatturaSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'numFatturaSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEBetween(
+  numFatturaSELessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'numFatturaSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  numFatturaSEBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -7268,153 +7526,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'numFatturaSE',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'numFatturaSE',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numFatturaSEStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'numFatturaSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'numFatturaSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numFatturaSEEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'numFatturaSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'numFatturaSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEContains(String value, {bool caseSensitive = true}) {
+  numFatturaSEContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'numFatturaSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'numFatturaSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEMatches(String pattern, {bool caseSensitive = true}) {
+  numFatturaSEMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'numFatturaSE',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'numFatturaSE',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEIsEmpty() {
+  numFatturaSEIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numFatturaSE',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'numFatturaSE', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEIsNotEmpty() {
+  numFatturaSEIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'numFatturaSE',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'numFatturaSE', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEOriginaleIsNull() {
+  numFatturaSEOriginaleIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'numFatturaSEOriginale',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'numFatturaSEOriginale'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEOriginaleIsNotNull() {
+  numFatturaSEOriginaleIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'numFatturaSEOriginale',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'numFatturaSEOriginale'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEOriginaleEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  numFatturaSEOriginaleEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numFatturaSEOriginale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'numFatturaSEOriginale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEOriginaleGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'numFatturaSEOriginale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEOriginaleLessThan(
+  numFatturaSEOriginaleGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'numFatturaSEOriginale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'numFatturaSEOriginale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEOriginaleBetween(
+  numFatturaSEOriginaleLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'numFatturaSEOriginale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  numFatturaSEOriginaleBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -7422,154 +7685,161 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'numFatturaSEOriginale',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'numFatturaSEOriginale',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEOriginaleStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numFatturaSEOriginaleStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'numFatturaSEOriginale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'numFatturaSEOriginale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEOriginaleEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numFatturaSEOriginaleEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'numFatturaSEOriginale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'numFatturaSEOriginale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEOriginaleContains(String value, {bool caseSensitive = true}) {
+  numFatturaSEOriginaleContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'numFatturaSEOriginale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'numFatturaSEOriginale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEOriginaleMatches(String pattern,
-          {bool caseSensitive = true}) {
+  numFatturaSEOriginaleMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'numFatturaSEOriginale',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'numFatturaSEOriginale',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEOriginaleIsEmpty() {
+  numFatturaSEOriginaleIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numFatturaSEOriginale',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'numFatturaSEOriginale', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numFatturaSEOriginaleIsNotEmpty() {
+  numFatturaSEOriginaleIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'numFatturaSEOriginale',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'numFatturaSEOriginale',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroBollaFatturaIsNull() {
+  numeroBollaFatturaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'numeroBollaFattura',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'numeroBollaFattura'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroBollaFatturaIsNotNull() {
+  numeroBollaFatturaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'numeroBollaFattura',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'numeroBollaFattura'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroBollaFatturaEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  numeroBollaFatturaEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroBollaFattura',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'numeroBollaFattura',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroBollaFatturaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'numeroBollaFattura',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroBollaFatturaLessThan(
+  numeroBollaFatturaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'numeroBollaFattura',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'numeroBollaFattura',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroBollaFatturaBetween(
+  numeroBollaFatturaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'numeroBollaFattura',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  numeroBollaFatturaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -7577,153 +7847,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'numeroBollaFattura',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'numeroBollaFattura',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroBollaFatturaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroBollaFatturaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'numeroBollaFattura',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'numeroBollaFattura',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroBollaFatturaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroBollaFatturaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'numeroBollaFattura',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'numeroBollaFattura',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroBollaFatturaContains(String value, {bool caseSensitive = true}) {
+  numeroBollaFatturaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'numeroBollaFattura',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'numeroBollaFattura',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroBollaFatturaMatches(String pattern, {bool caseSensitive = true}) {
+  numeroBollaFatturaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'numeroBollaFattura',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'numeroBollaFattura',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroBollaFatturaIsEmpty() {
+  numeroBollaFatturaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroBollaFattura',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'numeroBollaFattura', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroBollaFatturaIsNotEmpty() {
+  numeroBollaFatturaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'numeroBollaFattura',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'numeroBollaFattura', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoIsNull() {
+  numeroContoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'numeroConto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'numeroConto'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoIsNotNull() {
+  numeroContoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'numeroConto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'numeroConto'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  numeroContoEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'numeroConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'numeroConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoLessThan(
+  numeroContoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'numeroConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'numeroConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoBetween(
+  numeroContoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'numeroConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  numeroContoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -7731,153 +8006,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'numeroConto',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'numeroConto',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroContoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'numeroConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'numeroConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroContoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'numeroConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'numeroConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoContains(String value, {bool caseSensitive = true}) {
+  numeroContoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'numeroConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'numeroConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoMatches(String pattern, {bool caseSensitive = true}) {
+  numeroContoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'numeroConto',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'numeroConto',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoIsEmpty() {
+  numeroContoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroConto',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'numeroConto', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoIsNotEmpty() {
+  numeroContoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'numeroConto',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'numeroConto', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoSEIsNull() {
+  numeroContoSEIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'numeroContoSE',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'numeroContoSE'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoSEIsNotNull() {
+  numeroContoSEIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'numeroContoSE',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'numeroContoSE'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoSEEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  numeroContoSEEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroContoSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'numeroContoSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoSEGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'numeroContoSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoSELessThan(
+  numeroContoSEGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'numeroContoSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'numeroContoSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoSEBetween(
+  numeroContoSELessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'numeroContoSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  numeroContoSEBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -7885,153 +8165,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'numeroContoSE',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'numeroContoSE',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoSEStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroContoSEStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'numeroContoSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'numeroContoSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoSEEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroContoSEEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'numeroContoSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'numeroContoSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoSEContains(String value, {bool caseSensitive = true}) {
+  numeroContoSEContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'numeroContoSE',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'numeroContoSE',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoSEMatches(String pattern, {bool caseSensitive = true}) {
+  numeroContoSEMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'numeroContoSE',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'numeroContoSE',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoSEIsEmpty() {
+  numeroContoSEIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroContoSE',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'numeroContoSE', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroContoSEIsNotEmpty() {
+  numeroContoSEIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'numeroContoSE',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'numeroContoSE', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroTrasfertaIsNull() {
+  numeroTrasfertaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'numeroTrasferta',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'numeroTrasferta'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroTrasfertaIsNotNull() {
+  numeroTrasfertaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'numeroTrasferta',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'numeroTrasferta'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroTrasfertaEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  numeroTrasfertaEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroTrasfertaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroTrasfertaLessThan(
+  numeroTrasfertaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroTrasfertaBetween(
+  numeroTrasfertaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  numeroTrasfertaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -8039,102 +8324,104 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'numeroTrasferta',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'numeroTrasferta',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroTrasfertaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroTrasfertaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroTrasfertaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroTrasfertaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroTrasfertaContains(String value, {bool caseSensitive = true}) {
+  numeroTrasfertaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroTrasfertaMatches(String pattern, {bool caseSensitive = true}) {
+  numeroTrasfertaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'numeroTrasferta',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'numeroTrasferta',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroTrasfertaIsEmpty() {
+  numeroTrasfertaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroTrasferta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'numeroTrasferta', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      numeroTrasfertaIsNotEmpty() {
+  numeroTrasfertaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'numeroTrasferta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'numeroTrasferta', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ordineIsNull() {
+  ordineIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'ordine',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'ordine'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ordineIsNotNull() {
+  ordineIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'ordine',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'ordine'),
+      );
     });
   }
 
@@ -8143,43 +8430,49 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'ordine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'ordine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ordineGreaterThan(
+  ordineGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'ordine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'ordine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ordineLessThan(
+  ordineLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'ordine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'ordine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8191,103 +8484,106 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'ordine',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'ordine',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ordineStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  ordineStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'ordine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'ordine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ordineEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  ordineEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'ordine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'ordine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ordineContains(String value, {bool caseSensitive = true}) {
+  ordineContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'ordine',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'ordine',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> ordineMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'ordine',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'ordine',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ordineIsEmpty() {
+  ordineIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'ordine',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'ordine', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ordineIsNotEmpty() {
+  ordineIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'ordine',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'ordine', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      pnrNoIsNull() {
+  pnrNoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'pnrNo',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'pnrNo'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      pnrNoIsNotNull() {
+  pnrNoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'pnrNo',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'pnrNo'),
+      );
     });
   }
 
@@ -8296,27 +8592,31 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'pnrNo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'pnrNo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      pnrNoGreaterThan(
+  pnrNoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'pnrNo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'pnrNo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8326,12 +8626,14 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'pnrNo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'pnrNo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8343,28 +8645,29 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'pnrNo',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'pnrNo',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      pnrNoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  pnrNoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'pnrNo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'pnrNo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8373,72 +8676,78 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'pnrNo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'pnrNo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> pnrNoContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'pnrNo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'pnrNo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> pnrNoMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'pnrNo',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'pnrNo',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      pnrNoIsEmpty() {
+  pnrNoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'pnrNo',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'pnrNo', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      pnrNoIsNotEmpty() {
+  pnrNoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'pnrNo',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'pnrNo', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif1IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rif1',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rif1'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif1IsNotNull() {
+  rif1IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rif1',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rif1'),
+      );
     });
   }
 
@@ -8447,27 +8756,31 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif1',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rif1',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif1GreaterThan(
+  rif1GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rif1',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rif1',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8477,12 +8790,14 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rif1',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rif1',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8494,28 +8809,29 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rif1',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rif1',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif1StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rif1StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'rif1',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'rif1',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8524,72 +8840,78 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'rif1',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'rif1',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif1Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'rif1',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'rif1',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif1Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'rif1',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'rif1',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif1IsEmpty() {
+  rif1IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif1',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'rif1', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif1IsNotEmpty() {
+  rif1IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'rif1',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'rif1', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif2IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rif2',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rif2'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif2IsNotNull() {
+  rif2IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rif2',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rif2'),
+      );
     });
   }
 
@@ -8598,27 +8920,31 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif2',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rif2',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif2GreaterThan(
+  rif2GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rif2',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rif2',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8628,12 +8954,14 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rif2',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rif2',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8645,28 +8973,29 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rif2',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rif2',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif2StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rif2StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'rif2',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'rif2',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8675,72 +9004,78 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'rif2',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'rif2',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif2Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'rif2',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'rif2',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif2Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'rif2',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'rif2',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif2IsEmpty() {
+  rif2IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif2',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'rif2', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif2IsNotEmpty() {
+  rif2IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'rif2',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'rif2', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif3IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rif3',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rif3'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif3IsNotNull() {
+  rif3IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rif3',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rif3'),
+      );
     });
   }
 
@@ -8749,27 +9084,31 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rif3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif3GreaterThan(
+  rif3GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rif3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rif3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8779,12 +9118,14 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rif3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rif3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8796,28 +9137,29 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rif3',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rif3',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif3StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rif3StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'rif3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'rif3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8826,72 +9168,78 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'rif3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'rif3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif3Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'rif3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'rif3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif3Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'rif3',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'rif3',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif3IsEmpty() {
+  rif3IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif3',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'rif3', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif3IsNotEmpty() {
+  rif3IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'rif3',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'rif3', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif4IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rif4',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rif4'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif4IsNotNull() {
+  rif4IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rif4',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rif4'),
+      );
     });
   }
 
@@ -8900,27 +9248,31 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rif4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif4GreaterThan(
+  rif4GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rif4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rif4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8930,12 +9282,14 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rif4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rif4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8947,28 +9301,29 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rif4',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rif4',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif4StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rif4StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'rif4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'rif4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8977,72 +9332,78 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'rif4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'rif4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif4Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'rif4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'rif4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif4Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'rif4',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'rif4',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif4IsEmpty() {
+  rif4IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif4',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'rif4', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif4IsNotEmpty() {
+  rif4IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'rif4',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'rif4', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif5IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rif5',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rif5'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif5IsNotNull() {
+  rif5IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rif5',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rif5'),
+      );
     });
   }
 
@@ -9051,27 +9412,31 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif5',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rif5',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif5GreaterThan(
+  rif5GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rif5',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rif5',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9081,12 +9446,14 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rif5',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rif5',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9098,28 +9465,29 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rif5',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rif5',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif5StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rif5StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'rif5',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'rif5',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9128,72 +9496,78 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'rif5',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'rif5',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif5Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'rif5',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'rif5',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif5Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'rif5',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'rif5',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif5IsEmpty() {
+  rif5IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif5',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'rif5', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif5IsNotEmpty() {
+  rif5IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'rif5',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'rif5', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif6IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rif6',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rif6'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif6IsNotNull() {
+  rif6IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rif6',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rif6'),
+      );
     });
   }
 
@@ -9202,27 +9576,31 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif6',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rif6',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif6GreaterThan(
+  rif6GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rif6',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rif6',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9232,12 +9610,14 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rif6',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rif6',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9249,28 +9629,29 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rif6',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rif6',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif6StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rif6StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'rif6',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'rif6',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9279,72 +9660,78 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'rif6',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'rif6',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif6Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'rif6',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'rif6',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif6Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'rif6',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'rif6',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif6IsEmpty() {
+  rif6IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif6',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'rif6', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif6IsNotEmpty() {
+  rif6IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'rif6',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'rif6', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif7IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rif7',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rif7'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif7IsNotNull() {
+  rif7IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rif7',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rif7'),
+      );
     });
   }
 
@@ -9353,27 +9740,31 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif7',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rif7',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif7GreaterThan(
+  rif7GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rif7',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rif7',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9383,12 +9774,14 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rif7',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rif7',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9400,28 +9793,29 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rif7',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rif7',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif7StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rif7StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'rif7',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'rif7',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9430,124 +9824,133 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'rif7',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'rif7',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif7Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'rif7',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'rif7',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> rif7Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'rif7',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif7IsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rif7',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rif7IsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'rif7',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifEstrattoContoCartaIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rifEstrattoContoCarta',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifEstrattoContoCartaIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rifEstrattoContoCarta',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifEstrattoContoCartaEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rifEstrattoContoCarta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'rif7',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifEstrattoContoCartaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  rif7IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rifEstrattoContoCarta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'rif7', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifEstrattoContoCartaLessThan(
+  rif7IsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'rif7', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  rifEstrattoContoCartaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rifEstrattoContoCarta'),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  rifEstrattoContoCartaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rifEstrattoContoCarta'),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  rifEstrattoContoCartaEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rifEstrattoContoCarta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  rifEstrattoContoCartaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rifEstrattoContoCarta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rifEstrattoContoCarta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifEstrattoContoCartaBetween(
+  rifEstrattoContoCartaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rifEstrattoContoCarta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  rifEstrattoContoCartaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -9555,154 +9958,161 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rifEstrattoContoCarta',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rifEstrattoContoCarta',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifEstrattoContoCartaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rifEstrattoContoCartaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'rifEstrattoContoCarta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'rifEstrattoContoCarta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifEstrattoContoCartaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rifEstrattoContoCartaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'rifEstrattoContoCarta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'rifEstrattoContoCarta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifEstrattoContoCartaContains(String value, {bool caseSensitive = true}) {
+  rifEstrattoContoCartaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'rifEstrattoContoCarta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'rifEstrattoContoCarta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifEstrattoContoCartaMatches(String pattern,
-          {bool caseSensitive = true}) {
+  rifEstrattoContoCartaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'rifEstrattoContoCarta',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'rifEstrattoContoCarta',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifEstrattoContoCartaIsEmpty() {
+  rifEstrattoContoCartaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rifEstrattoContoCarta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'rifEstrattoContoCarta', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifEstrattoContoCartaIsNotEmpty() {
+  rifEstrattoContoCartaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'rifEstrattoContoCarta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'rifEstrattoContoCarta',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifPagamentoEstrattoContoIsNull() {
+  rifPagamentoEstrattoContoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rifPagamentoEstrattoConto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rifPagamentoEstrattoConto'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifPagamentoEstrattoContoIsNotNull() {
+  rifPagamentoEstrattoContoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rifPagamentoEstrattoConto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rifPagamentoEstrattoConto'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifPagamentoEstrattoContoEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  rifPagamentoEstrattoContoEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rifPagamentoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rifPagamentoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifPagamentoEstrattoContoGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rifPagamentoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifPagamentoEstrattoContoLessThan(
+  rifPagamentoEstrattoContoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rifPagamentoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rifPagamentoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifPagamentoEstrattoContoBetween(
+  rifPagamentoEstrattoContoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rifPagamentoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  rifPagamentoEstrattoContoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -9710,155 +10120,170 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rifPagamentoEstrattoConto',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rifPagamentoEstrattoConto',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifPagamentoEstrattoContoStartsWith(
+  rifPagamentoEstrattoContoStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'rifPagamentoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'rifPagamentoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifPagamentoEstrattoContoEndsWith(
-    String value, {
+  rifPagamentoEstrattoContoEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'rifPagamentoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  rifPagamentoEstrattoContoContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'rifPagamentoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  rifPagamentoEstrattoContoMatches(
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'rifPagamentoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'rifPagamentoEstrattoConto',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifPagamentoEstrattoContoContains(String value,
-          {bool caseSensitive = true}) {
+  rifPagamentoEstrattoContoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'rifPagamentoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rifPagamentoEstrattoConto',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifPagamentoEstrattoContoMatches(String pattern,
-          {bool caseSensitive = true}) {
+  rifPagamentoEstrattoContoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'rifPagamentoEstrattoConto',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'rifPagamentoEstrattoConto',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifPagamentoEstrattoContoIsEmpty() {
+  rifViaggio1IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rifPagamentoEstrattoConto',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rifViaggio1'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifPagamentoEstrattoContoIsNotEmpty() {
+  rifViaggio1IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'rifPagamentoEstrattoConto',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rifViaggio1'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio1IsNull() {
+  rifViaggio1EqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rifViaggio1',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rifViaggio1',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio1IsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rifViaggio1',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio1EqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rifViaggio1',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio1GreaterThan(
+  rifViaggio1GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rifViaggio1',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rifViaggio1',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio1LessThan(
+  rifViaggio1LessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rifViaggio1',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rifViaggio1',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio1Between(
+  rifViaggio1Between(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -9866,153 +10291,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rifViaggio1',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rifViaggio1',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio1StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rifViaggio1StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'rifViaggio1',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'rifViaggio1',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio1EndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rifViaggio1EndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'rifViaggio1',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'rifViaggio1',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio1Contains(String value, {bool caseSensitive = true}) {
+  rifViaggio1Contains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'rifViaggio1',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'rifViaggio1',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio1Matches(String pattern, {bool caseSensitive = true}) {
+  rifViaggio1Matches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'rifViaggio1',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'rifViaggio1',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio1IsEmpty() {
+  rifViaggio1IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rifViaggio1',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'rifViaggio1', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio1IsNotEmpty() {
+  rifViaggio1IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'rifViaggio1',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'rifViaggio1', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio2IsNull() {
+  rifViaggio2IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rifViaggio2',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rifViaggio2'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio2IsNotNull() {
+  rifViaggio2IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rifViaggio2',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rifViaggio2'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio2EqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  rifViaggio2EqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rifViaggio2',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rifViaggio2',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio2GreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rifViaggio2',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio2LessThan(
+  rifViaggio2GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rifViaggio2',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rifViaggio2',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio2Between(
+  rifViaggio2LessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rifViaggio2',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  rifViaggio2Between(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -10020,153 +10450,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rifViaggio2',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rifViaggio2',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio2StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rifViaggio2StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'rifViaggio2',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'rifViaggio2',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio2EndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rifViaggio2EndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'rifViaggio2',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'rifViaggio2',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio2Contains(String value, {bool caseSensitive = true}) {
+  rifViaggio2Contains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'rifViaggio2',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'rifViaggio2',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio2Matches(String pattern, {bool caseSensitive = true}) {
+  rifViaggio2Matches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'rifViaggio2',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'rifViaggio2',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio2IsEmpty() {
+  rifViaggio2IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rifViaggio2',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'rifViaggio2', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio2IsNotEmpty() {
+  rifViaggio2IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'rifViaggio2',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'rifViaggio2', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio3IsNull() {
+  rifViaggio3IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rifViaggio3',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rifViaggio3'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio3IsNotNull() {
+  rifViaggio3IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rifViaggio3',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rifViaggio3'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio3EqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  rifViaggio3EqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rifViaggio3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rifViaggio3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio3GreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rifViaggio3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio3LessThan(
+  rifViaggio3GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rifViaggio3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rifViaggio3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio3Between(
+  rifViaggio3LessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rifViaggio3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  rifViaggio3Between(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -10174,153 +10609,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rifViaggio3',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rifViaggio3',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio3StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rifViaggio3StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'rifViaggio3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'rifViaggio3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio3EndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rifViaggio3EndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'rifViaggio3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'rifViaggio3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio3Contains(String value, {bool caseSensitive = true}) {
+  rifViaggio3Contains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'rifViaggio3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'rifViaggio3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio3Matches(String pattern, {bool caseSensitive = true}) {
+  rifViaggio3Matches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'rifViaggio3',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'rifViaggio3',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio3IsEmpty() {
+  rifViaggio3IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rifViaggio3',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'rifViaggio3', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio3IsNotEmpty() {
+  rifViaggio3IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'rifViaggio3',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'rifViaggio3', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio4IsNull() {
+  rifViaggio4IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'rifViaggio4',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'rifViaggio4'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio4IsNotNull() {
+  rifViaggio4IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'rifViaggio4',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'rifViaggio4'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio4EqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  rifViaggio4EqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rifViaggio4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'rifViaggio4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio4GreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'rifViaggio4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio4LessThan(
+  rifViaggio4GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'rifViaggio4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'rifViaggio4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio4Between(
+  rifViaggio4LessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'rifViaggio4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  rifViaggio4Between(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -10328,153 +10768,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'rifViaggio4',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'rifViaggio4',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio4StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rifViaggio4StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'rifViaggio4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'rifViaggio4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio4EndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  rifViaggio4EndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'rifViaggio4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'rifViaggio4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio4Contains(String value, {bool caseSensitive = true}) {
+  rifViaggio4Contains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'rifViaggio4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'rifViaggio4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio4Matches(String pattern, {bool caseSensitive = true}) {
+  rifViaggio4Matches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'rifViaggio4',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'rifViaggio4',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio4IsEmpty() {
+  rifViaggio4IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'rifViaggio4',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'rifViaggio4', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      rifViaggio4IsNotEmpty() {
+  rifViaggio4IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'rifViaggio4',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'rifViaggio4', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      riferimentoEstrattoContoIsNull() {
+  riferimentoEstrattoContoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'riferimentoEstrattoConto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'riferimentoEstrattoConto'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      riferimentoEstrattoContoIsNotNull() {
+  riferimentoEstrattoContoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'riferimentoEstrattoConto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'riferimentoEstrattoConto'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      riferimentoEstrattoContoEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  riferimentoEstrattoContoEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'riferimentoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'riferimentoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      riferimentoEstrattoContoGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'riferimentoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      riferimentoEstrattoContoLessThan(
+  riferimentoEstrattoContoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'riferimentoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'riferimentoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      riferimentoEstrattoContoBetween(
+  riferimentoEstrattoContoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'riferimentoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  riferimentoEstrattoContoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -10482,178 +10927,186 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'riferimentoEstrattoConto',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'riferimentoEstrattoConto',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      riferimentoEstrattoContoStartsWith(
+  riferimentoEstrattoContoStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'riferimentoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'riferimentoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      riferimentoEstrattoContoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  riferimentoEstrattoContoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'riferimentoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'riferimentoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      riferimentoEstrattoContoContains(String value,
-          {bool caseSensitive = true}) {
+  riferimentoEstrattoContoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'riferimentoEstrattoConto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'riferimentoEstrattoConto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      riferimentoEstrattoContoMatches(String pattern,
-          {bool caseSensitive = true}) {
+  riferimentoEstrattoContoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'riferimentoEstrattoConto',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'riferimentoEstrattoConto',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      riferimentoEstrattoContoIsEmpty() {
+  riferimentoEstrattoContoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'riferimentoEstrattoConto',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'riferimentoEstrattoConto',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      riferimentoEstrattoContoIsNotEmpty() {
+  riferimentoEstrattoContoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'riferimentoEstrattoConto',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'riferimentoEstrattoConto',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      sourceFileLineIsNull() {
+  sourceFileLineIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'sourceFileLine',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'sourceFileLine'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      sourceFileLineIsNotNull() {
+  sourceFileLineIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'sourceFileLine',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'sourceFileLine'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      sourceFileLineEqualTo(int? value) {
+  sourceFileLineEqualTo(int? value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'sourceFileLine',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'sourceFileLine', value: value),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      sourceFileLineGreaterThan(
-    int? value, {
-    bool include = false,
-  }) {
+  sourceFileLineGreaterThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'sourceFileLine',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'sourceFileLine',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      sourceFileLineLessThan(
-    int? value, {
-    bool include = false,
-  }) {
+  sourceFileLineLessThan(int? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'sourceFileLine',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'sourceFileLine',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      sourceFileLineBetween(
+  sourceFileLineBetween(
     int? lower,
     int? upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'sourceFileLine',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'sourceFileLine',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoIsNull() {
+  statoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'stato',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'stato'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoIsNotNull() {
+  statoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'stato',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'stato'),
+      );
     });
   }
 
@@ -10662,27 +11115,31 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'stato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'stato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoGreaterThan(
+  statoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'stato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'stato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -10692,12 +11149,14 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'stato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'stato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -10709,28 +11168,29 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'stato',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'stato',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  statoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'stato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'stato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -10739,124 +11199,133 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'stato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'stato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> statoContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'stato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'stato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> statoMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'stato',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'stato',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'stato',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoRichiestaIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'statoRichiesta',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoRichiestaIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'statoRichiesta',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoRichiestaEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'statoRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'stato',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoRichiestaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  statoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'statoRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'stato', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoRichiestaLessThan(
+  statoIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'stato', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  statoRichiestaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'statoRichiesta'),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  statoRichiestaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'statoRichiesta'),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  statoRichiestaEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'statoRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  statoRichiestaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'statoRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'statoRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoRichiestaBetween(
+  statoRichiestaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'statoRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  statoRichiestaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -10864,153 +11333,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'statoRichiesta',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'statoRichiesta',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoRichiestaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  statoRichiestaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'statoRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'statoRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoRichiestaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  statoRichiestaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'statoRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'statoRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoRichiestaContains(String value, {bool caseSensitive = true}) {
+  statoRichiestaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'statoRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'statoRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoRichiestaMatches(String pattern, {bool caseSensitive = true}) {
+  statoRichiestaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'statoRichiesta',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'statoRichiesta',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoRichiestaIsEmpty() {
+  statoRichiestaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'statoRichiesta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'statoRichiesta', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      statoRichiestaIsNotEmpty() {
+  statoRichiestaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'statoRichiesta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'statoRichiesta', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      tassoCambioIsNull() {
+  tassoCambioIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'tassoCambio',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'tassoCambio'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      tassoCambioIsNotNull() {
+  tassoCambioIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'tassoCambio',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'tassoCambio'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      tassoCambioEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  tassoCambioEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tassoCambio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'tassoCambio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      tassoCambioGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'tassoCambio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      tassoCambioLessThan(
+  tassoCambioGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'tassoCambio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tassoCambio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      tassoCambioBetween(
+  tassoCambioLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tassoCambio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  tassoCambioBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -11018,153 +11492,161 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'tassoCambio',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tassoCambio',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      tassoCambioStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tassoCambioStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'tassoCambio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'tassoCambio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      tassoCambioEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tassoCambioEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'tassoCambio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'tassoCambio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      tassoCambioContains(String value, {bool caseSensitive = true}) {
+  tassoCambioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'tassoCambio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'tassoCambio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      tassoCambioMatches(String pattern, {bool caseSensitive = true}) {
+  tassoCambioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'tassoCambio',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'tassoCambio',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      tassoCambioIsEmpty() {
+  tassoCambioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tassoCambio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'tassoCambio', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      tassoCambioIsNotEmpty() {
+  tassoCambioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'tassoCambio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'tassoCambio', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      totaleImportoTasseIsNull() {
+  totaleImportoTasseIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'totaleImportoTasse',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'totaleImportoTasse'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      totaleImportoTasseIsNotNull() {
+  totaleImportoTasseIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'totaleImportoTasse',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'totaleImportoTasse'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      totaleImportoTasseEqualTo(
-    double? value, {
-    double epsilon = Query.epsilon,
-  }) {
+  totaleImportoTasseEqualTo(double? value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'totaleImportoTasse',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'totaleImportoTasse',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      totaleImportoTasseGreaterThan(
-    double? value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'totaleImportoTasse',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      totaleImportoTasseLessThan(
+  totaleImportoTasseGreaterThan(
     double? value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'totaleImportoTasse',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'totaleImportoTasse',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      totaleImportoTasseBetween(
+  totaleImportoTasseLessThan(
+    double? value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'totaleImportoTasse',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  totaleImportoTasseBetween(
     double? lower,
     double? upper, {
     bool includeLower = true,
@@ -11172,83 +11654,89 @@ extension EstrattoAmexQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'totaleImportoTasse',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'totaleImportoTasse',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ufficioViaggiIsNull() {
+  ufficioViaggiIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'ufficioViaggi',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'ufficioViaggi'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ufficioViaggiIsNotNull() {
+  ufficioViaggiIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'ufficioViaggi',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'ufficioViaggi'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ufficioViaggiEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  ufficioViaggiEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'ufficioViaggi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'ufficioViaggi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ufficioViaggiGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'ufficioViaggi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ufficioViaggiLessThan(
+  ufficioViaggiGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'ufficioViaggi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'ufficioViaggi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ufficioViaggiBetween(
+  ufficioViaggiLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'ufficioViaggi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  ufficioViaggiBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -11256,102 +11744,104 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'ufficioViaggi',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'ufficioViaggi',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ufficioViaggiStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  ufficioViaggiStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'ufficioViaggi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'ufficioViaggi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ufficioViaggiEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  ufficioViaggiEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'ufficioViaggi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'ufficioViaggi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ufficioViaggiContains(String value, {bool caseSensitive = true}) {
+  ufficioViaggiContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'ufficioViaggi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'ufficioViaggi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ufficioViaggiMatches(String pattern, {bool caseSensitive = true}) {
+  ufficioViaggiMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'ufficioViaggi',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'ufficioViaggi',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ufficioViaggiIsEmpty() {
+  ufficioViaggiIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'ufficioViaggi',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'ufficioViaggi', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      ufficioViaggiIsNotEmpty() {
+  ufficioViaggiIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'ufficioViaggi',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'ufficioViaggi', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaIsNull() {
+  valutaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'valuta',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'valuta'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaIsNotNull() {
+  valutaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'valuta',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'valuta'),
+      );
     });
   }
 
@@ -11360,43 +11850,49 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaGreaterThan(
+  valutaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaLessThan(
+  valutaLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -11408,154 +11904,160 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'valuta',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'valuta',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  valutaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  valutaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaContains(String value, {bool caseSensitive = true}) {
+  valutaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition> valutaMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'valuta',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'valuta',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'valuta',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaTransazioneIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'valutaTransazione',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaTransazioneIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'valutaTransazione',
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaTransazioneEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'valutaTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'valuta',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaTransazioneGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  valutaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'valutaTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'valuta', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaTransazioneLessThan(
+  valutaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'valuta', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  valutaTransazioneIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'valutaTransazione'),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  valutaTransazioneIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'valutaTransazione'),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  valutaTransazioneEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'valutaTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  valutaTransazioneGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'valutaTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'valutaTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaTransazioneBetween(
+  valutaTransazioneLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'valutaTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  valutaTransazioneBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -11563,153 +12065,158 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'valutaTransazione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'valutaTransazione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaTransazioneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  valutaTransazioneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'valutaTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'valutaTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaTransazioneEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  valutaTransazioneEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'valutaTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'valutaTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaTransazioneContains(String value, {bool caseSensitive = true}) {
+  valutaTransazioneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'valutaTransazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'valutaTransazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaTransazioneMatches(String pattern, {bool caseSensitive = true}) {
+  valutaTransazioneMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'valutaTransazione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'valutaTransazione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaTransazioneIsEmpty() {
+  valutaTransazioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'valutaTransazione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'valutaTransazione', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      valutaTransazioneIsNotEmpty() {
+  valutaTransazioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'valutaTransazione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'valutaTransazione', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      vettoreIsNull() {
+  vettoreIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'vettore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'vettore'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      vettoreIsNotNull() {
+  vettoreIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'vettore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'vettore'),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      vettoreEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  vettoreEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'vettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'vettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      vettoreGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'vettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      vettoreLessThan(
+  vettoreGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'vettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'vettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      vettoreBetween(
+  vettoreLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'vettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
+  vettoreBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -11717,84 +12224,86 @@ extension EstrattoAmexQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'vettore',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'vettore',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      vettoreStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  vettoreStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'vettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'vettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      vettoreEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  vettoreEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'vettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'vettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      vettoreContains(String value, {bool caseSensitive = true}) {
+  vettoreContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'vettore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'vettore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      vettoreMatches(String pattern, {bool caseSensitive = true}) {
+  vettoreMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'vettore',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'vettore',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      vettoreIsEmpty() {
+  vettoreIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'vettore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'vettore', value: ''),
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterFilterCondition>
-      vettoreIsNotEmpty() {
+  vettoreIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'vettore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'vettore', value: ''),
+      );
     });
   }
 }
@@ -11808,28 +12317,28 @@ extension EstrattoAmexQueryLinks
 extension EstrattoAmexQuerySortBy
     on QueryBuilder<EstrattoAmex, EstrattoAmex, QSortBy> {
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByAeroportoDestinazione() {
+  sortByAeroportoDestinazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'aeroportoDestinazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByAeroportoDestinazioneDesc() {
+  sortByAeroportoDestinazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'aeroportoDestinazione', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByAeroportoPartenza() {
+  sortByAeroportoPartenza() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'aeroportoPartenza', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByAeroportoPartenzaDesc() {
+  sortByAeroportoPartenzaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'aeroportoPartenza', Sort.desc);
     });
@@ -11842,21 +12351,21 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByAgenziaViaggiDesc() {
+  sortByAgenziaViaggiDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'agenziaViaggi', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByAllocazionePagamento() {
+  sortByAllocazionePagamento() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'allocazionePagamento', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByAllocazionePagamentoDesc() {
+  sortByAllocazionePagamentoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'allocazionePagamento', Sort.desc);
     });
@@ -11875,14 +12384,14 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByBollaOriginale() {
+  sortByBollaOriginale() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bollaOriginale', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByBollaOriginaleDesc() {
+  sortByBollaOriginaleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bollaOriginale', Sort.desc);
     });
@@ -11919,7 +12428,7 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByClasseViaggioDesc() {
+  sortByClasseViaggioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'classeViaggio', Sort.desc);
     });
@@ -11932,7 +12441,7 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByCodiceMercatoDesc() {
+  sortByCodiceMercatoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceMercato', Sort.desc);
     });
@@ -11945,35 +12454,35 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByCodiceSettoreDesc() {
+  sortByCodiceSettoreDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceSettore', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByCodiceSettoreSE() {
+  sortByCodiceSettoreSE() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceSettoreSE', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByCodiceSettoreSEDesc() {
+  sortByCodiceSettoreSEDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceSettoreSE', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByCodiceTipoTransazione() {
+  sortByCodiceTipoTransazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceTipoTransazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByCodiceTipoTransazioneDesc() {
+  sortByCodiceTipoTransazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceTipoTransazione', Sort.desc);
     });
@@ -11986,7 +12495,7 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByCodiceVettoreDesc() {
+  sortByCodiceVettoreDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceVettore', Sort.desc);
     });
@@ -11999,7 +12508,7 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByContestataDesc() {
+  sortByContestataDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'contestata', Sort.desc);
     });
@@ -12018,42 +12527,42 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDataAperturaRichiesta() {
+  sortByDataAperturaRichiesta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataAperturaRichiesta', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDataAperturaRichiestaDesc() {
+  sortByDataAperturaRichiestaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataAperturaRichiesta', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDataChiusuraRichiesta() {
+  sortByDataChiusuraRichiesta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataChiusuraRichiesta', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDataChiusuraRichiestaDesc() {
+  sortByDataChiusuraRichiestaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataChiusuraRichiesta', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDataEstrattoConto() {
+  sortByDataEstrattoConto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataEstrattoConto', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDataEstrattoContoDesc() {
+  sortByDataEstrattoContoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataEstrattoConto', Sort.desc);
     });
@@ -12066,77 +12575,77 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDataPartenzaDesc() {
+  sortByDataPartenzaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataPartenza', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDataProcessazione() {
+  sortByDataProcessazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataProcessazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDataProcessazioneDesc() {
+  sortByDataProcessazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataProcessazione', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDataScadenzaPagamento() {
+  sortByDataScadenzaPagamento() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataScadenzaPagamento', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDataScadenzaPagamentoDesc() {
+  sortByDataScadenzaPagamentoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataScadenzaPagamento', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDataTransazione() {
+  sortByDataTransazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataTransazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDataTransazioneDesc() {
+  sortByDataTransazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataTransazione', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDebitCreditCode() {
+  sortByDebitCreditCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'debitCreditCode', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByDebitCreditCodeDesc() {
+  sortByDebitCreditCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'debitCreditCode', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByFatturaAgenziaViaggio() {
+  sortByFatturaAgenziaViaggio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'fatturaAgenziaViaggio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByFatturaAgenziaViaggioDesc() {
+  sortByFatturaAgenziaViaggioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'fatturaAgenziaViaggio', Sort.desc);
     });
@@ -12161,35 +12670,35 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByIdTransazioneDesc() {
+  sortByIdTransazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'idTransazione', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByIdentificativoEstrattoConto() {
+  sortByIdentificativoEstrattoConto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'identificativoEstrattoConto', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByIdentificativoEstrattoContoDesc() {
+  sortByIdentificativoEstrattoContoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'identificativoEstrattoConto', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByImportoAllocato() {
+  sortByImportoAllocato() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoAllocato', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByImportoAllocatoDesc() {
+  sortByImportoAllocatoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoAllocato', Sort.desc);
     });
@@ -12202,7 +12711,7 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByImportoLordoDesc() {
+  sortByImportoLordoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoLordo', Sort.desc);
     });
@@ -12215,21 +12724,21 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByImportoNettoDesc() {
+  sortByImportoNettoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoNetto', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByImportoNonAllocato() {
+  sortByImportoNonAllocato() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoNonAllocato', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByImportoNonAllocatoDesc() {
+  sortByImportoNonAllocatoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoNonAllocato', Sort.desc);
     });
@@ -12248,14 +12757,14 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByInizialiPasseggero() {
+  sortByInizialiPasseggero() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'inizialiPasseggero', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByInizialiPasseggeroDesc() {
+  sortByInizialiPasseggeroDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'inizialiPasseggero', Sort.desc);
     });
@@ -12280,7 +12789,7 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByLogHistoryIdDesc() {
+  sortByLogHistoryIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'logHistoryId', Sort.desc);
     });
@@ -12293,7 +12802,7 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByNomeEsercizioDesc() {
+  sortByNomeEsercizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeEsercizio', Sort.desc);
     });
@@ -12306,21 +12815,21 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByNomeFornitoreDesc() {
+  sortByNomeFornitoreDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeFornitore', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByNomeViaggiatore() {
+  sortByNomeViaggiatore() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeViaggiatore', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByNomeViaggiatoreDesc() {
+  sortByNomeViaggiatoreDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeViaggiatore', Sort.desc);
     });
@@ -12333,35 +12842,35 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByNumFatturaSEDesc() {
+  sortByNumFatturaSEDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numFatturaSE', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByNumFatturaSEOriginale() {
+  sortByNumFatturaSEOriginale() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numFatturaSEOriginale', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByNumFatturaSEOriginaleDesc() {
+  sortByNumFatturaSEOriginaleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numFatturaSEOriginale', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByNumeroBollaFattura() {
+  sortByNumeroBollaFattura() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroBollaFattura', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByNumeroBollaFatturaDesc() {
+  sortByNumeroBollaFatturaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroBollaFattura', Sort.desc);
     });
@@ -12374,7 +12883,7 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByNumeroContoDesc() {
+  sortByNumeroContoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroConto', Sort.desc);
     });
@@ -12387,21 +12896,21 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByNumeroContoSEDesc() {
+  sortByNumeroContoSEDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroContoSE', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByNumeroTrasferta() {
+  sortByNumeroTrasferta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByNumeroTrasfertaDesc() {
+  sortByNumeroTrasfertaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.desc);
     });
@@ -12516,28 +13025,28 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByRifEstrattoContoCarta() {
+  sortByRifEstrattoContoCarta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifEstrattoContoCarta', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByRifEstrattoContoCartaDesc() {
+  sortByRifEstrattoContoCartaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifEstrattoContoCarta', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByRifPagamentoEstrattoConto() {
+  sortByRifPagamentoEstrattoConto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifPagamentoEstrattoConto', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByRifPagamentoEstrattoContoDesc() {
+  sortByRifPagamentoEstrattoContoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifPagamentoEstrattoConto', Sort.desc);
     });
@@ -12550,7 +13059,7 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByRifViaggio1Desc() {
+  sortByRifViaggio1Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifViaggio1', Sort.desc);
     });
@@ -12563,7 +13072,7 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByRifViaggio2Desc() {
+  sortByRifViaggio2Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifViaggio2', Sort.desc);
     });
@@ -12576,7 +13085,7 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByRifViaggio3Desc() {
+  sortByRifViaggio3Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifViaggio3', Sort.desc);
     });
@@ -12589,35 +13098,35 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByRifViaggio4Desc() {
+  sortByRifViaggio4Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifViaggio4', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByRiferimentoEstrattoConto() {
+  sortByRiferimentoEstrattoConto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'riferimentoEstrattoConto', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByRiferimentoEstrattoContoDesc() {
+  sortByRiferimentoEstrattoContoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'riferimentoEstrattoConto', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortBySourceFileLine() {
+  sortBySourceFileLine() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sourceFileLine', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortBySourceFileLineDesc() {
+  sortBySourceFileLineDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sourceFileLine', Sort.desc);
     });
@@ -12636,14 +13145,14 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByStatoRichiesta() {
+  sortByStatoRichiesta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'statoRichiesta', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByStatoRichiestaDesc() {
+  sortByStatoRichiestaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'statoRichiesta', Sort.desc);
     });
@@ -12656,21 +13165,21 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByTassoCambioDesc() {
+  sortByTassoCambioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tassoCambio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByTotaleImportoTasse() {
+  sortByTotaleImportoTasse() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleImportoTasse', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByTotaleImportoTasseDesc() {
+  sortByTotaleImportoTasseDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleImportoTasse', Sort.desc);
     });
@@ -12683,7 +13192,7 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByUfficioViaggiDesc() {
+  sortByUfficioViaggiDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ufficioViaggi', Sort.desc);
     });
@@ -12702,14 +13211,14 @@ extension EstrattoAmexQuerySortBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByValutaTransazione() {
+  sortByValutaTransazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'valutaTransazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      sortByValutaTransazioneDesc() {
+  sortByValutaTransazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'valutaTransazione', Sort.desc);
     });
@@ -12731,28 +13240,28 @@ extension EstrattoAmexQuerySortBy
 extension EstrattoAmexQuerySortThenBy
     on QueryBuilder<EstrattoAmex, EstrattoAmex, QSortThenBy> {
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByAeroportoDestinazione() {
+  thenByAeroportoDestinazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'aeroportoDestinazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByAeroportoDestinazioneDesc() {
+  thenByAeroportoDestinazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'aeroportoDestinazione', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByAeroportoPartenza() {
+  thenByAeroportoPartenza() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'aeroportoPartenza', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByAeroportoPartenzaDesc() {
+  thenByAeroportoPartenzaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'aeroportoPartenza', Sort.desc);
     });
@@ -12765,21 +13274,21 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByAgenziaViaggiDesc() {
+  thenByAgenziaViaggiDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'agenziaViaggi', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByAllocazionePagamento() {
+  thenByAllocazionePagamento() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'allocazionePagamento', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByAllocazionePagamentoDesc() {
+  thenByAllocazionePagamentoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'allocazionePagamento', Sort.desc);
     });
@@ -12798,14 +13307,14 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByBollaOriginale() {
+  thenByBollaOriginale() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bollaOriginale', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByBollaOriginaleDesc() {
+  thenByBollaOriginaleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'bollaOriginale', Sort.desc);
     });
@@ -12842,7 +13351,7 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByClasseViaggioDesc() {
+  thenByClasseViaggioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'classeViaggio', Sort.desc);
     });
@@ -12855,7 +13364,7 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByCodiceMercatoDesc() {
+  thenByCodiceMercatoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceMercato', Sort.desc);
     });
@@ -12868,35 +13377,35 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByCodiceSettoreDesc() {
+  thenByCodiceSettoreDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceSettore', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByCodiceSettoreSE() {
+  thenByCodiceSettoreSE() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceSettoreSE', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByCodiceSettoreSEDesc() {
+  thenByCodiceSettoreSEDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceSettoreSE', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByCodiceTipoTransazione() {
+  thenByCodiceTipoTransazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceTipoTransazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByCodiceTipoTransazioneDesc() {
+  thenByCodiceTipoTransazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceTipoTransazione', Sort.desc);
     });
@@ -12909,7 +13418,7 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByCodiceVettoreDesc() {
+  thenByCodiceVettoreDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceVettore', Sort.desc);
     });
@@ -12922,7 +13431,7 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByContestataDesc() {
+  thenByContestataDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'contestata', Sort.desc);
     });
@@ -12941,42 +13450,42 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDataAperturaRichiesta() {
+  thenByDataAperturaRichiesta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataAperturaRichiesta', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDataAperturaRichiestaDesc() {
+  thenByDataAperturaRichiestaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataAperturaRichiesta', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDataChiusuraRichiesta() {
+  thenByDataChiusuraRichiesta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataChiusuraRichiesta', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDataChiusuraRichiestaDesc() {
+  thenByDataChiusuraRichiestaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataChiusuraRichiesta', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDataEstrattoConto() {
+  thenByDataEstrattoConto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataEstrattoConto', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDataEstrattoContoDesc() {
+  thenByDataEstrattoContoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataEstrattoConto', Sort.desc);
     });
@@ -12989,77 +13498,77 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDataPartenzaDesc() {
+  thenByDataPartenzaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataPartenza', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDataProcessazione() {
+  thenByDataProcessazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataProcessazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDataProcessazioneDesc() {
+  thenByDataProcessazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataProcessazione', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDataScadenzaPagamento() {
+  thenByDataScadenzaPagamento() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataScadenzaPagamento', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDataScadenzaPagamentoDesc() {
+  thenByDataScadenzaPagamentoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataScadenzaPagamento', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDataTransazione() {
+  thenByDataTransazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataTransazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDataTransazioneDesc() {
+  thenByDataTransazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataTransazione', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDebitCreditCode() {
+  thenByDebitCreditCode() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'debitCreditCode', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByDebitCreditCodeDesc() {
+  thenByDebitCreditCodeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'debitCreditCode', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByFatturaAgenziaViaggio() {
+  thenByFatturaAgenziaViaggio() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'fatturaAgenziaViaggio', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByFatturaAgenziaViaggioDesc() {
+  thenByFatturaAgenziaViaggioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'fatturaAgenziaViaggio', Sort.desc);
     });
@@ -13096,35 +13605,35 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByIdTransazioneDesc() {
+  thenByIdTransazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'idTransazione', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByIdentificativoEstrattoConto() {
+  thenByIdentificativoEstrattoConto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'identificativoEstrattoConto', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByIdentificativoEstrattoContoDesc() {
+  thenByIdentificativoEstrattoContoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'identificativoEstrattoConto', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByImportoAllocato() {
+  thenByImportoAllocato() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoAllocato', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByImportoAllocatoDesc() {
+  thenByImportoAllocatoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoAllocato', Sort.desc);
     });
@@ -13137,7 +13646,7 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByImportoLordoDesc() {
+  thenByImportoLordoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoLordo', Sort.desc);
     });
@@ -13150,21 +13659,21 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByImportoNettoDesc() {
+  thenByImportoNettoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoNetto', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByImportoNonAllocato() {
+  thenByImportoNonAllocato() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoNonAllocato', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByImportoNonAllocatoDesc() {
+  thenByImportoNonAllocatoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'importoNonAllocato', Sort.desc);
     });
@@ -13183,14 +13692,14 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByInizialiPasseggero() {
+  thenByInizialiPasseggero() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'inizialiPasseggero', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByInizialiPasseggeroDesc() {
+  thenByInizialiPasseggeroDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'inizialiPasseggero', Sort.desc);
     });
@@ -13215,7 +13724,7 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByLogHistoryIdDesc() {
+  thenByLogHistoryIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'logHistoryId', Sort.desc);
     });
@@ -13228,7 +13737,7 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByNomeEsercizioDesc() {
+  thenByNomeEsercizioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeEsercizio', Sort.desc);
     });
@@ -13241,21 +13750,21 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByNomeFornitoreDesc() {
+  thenByNomeFornitoreDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeFornitore', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByNomeViaggiatore() {
+  thenByNomeViaggiatore() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeViaggiatore', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByNomeViaggiatoreDesc() {
+  thenByNomeViaggiatoreDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeViaggiatore', Sort.desc);
     });
@@ -13268,35 +13777,35 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByNumFatturaSEDesc() {
+  thenByNumFatturaSEDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numFatturaSE', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByNumFatturaSEOriginale() {
+  thenByNumFatturaSEOriginale() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numFatturaSEOriginale', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByNumFatturaSEOriginaleDesc() {
+  thenByNumFatturaSEOriginaleDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numFatturaSEOriginale', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByNumeroBollaFattura() {
+  thenByNumeroBollaFattura() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroBollaFattura', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByNumeroBollaFatturaDesc() {
+  thenByNumeroBollaFatturaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroBollaFattura', Sort.desc);
     });
@@ -13309,7 +13818,7 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByNumeroContoDesc() {
+  thenByNumeroContoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroConto', Sort.desc);
     });
@@ -13322,21 +13831,21 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByNumeroContoSEDesc() {
+  thenByNumeroContoSEDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroContoSE', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByNumeroTrasferta() {
+  thenByNumeroTrasferta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByNumeroTrasfertaDesc() {
+  thenByNumeroTrasfertaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.desc);
     });
@@ -13451,28 +13960,28 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByRifEstrattoContoCarta() {
+  thenByRifEstrattoContoCarta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifEstrattoContoCarta', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByRifEstrattoContoCartaDesc() {
+  thenByRifEstrattoContoCartaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifEstrattoContoCarta', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByRifPagamentoEstrattoConto() {
+  thenByRifPagamentoEstrattoConto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifPagamentoEstrattoConto', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByRifPagamentoEstrattoContoDesc() {
+  thenByRifPagamentoEstrattoContoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifPagamentoEstrattoConto', Sort.desc);
     });
@@ -13485,7 +13994,7 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByRifViaggio1Desc() {
+  thenByRifViaggio1Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifViaggio1', Sort.desc);
     });
@@ -13498,7 +14007,7 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByRifViaggio2Desc() {
+  thenByRifViaggio2Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifViaggio2', Sort.desc);
     });
@@ -13511,7 +14020,7 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByRifViaggio3Desc() {
+  thenByRifViaggio3Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifViaggio3', Sort.desc);
     });
@@ -13524,35 +14033,35 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByRifViaggio4Desc() {
+  thenByRifViaggio4Desc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'rifViaggio4', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByRiferimentoEstrattoConto() {
+  thenByRiferimentoEstrattoConto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'riferimentoEstrattoConto', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByRiferimentoEstrattoContoDesc() {
+  thenByRiferimentoEstrattoContoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'riferimentoEstrattoConto', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenBySourceFileLine() {
+  thenBySourceFileLine() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sourceFileLine', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenBySourceFileLineDesc() {
+  thenBySourceFileLineDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'sourceFileLine', Sort.desc);
     });
@@ -13571,14 +14080,14 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByStatoRichiesta() {
+  thenByStatoRichiesta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'statoRichiesta', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByStatoRichiestaDesc() {
+  thenByStatoRichiestaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'statoRichiesta', Sort.desc);
     });
@@ -13591,21 +14100,21 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByTassoCambioDesc() {
+  thenByTassoCambioDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tassoCambio', Sort.desc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByTotaleImportoTasse() {
+  thenByTotaleImportoTasse() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleImportoTasse', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByTotaleImportoTasseDesc() {
+  thenByTotaleImportoTasseDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'totaleImportoTasse', Sort.desc);
     });
@@ -13618,7 +14127,7 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByUfficioViaggiDesc() {
+  thenByUfficioViaggiDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'ufficioViaggi', Sort.desc);
     });
@@ -13637,14 +14146,14 @@ extension EstrattoAmexQuerySortThenBy
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByValutaTransazione() {
+  thenByValutaTransazione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'valutaTransazione', Sort.asc);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QAfterSortBy>
-      thenByValutaTransazioneDesc() {
+  thenByValutaTransazioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'valutaTransazione', Sort.desc);
     });
@@ -13666,224 +14175,280 @@ extension EstrattoAmexQuerySortThenBy
 extension EstrattoAmexQueryWhereDistinct
     on QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> {
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByAeroportoDestinazione({bool caseSensitive = true}) {
+  distinctByAeroportoDestinazione({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'aeroportoDestinazione',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'aeroportoDestinazione',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByAeroportoPartenza({bool caseSensitive = true}) {
+  distinctByAeroportoPartenza({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'aeroportoPartenza',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'aeroportoPartenza',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByAgenziaViaggi(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByAgenziaViaggi({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'agenziaViaggi',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'agenziaViaggi',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByAllocazionePagamento({bool caseSensitive = true}) {
+  distinctByAllocazionePagamento({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'allocazionePagamento',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'allocazionePagamento',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByBolla(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByBolla({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'bolla', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByBollaOriginale(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByBollaOriginale({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'bollaOriginale',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'bollaOriginale',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByCid(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByCid({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'cid', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByCittaSE(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByCittaSE({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'cittaSE', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByClasseViaggio(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByClasseViaggio({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'classeViaggio',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'classeViaggio',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByCodiceMercato(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByCodiceMercato({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'codiceMercato',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'codiceMercato',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByCodiceSettore(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByCodiceSettore({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'codiceSettore',
-          caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByCodiceSettoreSE(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'codiceSettoreSE',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'codiceSettore',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByCodiceTipoTransazione({bool caseSensitive = true}) {
+  distinctByCodiceSettoreSE({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'codiceTipoTransazione',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'codiceSettoreSE',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByCodiceVettore(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
+  distinctByCodiceTipoTransazione({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'codiceVettore',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'codiceTipoTransazione',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByContestata(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByCodiceVettore({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(
+        r'codiceVettore',
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByContestata({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'contestata', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByConto(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByConto({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'conto', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByDataAperturaRichiesta({bool caseSensitive = true}) {
+  distinctByDataAperturaRichiesta({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'dataAperturaRichiesta',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'dataAperturaRichiesta',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByDataChiusuraRichiesta({bool caseSensitive = true}) {
+  distinctByDataChiusuraRichiesta({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'dataChiusuraRichiesta',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'dataChiusuraRichiesta',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByDataEstrattoConto({bool caseSensitive = true}) {
+  distinctByDataEstrattoConto({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'dataEstrattoConto',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'dataEstrattoConto',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByDataPartenza(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByDataPartenza({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dataPartenza', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByDataProcessazione({bool caseSensitive = true}) {
+  distinctByDataProcessazione({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'dataProcessazione',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'dataProcessazione',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByDataScadenzaPagamento({bool caseSensitive = true}) {
+  distinctByDataScadenzaPagamento({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'dataScadenzaPagamento',
-          caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByDataTransazione(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'dataTransazione',
-          caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByDebitCreditCode(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'debitCreditCode',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'dataScadenzaPagamento',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByFatturaAgenziaViaggio({bool caseSensitive = true}) {
+  distinctByDataTransazione({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'fatturaAgenziaViaggio',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'dataTransazione',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByIdRegione(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
+  distinctByDebitCreditCode({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(
+        r'debitCreditCode',
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
+  distinctByFatturaAgenziaViaggio({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(
+        r'fatturaAgenziaViaggio',
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByIdRegione({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'idRegione', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByIdTransazione(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByIdTransazione({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'idTransazione',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'idTransazione',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByIdentificativoEstrattoConto({bool caseSensitive = true}) {
+  distinctByIdentificativoEstrattoConto({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'identificativoEstrattoConto',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'identificativoEstrattoConto',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByImportoAllocato() {
+  distinctByImportoAllocato() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'importoAllocato');
     });
@@ -13902,287 +14467,342 @@ extension EstrattoAmexQueryWhereDistinct
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByImportoNonAllocato() {
+  distinctByImportoNonAllocato() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'importoNonAllocato');
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByIndicator(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByIndicator({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'indicator', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByInizialiPasseggero({bool caseSensitive = true}) {
+  distinctByInizialiPasseggero({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'inizialiPasseggero',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'inizialiPasseggero',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByInoltrare(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByInoltrare({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'inoltrare', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByLogHistoryId(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByLogHistoryId({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'logHistoryId', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByNomeEsercizio(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByNomeEsercizio({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'nomeEsercizio',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'nomeEsercizio',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByNomeFornitore(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByNomeFornitore({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'nomeFornitore',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'nomeFornitore',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByNomeViaggiatore(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
+  distinctByNomeViaggiatore({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'nomeViaggiatore',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'nomeViaggiatore',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByNumFatturaSE(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByNumFatturaSE({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'numFatturaSE', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByNumFatturaSEOriginale({bool caseSensitive = true}) {
+  distinctByNumFatturaSEOriginale({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'numFatturaSEOriginale',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'numFatturaSEOriginale',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByNumeroBollaFattura({bool caseSensitive = true}) {
+  distinctByNumeroBollaFattura({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'numeroBollaFattura',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'numeroBollaFattura',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByNumeroConto(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByNumeroConto({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'numeroConto', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByNumeroContoSE(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByNumeroContoSE({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'numeroContoSE',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'numeroContoSE',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByNumeroTrasferta(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
+  distinctByNumeroTrasferta({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'numeroTrasferta',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'numeroTrasferta',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByOrdine(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByOrdine({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'ordine', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByPnrNo(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByPnrNo({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'pnrNo', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif1(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif1({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rif1', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif2(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif2({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rif2', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif3(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif3({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rif3', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif4(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif4({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rif4', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif5(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif5({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rif5', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif6(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif6({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rif6', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif7(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRif7({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rif7', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByRifEstrattoContoCarta({bool caseSensitive = true}) {
+  distinctByRifEstrattoContoCarta({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'rifEstrattoContoCarta',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'rifEstrattoContoCarta',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByRifPagamentoEstrattoConto({bool caseSensitive = true}) {
+  distinctByRifPagamentoEstrattoConto({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'rifPagamentoEstrattoConto',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'rifPagamentoEstrattoConto',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRifViaggio1(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRifViaggio1({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rifViaggio1', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRifViaggio2(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRifViaggio2({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rifViaggio2', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRifViaggio3(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRifViaggio3({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rifViaggio3', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRifViaggio4(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByRifViaggio4({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'rifViaggio4', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByRiferimentoEstrattoConto({bool caseSensitive = true}) {
+  distinctByRiferimentoEstrattoConto({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'riferimentoEstrattoConto',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'riferimentoEstrattoConto',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctBySourceFileLine() {
+  distinctBySourceFileLine() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'sourceFileLine');
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByStato(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByStato({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'stato', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByStatoRichiesta(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByStatoRichiesta({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'statoRichiesta',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'statoRichiesta',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByTassoCambio(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByTassoCambio({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'tassoCambio', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByTotaleImportoTasse() {
+  distinctByTotaleImportoTasse() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'totaleImportoTasse');
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByUfficioViaggi(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByUfficioViaggi({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'ufficioViaggi',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'ufficioViaggi',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByValuta(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByValuta({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'valuta', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct>
-      distinctByValutaTransazione({bool caseSensitive = true}) {
+  distinctByValutaTransazione({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'valutaTransazione',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'valutaTransazione',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByVettore(
-      {bool caseSensitive = true}) {
+  QueryBuilder<EstrattoAmex, EstrattoAmex, QDistinct> distinctByVettore({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'vettore', caseSensitive: caseSensitive);
     });
@@ -14198,28 +14818,28 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      aeroportoDestinazioneProperty() {
+  aeroportoDestinazioneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'aeroportoDestinazione');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      aeroportoPartenzaProperty() {
+  aeroportoPartenzaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'aeroportoPartenza');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      agenziaViaggiProperty() {
+  agenziaViaggiProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'agenziaViaggi');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      allocazionePagamentoProperty() {
+  allocazionePagamentoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'allocazionePagamento');
     });
@@ -14232,7 +14852,7 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      bollaOriginaleProperty() {
+  bollaOriginaleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'bollaOriginale');
     });
@@ -14251,42 +14871,42 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      classeViaggioProperty() {
+  classeViaggioProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'classeViaggio');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      codiceMercatoProperty() {
+  codiceMercatoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'codiceMercato');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      codiceSettoreProperty() {
+  codiceSettoreProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'codiceSettore');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      codiceSettoreSEProperty() {
+  codiceSettoreSEProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'codiceSettoreSE');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      codiceTipoTransazioneProperty() {
+  codiceTipoTransazioneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'codiceTipoTransazione');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      codiceVettoreProperty() {
+  codiceVettoreProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'codiceVettore');
     });
@@ -14305,21 +14925,21 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      dataAperturaRichiestaProperty() {
+  dataAperturaRichiestaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dataAperturaRichiesta');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      dataChiusuraRichiestaProperty() {
+  dataChiusuraRichiestaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dataChiusuraRichiesta');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      dataEstrattoContoProperty() {
+  dataEstrattoContoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dataEstrattoConto');
     });
@@ -14332,35 +14952,35 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      dataProcessazioneProperty() {
+  dataProcessazioneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dataProcessazione');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      dataScadenzaPagamentoProperty() {
+  dataScadenzaPagamentoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dataScadenzaPagamento');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      dataTransazioneProperty() {
+  dataTransazioneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dataTransazione');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      debitCreditCodeProperty() {
+  debitCreditCodeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'debitCreditCode');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      fatturaAgenziaViaggioProperty() {
+  fatturaAgenziaViaggioProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'fatturaAgenziaViaggio');
     });
@@ -14373,21 +14993,21 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      idTransazioneProperty() {
+  idTransazioneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'idTransazione');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      identificativoEstrattoContoProperty() {
+  identificativoEstrattoContoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'identificativoEstrattoConto');
     });
   }
 
   QueryBuilder<EstrattoAmex, double?, QQueryOperations>
-      importoAllocatoProperty() {
+  importoAllocatoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'importoAllocato');
     });
@@ -14406,7 +15026,7 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, double?, QQueryOperations>
-      importoNonAllocatoProperty() {
+  importoNonAllocatoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'importoNonAllocato');
     });
@@ -14419,7 +15039,7 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      inizialiPasseggeroProperty() {
+  inizialiPasseggeroProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'inizialiPasseggero');
     });
@@ -14438,21 +15058,21 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      nomeEsercizioProperty() {
+  nomeEsercizioProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nomeEsercizio');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      nomeFornitoreProperty() {
+  nomeFornitoreProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nomeFornitore');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      nomeViaggiatoreProperty() {
+  nomeViaggiatoreProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nomeViaggiatore');
     });
@@ -14465,14 +15085,14 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      numFatturaSEOriginaleProperty() {
+  numFatturaSEOriginaleProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'numFatturaSEOriginale');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      numeroBollaFatturaProperty() {
+  numeroBollaFatturaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'numeroBollaFattura');
     });
@@ -14485,14 +15105,14 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      numeroContoSEProperty() {
+  numeroContoSEProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'numeroContoSE');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      numeroTrasfertaProperty() {
+  numeroTrasfertaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'numeroTrasferta');
     });
@@ -14553,14 +15173,14 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      rifEstrattoContoCartaProperty() {
+  rifEstrattoContoCartaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'rifEstrattoContoCarta');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      rifPagamentoEstrattoContoProperty() {
+  rifPagamentoEstrattoContoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'rifPagamentoEstrattoConto');
     });
@@ -14591,7 +15211,7 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      riferimentoEstrattoContoProperty() {
+  riferimentoEstrattoContoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'riferimentoEstrattoConto');
     });
@@ -14610,7 +15230,7 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      statoRichiestaProperty() {
+  statoRichiestaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'statoRichiesta');
     });
@@ -14623,14 +15243,14 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, double?, QQueryOperations>
-      totaleImportoTasseProperty() {
+  totaleImportoTasseProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'totaleImportoTasse');
     });
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      ufficioViaggiProperty() {
+  ufficioViaggiProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'ufficioViaggi');
     });
@@ -14643,7 +15263,7 @@ extension EstrattoAmexQueryProperty
   }
 
   QueryBuilder<EstrattoAmex, String?, QQueryOperations>
-      valutaTransazioneProperty() {
+  valutaTransazioneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'valutaTransazione');
     });

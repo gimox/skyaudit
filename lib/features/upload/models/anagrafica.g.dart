@@ -17,11 +17,7 @@ const AnagraficaSchema = CollectionSchema(
   name: r'Anagrafica',
   id: 5423421987839097655,
   properties: {
-    r'cid': PropertySchema(
-      id: 0,
-      name: r'cid',
-      type: IsarType.string,
-    ),
+    r'cid': PropertySchema(id: 0, name: r'cid', type: IsarType.string),
     r'cidGestore': PropertySchema(
       id: 1,
       name: r'cidGestore',
@@ -92,11 +88,7 @@ const AnagraficaSchema = CollectionSchema(
       name: r'lastUpdate',
       type: IsarType.dateTime,
     ),
-    r'livello': PropertySchema(
-      id: 15,
-      name: r'livello',
-      type: IsarType.string,
-    ),
+    r'livello': PropertySchema(id: 15, name: r'livello', type: IsarType.string),
     r'luogoNascita': PropertySchema(
       id: 16,
       name: r'luogoNascita',
@@ -167,11 +159,7 @@ const AnagraficaSchema = CollectionSchema(
       name: r'nuovoSistProfJob',
       type: IsarType.string,
     ),
-    r'paese': PropertySchema(
-      id: 30,
-      name: r'paese',
-      type: IsarType.string,
-    ),
+    r'paese': PropertySchema(id: 30, name: r'paese', type: IsarType.string),
     r'partTimeFullTime': PropertySchema(
       id: 31,
       name: r'partTimeFullTime',
@@ -187,21 +175,13 @@ const AnagraficaSchema = CollectionSchema(
       name: r'provincia',
       type: IsarType.string,
     ),
-    r'regione': PropertySchema(
-      id: 34,
-      name: r'regione',
-      type: IsarType.string,
-    ),
+    r'regione': PropertySchema(id: 34, name: r'regione', type: IsarType.string),
     r'responsabileSINO': PropertySchema(
       id: 35,
       name: r'responsabileSINO',
       type: IsarType.string,
     ),
-    r'sedeCap': PropertySchema(
-      id: 36,
-      name: r'sedeCap',
-      type: IsarType.string,
-    ),
+    r'sedeCap': PropertySchema(id: 36, name: r'sedeCap', type: IsarType.string),
     r'sedeComune': PropertySchema(
       id: 37,
       name: r'sedeComune',
@@ -217,36 +197,20 @@ const AnagraficaSchema = CollectionSchema(
       name: r'sedeProvincia',
       type: IsarType.string,
     ),
-    r'sesso': PropertySchema(
-      id: 40,
-      name: r'sesso',
-      type: IsarType.string,
-    ),
-    r'societa': PropertySchema(
-      id: 41,
-      name: r'societa',
-      type: IsarType.string,
-    ),
+    r'sesso': PropertySchema(id: 40, name: r'sesso', type: IsarType.string),
+    r'societa': PropertySchema(id: 41, name: r'societa', type: IsarType.string),
     r'societaContabile': PropertySchema(
       id: 42,
       name: r'societaContabile',
       type: IsarType.string,
     ),
-    r'status': PropertySchema(
-      id: 43,
-      name: r'status',
-      type: IsarType.string,
-    ),
+    r'status': PropertySchema(id: 43, name: r'status', type: IsarType.string),
     r'tipoContratto': PropertySchema(
       id: 44,
       name: r'tipoContratto',
       type: IsarType.string,
     ),
-    r'tipoDip': PropertySchema(
-      id: 45,
-      name: r'tipoDip',
-      type: IsarType.string,
-    ),
+    r'tipoDip': PropertySchema(id: 45, name: r'tipoDip', type: IsarType.string),
     r'tipoScuola': PropertySchema(
       id: 46,
       name: r'tipoScuola',
@@ -257,11 +221,7 @@ const AnagraficaSchema = CollectionSchema(
       name: r'tipologiaResponsabile',
       type: IsarType.string,
     ),
-    r'under35': PropertySchema(
-      id: 48,
-      name: r'under35',
-      type: IsarType.string,
-    ),
+    r'under35': PropertySchema(id: 48, name: r'under35', type: IsarType.string),
     r'unitaOrg3': PropertySchema(
       id: 49,
       name: r'unitaOrg3',
@@ -356,8 +316,9 @@ const AnagraficaSchema = CollectionSchema(
       id: 67,
       name: r'utenteRUBU',
       type: IsarType.string,
-    )
+    ),
   },
+
   estimateSize: _anagraficaEstimateSize,
   serialize: _anagraficaSerialize,
   deserialize: _anagraficaDeserialize,
@@ -374,16 +335,17 @@ const AnagraficaSchema = CollectionSchema(
           name: r'codiceFiscale',
           type: IndexType.hash,
           caseSensitive: true,
-        )
+        ),
       ],
-    )
+    ),
   },
   links: {},
   embeddedSchemas: {},
+
   getId: _anagraficaGetId,
   getLinks: _anagraficaGetLinks,
   attach: _anagraficaAttach,
-  version: '3.1.0+1',
+  version: '3.3.2',
 );
 
 int _anagraficaEstimateSize(
@@ -1130,13 +1092,15 @@ extension AnagraficaByIndex on IsarCollection<Anagrafica> {
   }
 
   Future<List<Anagrafica?>> getAllByCodiceFiscale(
-      List<String?> codiceFiscaleValues) {
+    List<String?> codiceFiscaleValues,
+  ) {
     final values = codiceFiscaleValues.map((e) => [e]).toList();
     return getAllByIndex(r'codiceFiscale', values);
   }
 
   List<Anagrafica?> getAllByCodiceFiscaleSync(
-      List<String?> codiceFiscaleValues) {
+    List<String?> codiceFiscaleValues,
+  ) {
     final values = codiceFiscaleValues.map((e) => [e]).toList();
     return getAllByIndexSync(r'codiceFiscale', values);
   }
@@ -1163,8 +1127,10 @@ extension AnagraficaByIndex on IsarCollection<Anagrafica> {
     return putAllByIndex(r'codiceFiscale', objects);
   }
 
-  List<Id> putAllByCodiceFiscaleSync(List<Anagrafica> objects,
-      {bool saveLinks = true}) {
+  List<Id> putAllByCodiceFiscaleSync(
+    List<Anagrafica> objects, {
+    bool saveLinks = true,
+  }) {
     return putAllByIndexSync(r'codiceFiscale', objects, saveLinks: saveLinks);
   }
 }
@@ -1182,10 +1148,7 @@ extension AnagraficaQueryWhere
     on QueryBuilder<Anagrafica, Anagrafica, QWhereClause> {
   QueryBuilder<Anagrafica, Anagrafica, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
@@ -1211,8 +1174,10 @@ extension AnagraficaQueryWhere
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QAfterWhereClause> idGreaterThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<Anagrafica, Anagrafica, QAfterWhereClause> idGreaterThan(
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -1220,8 +1185,10 @@ extension AnagraficaQueryWhere
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QAfterWhereClause> idLessThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<Anagrafica, Anagrafica, QAfterWhereClause> idLessThan(
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -1236,78 +1203,92 @@ extension AnagraficaQueryWhere
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterWhereClause>
-      codiceFiscaleIsNull() {
+  codiceFiscaleIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'codiceFiscale',
-        value: [null],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'codiceFiscale', value: [null]),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterWhereClause>
-      codiceFiscaleIsNotNull() {
+  codiceFiscaleIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.between(
-        indexName: r'codiceFiscale',
-        lower: [null],
-        includeLower: false,
-        upper: [],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.between(
+          indexName: r'codiceFiscale',
+          lower: [null],
+          includeLower: false,
+          upper: [],
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterWhereClause> codiceFiscaleEqualTo(
-      String? codiceFiscale) {
+    String? codiceFiscale,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'codiceFiscale',
-        value: [codiceFiscale],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'codiceFiscale',
+          value: [codiceFiscale],
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterWhereClause>
-      codiceFiscaleNotEqualTo(String? codiceFiscale) {
+  codiceFiscaleNotEqualTo(String? codiceFiscale) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'codiceFiscale',
-              lower: [],
-              upper: [codiceFiscale],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'codiceFiscale',
-              lower: [codiceFiscale],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'codiceFiscale',
+                lower: [],
+                upper: [codiceFiscale],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'codiceFiscale',
+                lower: [codiceFiscale],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'codiceFiscale',
-              lower: [codiceFiscale],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'codiceFiscale',
-              lower: [],
-              upper: [codiceFiscale],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'codiceFiscale',
+                lower: [codiceFiscale],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'codiceFiscale',
+                lower: [],
+                upper: [codiceFiscale],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
@@ -1317,17 +1298,17 @@ extension AnagraficaQueryFilter
     on QueryBuilder<Anagrafica, Anagrafica, QFilterCondition> {
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> cidIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cid',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'cid'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> cidIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cid',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'cid'),
+      );
     });
   }
 
@@ -1336,11 +1317,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1350,12 +1333,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1365,12 +1350,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1382,14 +1369,16 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'cid',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'cid',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1398,11 +1387,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1411,71 +1402,77 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> cidContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> cidMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'cid',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'cid',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> cidIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'cid', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> cidIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'cid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'cid', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidGestoreIsNull() {
+  cidGestoreIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cidGestore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'cidGestore'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidGestoreIsNotNull() {
+  cidGestoreIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cidGestore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'cidGestore'),
+      );
     });
   }
 
@@ -1484,43 +1481,49 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cidGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'cidGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidGestoreGreaterThan(
+  cidGestoreGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'cidGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'cidGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidGestoreLessThan(
+  cidGestoreLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'cidGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'cidGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1532,154 +1535,160 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'cidGestore',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'cidGestore',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidGestoreStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  cidGestoreStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'cidGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'cidGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidGestoreEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  cidGestoreEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'cidGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'cidGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidGestoreContains(String value, {bool caseSensitive = true}) {
+  cidGestoreContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'cidGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'cidGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> cidGestoreMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'cidGestore',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidGestoreIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cidGestore',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidGestoreIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'cidGestore',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidKeyAccountIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cidKeyAccount',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidKeyAccountIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cidKeyAccount',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidKeyAccountEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cidKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'cidGestore',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidKeyAccountGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  cidGestoreIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'cidKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'cidGestore', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidKeyAccountLessThan(
+  cidGestoreIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'cidGestore', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  cidKeyAccountIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'cidKeyAccount'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  cidKeyAccountIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'cidKeyAccount'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  cidKeyAccountEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'cidKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  cidKeyAccountGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'cidKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'cidKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidKeyAccountBetween(
+  cidKeyAccountLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'cidKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  cidKeyAccountBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1687,153 +1696,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'cidKeyAccount',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'cidKeyAccount',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidKeyAccountStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  cidKeyAccountStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'cidKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'cidKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidKeyAccountEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  cidKeyAccountEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'cidKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'cidKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidKeyAccountContains(String value, {bool caseSensitive = true}) {
+  cidKeyAccountContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'cidKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'cidKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidKeyAccountMatches(String pattern, {bool caseSensitive = true}) {
+  cidKeyAccountMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'cidKeyAccount',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'cidKeyAccount',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidKeyAccountIsEmpty() {
+  cidKeyAccountIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cidKeyAccount',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'cidKeyAccount', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidKeyAccountIsNotEmpty() {
+  cidKeyAccountIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'cidKeyAccount',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'cidKeyAccount', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidResponsabileUOIsNull() {
+  cidResponsabileUOIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cidResponsabileUO',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'cidResponsabileUO'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidResponsabileUOIsNotNull() {
+  cidResponsabileUOIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cidResponsabileUO',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'cidResponsabileUO'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidResponsabileUOEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  cidResponsabileUOEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cidResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'cidResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidResponsabileUOGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'cidResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidResponsabileUOLessThan(
+  cidResponsabileUOGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'cidResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'cidResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidResponsabileUOBetween(
+  cidResponsabileUOLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'cidResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  cidResponsabileUOBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1841,153 +1855,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'cidResponsabileUO',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'cidResponsabileUO',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidResponsabileUOStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  cidResponsabileUOStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'cidResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'cidResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidResponsabileUOEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  cidResponsabileUOEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'cidResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'cidResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidResponsabileUOContains(String value, {bool caseSensitive = true}) {
+  cidResponsabileUOContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'cidResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'cidResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidResponsabileUOMatches(String pattern, {bool caseSensitive = true}) {
+  cidResponsabileUOMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'cidResponsabileUO',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'cidResponsabileUO',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidResponsabileUOIsEmpty() {
+  cidResponsabileUOIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cidResponsabileUO',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'cidResponsabileUO', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      cidResponsabileUOIsNotEmpty() {
+  cidResponsabileUOIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'cidResponsabileUO',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'cidResponsabileUO', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      codiceFiscaleIsNull() {
+  codiceFiscaleIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'codiceFiscale',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'codiceFiscale'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      codiceFiscaleIsNotNull() {
+  codiceFiscaleIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'codiceFiscale',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'codiceFiscale'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      codiceFiscaleEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  codiceFiscaleEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceFiscale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'codiceFiscale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      codiceFiscaleGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'codiceFiscale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      codiceFiscaleLessThan(
+  codiceFiscaleGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'codiceFiscale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'codiceFiscale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      codiceFiscaleBetween(
+  codiceFiscaleLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'codiceFiscale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  codiceFiscaleBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1995,153 +2014,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'codiceFiscale',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'codiceFiscale',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      codiceFiscaleStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceFiscaleStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'codiceFiscale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'codiceFiscale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      codiceFiscaleEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceFiscaleEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'codiceFiscale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'codiceFiscale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      codiceFiscaleContains(String value, {bool caseSensitive = true}) {
+  codiceFiscaleContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'codiceFiscale',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'codiceFiscale',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      codiceFiscaleMatches(String pattern, {bool caseSensitive = true}) {
+  codiceFiscaleMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'codiceFiscale',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'codiceFiscale',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      codiceFiscaleIsEmpty() {
+  codiceFiscaleIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceFiscale',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'codiceFiscale', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      codiceFiscaleIsNotEmpty() {
+  codiceFiscaleIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'codiceFiscale',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'codiceFiscale', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      contrSolidarietaIsNull() {
+  contrSolidarietaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'contrSolidarieta',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'contrSolidarieta'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      contrSolidarietaIsNotNull() {
+  contrSolidarietaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'contrSolidarieta',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'contrSolidarieta'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      contrSolidarietaEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  contrSolidarietaEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'contrSolidarieta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'contrSolidarieta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      contrSolidarietaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'contrSolidarieta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      contrSolidarietaLessThan(
+  contrSolidarietaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'contrSolidarieta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'contrSolidarieta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      contrSolidarietaBetween(
+  contrSolidarietaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'contrSolidarieta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  contrSolidarietaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -2149,153 +2173,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'contrSolidarieta',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'contrSolidarieta',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      contrSolidarietaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  contrSolidarietaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'contrSolidarieta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'contrSolidarieta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      contrSolidarietaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  contrSolidarietaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'contrSolidarieta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'contrSolidarieta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      contrSolidarietaContains(String value, {bool caseSensitive = true}) {
+  contrSolidarietaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'contrSolidarieta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'contrSolidarieta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      contrSolidarietaMatches(String pattern, {bool caseSensitive = true}) {
+  contrSolidarietaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'contrSolidarieta',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'contrSolidarieta',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      contrSolidarietaIsEmpty() {
+  contrSolidarietaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'contrSolidarieta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'contrSolidarieta', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      contrSolidarietaIsNotEmpty() {
+  contrSolidarietaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'contrSolidarieta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'contrSolidarieta', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneIsNull() {
+  dataAssunzioneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'dataAssunzione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'dataAssunzione'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneIsNotNull() {
+  dataAssunzioneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'dataAssunzione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'dataAssunzione'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  dataAssunzioneEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataAssunzione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataAssunzione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataAssunzione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneLessThan(
+  dataAssunzioneGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataAssunzione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataAssunzione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneBetween(
+  dataAssunzioneLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataAssunzione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  dataAssunzioneBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -2303,153 +2332,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataAssunzione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataAssunzione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataAssunzioneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataAssunzione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataAssunzione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataAssunzioneEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataAssunzione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataAssunzione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneContains(String value, {bool caseSensitive = true}) {
+  dataAssunzioneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataAssunzione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataAssunzione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneMatches(String pattern, {bool caseSensitive = true}) {
+  dataAssunzioneMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataAssunzione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataAssunzione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneIsEmpty() {
+  dataAssunzioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataAssunzione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataAssunzione', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneIsNotEmpty() {
+  dataAssunzioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataAssunzione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'dataAssunzione', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneGruppoIsNull() {
+  dataAssunzioneGruppoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'dataAssunzioneGruppo',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'dataAssunzioneGruppo'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneGruppoIsNotNull() {
+  dataAssunzioneGruppoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'dataAssunzioneGruppo',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'dataAssunzioneGruppo'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneGruppoEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  dataAssunzioneGruppoEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataAssunzioneGruppo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataAssunzioneGruppo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneGruppoGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataAssunzioneGruppo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneGruppoLessThan(
+  dataAssunzioneGruppoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataAssunzioneGruppo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataAssunzioneGruppo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneGruppoBetween(
+  dataAssunzioneGruppoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataAssunzioneGruppo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  dataAssunzioneGruppoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -2457,153 +2491,161 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataAssunzioneGruppo',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataAssunzioneGruppo',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneGruppoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataAssunzioneGruppoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataAssunzioneGruppo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataAssunzioneGruppo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneGruppoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataAssunzioneGruppoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataAssunzioneGruppo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataAssunzioneGruppo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneGruppoContains(String value, {bool caseSensitive = true}) {
+  dataAssunzioneGruppoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataAssunzioneGruppo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataAssunzioneGruppo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneGruppoMatches(String pattern, {bool caseSensitive = true}) {
+  dataAssunzioneGruppoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataAssunzioneGruppo',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataAssunzioneGruppo',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneGruppoIsEmpty() {
+  dataAssunzioneGruppoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataAssunzioneGruppo',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataAssunzioneGruppo', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataAssunzioneGruppoIsNotEmpty() {
+  dataAssunzioneGruppoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataAssunzioneGruppo',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'dataAssunzioneGruppo',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataNascitaIsNull() {
+  dataNascitaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'dataNascita',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'dataNascita'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataNascitaIsNotNull() {
+  dataNascitaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'dataNascita',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'dataNascita'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataNascitaEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  dataNascitaEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataNascita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataNascita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataNascitaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataNascita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataNascitaLessThan(
+  dataNascitaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataNascita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataNascita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataNascitaBetween(
+  dataNascitaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataNascita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  dataNascitaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -2611,102 +2653,104 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataNascita',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataNascita',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataNascitaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataNascitaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataNascita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataNascita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataNascitaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataNascitaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataNascita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataNascita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataNascitaContains(String value, {bool caseSensitive = true}) {
+  dataNascitaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataNascita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataNascita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataNascitaMatches(String pattern, {bool caseSensitive = true}) {
+  dataNascitaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataNascita',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataNascita',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataNascitaIsEmpty() {
+  dataNascitaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataNascita',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataNascita', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      dataNascitaIsNotEmpty() {
+  dataNascitaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataNascita',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'dataNascita', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      formazioneIsNull() {
+  formazioneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'formazione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'formazione'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      formazioneIsNotNull() {
+  formazioneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'formazione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'formazione'),
+      );
     });
   }
 
@@ -2715,43 +2759,49 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'formazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'formazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      formazioneGreaterThan(
+  formazioneGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'formazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'formazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      formazioneLessThan(
+  formazioneLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'formazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'formazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -2763,154 +2813,160 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'formazione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'formazione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      formazioneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  formazioneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'formazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'formazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      formazioneEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  formazioneEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'formazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'formazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      formazioneContains(String value, {bool caseSensitive = true}) {
+  formazioneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'formazione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'formazione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> formazioneMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'formazione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      formazioneIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'formazione',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      formazioneIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'formazione',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'gradoOccupaz',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'gradoOccupaz',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'gradoOccupaz',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'formazione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  formazioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'gradoOccupaz',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'formazione', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazLessThan(
+  formazioneIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'formazione', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  gradoOccupazIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'gradoOccupaz'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  gradoOccupazIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'gradoOccupaz'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  gradoOccupazEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'gradoOccupaz',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  gradoOccupazGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'gradoOccupaz',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'gradoOccupaz',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazBetween(
+  gradoOccupazLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'gradoOccupaz',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  gradoOccupazBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -2918,153 +2974,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'gradoOccupaz',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'gradoOccupaz',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  gradoOccupazStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'gradoOccupaz',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'gradoOccupaz',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  gradoOccupazEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'gradoOccupaz',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'gradoOccupaz',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazContains(String value, {bool caseSensitive = true}) {
+  gradoOccupazContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'gradoOccupaz',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'gradoOccupaz',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazMatches(String pattern, {bool caseSensitive = true}) {
+  gradoOccupazMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'gradoOccupaz',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'gradoOccupaz',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazIsEmpty() {
+  gradoOccupazIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'gradoOccupaz',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'gradoOccupaz', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazIsNotEmpty() {
+  gradoOccupazIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'gradoOccupaz',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'gradoOccupaz', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazInSolIsNull() {
+  gradoOccupazInSolIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'gradoOccupazInSol',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'gradoOccupazInSol'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazInSolIsNotNull() {
+  gradoOccupazInSolIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'gradoOccupazInSol',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'gradoOccupazInSol'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazInSolEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  gradoOccupazInSolEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'gradoOccupazInSol',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'gradoOccupazInSol',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazInSolGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'gradoOccupazInSol',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazInSolLessThan(
+  gradoOccupazInSolGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'gradoOccupazInSol',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'gradoOccupazInSol',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazInSolBetween(
+  gradoOccupazInSolLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'gradoOccupazInSol',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  gradoOccupazInSolBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -3072,94 +3133,96 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'gradoOccupazInSol',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'gradoOccupazInSol',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazInSolStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  gradoOccupazInSolStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'gradoOccupazInSol',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'gradoOccupazInSol',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazInSolEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  gradoOccupazInSolEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'gradoOccupazInSol',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'gradoOccupazInSol',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazInSolContains(String value, {bool caseSensitive = true}) {
+  gradoOccupazInSolContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'gradoOccupazInSol',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'gradoOccupazInSol',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazInSolMatches(String pattern, {bool caseSensitive = true}) {
+  gradoOccupazInSolMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'gradoOccupazInSol',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'gradoOccupazInSol',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazInSolIsEmpty() {
+  gradoOccupazInSolIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'gradoOccupazInSol',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'gradoOccupazInSol', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      gradoOccupazInSolIsNotEmpty() {
+  gradoOccupazInSolIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'gradoOccupazInSol',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'gradoOccupazInSol', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> idEqualTo(
-      Id value) {
+    Id value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
@@ -3168,11 +3231,13 @@ extension AnagraficaQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -3181,11 +3246,13 @@ extension AnagraficaQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -3196,82 +3263,87 @@ extension AnagraficaQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      importBatchIsNull() {
+  importBatchIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'importBatch',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'importBatch'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      importBatchIsNotNull() {
+  importBatchIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'importBatch',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'importBatch'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      importBatchEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  importBatchEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'importBatch',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'importBatch',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      importBatchGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'importBatch',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      importBatchLessThan(
+  importBatchGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'importBatch',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'importBatch',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      importBatchBetween(
+  importBatchLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'importBatch',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  importBatchBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -3279,153 +3351,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'importBatch',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'importBatch',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      importBatchStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  importBatchStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'importBatch',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'importBatch',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      importBatchEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  importBatchEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'importBatch',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'importBatch',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      importBatchContains(String value, {bool caseSensitive = true}) {
+  importBatchContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'importBatch',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'importBatch',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      importBatchMatches(String pattern, {bool caseSensitive = true}) {
+  importBatchMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'importBatch',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'importBatch',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      importBatchIsEmpty() {
+  importBatchIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'importBatch',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'importBatch', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      importBatchIsNotEmpty() {
+  importBatchIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'importBatch',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'importBatch', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      indirizzoMailIsNull() {
+  indirizzoMailIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'indirizzoMail',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'indirizzoMail'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      indirizzoMailIsNotNull() {
+  indirizzoMailIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'indirizzoMail',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'indirizzoMail'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      indirizzoMailEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  indirizzoMailEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'indirizzoMail',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'indirizzoMail',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      indirizzoMailGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'indirizzoMail',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      indirizzoMailLessThan(
+  indirizzoMailGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'indirizzoMail',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'indirizzoMail',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      indirizzoMailBetween(
+  indirizzoMailLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'indirizzoMail',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  indirizzoMailBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -3433,140 +3510,140 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'indirizzoMail',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'indirizzoMail',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      indirizzoMailStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  indirizzoMailStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'indirizzoMail',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'indirizzoMail',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      indirizzoMailEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  indirizzoMailEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'indirizzoMail',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'indirizzoMail',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      indirizzoMailContains(String value, {bool caseSensitive = true}) {
+  indirizzoMailContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'indirizzoMail',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'indirizzoMail',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      indirizzoMailMatches(String pattern, {bool caseSensitive = true}) {
+  indirizzoMailMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'indirizzoMail',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'indirizzoMail',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      indirizzoMailIsEmpty() {
+  indirizzoMailIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'indirizzoMail',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'indirizzoMail', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      indirizzoMailIsNotEmpty() {
+  indirizzoMailIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'indirizzoMail',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'indirizzoMail', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      lastUpdateIsNull() {
+  lastUpdateIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'lastUpdate',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'lastUpdate'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      lastUpdateIsNotNull() {
+  lastUpdateIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'lastUpdate',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'lastUpdate'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> lastUpdateEqualTo(
-      DateTime? value) {
+    DateTime? value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'lastUpdate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'lastUpdate', value: value),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      lastUpdateGreaterThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  lastUpdateGreaterThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'lastUpdate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'lastUpdate',
+          value: value,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      lastUpdateLessThan(
-    DateTime? value, {
-    bool include = false,
-  }) {
+  lastUpdateLessThan(DateTime? value, {bool include = false}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'lastUpdate',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'lastUpdate',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -3577,30 +3654,32 @@ extension AnagraficaQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'lastUpdate',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'lastUpdate',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> livelloIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'livello',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'livello'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      livelloIsNotNull() {
+  livelloIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'livello',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'livello'),
+      );
     });
   }
 
@@ -3609,27 +3688,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'livello',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'livello',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      livelloGreaterThan(
+  livelloGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'livello',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'livello',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -3639,12 +3722,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'livello',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'livello',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -3656,14 +3741,16 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'livello',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'livello',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -3672,11 +3759,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'livello',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'livello',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -3685,123 +3774,132 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'livello',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'livello',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> livelloContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'livello',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'livello',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> livelloMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'livello',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'livello',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> livelloIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'livello',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'livello', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      livelloIsNotEmpty() {
+  livelloIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'livello',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'livello', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      luogoNascitaIsNull() {
+  luogoNascitaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'luogoNascita',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'luogoNascita'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      luogoNascitaIsNotNull() {
+  luogoNascitaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'luogoNascita',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'luogoNascita'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      luogoNascitaEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  luogoNascitaEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'luogoNascita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'luogoNascita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      luogoNascitaGreaterThan(
+  luogoNascitaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'luogoNascita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'luogoNascita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      luogoNascitaLessThan(
+  luogoNascitaLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'luogoNascita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'luogoNascita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      luogoNascitaBetween(
+  luogoNascitaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -3809,153 +3907,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'luogoNascita',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'luogoNascita',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      luogoNascitaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  luogoNascitaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'luogoNascita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'luogoNascita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      luogoNascitaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  luogoNascitaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'luogoNascita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'luogoNascita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      luogoNascitaContains(String value, {bool caseSensitive = true}) {
+  luogoNascitaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'luogoNascita',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'luogoNascita',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      luogoNascitaMatches(String pattern, {bool caseSensitive = true}) {
+  luogoNascitaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'luogoNascita',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'luogoNascita',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      luogoNascitaIsEmpty() {
+  luogoNascitaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'luogoNascita',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'luogoNascita', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      luogoNascitaIsNotEmpty() {
+  luogoNascitaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'luogoNascita',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'luogoNascita', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailGestoreIsNull() {
+  mailGestoreIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'mailGestore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'mailGestore'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailGestoreIsNotNull() {
+  mailGestoreIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'mailGestore',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'mailGestore'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailGestoreEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  mailGestoreEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'mailGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'mailGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailGestoreGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'mailGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailGestoreLessThan(
+  mailGestoreGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'mailGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'mailGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailGestoreBetween(
+  mailGestoreLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'mailGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  mailGestoreBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -3963,153 +4066,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'mailGestore',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'mailGestore',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailGestoreStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  mailGestoreStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'mailGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'mailGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailGestoreEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  mailGestoreEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'mailGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'mailGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailGestoreContains(String value, {bool caseSensitive = true}) {
+  mailGestoreContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'mailGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'mailGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailGestoreMatches(String pattern, {bool caseSensitive = true}) {
+  mailGestoreMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'mailGestore',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'mailGestore',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailGestoreIsEmpty() {
+  mailGestoreIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'mailGestore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'mailGestore', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailGestoreIsNotEmpty() {
+  mailGestoreIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'mailGestore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'mailGestore', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailKeyAccountIsNull() {
+  mailKeyAccountIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'mailKeyAccount',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'mailKeyAccount'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailKeyAccountIsNotNull() {
+  mailKeyAccountIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'mailKeyAccount',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'mailKeyAccount'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailKeyAccountEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  mailKeyAccountEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'mailKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'mailKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailKeyAccountGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'mailKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailKeyAccountLessThan(
+  mailKeyAccountGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'mailKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'mailKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailKeyAccountBetween(
+  mailKeyAccountLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'mailKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  mailKeyAccountBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -4117,153 +4225,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'mailKeyAccount',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'mailKeyAccount',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailKeyAccountStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  mailKeyAccountStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'mailKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'mailKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailKeyAccountEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  mailKeyAccountEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'mailKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'mailKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailKeyAccountContains(String value, {bool caseSensitive = true}) {
+  mailKeyAccountContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'mailKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'mailKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailKeyAccountMatches(String pattern, {bool caseSensitive = true}) {
+  mailKeyAccountMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'mailKeyAccount',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'mailKeyAccount',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailKeyAccountIsEmpty() {
+  mailKeyAccountIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'mailKeyAccount',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'mailKeyAccount', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailKeyAccountIsNotEmpty() {
+  mailKeyAccountIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'mailKeyAccount',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'mailKeyAccount', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailResponsabileUOIsNull() {
+  mailResponsabileUOIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'mailResponsabileUO',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'mailResponsabileUO'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailResponsabileUOIsNotNull() {
+  mailResponsabileUOIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'mailResponsabileUO',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'mailResponsabileUO'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailResponsabileUOEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  mailResponsabileUOEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'mailResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'mailResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailResponsabileUOGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'mailResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailResponsabileUOLessThan(
+  mailResponsabileUOGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'mailResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'mailResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailResponsabileUOBetween(
+  mailResponsabileUOLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'mailResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  mailResponsabileUOBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -4271,101 +4384,103 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'mailResponsabileUO',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'mailResponsabileUO',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailResponsabileUOStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  mailResponsabileUOStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'mailResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'mailResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailResponsabileUOEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  mailResponsabileUOEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'mailResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'mailResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailResponsabileUOContains(String value, {bool caseSensitive = true}) {
+  mailResponsabileUOContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'mailResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'mailResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailResponsabileUOMatches(String pattern, {bool caseSensitive = true}) {
+  mailResponsabileUOMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'mailResponsabileUO',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'mailResponsabileUO',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailResponsabileUOIsEmpty() {
+  mailResponsabileUOIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'mailResponsabileUO',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'mailResponsabileUO', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mailResponsabileUOIsNotEmpty() {
+  mailResponsabileUOIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'mailResponsabileUO',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'mailResponsabileUO', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> mansioneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'mansione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'mansione'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mansioneIsNotNull() {
+  mansioneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'mansione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'mansione'),
+      );
     });
   }
 
@@ -4374,27 +4489,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'mansione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'mansione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mansioneGreaterThan(
+  mansioneGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'mansione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'mansione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -4404,12 +4523,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'mansione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'mansione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -4421,28 +4542,29 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'mansione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'mansione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mansioneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  mansioneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'mansione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'mansione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -4451,124 +4573,133 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'mansione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'mansione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> mansioneContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'mansione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'mansione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> mansioneMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'mansione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mansioneIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'mansione',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      mansioneIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'mansione',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      matricolaAziendaleUIDIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'matricolaAziendaleUID',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      matricolaAziendaleUIDIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'matricolaAziendaleUID',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      matricolaAziendaleUIDEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'matricolaAziendaleUID',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'mansione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      matricolaAziendaleUIDGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  mansioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'matricolaAziendaleUID',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'mansione', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      matricolaAziendaleUIDLessThan(
+  mansioneIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'mansione', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  matricolaAziendaleUIDIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'matricolaAziendaleUID'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  matricolaAziendaleUIDIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'matricolaAziendaleUID'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  matricolaAziendaleUIDEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'matricolaAziendaleUID',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  matricolaAziendaleUIDGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'matricolaAziendaleUID',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'matricolaAziendaleUID',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      matricolaAziendaleUIDBetween(
+  matricolaAziendaleUIDLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'matricolaAziendaleUID',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  matricolaAziendaleUIDBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -4576,103 +4707,107 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'matricolaAziendaleUID',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'matricolaAziendaleUID',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      matricolaAziendaleUIDStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  matricolaAziendaleUIDStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'matricolaAziendaleUID',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'matricolaAziendaleUID',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      matricolaAziendaleUIDEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  matricolaAziendaleUIDEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'matricolaAziendaleUID',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'matricolaAziendaleUID',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      matricolaAziendaleUIDContains(String value, {bool caseSensitive = true}) {
+  matricolaAziendaleUIDContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'matricolaAziendaleUID',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'matricolaAziendaleUID',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      matricolaAziendaleUIDMatches(String pattern,
-          {bool caseSensitive = true}) {
+  matricolaAziendaleUIDMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'matricolaAziendaleUID',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'matricolaAziendaleUID',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      matricolaAziendaleUIDIsEmpty() {
+  matricolaAziendaleUIDIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'matricolaAziendaleUID',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'matricolaAziendaleUID', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      matricolaAziendaleUIDIsNotEmpty() {
+  matricolaAziendaleUIDIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'matricolaAziendaleUID',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'matricolaAziendaleUID',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoIsNull() {
+  nominativoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nominativo',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nominativo'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoIsNotNull() {
+  nominativoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nominativo',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nominativo'),
+      );
     });
   }
 
@@ -4681,43 +4816,49 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nominativo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'nominativo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoGreaterThan(
+  nominativoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nominativo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nominativo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoLessThan(
+  nominativoLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nominativo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nominativo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -4729,154 +4870,160 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nominativo',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nominativo',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nominativoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'nominativo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'nominativo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nominativoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'nominativo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'nominativo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoContains(String value, {bool caseSensitive = true}) {
+  nominativoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'nominativo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'nominativo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> nominativoMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'nominativo',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nominativo',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'nominativo',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoGestoreIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nominativoGestore',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoGestoreIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nominativoGestore',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoGestoreEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nominativoGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'nominativo',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoGestoreGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  nominativoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nominativoGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nominativo', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoGestoreLessThan(
+  nominativoIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'nominativo', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  nominativoGestoreIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nominativoGestore'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  nominativoGestoreIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nominativoGestore'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  nominativoGestoreEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'nominativoGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  nominativoGestoreGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nominativoGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nominativoGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoGestoreBetween(
+  nominativoGestoreLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nominativoGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  nominativoGestoreBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -4884,153 +5031,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nominativoGestore',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nominativoGestore',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoGestoreStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nominativoGestoreStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'nominativoGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'nominativoGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoGestoreEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nominativoGestoreEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'nominativoGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'nominativoGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoGestoreContains(String value, {bool caseSensitive = true}) {
+  nominativoGestoreContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'nominativoGestore',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'nominativoGestore',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoGestoreMatches(String pattern, {bool caseSensitive = true}) {
+  nominativoGestoreMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'nominativoGestore',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'nominativoGestore',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoGestoreIsEmpty() {
+  nominativoGestoreIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nominativoGestore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nominativoGestore', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoGestoreIsNotEmpty() {
+  nominativoGestoreIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'nominativoGestore',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'nominativoGestore', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoKeyAccountIsNull() {
+  nominativoKeyAccountIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nominativoKeyAccount',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nominativoKeyAccount'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoKeyAccountIsNotNull() {
+  nominativoKeyAccountIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nominativoKeyAccount',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nominativoKeyAccount'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoKeyAccountEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  nominativoKeyAccountEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nominativoKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'nominativoKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoKeyAccountGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nominativoKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoKeyAccountLessThan(
+  nominativoKeyAccountGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nominativoKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nominativoKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoKeyAccountBetween(
+  nominativoKeyAccountLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nominativoKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  nominativoKeyAccountBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -5038,153 +5190,161 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nominativoKeyAccount',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nominativoKeyAccount',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoKeyAccountStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nominativoKeyAccountStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'nominativoKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'nominativoKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoKeyAccountEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nominativoKeyAccountEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'nominativoKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'nominativoKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoKeyAccountContains(String value, {bool caseSensitive = true}) {
+  nominativoKeyAccountContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'nominativoKeyAccount',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'nominativoKeyAccount',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoKeyAccountMatches(String pattern, {bool caseSensitive = true}) {
+  nominativoKeyAccountMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'nominativoKeyAccount',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'nominativoKeyAccount',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoKeyAccountIsEmpty() {
+  nominativoKeyAccountIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nominativoKeyAccount',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nominativoKeyAccount', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoKeyAccountIsNotEmpty() {
+  nominativoKeyAccountIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'nominativoKeyAccount',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'nominativoKeyAccount',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoResponsabileUOIsNull() {
+  nominativoResponsabileUOIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nominativoResponsabileUO',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nominativoResponsabileUO'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoResponsabileUOIsNotNull() {
+  nominativoResponsabileUOIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nominativoResponsabileUO',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nominativoResponsabileUO'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoResponsabileUOEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  nominativoResponsabileUOEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nominativoResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'nominativoResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoResponsabileUOGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nominativoResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoResponsabileUOLessThan(
+  nominativoResponsabileUOGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nominativoResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nominativoResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoResponsabileUOBetween(
+  nominativoResponsabileUOLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nominativoResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  nominativoResponsabileUOBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -5192,155 +5352,167 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nominativoResponsabileUO',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nominativoResponsabileUO',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoResponsabileUOStartsWith(
+  nominativoResponsabileUOStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'nominativoResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'nominativoResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoResponsabileUOEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nominativoResponsabileUOEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'nominativoResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'nominativoResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoResponsabileUOContains(String value,
-          {bool caseSensitive = true}) {
+  nominativoResponsabileUOContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'nominativoResponsabileUO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'nominativoResponsabileUO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoResponsabileUOMatches(String pattern,
-          {bool caseSensitive = true}) {
+  nominativoResponsabileUOMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'nominativoResponsabileUO',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'nominativoResponsabileUO',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoResponsabileUOIsEmpty() {
+  nominativoResponsabileUOIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nominativoResponsabileUO',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'nominativoResponsabileUO',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nominativoResponsabileUOIsNotEmpty() {
+  nominativoResponsabileUOIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'nominativoResponsabileUO',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'nominativoResponsabileUO',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAmbitoIsNull() {
+  nuovoSistProfAmbitoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nuovoSistProfAmbito',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nuovoSistProfAmbito'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAmbitoIsNotNull() {
+  nuovoSistProfAmbitoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nuovoSistProfAmbito',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nuovoSistProfAmbito'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAmbitoEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  nuovoSistProfAmbitoEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nuovoSistProfAmbito',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'nuovoSistProfAmbito',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAmbitoGreaterThan(
+  nuovoSistProfAmbitoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nuovoSistProfAmbito',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nuovoSistProfAmbito',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAmbitoLessThan(
+  nuovoSistProfAmbitoLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nuovoSistProfAmbito',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nuovoSistProfAmbito',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAmbitoBetween(
+  nuovoSistProfAmbitoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -5348,153 +5520,161 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nuovoSistProfAmbito',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nuovoSistProfAmbito',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAmbitoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nuovoSistProfAmbitoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'nuovoSistProfAmbito',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'nuovoSistProfAmbito',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAmbitoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nuovoSistProfAmbitoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'nuovoSistProfAmbito',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'nuovoSistProfAmbito',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAmbitoContains(String value, {bool caseSensitive = true}) {
+  nuovoSistProfAmbitoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'nuovoSistProfAmbito',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'nuovoSistProfAmbito',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAmbitoMatches(String pattern, {bool caseSensitive = true}) {
+  nuovoSistProfAmbitoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'nuovoSistProfAmbito',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'nuovoSistProfAmbito',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAmbitoIsEmpty() {
+  nuovoSistProfAmbitoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nuovoSistProfAmbito',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nuovoSistProfAmbito', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAmbitoIsNotEmpty() {
+  nuovoSistProfAmbitoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'nuovoSistProfAmbito',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'nuovoSistProfAmbito',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAreaIsNull() {
+  nuovoSistProfAreaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nuovoSistProfArea',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nuovoSistProfArea'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAreaIsNotNull() {
+  nuovoSistProfAreaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nuovoSistProfArea',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nuovoSistProfArea'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAreaEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  nuovoSistProfAreaEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nuovoSistProfArea',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'nuovoSistProfArea',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAreaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nuovoSistProfArea',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAreaLessThan(
+  nuovoSistProfAreaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nuovoSistProfArea',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nuovoSistProfArea',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAreaBetween(
+  nuovoSistProfAreaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nuovoSistProfArea',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  nuovoSistProfAreaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -5502,153 +5682,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nuovoSistProfArea',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nuovoSistProfArea',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAreaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nuovoSistProfAreaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'nuovoSistProfArea',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'nuovoSistProfArea',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAreaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nuovoSistProfAreaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'nuovoSistProfArea',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'nuovoSistProfArea',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAreaContains(String value, {bool caseSensitive = true}) {
+  nuovoSistProfAreaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'nuovoSistProfArea',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'nuovoSistProfArea',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAreaMatches(String pattern, {bool caseSensitive = true}) {
+  nuovoSistProfAreaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'nuovoSistProfArea',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'nuovoSistProfArea',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAreaIsEmpty() {
+  nuovoSistProfAreaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nuovoSistProfArea',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nuovoSistProfArea', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfAreaIsNotEmpty() {
+  nuovoSistProfAreaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'nuovoSistProfArea',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'nuovoSistProfArea', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfFamigliaIsNull() {
+  nuovoSistProfFamigliaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nuovoSistProfFamiglia',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nuovoSistProfFamiglia'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfFamigliaIsNotNull() {
+  nuovoSistProfFamigliaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nuovoSistProfFamiglia',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nuovoSistProfFamiglia'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfFamigliaEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  nuovoSistProfFamigliaEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nuovoSistProfFamiglia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'nuovoSistProfFamiglia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfFamigliaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nuovoSistProfFamiglia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfFamigliaLessThan(
+  nuovoSistProfFamigliaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nuovoSistProfFamiglia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nuovoSistProfFamiglia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfFamigliaBetween(
+  nuovoSistProfFamigliaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nuovoSistProfFamiglia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  nuovoSistProfFamigliaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -5656,154 +5841,161 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nuovoSistProfFamiglia',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nuovoSistProfFamiglia',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfFamigliaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nuovoSistProfFamigliaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'nuovoSistProfFamiglia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'nuovoSistProfFamiglia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfFamigliaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nuovoSistProfFamigliaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'nuovoSistProfFamiglia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'nuovoSistProfFamiglia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfFamigliaContains(String value, {bool caseSensitive = true}) {
+  nuovoSistProfFamigliaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'nuovoSistProfFamiglia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'nuovoSistProfFamiglia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfFamigliaMatches(String pattern,
-          {bool caseSensitive = true}) {
+  nuovoSistProfFamigliaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'nuovoSistProfFamiglia',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'nuovoSistProfFamiglia',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfFamigliaIsEmpty() {
+  nuovoSistProfFamigliaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nuovoSistProfFamiglia',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nuovoSistProfFamiglia', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfFamigliaIsNotEmpty() {
+  nuovoSistProfFamigliaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'nuovoSistProfFamiglia',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'nuovoSistProfFamiglia',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfJobIsNull() {
+  nuovoSistProfJobIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'nuovoSistProfJob',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'nuovoSistProfJob'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfJobIsNotNull() {
+  nuovoSistProfJobIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'nuovoSistProfJob',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'nuovoSistProfJob'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfJobEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  nuovoSistProfJobEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nuovoSistProfJob',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'nuovoSistProfJob',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfJobGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nuovoSistProfJob',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfJobLessThan(
+  nuovoSistProfJobGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nuovoSistProfJob',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nuovoSistProfJob',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfJobBetween(
+  nuovoSistProfJobLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nuovoSistProfJob',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  nuovoSistProfJobBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -5811,100 +6003,102 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nuovoSistProfJob',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nuovoSistProfJob',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfJobStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nuovoSistProfJobStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'nuovoSistProfJob',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'nuovoSistProfJob',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfJobEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nuovoSistProfJobEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'nuovoSistProfJob',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'nuovoSistProfJob',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfJobContains(String value, {bool caseSensitive = true}) {
+  nuovoSistProfJobContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'nuovoSistProfJob',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'nuovoSistProfJob',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfJobMatches(String pattern, {bool caseSensitive = true}) {
+  nuovoSistProfJobMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'nuovoSistProfJob',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'nuovoSistProfJob',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfJobIsEmpty() {
+  nuovoSistProfJobIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nuovoSistProfJob',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nuovoSistProfJob', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      nuovoSistProfJobIsNotEmpty() {
+  nuovoSistProfJobIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'nuovoSistProfJob',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'nuovoSistProfJob', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> paeseIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'paese',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'paese'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> paeseIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'paese',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'paese'),
+      );
     });
   }
 
@@ -5913,11 +6107,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'paese',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'paese',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -5927,12 +6123,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'paese',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'paese',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -5942,12 +6140,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'paese',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'paese',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -5959,14 +6159,16 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'paese',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'paese',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -5975,11 +6177,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'paese',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'paese',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -5988,123 +6192,132 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'paese',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'paese',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> paeseContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'paese',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'paese',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> paeseMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'paese',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'paese',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> paeseIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'paese',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'paese', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      paeseIsNotEmpty() {
+  paeseIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'paese',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'paese', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      partTimeFullTimeIsNull() {
+  partTimeFullTimeIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'partTimeFullTime',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'partTimeFullTime'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      partTimeFullTimeIsNotNull() {
+  partTimeFullTimeIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'partTimeFullTime',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'partTimeFullTime'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      partTimeFullTimeEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  partTimeFullTimeEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'partTimeFullTime',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'partTimeFullTime',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      partTimeFullTimeGreaterThan(
+  partTimeFullTimeGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'partTimeFullTime',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'partTimeFullTime',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      partTimeFullTimeLessThan(
+  partTimeFullTimeLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'partTimeFullTime',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'partTimeFullTime',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      partTimeFullTimeBetween(
+  partTimeFullTimeBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -6112,102 +6325,104 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'partTimeFullTime',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'partTimeFullTime',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      partTimeFullTimeStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  partTimeFullTimeStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'partTimeFullTime',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'partTimeFullTime',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      partTimeFullTimeEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  partTimeFullTimeEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'partTimeFullTime',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'partTimeFullTime',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      partTimeFullTimeContains(String value, {bool caseSensitive = true}) {
+  partTimeFullTimeContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'partTimeFullTime',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'partTimeFullTime',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      partTimeFullTimeMatches(String pattern, {bool caseSensitive = true}) {
+  partTimeFullTimeMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'partTimeFullTime',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'partTimeFullTime',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      partTimeFullTimeIsEmpty() {
+  partTimeFullTimeIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'partTimeFullTime',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'partTimeFullTime', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      partTimeFullTimeIsNotEmpty() {
+  partTimeFullTimeIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'partTimeFullTime',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'partTimeFullTime', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      posizioneIsNull() {
+  posizioneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'posizione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'posizione'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      posizioneIsNotNull() {
+  posizioneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'posizione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'posizione'),
+      );
     });
   }
 
@@ -6216,27 +6431,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'posizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'posizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      posizioneGreaterThan(
+  posizioneGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'posizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'posizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6246,12 +6465,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'posizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'posizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6263,28 +6484,29 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'posizione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'posizione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      posizioneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  posizioneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'posizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'posizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6293,73 +6515,79 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'posizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'posizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> posizioneContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'posizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'posizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> posizioneMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'posizione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'posizione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      posizioneIsEmpty() {
+  posizioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'posizione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'posizione', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      posizioneIsNotEmpty() {
+  posizioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'posizione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'posizione', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      provinciaIsNull() {
+  provinciaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'provincia',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'provincia'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      provinciaIsNotNull() {
+  provinciaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'provincia',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'provincia'),
+      );
     });
   }
 
@@ -6368,27 +6596,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'provincia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'provincia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      provinciaGreaterThan(
+  provinciaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'provincia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'provincia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6398,12 +6630,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'provincia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'provincia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6415,28 +6649,29 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'provincia',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'provincia',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      provinciaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  provinciaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'provincia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'provincia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6445,72 +6680,78 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'provincia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'provincia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> provinciaContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'provincia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'provincia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> provinciaMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'provincia',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'provincia',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      provinciaIsEmpty() {
+  provinciaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'provincia',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'provincia', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      provinciaIsNotEmpty() {
+  provinciaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'provincia',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'provincia', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> regioneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'regione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'regione'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      regioneIsNotNull() {
+  regioneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'regione',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'regione'),
+      );
     });
   }
 
@@ -6519,27 +6760,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'regione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'regione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      regioneGreaterThan(
+  regioneGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'regione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'regione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6549,12 +6794,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'regione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'regione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6566,14 +6813,16 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'regione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'regione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6582,11 +6831,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'regione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'regione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6595,123 +6846,132 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'regione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'regione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> regioneContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'regione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'regione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> regioneMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'regione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'regione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> regioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'regione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'regione', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      regioneIsNotEmpty() {
+  regioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'regione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'regione', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      responsabileSINOIsNull() {
+  responsabileSINOIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'responsabileSINO',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'responsabileSINO'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      responsabileSINOIsNotNull() {
+  responsabileSINOIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'responsabileSINO',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'responsabileSINO'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      responsabileSINOEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  responsabileSINOEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'responsabileSINO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'responsabileSINO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      responsabileSINOGreaterThan(
+  responsabileSINOGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'responsabileSINO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'responsabileSINO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      responsabileSINOLessThan(
+  responsabileSINOLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'responsabileSINO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'responsabileSINO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      responsabileSINOBetween(
+  responsabileSINOBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -6719,101 +6979,103 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'responsabileSINO',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'responsabileSINO',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      responsabileSINOStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  responsabileSINOStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'responsabileSINO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'responsabileSINO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      responsabileSINOEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  responsabileSINOEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'responsabileSINO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'responsabileSINO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      responsabileSINOContains(String value, {bool caseSensitive = true}) {
+  responsabileSINOContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'responsabileSINO',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'responsabileSINO',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      responsabileSINOMatches(String pattern, {bool caseSensitive = true}) {
+  responsabileSINOMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'responsabileSINO',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'responsabileSINO',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      responsabileSINOIsEmpty() {
+  responsabileSINOIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'responsabileSINO',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'responsabileSINO', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      responsabileSINOIsNotEmpty() {
+  responsabileSINOIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'responsabileSINO',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'responsabileSINO', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> sedeCapIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'sedeCap',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'sedeCap'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeCapIsNotNull() {
+  sedeCapIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'sedeCap',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'sedeCap'),
+      );
     });
   }
 
@@ -6822,27 +7084,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'sedeCap',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'sedeCap',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeCapGreaterThan(
+  sedeCapGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'sedeCap',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'sedeCap',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6852,12 +7118,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'sedeCap',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'sedeCap',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6869,14 +7137,16 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'sedeCap',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'sedeCap',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6885,11 +7155,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'sedeCap',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'sedeCap',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -6898,72 +7170,78 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'sedeCap',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'sedeCap',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> sedeCapContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'sedeCap',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'sedeCap',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> sedeCapMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'sedeCap',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'sedeCap',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> sedeCapIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'sedeCap',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'sedeCap', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeCapIsNotEmpty() {
+  sedeCapIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'sedeCap',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'sedeCap', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeComuneIsNull() {
+  sedeComuneIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'sedeComune',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'sedeComune'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeComuneIsNotNull() {
+  sedeComuneIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'sedeComune',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'sedeComune'),
+      );
     });
   }
 
@@ -6972,43 +7250,49 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'sedeComune',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'sedeComune',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeComuneGreaterThan(
+  sedeComuneGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'sedeComune',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'sedeComune',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeComuneLessThan(
+  sedeComuneLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'sedeComune',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'sedeComune',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7020,154 +7304,160 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'sedeComune',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'sedeComune',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeComuneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  sedeComuneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'sedeComune',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'sedeComune',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeComuneEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  sedeComuneEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'sedeComune',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'sedeComune',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeComuneContains(String value, {bool caseSensitive = true}) {
+  sedeComuneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'sedeComune',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'sedeComune',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> sedeComuneMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'sedeComune',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeComuneIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'sedeComune',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeComuneIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'sedeComune',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeIndirizzoIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'sedeIndirizzo',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeIndirizzoIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'sedeIndirizzo',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeIndirizzoEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'sedeIndirizzo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'sedeComune',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeIndirizzoGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  sedeComuneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'sedeIndirizzo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'sedeComune', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeIndirizzoLessThan(
+  sedeComuneIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'sedeComune', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  sedeIndirizzoIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'sedeIndirizzo'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  sedeIndirizzoIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'sedeIndirizzo'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  sedeIndirizzoEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'sedeIndirizzo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  sedeIndirizzoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'sedeIndirizzo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'sedeIndirizzo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeIndirizzoBetween(
+  sedeIndirizzoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'sedeIndirizzo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  sedeIndirizzoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -7175,153 +7465,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'sedeIndirizzo',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'sedeIndirizzo',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeIndirizzoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  sedeIndirizzoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'sedeIndirizzo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'sedeIndirizzo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeIndirizzoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  sedeIndirizzoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'sedeIndirizzo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'sedeIndirizzo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeIndirizzoContains(String value, {bool caseSensitive = true}) {
+  sedeIndirizzoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'sedeIndirizzo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'sedeIndirizzo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeIndirizzoMatches(String pattern, {bool caseSensitive = true}) {
+  sedeIndirizzoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'sedeIndirizzo',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'sedeIndirizzo',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeIndirizzoIsEmpty() {
+  sedeIndirizzoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'sedeIndirizzo',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'sedeIndirizzo', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeIndirizzoIsNotEmpty() {
+  sedeIndirizzoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'sedeIndirizzo',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'sedeIndirizzo', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeProvinciaIsNull() {
+  sedeProvinciaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'sedeProvincia',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'sedeProvincia'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeProvinciaIsNotNull() {
+  sedeProvinciaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'sedeProvincia',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'sedeProvincia'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeProvinciaEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  sedeProvinciaEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'sedeProvincia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'sedeProvincia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeProvinciaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'sedeProvincia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeProvinciaLessThan(
+  sedeProvinciaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'sedeProvincia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'sedeProvincia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeProvinciaBetween(
+  sedeProvinciaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'sedeProvincia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  sedeProvinciaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -7329,100 +7624,102 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'sedeProvincia',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'sedeProvincia',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeProvinciaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  sedeProvinciaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'sedeProvincia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'sedeProvincia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeProvinciaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  sedeProvinciaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'sedeProvincia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'sedeProvincia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeProvinciaContains(String value, {bool caseSensitive = true}) {
+  sedeProvinciaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'sedeProvincia',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'sedeProvincia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeProvinciaMatches(String pattern, {bool caseSensitive = true}) {
+  sedeProvinciaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'sedeProvincia',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'sedeProvincia',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeProvinciaIsEmpty() {
+  sedeProvinciaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'sedeProvincia',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'sedeProvincia', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sedeProvinciaIsNotEmpty() {
+  sedeProvinciaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'sedeProvincia',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'sedeProvincia', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> sessoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'sesso',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'sesso'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> sessoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'sesso',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'sesso'),
+      );
     });
   }
 
@@ -7431,11 +7728,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'sesso',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'sesso',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7445,12 +7744,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'sesso',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'sesso',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7460,12 +7761,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'sesso',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'sesso',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7477,14 +7780,16 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'sesso',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'sesso',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7493,11 +7798,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'sesso',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'sesso',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7506,71 +7813,77 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'sesso',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'sesso',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> sessoContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'sesso',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'sesso',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> sessoMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'sesso',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'sesso',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> sessoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'sesso',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'sesso', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      sessoIsNotEmpty() {
+  sessoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'sesso',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'sesso', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> societaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'societa',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'societa'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaIsNotNull() {
+  societaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'societa',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'societa'),
+      );
     });
   }
 
@@ -7579,27 +7892,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'societa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'societa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaGreaterThan(
+  societaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'societa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'societa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7609,12 +7926,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'societa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'societa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7626,14 +7945,16 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'societa',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'societa',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7642,11 +7963,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'societa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'societa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7655,123 +7978,132 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'societa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'societa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> societaContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'societa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'societa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> societaMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'societa',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'societa',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> societaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'societa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'societa', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaIsNotEmpty() {
+  societaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'societa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'societa', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaContabileIsNull() {
+  societaContabileIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'societaContabile',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'societaContabile'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaContabileIsNotNull() {
+  societaContabileIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'societaContabile',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'societaContabile'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaContabileEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  societaContabileEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'societaContabile',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'societaContabile',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaContabileGreaterThan(
+  societaContabileGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'societaContabile',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'societaContabile',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaContabileLessThan(
+  societaContabileLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'societaContabile',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'societaContabile',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaContabileBetween(
+  societaContabileBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -7779,101 +8111,103 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'societaContabile',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'societaContabile',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaContabileStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  societaContabileStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'societaContabile',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'societaContabile',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaContabileEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  societaContabileEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'societaContabile',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'societaContabile',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaContabileContains(String value, {bool caseSensitive = true}) {
+  societaContabileContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'societaContabile',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'societaContabile',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaContabileMatches(String pattern, {bool caseSensitive = true}) {
+  societaContabileMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'societaContabile',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'societaContabile',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaContabileIsEmpty() {
+  societaContabileIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'societaContabile',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'societaContabile', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      societaContabileIsNotEmpty() {
+  societaContabileIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'societaContabile',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'societaContabile', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> statusIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'status',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'status'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      statusIsNotNull() {
+  statusIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'status',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'status'),
+      );
     });
   }
 
@@ -7882,11 +8216,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'status',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'status',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7896,12 +8232,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'status',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'status',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7911,12 +8249,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'status',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'status',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7928,14 +8268,16 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'status',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'status',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7944,11 +8286,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'status',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'status',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -7957,123 +8301,132 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'status',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'status',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> statusContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'status',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'status',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> statusMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'status',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'status',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> statusIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'status',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'status', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      statusIsNotEmpty() {
+  statusIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'status',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'status', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoContrattoIsNull() {
+  tipoContrattoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'tipoContratto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'tipoContratto'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoContrattoIsNotNull() {
+  tipoContrattoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'tipoContratto',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'tipoContratto'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoContrattoEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  tipoContrattoEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoContratto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'tipoContratto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoContrattoGreaterThan(
+  tipoContrattoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'tipoContratto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tipoContratto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoContrattoLessThan(
+  tipoContrattoLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'tipoContratto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tipoContratto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoContrattoBetween(
+  tipoContrattoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -8081,101 +8434,103 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'tipoContratto',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tipoContratto',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoContrattoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoContrattoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'tipoContratto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'tipoContratto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoContrattoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoContrattoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'tipoContratto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'tipoContratto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoContrattoContains(String value, {bool caseSensitive = true}) {
+  tipoContrattoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'tipoContratto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'tipoContratto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoContrattoMatches(String pattern, {bool caseSensitive = true}) {
+  tipoContrattoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'tipoContratto',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'tipoContratto',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoContrattoIsEmpty() {
+  tipoContrattoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoContratto',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'tipoContratto', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoContrattoIsNotEmpty() {
+  tipoContrattoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'tipoContratto',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'tipoContratto', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> tipoDipIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'tipoDip',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'tipoDip'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoDipIsNotNull() {
+  tipoDipIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'tipoDip',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'tipoDip'),
+      );
     });
   }
 
@@ -8184,27 +8539,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoDip',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'tipoDip',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoDipGreaterThan(
+  tipoDipGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'tipoDip',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tipoDip',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8214,12 +8573,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'tipoDip',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tipoDip',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8231,14 +8592,16 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'tipoDip',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tipoDip',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8247,11 +8610,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'tipoDip',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'tipoDip',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8260,72 +8625,78 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'tipoDip',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'tipoDip',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> tipoDipContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'tipoDip',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'tipoDip',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> tipoDipMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'tipoDip',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'tipoDip',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> tipoDipIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoDip',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'tipoDip', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoDipIsNotEmpty() {
+  tipoDipIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'tipoDip',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'tipoDip', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoScuolaIsNull() {
+  tipoScuolaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'tipoScuola',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'tipoScuola'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoScuolaIsNotNull() {
+  tipoScuolaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'tipoScuola',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'tipoScuola'),
+      );
     });
   }
 
@@ -8334,43 +8705,49 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoScuola',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'tipoScuola',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoScuolaGreaterThan(
+  tipoScuolaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'tipoScuola',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tipoScuola',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoScuolaLessThan(
+  tipoScuolaLessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'tipoScuola',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tipoScuola',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8382,154 +8759,160 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'tipoScuola',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tipoScuola',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoScuolaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoScuolaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'tipoScuola',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'tipoScuola',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoScuolaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoScuolaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'tipoScuola',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'tipoScuola',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoScuolaContains(String value, {bool caseSensitive = true}) {
+  tipoScuolaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'tipoScuola',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'tipoScuola',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> tipoScuolaMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'tipoScuola',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoScuolaIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoScuola',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipoScuolaIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'tipoScuola',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipologiaResponsabileIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'tipologiaResponsabile',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipologiaResponsabileIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'tipologiaResponsabile',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipologiaResponsabileEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipologiaResponsabile',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'tipoScuola',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipologiaResponsabileGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  tipoScuolaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'tipologiaResponsabile',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'tipoScuola', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipologiaResponsabileLessThan(
+  tipoScuolaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'tipoScuola', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  tipologiaResponsabileIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'tipologiaResponsabile'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  tipologiaResponsabileIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'tipologiaResponsabile'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  tipologiaResponsabileEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'tipologiaResponsabile',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  tipologiaResponsabileGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'tipologiaResponsabile',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tipologiaResponsabile',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipologiaResponsabileBetween(
+  tipologiaResponsabileLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tipologiaResponsabile',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  tipologiaResponsabileBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -8537,102 +8920,106 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'tipologiaResponsabile',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tipologiaResponsabile',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipologiaResponsabileStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipologiaResponsabileStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'tipologiaResponsabile',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'tipologiaResponsabile',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipologiaResponsabileEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipologiaResponsabileEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'tipologiaResponsabile',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'tipologiaResponsabile',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipologiaResponsabileContains(String value, {bool caseSensitive = true}) {
+  tipologiaResponsabileContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'tipologiaResponsabile',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'tipologiaResponsabile',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipologiaResponsabileMatches(String pattern,
-          {bool caseSensitive = true}) {
+  tipologiaResponsabileMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'tipologiaResponsabile',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'tipologiaResponsabile',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipologiaResponsabileIsEmpty() {
+  tipologiaResponsabileIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipologiaResponsabile',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'tipologiaResponsabile', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      tipologiaResponsabileIsNotEmpty() {
+  tipologiaResponsabileIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'tipologiaResponsabile',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'tipologiaResponsabile',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> under35IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'under35',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'under35'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      under35IsNotNull() {
+  under35IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'under35',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'under35'),
+      );
     });
   }
 
@@ -8641,27 +9028,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'under35',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'under35',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      under35GreaterThan(
+  under35GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'under35',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'under35',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8671,12 +9062,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'under35',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'under35',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8688,14 +9081,16 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'under35',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'under35',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8704,11 +9099,13 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'under35',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'under35',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8717,72 +9114,78 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'under35',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'under35',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> under35Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'under35',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'under35',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> under35Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'under35',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'under35',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> under35IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'under35',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'under35', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      under35IsNotEmpty() {
+  under35IsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'under35',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'under35', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3IsNull() {
+  unitaOrg3IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg3',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg3'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3IsNotNull() {
+  unitaOrg3IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg3',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg3'),
+      );
     });
   }
 
@@ -8791,27 +9194,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3GreaterThan(
+  unitaOrg3GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8821,12 +9228,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8838,28 +9247,29 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg3',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg3',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg3StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -8868,124 +9278,133 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg3Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg3',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg3',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg3Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg3',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3IsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg3',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3IsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg3',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3DesIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg3Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3DesIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg3Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3DesEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg3Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg3',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3DesGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  unitaOrg3IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg3Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg3', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3DesLessThan(
+  unitaOrg3IsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg3', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg3DesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg3Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg3DesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg3Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg3DesEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg3Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg3DesGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg3Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg3Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3DesBetween(
+  unitaOrg3DesLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg3Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg3DesBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -8993,102 +9412,104 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg3Des',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg3Des',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3DesStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg3DesStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg3Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg3Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3DesEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg3DesEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg3Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg3Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3DesContains(String value, {bool caseSensitive = true}) {
+  unitaOrg3DesContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg3Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg3Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3DesMatches(String pattern, {bool caseSensitive = true}) {
+  unitaOrg3DesMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg3Des',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg3Des',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3DesIsEmpty() {
+  unitaOrg3DesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg3Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg3Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg3DesIsNotEmpty() {
+  unitaOrg3DesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg3Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg3Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4IsNull() {
+  unitaOrg4IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg4',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg4'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4IsNotNull() {
+  unitaOrg4IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg4',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg4'),
+      );
     });
   }
 
@@ -9097,27 +9518,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4GreaterThan(
+  unitaOrg4GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9127,12 +9552,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9144,28 +9571,29 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg4',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg4',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg4StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9174,124 +9602,133 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg4Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg4',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg4',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg4Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg4',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4IsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg4',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4IsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg4',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4DesIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg4Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4DesIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg4Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4DesEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg4Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg4',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4DesGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  unitaOrg4IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg4Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg4', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4DesLessThan(
+  unitaOrg4IsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg4', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg4DesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg4Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg4DesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg4Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg4DesEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg4Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg4DesGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg4Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg4Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4DesBetween(
+  unitaOrg4DesLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg4Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg4DesBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -9299,102 +9736,104 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg4Des',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg4Des',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4DesStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg4DesStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg4Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg4Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4DesEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg4DesEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg4Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg4Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4DesContains(String value, {bool caseSensitive = true}) {
+  unitaOrg4DesContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg4Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg4Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4DesMatches(String pattern, {bool caseSensitive = true}) {
+  unitaOrg4DesMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg4Des',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg4Des',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4DesIsEmpty() {
+  unitaOrg4DesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg4Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg4Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg4DesIsNotEmpty() {
+  unitaOrg4DesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg4Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg4Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5IsNull() {
+  unitaOrg5IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg5',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg5'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5IsNotNull() {
+  unitaOrg5IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg5',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg5'),
+      );
     });
   }
 
@@ -9403,27 +9842,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg5',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg5',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5GreaterThan(
+  unitaOrg5GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg5',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg5',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9433,12 +9876,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg5',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg5',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9450,28 +9895,29 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg5',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg5',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg5StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg5',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg5',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9480,124 +9926,133 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg5',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg5',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg5Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg5',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg5',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg5Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg5',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5IsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg5',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5IsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg5',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5DesIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg5Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5DesIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg5Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5DesEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg5Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg5',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5DesGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  unitaOrg5IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg5Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg5', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5DesLessThan(
+  unitaOrg5IsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg5', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg5DesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg5Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg5DesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg5Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg5DesEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg5Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg5DesGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg5Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg5Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5DesBetween(
+  unitaOrg5DesLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg5Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg5DesBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -9605,102 +10060,104 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg5Des',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg5Des',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5DesStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg5DesStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg5Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg5Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5DesEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg5DesEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg5Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg5Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5DesContains(String value, {bool caseSensitive = true}) {
+  unitaOrg5DesContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg5Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg5Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5DesMatches(String pattern, {bool caseSensitive = true}) {
+  unitaOrg5DesMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg5Des',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg5Des',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5DesIsEmpty() {
+  unitaOrg5DesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg5Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg5Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg5DesIsNotEmpty() {
+  unitaOrg5DesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg5Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg5Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6IsNull() {
+  unitaOrg6IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg6',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg6'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6IsNotNull() {
+  unitaOrg6IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg6',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg6'),
+      );
     });
   }
 
@@ -9709,27 +10166,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg6',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg6',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6GreaterThan(
+  unitaOrg6GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg6',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg6',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9739,12 +10200,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg6',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg6',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9756,28 +10219,29 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg6',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg6',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg6StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg6',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg6',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -9786,124 +10250,133 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg6',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg6',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg6Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg6',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg6',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg6Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg6',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6IsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg6',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6IsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg6',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6DesIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg6Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6DesIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg6Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6DesEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg6Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg6',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6DesGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  unitaOrg6IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg6Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg6', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6DesLessThan(
+  unitaOrg6IsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg6', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg6DesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg6Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg6DesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg6Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg6DesEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg6Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg6DesGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg6Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg6Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6DesBetween(
+  unitaOrg6DesLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg6Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg6DesBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -9911,102 +10384,104 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg6Des',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg6Des',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6DesStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg6DesStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg6Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg6Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6DesEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg6DesEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg6Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg6Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6DesContains(String value, {bool caseSensitive = true}) {
+  unitaOrg6DesContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg6Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg6Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6DesMatches(String pattern, {bool caseSensitive = true}) {
+  unitaOrg6DesMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg6Des',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg6Des',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6DesIsEmpty() {
+  unitaOrg6DesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg6Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg6Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg6DesIsNotEmpty() {
+  unitaOrg6DesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg6Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg6Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7IsNull() {
+  unitaOrg7IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg7',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg7'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7IsNotNull() {
+  unitaOrg7IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg7',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg7'),
+      );
     });
   }
 
@@ -10015,27 +10490,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg7',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg7',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7GreaterThan(
+  unitaOrg7GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg7',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg7',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -10045,12 +10524,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg7',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg7',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -10062,28 +10543,29 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg7',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg7',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg7StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg7',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg7',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -10092,124 +10574,133 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg7',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg7',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg7Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg7',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg7',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg7Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg7',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7IsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg7',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7IsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg7',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7DesIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg7Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7DesIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg7Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7DesEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg7Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg7',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7DesGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  unitaOrg7IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg7Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg7', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7DesLessThan(
+  unitaOrg7IsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg7', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg7DesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg7Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg7DesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg7Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg7DesEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg7Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg7DesGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg7Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg7Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7DesBetween(
+  unitaOrg7DesLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg7Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg7DesBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -10217,102 +10708,104 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg7Des',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg7Des',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7DesStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg7DesStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg7Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg7Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7DesEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg7DesEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg7Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg7Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7DesContains(String value, {bool caseSensitive = true}) {
+  unitaOrg7DesContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg7Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg7Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7DesMatches(String pattern, {bool caseSensitive = true}) {
+  unitaOrg7DesMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg7Des',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg7Des',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7DesIsEmpty() {
+  unitaOrg7DesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg7Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg7Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg7DesIsNotEmpty() {
+  unitaOrg7DesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg7Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg7Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8IsNull() {
+  unitaOrg8IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg8',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg8'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8IsNotNull() {
+  unitaOrg8IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg8',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg8'),
+      );
     });
   }
 
@@ -10321,27 +10814,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg8',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg8',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8GreaterThan(
+  unitaOrg8GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg8',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg8',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -10351,12 +10848,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg8',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg8',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -10368,28 +10867,29 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg8',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg8',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg8StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg8',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg8',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -10398,124 +10898,133 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg8',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg8',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg8Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg8',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg8',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg8Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg8',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8IsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg8',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8IsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg8',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8DesIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg8Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8DesIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg8Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8DesEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg8Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg8',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8DesGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  unitaOrg8IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg8Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg8', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8DesLessThan(
+  unitaOrg8IsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg8', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg8DesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg8Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg8DesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg8Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg8DesEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg8Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg8DesGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg8Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg8Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8DesBetween(
+  unitaOrg8DesLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg8Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg8DesBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -10523,102 +11032,104 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg8Des',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg8Des',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8DesStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg8DesStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg8Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg8Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8DesEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg8DesEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg8Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg8Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8DesContains(String value, {bool caseSensitive = true}) {
+  unitaOrg8DesContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg8Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg8Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8DesMatches(String pattern, {bool caseSensitive = true}) {
+  unitaOrg8DesMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg8Des',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg8Des',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8DesIsEmpty() {
+  unitaOrg8DesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg8Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg8Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg8DesIsNotEmpty() {
+  unitaOrg8DesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg8Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg8Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9IsNull() {
+  unitaOrg9IsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg9',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg9'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9IsNotNull() {
+  unitaOrg9IsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg9',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg9'),
+      );
     });
   }
 
@@ -10627,27 +11138,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg9',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg9',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9GreaterThan(
+  unitaOrg9GreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg9',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg9',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -10657,12 +11172,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg9',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg9',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -10674,28 +11191,29 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg9',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg9',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9StartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg9StartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg9',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg9',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -10704,124 +11222,133 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg9',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg9',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg9Contains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg9',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg9',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> unitaOrg9Matches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg9',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9IsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg9',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9IsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg9',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9DesIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrg9Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9DesIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrg9Des',
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9DesEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg9Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg9',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9DesGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  unitaOrg9IsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrg9Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg9', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9DesLessThan(
+  unitaOrg9IsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg9', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg9DesIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrg9Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg9DesIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrg9Des'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg9DesEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrg9Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg9DesGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrg9Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrg9Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9DesBetween(
+  unitaOrg9DesLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrg9Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrg9DesBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -10829,153 +11356,158 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrg9Des',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrg9Des',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9DesStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg9DesStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrg9Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrg9Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9DesEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrg9DesEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrg9Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrg9Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9DesContains(String value, {bool caseSensitive = true}) {
+  unitaOrg9DesContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrg9Des',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrg9Des',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9DesMatches(String pattern, {bool caseSensitive = true}) {
+  unitaOrg9DesMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrg9Des',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrg9Des',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9DesIsEmpty() {
+  unitaOrg9DesIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrg9Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrg9Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrg9DesIsNotEmpty() {
+  unitaOrg9DesIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrg9Des',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrg9Des', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrganizzativaIsNull() {
+  unitaOrganizzativaIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'unitaOrganizzativa',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'unitaOrganizzativa'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrganizzativaIsNotNull() {
+  unitaOrganizzativaIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'unitaOrganizzativa',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'unitaOrganizzativa'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrganizzativaEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrganizzativaEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrganizzativa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'unitaOrganizzativa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrganizzativaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'unitaOrganizzativa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrganizzativaLessThan(
+  unitaOrganizzativaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'unitaOrganizzativa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'unitaOrganizzativa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrganizzativaBetween(
+  unitaOrganizzativaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'unitaOrganizzativa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  unitaOrganizzativaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -10983,102 +11515,104 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'unitaOrganizzativa',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'unitaOrganizzativa',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrganizzativaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrganizzativaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'unitaOrganizzativa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'unitaOrganizzativa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrganizzativaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  unitaOrganizzativaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'unitaOrganizzativa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'unitaOrganizzativa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrganizzativaContains(String value, {bool caseSensitive = true}) {
+  unitaOrganizzativaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'unitaOrganizzativa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'unitaOrganizzativa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrganizzativaMatches(String pattern, {bool caseSensitive = true}) {
+  unitaOrganizzativaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'unitaOrganizzativa',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'unitaOrganizzativa',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrganizzativaIsEmpty() {
+  unitaOrganizzativaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'unitaOrganizzativa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'unitaOrganizzativa', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      unitaOrganizzativaIsNotEmpty() {
+  unitaOrganizzativaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'unitaOrganizzativa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'unitaOrganizzativa', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteCODIsNull() {
+  utenteCODIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'utenteCOD',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'utenteCOD'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteCODIsNotNull() {
+  utenteCODIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'utenteCOD',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'utenteCOD'),
+      );
     });
   }
 
@@ -11087,27 +11621,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'utenteCOD',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'utenteCOD',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteCODGreaterThan(
+  utenteCODGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'utenteCOD',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'utenteCOD',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -11117,12 +11655,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'utenteCOD',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'utenteCOD',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -11134,28 +11674,29 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'utenteCOD',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'utenteCOD',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteCODStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  utenteCODStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'utenteCOD',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'utenteCOD',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -11164,72 +11705,78 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'utenteCOD',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'utenteCOD',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> utenteCODContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'utenteCOD',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'utenteCOD',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> utenteCODMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'utenteCOD',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'utenteCOD',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteCODIsEmpty() {
+  utenteCODIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'utenteCOD',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'utenteCOD', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteCODIsNotEmpty() {
+  utenteCODIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'utenteCOD',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'utenteCOD', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> utenteKAIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'utenteKA',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'utenteKA'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteKAIsNotNull() {
+  utenteKAIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'utenteKA',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'utenteKA'),
+      );
     });
   }
 
@@ -11238,27 +11785,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'utenteKA',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'utenteKA',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteKAGreaterThan(
+  utenteKAGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'utenteKA',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'utenteKA',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -11268,12 +11819,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'utenteKA',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'utenteKA',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -11285,28 +11838,29 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'utenteKA',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'utenteKA',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteKAStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  utenteKAStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'utenteKA',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'utenteKA',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -11315,72 +11869,78 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'utenteKA',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'utenteKA',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> utenteKAContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'utenteKA',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'utenteKA',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> utenteKAMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'utenteKA',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'utenteKA',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteKAIsEmpty() {
+  utenteKAIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'utenteKA',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'utenteKA', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteKAIsNotEmpty() {
+  utenteKAIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'utenteKA',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'utenteKA', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> utenteRUIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'utenteRU',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'utenteRU'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUIsNotNull() {
+  utenteRUIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'utenteRU',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'utenteRU'),
+      );
     });
   }
 
@@ -11389,27 +11949,31 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'utenteRU',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'utenteRU',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUGreaterThan(
+  utenteRUGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'utenteRU',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'utenteRU',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -11419,12 +11983,14 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'utenteRU',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'utenteRU',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -11436,28 +12002,29 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'utenteRU',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'utenteRU',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  utenteRUStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'utenteRU',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'utenteRU',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -11466,73 +12033,79 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'utenteRU',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'utenteRU',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> utenteRUContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'utenteRU',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'utenteRU',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> utenteRUMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'utenteRU',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'utenteRU',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUIsEmpty() {
+  utenteRUIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'utenteRU',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'utenteRU', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUIsNotEmpty() {
+  utenteRUIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'utenteRU',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'utenteRU', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUBUIsNull() {
+  utenteRUBUIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'utenteRUBU',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'utenteRUBU'),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUBUIsNotNull() {
+  utenteRUBUIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'utenteRUBU',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'utenteRUBU'),
+      );
     });
   }
 
@@ -11541,43 +12114,49 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'utenteRUBU',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'utenteRUBU',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUBUGreaterThan(
+  utenteRUBUGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'utenteRUBU',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'utenteRUBU',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUBULessThan(
+  utenteRUBULessThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'utenteRUBU',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'utenteRUBU',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -11589,85 +12168,88 @@ extension AnagraficaQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'utenteRUBU',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'utenteRUBU',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUBUStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  utenteRUBUStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'utenteRUBU',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'utenteRUBU',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUBUEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  utenteRUBUEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'utenteRUBU',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'utenteRUBU',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUBUContains(String value, {bool caseSensitive = true}) {
+  utenteRUBUContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'utenteRUBU',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'utenteRUBU',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> utenteRUBUMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'utenteRUBU',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'utenteRUBU',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUBUIsEmpty() {
+  utenteRUBUIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'utenteRUBU',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'utenteRUBU', value: ''),
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
-      utenteRUBUIsNotEmpty() {
+  utenteRUBUIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'utenteRUBU',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'utenteRUBU', value: ''),
+      );
     });
   }
 }
@@ -11723,7 +12305,7 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByCidResponsabileUODesc() {
+  sortByCidResponsabileUODesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cidResponsabileUO', Sort.desc);
     });
@@ -11748,7 +12330,7 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByContrSolidarietaDesc() {
+  sortByContrSolidarietaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'contrSolidarieta', Sort.desc);
     });
@@ -11761,21 +12343,21 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByDataAssunzioneDesc() {
+  sortByDataAssunzioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataAssunzione', Sort.desc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByDataAssunzioneGruppo() {
+  sortByDataAssunzioneGruppo() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataAssunzioneGruppo', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByDataAssunzioneGruppoDesc() {
+  sortByDataAssunzioneGruppoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataAssunzioneGruppo', Sort.desc);
     });
@@ -11824,7 +12406,7 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByGradoOccupazInSolDesc() {
+  sortByGradoOccupazInSolDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'gradoOccupazInSol', Sort.desc);
     });
@@ -11909,21 +12491,21 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByMailKeyAccountDesc() {
+  sortByMailKeyAccountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mailKeyAccount', Sort.desc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByMailResponsabileUO() {
+  sortByMailResponsabileUO() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mailResponsabileUO', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByMailResponsabileUODesc() {
+  sortByMailResponsabileUODesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mailResponsabileUO', Sort.desc);
     });
@@ -11942,14 +12524,14 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByMatricolaAziendaleUID() {
+  sortByMatricolaAziendaleUID() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'matricolaAziendaleUID', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByMatricolaAziendaleUIDDesc() {
+  sortByMatricolaAziendaleUIDDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'matricolaAziendaleUID', Sort.desc);
     });
@@ -11974,49 +12556,49 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByNominativoGestoreDesc() {
+  sortByNominativoGestoreDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nominativoGestore', Sort.desc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByNominativoKeyAccount() {
+  sortByNominativoKeyAccount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nominativoKeyAccount', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByNominativoKeyAccountDesc() {
+  sortByNominativoKeyAccountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nominativoKeyAccount', Sort.desc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByNominativoResponsabileUO() {
+  sortByNominativoResponsabileUO() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nominativoResponsabileUO', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByNominativoResponsabileUODesc() {
+  sortByNominativoResponsabileUODesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nominativoResponsabileUO', Sort.desc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByNuovoSistProfAmbito() {
+  sortByNuovoSistProfAmbito() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nuovoSistProfAmbito', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByNuovoSistProfAmbitoDesc() {
+  sortByNuovoSistProfAmbitoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nuovoSistProfAmbito', Sort.desc);
     });
@@ -12029,21 +12611,21 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByNuovoSistProfAreaDesc() {
+  sortByNuovoSistProfAreaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nuovoSistProfArea', Sort.desc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByNuovoSistProfFamiglia() {
+  sortByNuovoSistProfFamiglia() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nuovoSistProfFamiglia', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByNuovoSistProfFamigliaDesc() {
+  sortByNuovoSistProfFamigliaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nuovoSistProfFamiglia', Sort.desc);
     });
@@ -12056,7 +12638,7 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByNuovoSistProfJobDesc() {
+  sortByNuovoSistProfJobDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nuovoSistProfJob', Sort.desc);
     });
@@ -12081,7 +12663,7 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByPartTimeFullTimeDesc() {
+  sortByPartTimeFullTimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'partTimeFullTime', Sort.desc);
     });
@@ -12130,7 +12712,7 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByResponsabileSINODesc() {
+  sortByResponsabileSINODesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'responsabileSINO', Sort.desc);
     });
@@ -12215,7 +12797,7 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortBySocietaContabileDesc() {
+  sortBySocietaContabileDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'societaContabile', Sort.desc);
     });
@@ -12270,14 +12852,14 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByTipologiaResponsabile() {
+  sortByTipologiaResponsabile() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipologiaResponsabile', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByTipologiaResponsabileDesc() {
+  sortByTipologiaResponsabileDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipologiaResponsabile', Sort.desc);
     });
@@ -12464,14 +13046,14 @@ extension AnagraficaQuerySortBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByUnitaOrganizzativa() {
+  sortByUnitaOrganizzativa() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'unitaOrganizzativa', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      sortByUnitaOrganizzativaDesc() {
+  sortByUnitaOrganizzativaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'unitaOrganizzativa', Sort.desc);
     });
@@ -12571,7 +13153,7 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByCidResponsabileUODesc() {
+  thenByCidResponsabileUODesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cidResponsabileUO', Sort.desc);
     });
@@ -12596,7 +13178,7 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByContrSolidarietaDesc() {
+  thenByContrSolidarietaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'contrSolidarieta', Sort.desc);
     });
@@ -12609,21 +13191,21 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByDataAssunzioneDesc() {
+  thenByDataAssunzioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataAssunzione', Sort.desc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByDataAssunzioneGruppo() {
+  thenByDataAssunzioneGruppo() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataAssunzioneGruppo', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByDataAssunzioneGruppoDesc() {
+  thenByDataAssunzioneGruppoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'dataAssunzioneGruppo', Sort.desc);
     });
@@ -12672,7 +13254,7 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByGradoOccupazInSolDesc() {
+  thenByGradoOccupazInSolDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'gradoOccupazInSol', Sort.desc);
     });
@@ -12769,21 +13351,21 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByMailKeyAccountDesc() {
+  thenByMailKeyAccountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mailKeyAccount', Sort.desc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByMailResponsabileUO() {
+  thenByMailResponsabileUO() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mailResponsabileUO', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByMailResponsabileUODesc() {
+  thenByMailResponsabileUODesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'mailResponsabileUO', Sort.desc);
     });
@@ -12802,14 +13384,14 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByMatricolaAziendaleUID() {
+  thenByMatricolaAziendaleUID() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'matricolaAziendaleUID', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByMatricolaAziendaleUIDDesc() {
+  thenByMatricolaAziendaleUIDDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'matricolaAziendaleUID', Sort.desc);
     });
@@ -12834,49 +13416,49 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByNominativoGestoreDesc() {
+  thenByNominativoGestoreDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nominativoGestore', Sort.desc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByNominativoKeyAccount() {
+  thenByNominativoKeyAccount() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nominativoKeyAccount', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByNominativoKeyAccountDesc() {
+  thenByNominativoKeyAccountDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nominativoKeyAccount', Sort.desc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByNominativoResponsabileUO() {
+  thenByNominativoResponsabileUO() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nominativoResponsabileUO', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByNominativoResponsabileUODesc() {
+  thenByNominativoResponsabileUODesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nominativoResponsabileUO', Sort.desc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByNuovoSistProfAmbito() {
+  thenByNuovoSistProfAmbito() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nuovoSistProfAmbito', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByNuovoSistProfAmbitoDesc() {
+  thenByNuovoSistProfAmbitoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nuovoSistProfAmbito', Sort.desc);
     });
@@ -12889,21 +13471,21 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByNuovoSistProfAreaDesc() {
+  thenByNuovoSistProfAreaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nuovoSistProfArea', Sort.desc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByNuovoSistProfFamiglia() {
+  thenByNuovoSistProfFamiglia() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nuovoSistProfFamiglia', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByNuovoSistProfFamigliaDesc() {
+  thenByNuovoSistProfFamigliaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nuovoSistProfFamiglia', Sort.desc);
     });
@@ -12916,7 +13498,7 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByNuovoSistProfJobDesc() {
+  thenByNuovoSistProfJobDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nuovoSistProfJob', Sort.desc);
     });
@@ -12941,7 +13523,7 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByPartTimeFullTimeDesc() {
+  thenByPartTimeFullTimeDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'partTimeFullTime', Sort.desc);
     });
@@ -12990,7 +13572,7 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByResponsabileSINODesc() {
+  thenByResponsabileSINODesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'responsabileSINO', Sort.desc);
     });
@@ -13075,7 +13657,7 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenBySocietaContabileDesc() {
+  thenBySocietaContabileDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'societaContabile', Sort.desc);
     });
@@ -13130,14 +13712,14 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByTipologiaResponsabile() {
+  thenByTipologiaResponsabile() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipologiaResponsabile', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByTipologiaResponsabileDesc() {
+  thenByTipologiaResponsabileDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipologiaResponsabile', Sort.desc);
     });
@@ -13324,14 +13906,14 @@ extension AnagraficaQuerySortThenBy
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByUnitaOrganizzativa() {
+  thenByUnitaOrganizzativa() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'unitaOrganizzativa', Sort.asc);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy>
-      thenByUnitaOrganizzativaDesc() {
+  thenByUnitaOrganizzativaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'unitaOrganizzativa', Sort.desc);
     });
@@ -13388,109 +13970,138 @@ extension AnagraficaQuerySortThenBy
 
 extension AnagraficaQueryWhereDistinct
     on QueryBuilder<Anagrafica, Anagrafica, QDistinct> {
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByCid(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByCid({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'cid', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByCidGestore(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByCidGestore({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'cidGestore', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByCidKeyAccount(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByCidKeyAccount({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'cidKeyAccount',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'cidKeyAccount',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByCidResponsabileUO(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByCidResponsabileUO({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'cidResponsabileUO',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'cidResponsabileUO',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByCodiceFiscale(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByCodiceFiscale({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'codiceFiscale',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'codiceFiscale',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByContrSolidarieta(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByContrSolidarieta({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'contrSolidarieta',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'contrSolidarieta',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByDataAssunzione(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByDataAssunzione({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'dataAssunzione',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'dataAssunzione',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QDistinct>
-      distinctByDataAssunzioneGruppo({bool caseSensitive = true}) {
+  distinctByDataAssunzioneGruppo({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'dataAssunzioneGruppo',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'dataAssunzioneGruppo',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByDataNascita(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByDataNascita({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dataNascita', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByFormazione(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByFormazione({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'formazione', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByGradoOccupaz(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByGradoOccupaz({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'gradoOccupaz', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByGradoOccupazInSol(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByGradoOccupazInSol({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'gradoOccupazInSol',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'gradoOccupazInSol',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByImportBatch(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByImportBatch({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'importBatch', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByIndirizzoMail(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByIndirizzoMail({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'indirizzoMail',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'indirizzoMail',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
@@ -13500,390 +14111,473 @@ extension AnagraficaQueryWhereDistinct
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByLivello(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByLivello({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'livello', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByLuogoNascita(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByLuogoNascita({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'luogoNascita', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByMailGestore(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByMailGestore({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'mailGestore', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByMailKeyAccount(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByMailKeyAccount({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'mailKeyAccount',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'mailKeyAccount',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByMailResponsabileUO(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByMailResponsabileUO({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'mailResponsabileUO',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'mailResponsabileUO',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByMansione(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByMansione({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'mansione', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QDistinct>
-      distinctByMatricolaAziendaleUID({bool caseSensitive = true}) {
+  distinctByMatricolaAziendaleUID({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'matricolaAziendaleUID',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'matricolaAziendaleUID',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByNominativo(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByNominativo({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'nominativo', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByNominativoGestore(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByNominativoGestore({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'nominativoGestore',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'nominativoGestore',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QDistinct>
-      distinctByNominativoKeyAccount({bool caseSensitive = true}) {
+  distinctByNominativoKeyAccount({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'nominativoKeyAccount',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'nominativoKeyAccount',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QDistinct>
-      distinctByNominativoResponsabileUO({bool caseSensitive = true}) {
+  distinctByNominativoResponsabileUO({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'nominativoResponsabileUO',
-          caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByNuovoSistProfAmbito(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'nuovoSistProfAmbito',
-          caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByNuovoSistProfArea(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'nuovoSistProfArea',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'nominativoResponsabileUO',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QDistinct>
-      distinctByNuovoSistProfFamiglia({bool caseSensitive = true}) {
+  distinctByNuovoSistProfAmbito({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'nuovoSistProfFamiglia',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'nuovoSistProfAmbito',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByNuovoSistProfJob(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByNuovoSistProfArea({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'nuovoSistProfJob',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'nuovoSistProfArea',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByPaese(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct>
+  distinctByNuovoSistProfFamiglia({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(
+        r'nuovoSistProfFamiglia',
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByNuovoSistProfJob({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(
+        r'nuovoSistProfJob',
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByPaese({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'paese', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByPartTimeFullTime(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByPartTimeFullTime({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'partTimeFullTime',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'partTimeFullTime',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByPosizione(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByPosizione({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'posizione', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByProvincia(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByProvincia({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'provincia', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByRegione(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByRegione({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'regione', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByResponsabileSINO(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByResponsabileSINO({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'responsabileSINO',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'responsabileSINO',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySedeCap(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySedeCap({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'sedeCap', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySedeComune(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySedeComune({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'sedeComune', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySedeIndirizzo(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySedeIndirizzo({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'sedeIndirizzo',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'sedeIndirizzo',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySedeProvincia(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySedeProvincia({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'sedeProvincia',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'sedeProvincia',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySesso(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySesso({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'sesso', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySocieta(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySocieta({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'societa', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySocietaContabile(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctBySocietaContabile({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'societaContabile',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'societaContabile',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByStatus(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByStatus({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'status', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByTipoContratto(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByTipoContratto({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'tipoContratto',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'tipoContratto',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByTipoDip(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByTipoDip({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'tipoDip', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByTipoScuola(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByTipoScuola({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'tipoScuola', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<Anagrafica, Anagrafica, QDistinct>
-      distinctByTipologiaResponsabile({bool caseSensitive = true}) {
+  distinctByTipologiaResponsabile({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'tipologiaResponsabile',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'tipologiaResponsabile',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnder35(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnder35({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'under35', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg3(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg3({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg3', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg3Des(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg3Des({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg3Des', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg4(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg4({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg4', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg4Des(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg4Des({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg4Des', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg5(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg5({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg5', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg5Des(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg5Des({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg5Des', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg6(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg6({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg6', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg6Des(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg6Des({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg6Des', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg7(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg7({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg7', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg7Des(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg7Des({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg7Des', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg8(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg8({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg8', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg8Des(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg8Des({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg8Des', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg9(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg9({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg9', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg9Des(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrg9Des({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'unitaOrg9Des', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrganizzativa(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUnitaOrganizzativa({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'unitaOrganizzativa',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'unitaOrganizzativa',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUtenteCOD(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUtenteCOD({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'utenteCOD', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUtenteKA(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUtenteKA({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'utenteKA', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUtenteRU(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUtenteRU({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'utenteRU', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUtenteRUBU(
-      {bool caseSensitive = true}) {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByUtenteRUBU({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'utenteRUBU', caseSensitive: caseSensitive);
     });
@@ -13917,7 +14611,7 @@ extension AnagraficaQueryProperty
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      cidResponsabileUOProperty() {
+  cidResponsabileUOProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'cidResponsabileUO');
     });
@@ -13930,7 +14624,7 @@ extension AnagraficaQueryProperty
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      contrSolidarietaProperty() {
+  contrSolidarietaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'contrSolidarieta');
     });
@@ -13943,7 +14637,7 @@ extension AnagraficaQueryProperty
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      dataAssunzioneGruppoProperty() {
+  dataAssunzioneGruppoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'dataAssunzioneGruppo');
     });
@@ -13968,7 +14662,7 @@ extension AnagraficaQueryProperty
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      gradoOccupazInSolProperty() {
+  gradoOccupazInSolProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'gradoOccupazInSol');
     });
@@ -14017,7 +14711,7 @@ extension AnagraficaQueryProperty
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      mailResponsabileUOProperty() {
+  mailResponsabileUOProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'mailResponsabileUO');
     });
@@ -14030,7 +14724,7 @@ extension AnagraficaQueryProperty
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      matricolaAziendaleUIDProperty() {
+  matricolaAziendaleUIDProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'matricolaAziendaleUID');
     });
@@ -14043,49 +14737,49 @@ extension AnagraficaQueryProperty
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      nominativoGestoreProperty() {
+  nominativoGestoreProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nominativoGestore');
     });
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      nominativoKeyAccountProperty() {
+  nominativoKeyAccountProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nominativoKeyAccount');
     });
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      nominativoResponsabileUOProperty() {
+  nominativoResponsabileUOProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nominativoResponsabileUO');
     });
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      nuovoSistProfAmbitoProperty() {
+  nuovoSistProfAmbitoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nuovoSistProfAmbito');
     });
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      nuovoSistProfAreaProperty() {
+  nuovoSistProfAreaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nuovoSistProfArea');
     });
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      nuovoSistProfFamigliaProperty() {
+  nuovoSistProfFamigliaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nuovoSistProfFamiglia');
     });
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      nuovoSistProfJobProperty() {
+  nuovoSistProfJobProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nuovoSistProfJob');
     });
@@ -14098,7 +14792,7 @@ extension AnagraficaQueryProperty
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      partTimeFullTimeProperty() {
+  partTimeFullTimeProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'partTimeFullTime');
     });
@@ -14123,7 +14817,7 @@ extension AnagraficaQueryProperty
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      responsabileSINOProperty() {
+  responsabileSINOProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'responsabileSINO');
     });
@@ -14166,7 +14860,7 @@ extension AnagraficaQueryProperty
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      societaContabileProperty() {
+  societaContabileProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'societaContabile');
     });
@@ -14197,7 +14891,7 @@ extension AnagraficaQueryProperty
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      tipologiaResponsabileProperty() {
+  tipologiaResponsabileProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'tipologiaResponsabile');
     });
@@ -14294,7 +14988,7 @@ extension AnagraficaQueryProperty
   }
 
   QueryBuilder<Anagrafica, String?, QQueryOperations>
-      unitaOrganizzativaProperty() {
+  unitaOrganizzativaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'unitaOrganizzativa');
     });

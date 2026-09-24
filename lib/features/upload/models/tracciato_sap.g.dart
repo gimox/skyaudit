@@ -17,21 +17,13 @@ const TracciatoSapSchema = CollectionSchema(
   name: r'TracciatoSap',
   id: -6296813604166429681,
   properties: {
-    r'calc': PropertySchema(
-      id: 0,
-      name: r'calc',
-      type: IsarType.string,
-    ),
+    r'calc': PropertySchema(id: 0, name: r'calc', type: IsarType.string),
     r'cdRichiesta': PropertySchema(
       id: 1,
       name: r'cdRichiesta',
       type: IsarType.string,
     ),
-    r'cid': PropertySchema(
-      id: 2,
-      name: r'cid',
-      type: IsarType.string,
-    ),
+    r'cid': PropertySchema(id: 2, name: r'cid', type: IsarType.string),
     r'classeRetributiva': PropertySchema(
       id: 3,
       name: r'classeRetributiva',
@@ -52,21 +44,9 @@ const TracciatoSapSchema = CollectionSchema(
       name: r'colonnaT',
       type: IsarType.string,
     ),
-    r'data': PropertySchema(
-      id: 7,
-      name: r'data',
-      type: IsarType.string,
-    ),
-    r'fi': PropertySchema(
-      id: 8,
-      name: r'fi',
-      type: IsarType.string,
-    ),
-    r'importo': PropertySchema(
-      id: 9,
-      name: r'importo',
-      type: IsarType.double,
-    ),
+    r'data': PropertySchema(id: 7, name: r'data', type: IsarType.string),
+    r'fi': PropertySchema(id: 8, name: r'fi', type: IsarType.string),
+    r'importo': PropertySchema(id: 9, name: r'importo', type: IsarType.double),
     r'logHistoryId': PropertySchema(
       id: 10,
       name: r'logHistoryId',
@@ -87,11 +67,7 @@ const TracciatoSapSchema = CollectionSchema(
       name: r'progressivoGiustificativo',
       type: IsarType.string,
     ),
-    r'riTr': PropertySchema(
-      id: 14,
-      name: r'riTr',
-      type: IsarType.string,
-    ),
+    r'riTr': PropertySchema(id: 14, name: r'riTr', type: IsarType.string),
     r'societaCodice': PropertySchema(
       id: 15,
       name: r'societaCodice',
@@ -117,12 +93,9 @@ const TracciatoSapSchema = CollectionSchema(
       name: r'tipoSpesaDescrizione',
       type: IsarType.string,
     ),
-    r'valuta': PropertySchema(
-      id: 20,
-      name: r'valuta',
-      type: IsarType.string,
-    )
+    r'valuta': PropertySchema(id: 20, name: r'valuta', type: IsarType.string),
   },
+
   estimateSize: _tracciatoSapEstimateSize,
   serialize: _tracciatoSapSerialize,
   deserialize: _tracciatoSapDeserialize,
@@ -139,7 +112,7 @@ const TracciatoSapSchema = CollectionSchema(
           name: r'cid',
           type: IndexType.hash,
           caseSensitive: true,
-        )
+        ),
       ],
     ),
     r'numeroTrasferta': IndexSchema(
@@ -152,16 +125,17 @@ const TracciatoSapSchema = CollectionSchema(
           name: r'numeroTrasferta',
           type: IndexType.hash,
           caseSensitive: true,
-        )
+        ),
       ],
-    )
+    ),
   },
   links: {},
   embeddedSchemas: {},
+
   getId: _tracciatoSapGetId,
   getLinks: _tracciatoSapGetLinks,
   attach: _tracciatoSapAttach,
-  version: '3.1.0+1',
+  version: '3.3.2',
 );
 
 int _tracciatoSapEstimateSize(
@@ -363,7 +337,10 @@ List<IsarLinkBase<dynamic>> _tracciatoSapGetLinks(TracciatoSap object) {
 }
 
 void _tracciatoSapAttach(
-    IsarCollection<dynamic> col, Id id, TracciatoSap object) {
+  IsarCollection<dynamic> col,
+  Id id,
+  TracciatoSap object,
+) {
   object.id = id;
 }
 
@@ -380,15 +357,13 @@ extension TracciatoSapQueryWhere
     on QueryBuilder<TracciatoSap, TracciatoSap, QWhereClause> {
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterWhereClause> idNotEqualTo(
-      Id id) {
+    Id id,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -411,8 +386,9 @@ extension TracciatoSapQueryWhere
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterWhereClause> idGreaterThan(
-      Id id,
-      {bool include = false}) {
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -420,8 +396,10 @@ extension TracciatoSapQueryWhere
     });
   }
 
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterWhereClause> idLessThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterWhereClause> idLessThan(
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -436,101 +414,122 @@ extension TracciatoSapQueryWhere
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterWhereClause> cidEqualTo(
-      String cid) {
+    String cid,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'cid',
-        value: [cid],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'cid', value: [cid]),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterWhereClause> cidNotEqualTo(
-      String cid) {
+    String cid,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'cid',
-              lower: [],
-              upper: [cid],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'cid',
-              lower: [cid],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cid',
+                lower: [],
+                upper: [cid],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cid',
+                lower: [cid],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'cid',
-              lower: [cid],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'cid',
-              lower: [],
-              upper: [cid],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cid',
+                lower: [cid],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cid',
+                lower: [],
+                upper: [cid],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterWhereClause>
-      numeroTrasfertaEqualTo(String numeroTrasferta) {
+  numeroTrasfertaEqualTo(String numeroTrasferta) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'numeroTrasferta',
-        value: [numeroTrasferta],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'numeroTrasferta',
+          value: [numeroTrasferta],
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterWhereClause>
-      numeroTrasfertaNotEqualTo(String numeroTrasferta) {
+  numeroTrasfertaNotEqualTo(String numeroTrasferta) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroTrasferta',
-              lower: [],
-              upper: [numeroTrasferta],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroTrasferta',
-              lower: [numeroTrasferta],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroTrasferta',
+                lower: [],
+                upper: [numeroTrasferta],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroTrasferta',
+                lower: [numeroTrasferta],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroTrasferta',
-              lower: [numeroTrasferta],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroTrasferta',
-              lower: [],
-              upper: [numeroTrasferta],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroTrasferta',
+                lower: [numeroTrasferta],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroTrasferta',
+                lower: [],
+                upper: [numeroTrasferta],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
@@ -540,18 +539,18 @@ extension TracciatoSapQueryFilter
     on QueryBuilder<TracciatoSap, TracciatoSap, QFilterCondition> {
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> calcIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'calc',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'calc'),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      calcIsNotNull() {
+  calcIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'calc',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'calc'),
+      );
     });
   }
 
@@ -560,27 +559,31 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'calc',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'calc',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      calcGreaterThan(
+  calcGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'calc',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'calc',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -590,12 +593,14 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'calc',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'calc',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -607,28 +612,29 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'calc',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'calc',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      calcStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  calcStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'calc',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'calc',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -637,124 +643,133 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'calc',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'calc',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> calcContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'calc',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'calc',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> calcMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'calc',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      calcIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'calc',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      calcIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'calc',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cdRichiestaIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cdRichiesta',
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cdRichiestaIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cdRichiesta',
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cdRichiestaEqualTo(
-    String? value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cdRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'calc',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cdRichiestaGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  calcIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'cdRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'calc', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cdRichiestaLessThan(
+  calcIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'calc', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  cdRichiestaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'cdRichiesta'),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  cdRichiestaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'cdRichiesta'),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  cdRichiestaEqualTo(String? value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'cdRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  cdRichiestaGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'cdRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'cdRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cdRichiestaBetween(
+  cdRichiestaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'cdRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  cdRichiestaBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -762,84 +777,86 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'cdRichiesta',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'cdRichiesta',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cdRichiestaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  cdRichiestaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'cdRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'cdRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cdRichiestaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  cdRichiestaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'cdRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'cdRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cdRichiestaContains(String value, {bool caseSensitive = true}) {
+  cdRichiestaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'cdRichiesta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'cdRichiesta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cdRichiestaMatches(String pattern, {bool caseSensitive = true}) {
+  cdRichiestaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'cdRichiesta',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'cdRichiesta',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cdRichiestaIsEmpty() {
+  cdRichiestaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cdRichiesta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'cdRichiesta', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cdRichiestaIsNotEmpty() {
+  cdRichiestaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'cdRichiesta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'cdRichiesta', value: ''),
+      );
     });
   }
 
@@ -848,27 +865,31 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cidGreaterThan(
+  cidGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -878,12 +899,14 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -895,14 +918,16 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'cid',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'cid',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -911,11 +936,13 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -924,105 +951,114 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> cidContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> cidMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'cid',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'cid',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> cidIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'cid', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      cidIsNotEmpty() {
+  cidIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'cid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'cid', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      classeRetributivaEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  classeRetributivaEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'classeRetributiva',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'classeRetributiva',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      classeRetributivaGreaterThan(
+  classeRetributivaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'classeRetributiva',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'classeRetributiva',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      classeRetributivaLessThan(
+  classeRetributivaLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'classeRetributiva',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'classeRetributiva',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      classeRetributivaBetween(
+  classeRetributivaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1030,153 +1066,158 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'classeRetributiva',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'classeRetributiva',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      classeRetributivaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  classeRetributivaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'classeRetributiva',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'classeRetributiva',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      classeRetributivaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  classeRetributivaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'classeRetributiva',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'classeRetributiva',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      classeRetributivaContains(String value, {bool caseSensitive = true}) {
+  classeRetributivaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'classeRetributiva',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'classeRetributiva',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      classeRetributivaMatches(String pattern, {bool caseSensitive = true}) {
+  classeRetributivaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'classeRetributiva',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'classeRetributiva',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      classeRetributivaIsEmpty() {
+  classeRetributivaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'classeRetributiva',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'classeRetributiva', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      classeRetributivaIsNotEmpty() {
+  classeRetributivaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'classeRetributiva',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'classeRetributiva', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceStatoIsNull() {
+  codiceStatoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'codiceStato',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'codiceStato'),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceStatoIsNotNull() {
+  codiceStatoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'codiceStato',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'codiceStato'),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceStatoEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  codiceStatoEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceStato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'codiceStato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceStatoGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'codiceStato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceStatoLessThan(
+  codiceStatoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'codiceStato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'codiceStato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceStatoBetween(
+  codiceStatoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'codiceStato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  codiceStatoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1184,153 +1225,158 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'codiceStato',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'codiceStato',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceStatoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceStatoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'codiceStato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'codiceStato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceStatoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceStatoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'codiceStato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'codiceStato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceStatoContains(String value, {bool caseSensitive = true}) {
+  codiceStatoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'codiceStato',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'codiceStato',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceStatoMatches(String pattern, {bool caseSensitive = true}) {
+  codiceStatoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'codiceStato',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'codiceStato',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceStatoIsEmpty() {
+  codiceStatoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceStato',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'codiceStato', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceStatoIsNotEmpty() {
+  codiceStatoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'codiceStato',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'codiceStato', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceTrasferimentoFiIsNull() {
+  codiceTrasferimentoFiIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'codiceTrasferimentoFi',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'codiceTrasferimentoFi'),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceTrasferimentoFiIsNotNull() {
+  codiceTrasferimentoFiIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'codiceTrasferimentoFi',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'codiceTrasferimentoFi'),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceTrasferimentoFiEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  codiceTrasferimentoFiEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceTrasferimentoFi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'codiceTrasferimentoFi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceTrasferimentoFiGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'codiceTrasferimentoFi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceTrasferimentoFiLessThan(
+  codiceTrasferimentoFiGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'codiceTrasferimentoFi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'codiceTrasferimentoFi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceTrasferimentoFiBetween(
+  codiceTrasferimentoFiLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'codiceTrasferimentoFi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  codiceTrasferimentoFiBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1338,154 +1384,161 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'codiceTrasferimentoFi',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'codiceTrasferimentoFi',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceTrasferimentoFiStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceTrasferimentoFiStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'codiceTrasferimentoFi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'codiceTrasferimentoFi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceTrasferimentoFiEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  codiceTrasferimentoFiEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'codiceTrasferimentoFi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'codiceTrasferimentoFi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceTrasferimentoFiContains(String value, {bool caseSensitive = true}) {
+  codiceTrasferimentoFiContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'codiceTrasferimentoFi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'codiceTrasferimentoFi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceTrasferimentoFiMatches(String pattern,
-          {bool caseSensitive = true}) {
+  codiceTrasferimentoFiMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'codiceTrasferimentoFi',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'codiceTrasferimentoFi',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceTrasferimentoFiIsEmpty() {
+  codiceTrasferimentoFiIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'codiceTrasferimentoFi',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'codiceTrasferimentoFi', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      codiceTrasferimentoFiIsNotEmpty() {
+  codiceTrasferimentoFiIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'codiceTrasferimentoFi',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'codiceTrasferimentoFi',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      colonnaTIsNull() {
+  colonnaTIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'colonnaT',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'colonnaT'),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      colonnaTIsNotNull() {
+  colonnaTIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'colonnaT',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'colonnaT'),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      colonnaTEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  colonnaTEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'colonnaT',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'colonnaT',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      colonnaTGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'colonnaT',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      colonnaTLessThan(
+  colonnaTGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'colonnaT',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'colonnaT',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      colonnaTBetween(
+  colonnaTLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'colonnaT',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  colonnaTBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1493,84 +1546,86 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'colonnaT',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'colonnaT',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      colonnaTStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  colonnaTStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'colonnaT',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'colonnaT',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      colonnaTEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  colonnaTEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'colonnaT',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'colonnaT',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      colonnaTContains(String value, {bool caseSensitive = true}) {
+  colonnaTContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'colonnaT',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'colonnaT',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      colonnaTMatches(String pattern, {bool caseSensitive = true}) {
+  colonnaTMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'colonnaT',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'colonnaT',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      colonnaTIsEmpty() {
+  colonnaTIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'colonnaT',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'colonnaT', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      colonnaTIsNotEmpty() {
+  colonnaTIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'colonnaT',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'colonnaT', value: ''),
+      );
     });
   }
 
@@ -1579,27 +1634,31 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'data',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'data',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      dataGreaterThan(
+  dataGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'data',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'data',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1609,12 +1668,14 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'data',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'data',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1626,28 +1687,29 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'data',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'data',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      dataStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'data',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'data',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1656,72 +1718,78 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'data',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'data',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> dataContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'data',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'data',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> dataMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'data',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'data',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      dataIsEmpty() {
+  dataIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'data',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'data', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      dataIsNotEmpty() {
+  dataIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'data',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'data', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> fiIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'fi',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'fi'),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      fiIsNotNull() {
+  fiIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'fi',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'fi'),
+      );
     });
   }
 
@@ -1730,11 +1798,13 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'fi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'fi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1744,12 +1814,14 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'fi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'fi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1759,12 +1831,14 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'fi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'fi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1776,14 +1850,16 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'fi',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'fi',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1792,11 +1868,13 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'fi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'fi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1805,64 +1883,70 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'fi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'fi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> fiContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'fi',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'fi',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> fiMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'fi',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'fi',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> fiIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'fi',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'fi', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      fiIsNotEmpty() {
+  fiIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'fi',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'fi', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> idEqualTo(
-      Id value) {
+    Id value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
@@ -1871,11 +1955,13 @@ extension TracciatoSapQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -1884,11 +1970,13 @@ extension TracciatoSapQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -1899,64 +1987,72 @@ extension TracciatoSapQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      importoEqualTo(
-    double value, {
-    double epsilon = Query.epsilon,
-  }) {
+  importoEqualTo(double value, {double epsilon = Query.epsilon}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'importo',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'importo',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      importoGreaterThan(
-    double value, {
-    bool include = false,
-    double epsilon = Query.epsilon,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'importo',
-        value: value,
-        epsilon: epsilon,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      importoLessThan(
+  importoGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'importo',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'importo',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      importoBetween(
+  importoLessThan(
+    double value, {
+    bool include = false,
+    double epsilon = Query.epsilon,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'importo',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  importoBetween(
     double lower,
     double upper, {
     bool includeLower = true,
@@ -1964,83 +2060,89 @@ extension TracciatoSapQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'importo',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'importo',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      logHistoryIdIsNull() {
+  logHistoryIdIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'logHistoryId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'logHistoryId'),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      logHistoryIdIsNotNull() {
+  logHistoryIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'logHistoryId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'logHistoryId'),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      logHistoryIdEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  logHistoryIdEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      logHistoryIdGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      logHistoryIdLessThan(
+  logHistoryIdGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      logHistoryIdBetween(
+  logHistoryIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  logHistoryIdBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -2048,135 +2150,140 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'logHistoryId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'logHistoryId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      logHistoryIdStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  logHistoryIdStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      logHistoryIdEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  logHistoryIdEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      logHistoryIdContains(String value, {bool caseSensitive = true}) {
+  logHistoryIdContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      logHistoryIdMatches(String pattern, {bool caseSensitive = true}) {
+  logHistoryIdMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'logHistoryId',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'logHistoryId',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      logHistoryIdIsEmpty() {
+  logHistoryIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'logHistoryId',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'logHistoryId', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      logHistoryIdIsNotEmpty() {
+  logHistoryIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'logHistoryId',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'logHistoryId', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      nomeDipendenteEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nomeDipendenteEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nomeDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'nomeDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      nomeDipendenteGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'nomeDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      nomeDipendenteLessThan(
+  nomeDipendenteGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'nomeDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'nomeDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      nomeDipendenteBetween(
+  nomeDipendenteLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'nomeDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  nomeDipendenteBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2184,135 +2291,140 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'nomeDipendente',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'nomeDipendente',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      nomeDipendenteStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nomeDipendenteStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'nomeDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'nomeDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      nomeDipendenteEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  nomeDipendenteEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'nomeDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'nomeDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      nomeDipendenteContains(String value, {bool caseSensitive = true}) {
+  nomeDipendenteContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'nomeDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'nomeDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      nomeDipendenteMatches(String pattern, {bool caseSensitive = true}) {
+  nomeDipendenteMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'nomeDipendente',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'nomeDipendente',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      nomeDipendenteIsEmpty() {
+  nomeDipendenteIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'nomeDipendente',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'nomeDipendente', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      nomeDipendenteIsNotEmpty() {
+  nomeDipendenteIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'nomeDipendente',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'nomeDipendente', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      numeroTrasfertaEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroTrasfertaEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      numeroTrasfertaGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      numeroTrasfertaLessThan(
+  numeroTrasfertaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      numeroTrasfertaBetween(
+  numeroTrasfertaLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  numeroTrasfertaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2320,153 +2432,158 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'numeroTrasferta',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'numeroTrasferta',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      numeroTrasfertaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroTrasfertaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      numeroTrasfertaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroTrasfertaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      numeroTrasfertaContains(String value, {bool caseSensitive = true}) {
+  numeroTrasfertaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      numeroTrasfertaMatches(String pattern, {bool caseSensitive = true}) {
+  numeroTrasfertaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'numeroTrasferta',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'numeroTrasferta',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      numeroTrasfertaIsEmpty() {
+  numeroTrasfertaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroTrasferta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'numeroTrasferta', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      numeroTrasfertaIsNotEmpty() {
+  numeroTrasfertaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'numeroTrasferta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'numeroTrasferta', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      progressivoGiustificativoIsNull() {
+  progressivoGiustificativoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'progressivoGiustificativo',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'progressivoGiustificativo'),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      progressivoGiustificativoIsNotNull() {
+  progressivoGiustificativoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'progressivoGiustificativo',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'progressivoGiustificativo'),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      progressivoGiustificativoEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  progressivoGiustificativoEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'progressivoGiustificativo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'progressivoGiustificativo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      progressivoGiustificativoGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'progressivoGiustificativo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      progressivoGiustificativoLessThan(
+  progressivoGiustificativoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'progressivoGiustificativo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'progressivoGiustificativo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      progressivoGiustificativoBetween(
+  progressivoGiustificativoLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'progressivoGiustificativo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  progressivoGiustificativoBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -2474,103 +2591,115 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'progressivoGiustificativo',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'progressivoGiustificativo',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      progressivoGiustificativoStartsWith(
+  progressivoGiustificativoStartsWith(
     String value, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'progressivoGiustificativo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'progressivoGiustificativo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      progressivoGiustificativoEndsWith(
-    String value, {
+  progressivoGiustificativoEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'progressivoGiustificativo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  progressivoGiustificativoContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'progressivoGiustificativo',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  progressivoGiustificativoMatches(
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'progressivoGiustificativo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'progressivoGiustificativo',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      progressivoGiustificativoContains(String value,
-          {bool caseSensitive = true}) {
+  progressivoGiustificativoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'progressivoGiustificativo',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'progressivoGiustificativo',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      progressivoGiustificativoMatches(String pattern,
-          {bool caseSensitive = true}) {
+  progressivoGiustificativoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'progressivoGiustificativo',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      progressivoGiustificativoIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'progressivoGiustificativo',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      progressivoGiustificativoIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'progressivoGiustificativo',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'progressivoGiustificativo',
+          value: '',
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> riTrIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'riTr',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'riTr'),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      riTrIsNotNull() {
+  riTrIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'riTr',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'riTr'),
+      );
     });
   }
 
@@ -2579,27 +2708,31 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'riTr',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'riTr',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      riTrGreaterThan(
+  riTrGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'riTr',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'riTr',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -2609,12 +2742,14 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'riTr',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'riTr',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -2626,28 +2761,29 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'riTr',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'riTr',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      riTrStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  riTrStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'riTr',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'riTr',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -2656,106 +2792,115 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'riTr',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'riTr',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> riTrContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'riTr',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'riTr',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> riTrMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'riTr',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      riTrIsEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'riTr',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      riTrIsNotEmpty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'riTr',
-        value: '',
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaCodiceEqualTo(
-    String value, {
+    String pattern, {
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'societaCodice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'riTr',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaCodiceGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
+  riTrIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'societaCodice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'riTr', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaCodiceLessThan(
+  riTrIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'riTr', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  societaCodiceEqualTo(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'societaCodice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  societaCodiceGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'societaCodice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'societaCodice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaCodiceBetween(
+  societaCodiceLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'societaCodice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  societaCodiceBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2763,135 +2908,140 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'societaCodice',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'societaCodice',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaCodiceStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  societaCodiceStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'societaCodice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'societaCodice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaCodiceEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  societaCodiceEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'societaCodice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'societaCodice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaCodiceContains(String value, {bool caseSensitive = true}) {
+  societaCodiceContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'societaCodice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'societaCodice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaCodiceMatches(String pattern, {bool caseSensitive = true}) {
+  societaCodiceMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'societaCodice',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'societaCodice',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaCodiceIsEmpty() {
+  societaCodiceIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'societaCodice',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'societaCodice', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaCodiceIsNotEmpty() {
+  societaCodiceIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'societaCodice',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'societaCodice', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaDescrizioneEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  societaDescrizioneEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'societaDescrizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'societaDescrizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaDescrizioneGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'societaDescrizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaDescrizioneLessThan(
+  societaDescrizioneGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'societaDescrizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'societaDescrizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaDescrizioneBetween(
+  societaDescrizioneLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'societaDescrizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  societaDescrizioneBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -2899,135 +3049,140 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'societaDescrizione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'societaDescrizione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaDescrizioneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  societaDescrizioneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'societaDescrizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'societaDescrizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaDescrizioneEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  societaDescrizioneEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'societaDescrizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'societaDescrizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaDescrizioneContains(String value, {bool caseSensitive = true}) {
+  societaDescrizioneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'societaDescrizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'societaDescrizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaDescrizioneMatches(String pattern, {bool caseSensitive = true}) {
+  societaDescrizioneMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'societaDescrizione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'societaDescrizione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaDescrizioneIsEmpty() {
+  societaDescrizioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'societaDescrizione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'societaDescrizione', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      societaDescrizioneIsNotEmpty() {
+  societaDescrizioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'societaDescrizione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'societaDescrizione', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoDipendenteEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoDipendenteEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'tipoDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoDipendenteGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'tipoDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoDipendenteLessThan(
+  tipoDipendenteGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'tipoDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tipoDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoDipendenteBetween(
+  tipoDipendenteLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tipoDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  tipoDipendenteBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -3035,135 +3190,140 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'tipoDipendente',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tipoDipendente',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoDipendenteStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoDipendenteStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'tipoDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'tipoDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoDipendenteEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoDipendenteEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'tipoDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'tipoDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoDipendenteContains(String value, {bool caseSensitive = true}) {
+  tipoDipendenteContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'tipoDipendente',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'tipoDipendente',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoDipendenteMatches(String pattern, {bool caseSensitive = true}) {
+  tipoDipendenteMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'tipoDipendente',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'tipoDipendente',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoDipendenteIsEmpty() {
+  tipoDipendenteIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoDipendente',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'tipoDipendente', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoDipendenteIsNotEmpty() {
+  tipoDipendenteIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'tipoDipendente',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'tipoDipendente', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaCodiceEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoSpesaCodiceEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoSpesaCodice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'tipoSpesaCodice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaCodiceGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'tipoSpesaCodice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaCodiceLessThan(
+  tipoSpesaCodiceGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'tipoSpesaCodice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tipoSpesaCodice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaCodiceBetween(
+  tipoSpesaCodiceLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tipoSpesaCodice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  tipoSpesaCodiceBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -3171,135 +3331,140 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'tipoSpesaCodice',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tipoSpesaCodice',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaCodiceStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoSpesaCodiceStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'tipoSpesaCodice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'tipoSpesaCodice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaCodiceEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoSpesaCodiceEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'tipoSpesaCodice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'tipoSpesaCodice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaCodiceContains(String value, {bool caseSensitive = true}) {
+  tipoSpesaCodiceContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'tipoSpesaCodice',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'tipoSpesaCodice',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaCodiceMatches(String pattern, {bool caseSensitive = true}) {
+  tipoSpesaCodiceMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'tipoSpesaCodice',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'tipoSpesaCodice',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaCodiceIsEmpty() {
+  tipoSpesaCodiceIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoSpesaCodice',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'tipoSpesaCodice', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaCodiceIsNotEmpty() {
+  tipoSpesaCodiceIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'tipoSpesaCodice',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'tipoSpesaCodice', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaDescrizioneEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoSpesaDescrizioneEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoSpesaDescrizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'tipoSpesaDescrizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaDescrizioneGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'tipoSpesaDescrizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaDescrizioneLessThan(
+  tipoSpesaDescrizioneGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'tipoSpesaDescrizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'tipoSpesaDescrizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaDescrizioneBetween(
+  tipoSpesaDescrizioneLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'tipoSpesaDescrizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
+  tipoSpesaDescrizioneBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -3307,84 +3472,89 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'tipoSpesaDescrizione',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'tipoSpesaDescrizione',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaDescrizioneStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoSpesaDescrizioneStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'tipoSpesaDescrizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'tipoSpesaDescrizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaDescrizioneEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  tipoSpesaDescrizioneEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'tipoSpesaDescrizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'tipoSpesaDescrizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaDescrizioneContains(String value, {bool caseSensitive = true}) {
+  tipoSpesaDescrizioneContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'tipoSpesaDescrizione',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'tipoSpesaDescrizione',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaDescrizioneMatches(String pattern, {bool caseSensitive = true}) {
+  tipoSpesaDescrizioneMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'tipoSpesaDescrizione',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'tipoSpesaDescrizione',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaDescrizioneIsEmpty() {
+  tipoSpesaDescrizioneIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'tipoSpesaDescrizione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'tipoSpesaDescrizione', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      tipoSpesaDescrizioneIsNotEmpty() {
+  tipoSpesaDescrizioneIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'tipoSpesaDescrizione',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          property: r'tipoSpesaDescrizione',
+          value: '',
+        ),
+      );
     });
   }
 
@@ -3393,43 +3563,49 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      valutaGreaterThan(
+  valutaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      valutaLessThan(
+  valutaLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -3441,85 +3617,88 @@ extension TracciatoSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'valuta',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'valuta',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      valutaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  valutaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      valutaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  valutaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      valutaContains(String value, {bool caseSensitive = true}) {
+  valutaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'valuta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'valuta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition> valutaMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'valuta',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'valuta',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      valutaIsEmpty() {
+  valutaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'valuta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'valuta', value: ''),
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterFilterCondition>
-      valutaIsNotEmpty() {
+  valutaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'valuta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'valuta', value: ''),
+      );
     });
   }
 }
@@ -3551,7 +3730,7 @@ extension TracciatoSapQuerySortBy
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByCdRichiestaDesc() {
+  sortByCdRichiestaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cdRichiesta', Sort.desc);
     });
@@ -3570,14 +3749,14 @@ extension TracciatoSapQuerySortBy
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByClasseRetributiva() {
+  sortByClasseRetributiva() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'classeRetributiva', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByClasseRetributivaDesc() {
+  sortByClasseRetributivaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'classeRetributiva', Sort.desc);
     });
@@ -3590,21 +3769,21 @@ extension TracciatoSapQuerySortBy
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByCodiceStatoDesc() {
+  sortByCodiceStatoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceStato', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByCodiceTrasferimentoFi() {
+  sortByCodiceTrasferimentoFi() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceTrasferimentoFi', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByCodiceTrasferimentoFiDesc() {
+  sortByCodiceTrasferimentoFiDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceTrasferimentoFi', Sort.desc);
     });
@@ -3665,49 +3844,49 @@ extension TracciatoSapQuerySortBy
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByLogHistoryIdDesc() {
+  sortByLogHistoryIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'logHistoryId', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByNomeDipendente() {
+  sortByNomeDipendente() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeDipendente', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByNomeDipendenteDesc() {
+  sortByNomeDipendenteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeDipendente', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByNumeroTrasferta() {
+  sortByNumeroTrasferta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByNumeroTrasfertaDesc() {
+  sortByNumeroTrasfertaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByProgressivoGiustificativo() {
+  sortByProgressivoGiustificativo() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'progressivoGiustificativo', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByProgressivoGiustificativoDesc() {
+  sortByProgressivoGiustificativoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'progressivoGiustificativo', Sort.desc);
     });
@@ -3732,63 +3911,63 @@ extension TracciatoSapQuerySortBy
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortBySocietaCodiceDesc() {
+  sortBySocietaCodiceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'societaCodice', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortBySocietaDescrizione() {
+  sortBySocietaDescrizione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'societaDescrizione', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortBySocietaDescrizioneDesc() {
+  sortBySocietaDescrizioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'societaDescrizione', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByTipoDipendente() {
+  sortByTipoDipendente() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoDipendente', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByTipoDipendenteDesc() {
+  sortByTipoDipendenteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoDipendente', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByTipoSpesaCodice() {
+  sortByTipoSpesaCodice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoSpesaCodice', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByTipoSpesaCodiceDesc() {
+  sortByTipoSpesaCodiceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoSpesaCodice', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByTipoSpesaDescrizione() {
+  sortByTipoSpesaDescrizione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoSpesaDescrizione', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      sortByTipoSpesaDescrizioneDesc() {
+  sortByTipoSpesaDescrizioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoSpesaDescrizione', Sort.desc);
     });
@@ -3828,7 +4007,7 @@ extension TracciatoSapQuerySortThenBy
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByCdRichiestaDesc() {
+  thenByCdRichiestaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cdRichiesta', Sort.desc);
     });
@@ -3847,14 +4026,14 @@ extension TracciatoSapQuerySortThenBy
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByClasseRetributiva() {
+  thenByClasseRetributiva() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'classeRetributiva', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByClasseRetributivaDesc() {
+  thenByClasseRetributivaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'classeRetributiva', Sort.desc);
     });
@@ -3867,21 +4046,21 @@ extension TracciatoSapQuerySortThenBy
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByCodiceStatoDesc() {
+  thenByCodiceStatoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceStato', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByCodiceTrasferimentoFi() {
+  thenByCodiceTrasferimentoFi() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceTrasferimentoFi', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByCodiceTrasferimentoFiDesc() {
+  thenByCodiceTrasferimentoFiDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'codiceTrasferimentoFi', Sort.desc);
     });
@@ -3954,49 +4133,49 @@ extension TracciatoSapQuerySortThenBy
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByLogHistoryIdDesc() {
+  thenByLogHistoryIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'logHistoryId', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByNomeDipendente() {
+  thenByNomeDipendente() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeDipendente', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByNomeDipendenteDesc() {
+  thenByNomeDipendenteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'nomeDipendente', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByNumeroTrasferta() {
+  thenByNumeroTrasferta() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByNumeroTrasfertaDesc() {
+  thenByNumeroTrasfertaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByProgressivoGiustificativo() {
+  thenByProgressivoGiustificativo() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'progressivoGiustificativo', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByProgressivoGiustificativoDesc() {
+  thenByProgressivoGiustificativoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'progressivoGiustificativo', Sort.desc);
     });
@@ -4021,63 +4200,63 @@ extension TracciatoSapQuerySortThenBy
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenBySocietaCodiceDesc() {
+  thenBySocietaCodiceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'societaCodice', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenBySocietaDescrizione() {
+  thenBySocietaDescrizione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'societaDescrizione', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenBySocietaDescrizioneDesc() {
+  thenBySocietaDescrizioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'societaDescrizione', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByTipoDipendente() {
+  thenByTipoDipendente() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoDipendente', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByTipoDipendenteDesc() {
+  thenByTipoDipendenteDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoDipendente', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByTipoSpesaCodice() {
+  thenByTipoSpesaCodice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoSpesaCodice', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByTipoSpesaCodiceDesc() {
+  thenByTipoSpesaCodiceDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoSpesaCodice', Sort.desc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByTipoSpesaDescrizione() {
+  thenByTipoSpesaDescrizione() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoSpesaDescrizione', Sort.asc);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QAfterSortBy>
-      thenByTipoSpesaDescrizioneDesc() {
+  thenByTipoSpesaDescrizioneDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'tipoSpesaDescrizione', Sort.desc);
     });
@@ -4098,66 +4277,77 @@ extension TracciatoSapQuerySortThenBy
 
 extension TracciatoSapQueryWhereDistinct
     on QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> {
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByCalc(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByCalc({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'calc', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByCdRichiesta(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByCdRichiesta({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'cdRichiesta', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByCid(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByCid({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'cid', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QDistinct>
-      distinctByClasseRetributiva({bool caseSensitive = true}) {
+  distinctByClasseRetributiva({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'classeRetributiva',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'classeRetributiva',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByCodiceStato(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByCodiceStato({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'codiceStato', caseSensitive: caseSensitive);
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QDistinct>
-      distinctByCodiceTrasferimentoFi({bool caseSensitive = true}) {
+  distinctByCodiceTrasferimentoFi({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'codiceTrasferimentoFi',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'codiceTrasferimentoFi',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByColonnaT(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByColonnaT({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'colonnaT', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByData(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByData({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'data', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByFi(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByFi({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'fi', caseSensitive: caseSensitive);
     });
@@ -4169,86 +4359,108 @@ extension TracciatoSapQueryWhereDistinct
     });
   }
 
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByLogHistoryId(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByLogHistoryId({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'logHistoryId', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByNomeDipendente(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByNomeDipendente({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'nomeDipendente',
-          caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByNumeroTrasferta(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'numeroTrasferta',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'nomeDipendente',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QDistinct>
-      distinctByProgressivoGiustificativo({bool caseSensitive = true}) {
+  distinctByNumeroTrasferta({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'progressivoGiustificativo',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'numeroTrasferta',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByRiTr(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct>
+  distinctByProgressivoGiustificativo({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(
+        r'progressivoGiustificativo',
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByRiTr({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'riTr', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctBySocietaCodice(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctBySocietaCodice({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'societaCodice',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'societaCodice',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QDistinct>
-      distinctBySocietaDescrizione({bool caseSensitive = true}) {
+  distinctBySocietaDescrizione({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'societaDescrizione',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'societaDescrizione',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByTipoDipendente(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByTipoDipendente({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'tipoDipendente',
-          caseSensitive: caseSensitive);
-    });
-  }
-
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByTipoSpesaCodice(
-      {bool caseSensitive = true}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'tipoSpesaCodice',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'tipoDipendente',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
   QueryBuilder<TracciatoSap, TracciatoSap, QDistinct>
-      distinctByTipoSpesaDescrizione({bool caseSensitive = true}) {
+  distinctByTipoSpesaCodice({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'tipoSpesaDescrizione',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'tipoSpesaCodice',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByValuta(
-      {bool caseSensitive = true}) {
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct>
+  distinctByTipoSpesaDescrizione({bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(
+        r'tipoSpesaDescrizione',
+        caseSensitive: caseSensitive,
+      );
+    });
+  }
+
+  QueryBuilder<TracciatoSap, TracciatoSap, QDistinct> distinctByValuta({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'valuta', caseSensitive: caseSensitive);
     });
@@ -4282,7 +4494,7 @@ extension TracciatoSapQueryProperty
   }
 
   QueryBuilder<TracciatoSap, String, QQueryOperations>
-      classeRetributivaProperty() {
+  classeRetributivaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'classeRetributiva');
     });
@@ -4295,7 +4507,7 @@ extension TracciatoSapQueryProperty
   }
 
   QueryBuilder<TracciatoSap, String?, QQueryOperations>
-      codiceTrasferimentoFiProperty() {
+  codiceTrasferimentoFiProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'codiceTrasferimentoFi');
     });
@@ -4332,21 +4544,21 @@ extension TracciatoSapQueryProperty
   }
 
   QueryBuilder<TracciatoSap, String, QQueryOperations>
-      nomeDipendenteProperty() {
+  nomeDipendenteProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'nomeDipendente');
     });
   }
 
   QueryBuilder<TracciatoSap, String, QQueryOperations>
-      numeroTrasfertaProperty() {
+  numeroTrasfertaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'numeroTrasferta');
     });
   }
 
   QueryBuilder<TracciatoSap, String?, QQueryOperations>
-      progressivoGiustificativoProperty() {
+  progressivoGiustificativoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'progressivoGiustificativo');
     });
@@ -4365,28 +4577,28 @@ extension TracciatoSapQueryProperty
   }
 
   QueryBuilder<TracciatoSap, String, QQueryOperations>
-      societaDescrizioneProperty() {
+  societaDescrizioneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'societaDescrizione');
     });
   }
 
   QueryBuilder<TracciatoSap, String, QQueryOperations>
-      tipoDipendenteProperty() {
+  tipoDipendenteProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'tipoDipendente');
     });
   }
 
   QueryBuilder<TracciatoSap, String, QQueryOperations>
-      tipoSpesaCodiceProperty() {
+  tipoSpesaCodiceProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'tipoSpesaCodice');
     });
   }
 
   QueryBuilder<TracciatoSap, String, QQueryOperations>
-      tipoSpesaDescrizioneProperty() {
+  tipoSpesaDescrizioneProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'tipoSpesaDescrizione');
     });

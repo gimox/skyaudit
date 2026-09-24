@@ -17,6 +17,7 @@ const TempTestSchema = CollectionSchema(
   name: r'TracciatoContabile_49',
   id: 4192282987520209018,
   properties: {},
+
   estimateSize: _tempTestEstimateSize,
   serialize: _tempTestSerialize,
   deserialize: _tempTestDeserialize,
@@ -25,10 +26,11 @@ const TempTestSchema = CollectionSchema(
   indexes: {},
   links: {},
   embeddedSchemas: {},
+
   getId: _tempTestGetId,
   getLinks: _tempTestGetLinks,
   attach: _tempTestAttach,
-  version: '3.1.0+1',
+  version: '3.3.2',
 );
 
 int _tempTestEstimateSize(
@@ -92,10 +94,7 @@ extension TempTestQueryWhereSort on QueryBuilder<TempTest, TempTest, QWhere> {
 extension TempTestQueryWhere on QueryBuilder<TempTest, TempTest, QWhereClause> {
   QueryBuilder<TempTest, TempTest, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
@@ -121,8 +120,10 @@ extension TempTestQueryWhere on QueryBuilder<TempTest, TempTest, QWhereClause> {
     });
   }
 
-  QueryBuilder<TempTest, TempTest, QAfterWhereClause> idGreaterThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<TempTest, TempTest, QAfterWhereClause> idGreaterThan(
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -130,8 +131,10 @@ extension TempTestQueryWhere on QueryBuilder<TempTest, TempTest, QWhereClause> {
     });
   }
 
-  QueryBuilder<TempTest, TempTest, QAfterWhereClause> idLessThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<TempTest, TempTest, QAfterWhereClause> idLessThan(
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -146,12 +149,14 @@ extension TempTestQueryWhere on QueryBuilder<TempTest, TempTest, QWhereClause> {
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }
@@ -160,10 +165,9 @@ extension TempTestQueryFilter
     on QueryBuilder<TempTest, TempTest, QFilterCondition> {
   QueryBuilder<TempTest, TempTest, QAfterFilterCondition> idEqualTo(Id value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
@@ -172,11 +176,13 @@ extension TempTestQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -185,11 +191,13 @@ extension TempTestQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -200,13 +208,15 @@ extension TempTestQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 }

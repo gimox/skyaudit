@@ -1,4 +1,4 @@
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 
 part 'tracciato_contabile.g.dart';
 
@@ -31,6 +31,12 @@ class TracciatoContabile {
   final bool isScarto;
   @Index()
   final String? scartoLogHistoryId;
+  @Index()
+  final bool isBonificato;
+  final String? notaBonifica;
+  final DateTime? dataBonifica;
+  @Index()
+  final String? bonificatoDa;
 
   TracciatoContabile({
     required this.recordType,
@@ -55,6 +61,10 @@ class TracciatoContabile {
     this.sourceFileLine,
     this.isScarto = false,
     this.scartoLogHistoryId,
+    this.isBonificato = false,
+    this.notaBonifica,
+    this.dataBonifica,
+    this.bonificatoDa,
   });
 
   static String _formatDate(String yyyymmdd) {
@@ -134,6 +144,10 @@ class TracciatoContabile {
       'logHistoryId': logHistoryId,
       'sourceFileLine': sourceFileLine,
       'isScarto': isScarto,
+      'isBonificato': isBonificato,
+      'notaBonifica': notaBonifica,
+      'dataBonifica': dataBonifica?.toIso8601String(),
+      'bonificatoDa': bonificatoDa,
     };
   }
 
@@ -160,6 +174,72 @@ class TracciatoContabile {
       logHistoryId: map['logHistoryId'],
       sourceFileLine: map['sourceFileLine'] as int?,
       isScarto: map['isScarto'] ?? false,
+      scartoLogHistoryId: map['scartoLogHistoryId'],
+      isBonificato: map['isBonificato'] ?? false,
+      notaBonifica: map['notaBonifica'] as String?,
+      dataBonifica: map['dataBonifica'] != null ? DateTime.tryParse(map['dataBonifica']) : null,
+      bonificatoDa: map['bonificatoDa'] as String?,
     );
+  }
+
+  TracciatoContabile copyWith({
+    Id? id,
+    String? recordType,
+    String? cid,
+    String? numeroTrasferta,
+    String? progressivo,
+    String? societa,
+    String? tipoDipendente,
+    String? giustificativoSpesa,
+    String? numeroBolla,
+    String? dataSpesa,
+    String? localita,
+    String? dataInizio,
+    String? oraInizio,
+    String? dataFine,
+    String? oraFine,
+    String? tipoAttivita,
+    double? importo,
+    String? valuta,
+    bool? isNegative,
+    String? logHistoryId,
+    int? sourceFileLine,
+    bool? isScarto,
+    String? scartoLogHistoryId,
+    bool? isBonificato,
+    String? notaBonifica,
+    DateTime? dataBonifica,
+    String? bonificatoDa,
+  }) {
+    final record = TracciatoContabile(
+      recordType: recordType ?? this.recordType,
+      cid: cid ?? this.cid,
+      numeroTrasferta: numeroTrasferta ?? this.numeroTrasferta,
+      progressivo: progressivo ?? this.progressivo,
+      societa: societa ?? this.societa,
+      tipoDipendente: tipoDipendente ?? this.tipoDipendente,
+      giustificativoSpesa: giustificativoSpesa ?? this.giustificativoSpesa,
+      numeroBolla: numeroBolla ?? this.numeroBolla,
+      dataSpesa: dataSpesa ?? this.dataSpesa,
+      localita: localita ?? this.localita,
+      dataInizio: dataInizio ?? this.dataInizio,
+      oraInizio: oraInizio ?? this.oraInizio,
+      dataFine: dataFine ?? this.dataFine,
+      oraFine: oraFine ?? this.oraFine,
+      tipoAttivita: tipoAttivita ?? this.tipoAttivita,
+      importo: importo ?? this.importo,
+      valuta: valuta ?? this.valuta,
+      isNegative: isNegative ?? this.isNegative,
+      logHistoryId: logHistoryId ?? this.logHistoryId,
+      sourceFileLine: sourceFileLine ?? this.sourceFileLine,
+      isScarto: isScarto ?? this.isScarto,
+      scartoLogHistoryId: scartoLogHistoryId ?? this.scartoLogHistoryId,
+      isBonificato: isBonificato ?? this.isBonificato,
+      notaBonifica: notaBonifica ?? this.notaBonifica,
+      dataBonifica: dataBonifica ?? this.dataBonifica,
+      bonificatoDa: bonificatoDa ?? this.bonificatoDa,
+    );
+    record.id = id ?? this.id;
+    return record;
   }
 }

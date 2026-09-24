@@ -17,11 +17,7 @@ const ScartiEcSapSchema = CollectionSchema(
   name: r'ScartiEcSap',
   id: -295590952916692497,
   properties: {
-    r'cid': PropertySchema(
-      id: 0,
-      name: r'cid',
-      type: IsarType.string,
-    ),
+    r'cid': PropertySchema(id: 0, name: r'cid', type: IsarType.string),
     r'dataInvio': PropertySchema(
       id: 1,
       name: r'dataInvio',
@@ -32,16 +28,8 @@ const ScartiEcSapSchema = CollectionSchema(
       name: r'descrizioneScarto',
       type: IsarType.string,
     ),
-    r'divisa': PropertySchema(
-      id: 3,
-      name: r'divisa',
-      type: IsarType.string,
-    ),
-    r'importo': PropertySchema(
-      id: 4,
-      name: r'importo',
-      type: IsarType.double,
-    ),
+    r'divisa': PropertySchema(id: 3, name: r'divisa', type: IsarType.string),
+    r'importo': PropertySchema(id: 4, name: r'importo', type: IsarType.double),
     r'isMatched': PropertySchema(
       id: 5,
       name: r'isMatched',
@@ -52,33 +40,35 @@ const ScartiEcSapSchema = CollectionSchema(
       name: r'logHistoryId',
       type: IsarType.string,
     ),
-    r'note': PropertySchema(
-      id: 7,
-      name: r'note',
-      type: IsarType.string,
-    ),
+    r'note': PropertySchema(id: 7, name: r'note', type: IsarType.string),
     r'numeroTrasferta': PropertySchema(
       id: 8,
       name: r'numeroTrasferta',
       type: IsarType.string,
     ),
-    r'spesa': PropertySchema(
-      id: 9,
-      name: r'spesa',
-      type: IsarType.string,
-    ),
-    r'storno': PropertySchema(
-      id: 10,
-      name: r'storno',
-      type: IsarType.string,
-    )
+    r'spesa': PropertySchema(id: 9, name: r'spesa', type: IsarType.string),
+    r'storno': PropertySchema(id: 10, name: r'storno', type: IsarType.string),
   },
+
   estimateSize: _scartiEcSapEstimateSize,
   serialize: _scartiEcSapSerialize,
   deserialize: _scartiEcSapDeserialize,
   deserializeProp: _scartiEcSapDeserializeProp,
   idName: r'id',
   indexes: {
+    r'isMatched': IndexSchema(
+      id: -6584544857258267416,
+      name: r'isMatched',
+      unique: false,
+      replace: false,
+      properties: [
+        IndexPropertySchema(
+          name: r'isMatched',
+          type: IndexType.value,
+          caseSensitive: false,
+        ),
+      ],
+    ),
     r'numeroTrasferta': IndexSchema(
       id: 388667339200907265,
       name: r'numeroTrasferta',
@@ -89,7 +79,7 @@ const ScartiEcSapSchema = CollectionSchema(
           name: r'numeroTrasferta',
           type: IndexType.hash,
           caseSensitive: true,
-        )
+        ),
       ],
     ),
     r'cid': IndexSchema(
@@ -102,29 +92,17 @@ const ScartiEcSapSchema = CollectionSchema(
           name: r'cid',
           type: IndexType.hash,
           caseSensitive: true,
-        )
+        ),
       ],
     ),
-    r'isMatched': IndexSchema(
-      id: -6584544857258267416,
-      name: r'isMatched',
-      unique: false,
-      replace: false,
-      properties: [
-        IndexPropertySchema(
-          name: r'isMatched',
-          type: IndexType.value,
-          caseSensitive: false,
-        )
-      ],
-    )
   },
   links: {},
   embeddedSchemas: {},
+
   getId: _scartiEcSapGetId,
   getLinks: _scartiEcSapGetLinks,
   attach: _scartiEcSapAttach,
-  version: '3.1.0+1',
+  version: '3.3.2',
 );
 
 int _scartiEcSapEstimateSize(
@@ -245,7 +223,10 @@ List<IsarLinkBase<dynamic>> _scartiEcSapGetLinks(ScartiEcSap object) {
 }
 
 void _scartiEcSapAttach(
-    IsarCollection<dynamic> col, Id id, ScartiEcSap object) {
+  IsarCollection<dynamic> col,
+  Id id,
+  ScartiEcSap object,
+) {
   object.id = id;
 }
 
@@ -270,15 +251,13 @@ extension ScartiEcSapQueryWhere
     on QueryBuilder<ScartiEcSap, ScartiEcSap, QWhereClause> {
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> idEqualTo(Id id) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
+      return query.addWhereClause(IdWhereClause.between(lower: id, upper: id));
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> idNotEqualTo(
-      Id id) {
+    Id id,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
@@ -300,8 +279,10 @@ extension ScartiEcSapQueryWhere
     });
   }
 
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> idGreaterThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> idGreaterThan(
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.greaterThan(lower: id, includeLower: include),
@@ -309,8 +290,10 @@ extension ScartiEcSapQueryWhere
     });
   }
 
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> idLessThan(Id id,
-      {bool include = false}) {
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> idLessThan(
+    Id id, {
+    bool include = false,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addWhereClause(
         IdWhereClause.lessThan(upper: id, includeUpper: include),
@@ -325,146 +308,176 @@ extension ScartiEcSapQueryWhere
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
+      return query.addWhereClause(
+        IdWhereClause.between(
+          lower: lowerId,
+          includeLower: includeLower,
+          upper: upperId,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause>
-      numeroTrasfertaEqualTo(String numeroTrasferta) {
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> isMatchedEqualTo(
+    bool isMatched,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'numeroTrasferta',
-        value: [numeroTrasferta],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'isMatched', value: [isMatched]),
+      );
     });
   }
 
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause>
-      numeroTrasfertaNotEqualTo(String numeroTrasferta) {
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> isMatchedNotEqualTo(
+    bool isMatched,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroTrasferta',
-              lower: [],
-              upper: [numeroTrasferta],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroTrasferta',
-              lower: [numeroTrasferta],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isMatched',
+                lower: [],
+                upper: [isMatched],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isMatched',
+                lower: [isMatched],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroTrasferta',
-              lower: [numeroTrasferta],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'numeroTrasferta',
-              lower: [],
-              upper: [numeroTrasferta],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isMatched',
+                lower: [isMatched],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'isMatched',
+                lower: [],
+                upper: [isMatched],
+                includeUpper: false,
+              ),
+            );
+      }
+    });
+  }
+
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause>
+  numeroTrasfertaEqualTo(String numeroTrasferta) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(
+          indexName: r'numeroTrasferta',
+          value: [numeroTrasferta],
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause>
+  numeroTrasfertaNotEqualTo(String numeroTrasferta) {
+    return QueryBuilder.apply(this, (query) {
+      if (query.whereSort == Sort.asc) {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroTrasferta',
+                lower: [],
+                upper: [numeroTrasferta],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroTrasferta',
+                lower: [numeroTrasferta],
+                includeLower: false,
+                upper: [],
+              ),
+            );
+      } else {
+        return query
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroTrasferta',
+                lower: [numeroTrasferta],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'numeroTrasferta',
+                lower: [],
+                upper: [numeroTrasferta],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> cidEqualTo(
-      String cid) {
+    String cid,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'cid',
-        value: [cid],
-      ));
+      return query.addWhereClause(
+        IndexWhereClause.equalTo(indexName: r'cid', value: [cid]),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> cidNotEqualTo(
-      String cid) {
+    String cid,
+  ) {
     return QueryBuilder.apply(this, (query) {
       if (query.whereSort == Sort.asc) {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'cid',
-              lower: [],
-              upper: [cid],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'cid',
-              lower: [cid],
-              includeLower: false,
-              upper: [],
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cid',
+                lower: [],
+                upper: [cid],
+                includeUpper: false,
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cid',
+                lower: [cid],
+                includeLower: false,
+                upper: [],
+              ),
+            );
       } else {
         return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'cid',
-              lower: [cid],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'cid',
-              lower: [],
-              upper: [cid],
-              includeUpper: false,
-            ));
-      }
-    });
-  }
-
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> isMatchedEqualTo(
-      bool isMatched) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IndexWhereClause.equalTo(
-        indexName: r'isMatched',
-        value: [isMatched],
-      ));
-    });
-  }
-
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterWhereClause> isMatchedNotEqualTo(
-      bool isMatched) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isMatched',
-              lower: [],
-              upper: [isMatched],
-              includeUpper: false,
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isMatched',
-              lower: [isMatched],
-              includeLower: false,
-              upper: [],
-            ));
-      } else {
-        return query
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isMatched',
-              lower: [isMatched],
-              includeLower: false,
-              upper: [],
-            ))
-            .addWhereClause(IndexWhereClause.between(
-              indexName: r'isMatched',
-              lower: [],
-              upper: [isMatched],
-              includeUpper: false,
-            ));
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cid',
+                lower: [cid],
+                includeLower: false,
+                upper: [],
+              ),
+            )
+            .addWhereClause(
+              IndexWhereClause.between(
+                indexName: r'cid',
+                lower: [],
+                upper: [cid],
+                includeUpper: false,
+              ),
+            );
       }
     });
   }
@@ -477,11 +490,13 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -491,12 +506,14 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -506,12 +523,14 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -523,14 +542,16 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'cid',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'cid',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -539,11 +560,13 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -552,105 +575,114 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> cidContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'cid',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'cid',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> cidMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'cid',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'cid',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> cidIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'cid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'cid', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      cidIsNotEmpty() {
+  cidIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'cid',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'cid', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      dataInvioEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataInvioEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataInvio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'dataInvio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      dataInvioGreaterThan(
+  dataInvioGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'dataInvio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'dataInvio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      dataInvioLessThan(
+  dataInvioLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'dataInvio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'dataInvio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      dataInvioBetween(
+  dataInvioBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -658,135 +690,140 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'dataInvio',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'dataInvio',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      dataInvioStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataInvioStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'dataInvio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'dataInvio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      dataInvioEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  dataInvioEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'dataInvio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'dataInvio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      dataInvioContains(String value, {bool caseSensitive = true}) {
+  dataInvioContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'dataInvio',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'dataInvio',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      dataInvioMatches(String pattern, {bool caseSensitive = true}) {
+  dataInvioMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'dataInvio',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'dataInvio',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      dataInvioIsEmpty() {
+  dataInvioIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'dataInvio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'dataInvio', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      dataInvioIsNotEmpty() {
+  dataInvioIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'dataInvio',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'dataInvio', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      descrizioneScartoEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  descrizioneScartoEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'descrizioneScarto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'descrizioneScarto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      descrizioneScartoGreaterThan(
-    String value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'descrizioneScarto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      descrizioneScartoLessThan(
+  descrizioneScartoGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'descrizioneScarto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'descrizioneScarto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      descrizioneScartoBetween(
+  descrizioneScartoLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'descrizioneScarto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
+  descrizioneScartoBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -794,84 +831,86 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'descrizioneScarto',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'descrizioneScarto',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      descrizioneScartoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  descrizioneScartoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'descrizioneScarto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'descrizioneScarto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      descrizioneScartoEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  descrizioneScartoEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'descrizioneScarto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'descrizioneScarto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      descrizioneScartoContains(String value, {bool caseSensitive = true}) {
+  descrizioneScartoContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'descrizioneScarto',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'descrizioneScarto',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      descrizioneScartoMatches(String pattern, {bool caseSensitive = true}) {
+  descrizioneScartoMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'descrizioneScarto',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'descrizioneScarto',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      descrizioneScartoIsEmpty() {
+  descrizioneScartoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'descrizioneScarto',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'descrizioneScarto', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      descrizioneScartoIsNotEmpty() {
+  descrizioneScartoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'descrizioneScarto',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'descrizioneScarto', value: ''),
+      );
     });
   }
 
@@ -880,27 +919,31 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'divisa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'divisa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      divisaGreaterThan(
+  divisaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'divisa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'divisa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -910,12 +953,14 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'divisa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'divisa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -927,28 +972,29 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'divisa',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'divisa',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      divisaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  divisaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'divisa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'divisa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -957,65 +1003,71 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'divisa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'divisa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> divisaContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'divisa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'divisa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> divisaMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'divisa',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'divisa',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      divisaIsEmpty() {
+  divisaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'divisa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'divisa', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      divisaIsNotEmpty() {
+  divisaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'divisa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'divisa', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> idEqualTo(
-      Id value) {
+    Id value,
+  ) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'id', value: value),
+      );
     });
   }
 
@@ -1024,11 +1076,13 @@ extension ScartiEcSapQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -1037,11 +1091,13 @@ extension ScartiEcSapQueryFilter
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'id',
+          value: value,
+        ),
+      );
     });
   }
 
@@ -1052,13 +1108,15 @@ extension ScartiEcSapQueryFilter
     bool includeUpper = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'id',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+        ),
+      );
     });
   }
 
@@ -1067,27 +1125,33 @@ extension ScartiEcSapQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'importo',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'importo',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      importoGreaterThan(
+  importoGreaterThan(
     double value, {
     bool include = false,
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'importo',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'importo',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -1097,12 +1161,15 @@ extension ScartiEcSapQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'importo',
-        value: value,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'importo',
+          value: value,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
@@ -1114,93 +1181,98 @@ extension ScartiEcSapQueryFilter
     double epsilon = Query.epsilon,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'importo',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        epsilon: epsilon,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'importo',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+
+          epsilon: epsilon,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      isMatchedEqualTo(bool value) {
+  isMatchedEqualTo(bool value) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'isMatched',
-        value: value,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'isMatched', value: value),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      logHistoryIdIsNull() {
+  logHistoryIdIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'logHistoryId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'logHistoryId'),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      logHistoryIdIsNotNull() {
+  logHistoryIdIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'logHistoryId',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'logHistoryId'),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      logHistoryIdEqualTo(
-    String? value, {
-    bool caseSensitive = true,
-  }) {
+  logHistoryIdEqualTo(String? value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      logHistoryIdGreaterThan(
-    String? value, {
-    bool include = false,
-    bool caseSensitive = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
-    });
-  }
-
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      logHistoryIdLessThan(
+  logHistoryIdGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      logHistoryIdBetween(
+  logHistoryIdLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
+  logHistoryIdBetween(
     String? lower,
     String? upper, {
     bool includeLower = true,
@@ -1208,101 +1280,103 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'logHistoryId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'logHistoryId',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      logHistoryIdStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  logHistoryIdStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      logHistoryIdEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  logHistoryIdEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      logHistoryIdContains(String value, {bool caseSensitive = true}) {
+  logHistoryIdContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'logHistoryId',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'logHistoryId',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      logHistoryIdMatches(String pattern, {bool caseSensitive = true}) {
+  logHistoryIdMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'logHistoryId',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'logHistoryId',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      logHistoryIdIsEmpty() {
+  logHistoryIdIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'logHistoryId',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'logHistoryId', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      logHistoryIdIsNotEmpty() {
+  logHistoryIdIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'logHistoryId',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'logHistoryId', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> noteIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'note',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'note'),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      noteIsNotNull() {
+  noteIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'note',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'note'),
+      );
     });
   }
 
@@ -1311,11 +1385,13 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'note',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1325,12 +1401,14 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'note',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1340,12 +1418,14 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'note',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1357,14 +1437,16 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'note',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'note',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1373,11 +1455,13 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'note',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1386,105 +1470,114 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'note',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> noteContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'note',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'note',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> noteMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'note',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'note',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> noteIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'note',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'note', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      noteIsNotEmpty() {
+  noteIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'note',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'note', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      numeroTrasfertaEqualTo(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroTrasfertaEqualTo(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      numeroTrasfertaGreaterThan(
+  numeroTrasfertaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      numeroTrasfertaLessThan(
+  numeroTrasfertaLessThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      numeroTrasfertaBetween(
+  numeroTrasfertaBetween(
     String lower,
     String upper, {
     bool includeLower = true,
@@ -1492,84 +1585,86 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'numeroTrasferta',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'numeroTrasferta',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      numeroTrasfertaStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroTrasfertaStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      numeroTrasfertaEndsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  numeroTrasfertaEndsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      numeroTrasfertaContains(String value, {bool caseSensitive = true}) {
+  numeroTrasfertaContains(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'numeroTrasferta',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'numeroTrasferta',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      numeroTrasfertaMatches(String pattern, {bool caseSensitive = true}) {
+  numeroTrasfertaMatches(String pattern, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'numeroTrasferta',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'numeroTrasferta',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      numeroTrasfertaIsEmpty() {
+  numeroTrasfertaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'numeroTrasferta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'numeroTrasferta', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      numeroTrasfertaIsNotEmpty() {
+  numeroTrasfertaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'numeroTrasferta',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'numeroTrasferta', value: ''),
+      );
     });
   }
 
@@ -1578,27 +1673,31 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'spesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'spesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      spesaGreaterThan(
+  spesaGreaterThan(
     String value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'spesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'spesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1608,12 +1707,14 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'spesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'spesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1625,14 +1726,16 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'spesa',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'spesa',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1641,11 +1744,13 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'spesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'spesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1654,71 +1759,77 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'spesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'spesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> spesaContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'spesa',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'spesa',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> spesaMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'spesa',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'spesa',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> spesaIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'spesa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'spesa', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      spesaIsNotEmpty() {
+  spesaIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'spesa',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'spesa', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> stornoIsNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'storno',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'storno'),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      stornoIsNotNull() {
+  stornoIsNotNull() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'storno',
-      ));
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'storno'),
+      );
     });
   }
 
@@ -1727,27 +1838,31 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'storno',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'storno',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      stornoGreaterThan(
+  stornoGreaterThan(
     String? value, {
     bool include = false,
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'storno',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'storno',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1757,12 +1872,14 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'storno',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'storno',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1774,28 +1891,29 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'storno',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'storno',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      stornoStartsWith(
-    String value, {
-    bool caseSensitive = true,
-  }) {
+  stornoStartsWith(String value, {bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.startsWith(
-        property: r'storno',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'storno',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
@@ -1804,55 +1922,61 @@ extension ScartiEcSapQueryFilter
     bool caseSensitive = true,
   }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.endsWith(
-        property: r'storno',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'storno',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> stornoContains(
-      String value,
-      {bool caseSensitive = true}) {
+    String value, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.contains(
-        property: r'storno',
-        value: value,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'storno',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition> stornoMatches(
-      String pattern,
-      {bool caseSensitive = true}) {
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.matches(
-        property: r'storno',
-        wildcard: pattern,
-        caseSensitive: caseSensitive,
-      ));
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'storno',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      stornoIsEmpty() {
+  stornoIsEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'storno',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'storno', value: ''),
+      );
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterFilterCondition>
-      stornoIsNotEmpty() {
+  stornoIsNotEmpty() {
     return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        property: r'storno',
-        value: '',
-      ));
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'storno', value: ''),
+      );
     });
   }
 }
@@ -1890,14 +2014,14 @@ extension ScartiEcSapQuerySortBy
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy>
-      sortByDescrizioneScarto() {
+  sortByDescrizioneScarto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneScarto', Sort.asc);
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy>
-      sortByDescrizioneScartoDesc() {
+  sortByDescrizioneScartoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneScarto', Sort.desc);
     });
@@ -1946,7 +2070,7 @@ extension ScartiEcSapQuerySortBy
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy>
-      sortByLogHistoryIdDesc() {
+  sortByLogHistoryIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'logHistoryId', Sort.desc);
     });
@@ -1971,7 +2095,7 @@ extension ScartiEcSapQuerySortBy
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy>
-      sortByNumeroTrasfertaDesc() {
+  sortByNumeroTrasfertaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.desc);
     });
@@ -2029,14 +2153,14 @@ extension ScartiEcSapQuerySortThenBy
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy>
-      thenByDescrizioneScarto() {
+  thenByDescrizioneScarto() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneScarto', Sort.asc);
     });
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy>
-      thenByDescrizioneScartoDesc() {
+  thenByDescrizioneScartoDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'descrizioneScarto', Sort.desc);
     });
@@ -2097,7 +2221,7 @@ extension ScartiEcSapQuerySortThenBy
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy>
-      thenByLogHistoryIdDesc() {
+  thenByLogHistoryIdDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'logHistoryId', Sort.desc);
     });
@@ -2122,7 +2246,7 @@ extension ScartiEcSapQuerySortThenBy
   }
 
   QueryBuilder<ScartiEcSap, ScartiEcSap, QAfterSortBy>
-      thenByNumeroTrasfertaDesc() {
+  thenByNumeroTrasfertaDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'numeroTrasferta', Sort.desc);
     });
@@ -2155,30 +2279,35 @@ extension ScartiEcSapQuerySortThenBy
 
 extension ScartiEcSapQueryWhereDistinct
     on QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> {
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByCid(
-      {bool caseSensitive = true}) {
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByCid({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'cid', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByDataInvio(
-      {bool caseSensitive = true}) {
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByDataInvio({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'dataInvio', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByDescrizioneScarto(
-      {bool caseSensitive = true}) {
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct>
+  distinctByDescrizioneScarto({bool caseSensitive = true}) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'descrizioneScarto',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'descrizioneScarto',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByDivisa(
-      {bool caseSensitive = true}) {
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByDivisa({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'divisa', caseSensitive: caseSensitive);
     });
@@ -2196,37 +2325,44 @@ extension ScartiEcSapQueryWhereDistinct
     });
   }
 
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByLogHistoryId(
-      {bool caseSensitive = true}) {
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByLogHistoryId({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'logHistoryId', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByNote(
-      {bool caseSensitive = true}) {
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByNote({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'note', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByNumeroTrasferta(
-      {bool caseSensitive = true}) {
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByNumeroTrasferta({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'numeroTrasferta',
-          caseSensitive: caseSensitive);
+      return query.addDistinctBy(
+        r'numeroTrasferta',
+        caseSensitive: caseSensitive,
+      );
     });
   }
 
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctBySpesa(
-      {bool caseSensitive = true}) {
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctBySpesa({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'spesa', caseSensitive: caseSensitive);
     });
   }
 
-  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByStorno(
-      {bool caseSensitive = true}) {
+  QueryBuilder<ScartiEcSap, ScartiEcSap, QDistinct> distinctByStorno({
+    bool caseSensitive = true,
+  }) {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'storno', caseSensitive: caseSensitive);
     });
@@ -2254,7 +2390,7 @@ extension ScartiEcSapQueryProperty
   }
 
   QueryBuilder<ScartiEcSap, String, QQueryOperations>
-      descrizioneScartoProperty() {
+  descrizioneScartoProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'descrizioneScarto');
     });
@@ -2291,7 +2427,7 @@ extension ScartiEcSapQueryProperty
   }
 
   QueryBuilder<ScartiEcSap, String, QQueryOperations>
-      numeroTrasfertaProperty() {
+  numeroTrasfertaProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'numeroTrasferta');
     });

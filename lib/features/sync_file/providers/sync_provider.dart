@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:cross_file/cross_file.dart';
 import '../../../core/db/isar_provider.dart';
 import '../../auth/providers/auth_provider.dart';
@@ -583,6 +583,22 @@ class SyncNotifier extends StateNotifier<SyncState> {
             processedFilesCount: state.processedFilesCount + 1,
             syncProgress: (state.processedFilesCount + 1) / state.totalFilesFound,
           );
+        }
+      }
+
+      // Sincronizzazione bonifiche condivise da SharePoint List
+      if (typesToSync.contains('contabile') || state.selectedSyncType == 'all') {
+        try {
+          state = state.copyWith(syncStep: 'Sincronizzazione bonifiche condivise...');
+          _log('Sincronizzazione bonifiche condivise dalla lista SharePoint...');
+          final bonificheUpdated = await _ref.read(tracciatoContabilesProvider.notifier).syncBonificheFromSharePoint();
+          if (bonificheUpdated > 0) {
+            _log('Sincronizzate con successo $bonificheUpdated bonifiche condivise nel tracciato contabile.');
+          } else {
+            _log('Verifica bonifiche completata: nessuna nuova bonifica remota da applicare.');
+          }
+        } catch (e) {
+          _log('Avviso sincronizzazione bonifiche: $e');
         }
       }
 

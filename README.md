@@ -16,6 +16,7 @@ L'architettura dello stato e della logica di business di SkyAudit è interamente
 Ciascun tracciato o risorsa possiede un `NotifierProvider` dedicato che gestisce le operazioni di lettura asincrona, filtraggio in memoria e scrittura sul database locale Isar:
 * **`tracciatoContabileProvider`**: Carica, filtra e aggiorna le righe della fatturazione agenzia (TXT).
 * **`tracciatoSapProvider`**: Gestisce le scritture contabili SAP.
+* **`trasferteSapProvider`**: Gestisce le aggregazioni e lo stato delle trasferte SAP per numero trasferta e CID.
 * **`estrattoContoProvider`**: Gestisce i dati degli estratti conto centralizzati.
 * **`estrattoAmexProvider`**: Fornisce l'accesso alle transazioni delle carte American Express individuali.
 * **`anagraficaProvider`**: Amministra il database delle risorse umane, garantendo la logica di sostituzione pulita all'import di un nuovo file.
@@ -86,39 +87,50 @@ Visualizzazione ed elaborazione dei flussi delle carte di credito aziendali Amer
 Modulo di importazione delle registrazioni contabili esportate da SAP:
 * Rappresenta le scritture di costo effettive registrate a libro giornale, essenziali per la quadratura finale del "liquidato" rispetto al "fatturato".
 
-### 6. Scarti Tracciato
-Pannello per l'identificazione immediata delle anomalie di quadratura (discrepanze):
-* Calcola ed elenca in automatico i record orfani o con differenze di importo significnative tra l'estratto conto della carta, la fatturazione dell'agenzia viaggi e le registrazioni su SAP.
+### 6. Trasferte SAP
+Vista aggregata per numero trasferta delle registrazioni contabili SAP:
+* **Aggregazione**: Raggruppa le scritture contabili calcolando il totale liquidato per trasferta.
+* **Integrazione Anagrafica**: Associa automaticamente il nominativo completo del dipendente tramite matching su CID con il database HR.
+* **Filtri e Statistiche**: Filtro per data, per società, per file di importazione e ricerca avanzata, con esportazione tabellare in Microsoft Excel.
 
-### 7. Controlli Trasferte (Riconciliazione)
+### 7. Scarti Tracciato
+Pannello per l'identificazione immediata delle anomalie di quadratura (discrepanze):
+* Calcola ed elenca in automatico i record orfani o con differenze di importo significative tra l'estratto conto della carta, la fatturazione dell'agenzia viaggi e le registrazioni su SAP.
+
+### 8. Trasferte Scartate
+Modulo di monitoraggio e gestione del ciclo di vita degli scarti contabili:
+* Raggruppa gli scarti per numero di trasferta con storico delle date di invio.
+* Consente il filtraggio rapido per stato di reinserimento contabile (*Tutti*, *Da Reinserire*, *Reinseriti*).
+
+### 9. Controlli Trasferte (Riconciliazione)
 Il cuore logico contabile dell'applicativo. Aggrega i dati per **Numero Trasferta** o per **CID** ed evidenzia anomalie tramite specifici flag colorati:
 * **Verifiche di Congruenza**: Discrepanza importi, corrispondenza dei codici società e tipo dipendente, assenza di record SAP o di estratti conto corrispondenti.
 * **Ricerca Dipendente**: Sistema avanzato di autocompletamento in tempo reale basato su Nome, Cognome, CID o Codice Fiscale.
 * **Visualizzazione a Busta**: Sezione a espansione con dettagli affiancati di tutte le voci associate (Contabile, SAP, AMEX, Estratto Conto) con evidenza dei singoli scostamenti.
 
-### 8. Dove Viaggi (Mappatura Geografica)
+### 10. Dove Viaggi (Mappatura Geografica)
 Modulo cartografico interattivo per la tracciabilità delle trasferte:
 * Mappa le località di trasferta convertendole in coordinate geografiche.
 * Visualizza marker interattivi con caricamento dinamico di tile basato su **CartoDB Voyager** ad alte prestazioni.
 * Filtro integrato per dipendente con pannello di ricerca ad autocompletamento.
 
-### 9. Anagrafica Dipendenti
+### 11. Anagrafica Dipendenti
 Database centralizzato delle risorse umane (CIDs, Codici Fiscali, Nomi, Società e Qualifiche):
 * Utilizzato come dizionario autoritativo per validare il "Tipo Dipendente" e associare le generalità ai CIDs presenti nei tracciati.
 
-### 10. Caricamento File (Upload Manuale)
+### 12. Caricamento File (Upload Manuale)
 Interfaccia drag-and-drop ed esplora risorse per caricare localmente i file:
 * **Parser TXT Posizionale**: Legge i file contabili posizionali estraendo i campi in base a specifici offset (vedi sezione *Regole di Parsing*).
 * **Parser Excel (AMEX, SAP, Estratti)**: Legge e mappa le colonne dei fogli di calcolo Excel nel database relazionale Isar.
 
-### 11. Sincronizzazione Cloud (SharePoint)
+### 13. Sincronizzazione Cloud (SharePoint)
 Console per l'importazione automatica di file direttamente da cartelle remote SharePoint tramite Microsoft Graph API:
 * **Autenticazione**: Richiede il login aziendale Microsoft Entra ID (SSO) tramite flusso protetto di redirect OAuth2. Se l'utente non è loggato, mostra un pannello informativo centrato (`ACCEDI PER SINCRONIZZARE`) inibendo le altre funzioni.
 * **Sincronizzazione Delta (Tracciati Contabili, AMEX, SAP, ecc.)**: Verifica la data di modifica del file su SharePoint e scarica/elabora solo i file effettivamente nuovi o modificati.
 * **Sostituzione Totale (Anagrafica)**: Per l'anagrafica, seleziona esclusivamente il file più recente nella cartella SharePoint. Se non è mai stato importato, svuota completamente la tabella locale del DB ed effettua un caricamento pulito da zero (nessun delta row-by-row).
 * **Console di monitoraggio**: Visualizzazione opzionale (nascosta di default) dei log di avanzamento dettagliati del parser e dei record importati.
 
-### 12. Log History & Impostazioni Dizionari
+### 14. Log History & Impostazioni Dizionari
 * **Log History**: Visualizza lo storico degli import (Nome File, Data Operazione, Record Inseriti, Stato) a fini di audit trail.
 * **Gestione Database**: Permette la formattazione mirata e separata delle singole tabelle di Isar.
 * **Dizionari**: Pannello per gestire i codici di decodifica (Giustificativi di spesa, Qualifica dipendente, Codici Società) salvati su DB e usati dinamicamente per tradurre i codici criptici dei tracciati in descrizioni testuali chiare.
@@ -276,5 +288,10 @@ Durante l'esecuzione, la pipeline copierà il template `auth_config.sample.dart`
    git tag v1.0.3
    git push origin v1.0.3
    ```
-La pipeline rileverà il nuovo tag `v*`, compilerà gli applicativi iniettando le chiavi, genererà il changelog leggendo i messaggi dei commit, caricherà il file `version.json` compilato sul branch `main` e pubblicherà la release ufficiale su GitHub.
+La pipeline rileverà il nuovo tag `v*`, compilerà gli applicativi iniettando le chiavi, genererà il changelog leggendo i messaggi dei commit, caricherà il file `version.json` e `appcast.xml` compilati sul branch `main` e pubblicherà la release ufficiale su GitHub.
+
+#### C. Meccanismo di Auto-Aggiornamento Multipiattaforma
+L'applicazione include un sistema di aggiornamento integrato all'avvio:
+* **macOS (Sparkle)**: Verifica la disponibilità di nuove versioni interrogando il feed `appcast.xml` pubblicato sul repository. L'utente riceve la notifica con visualizzazione del changelog e download/installazione automatica in-app del pacchetto DMG.
+* **Windows (Inno Setup & version.json)**: Controlla gli aggiornamenti tramite il file `version.json` su GitHub. L'eseguibile installer (`windows/installer.iss`) permette l'installazione e l'aggiornamento pulito del client desktop senza perdita dei dati locali salvati nel database Isar.
 

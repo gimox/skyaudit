@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:travel_check/features/upload/models/log_history.dart';
 import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
 import 'package:travel_check/features/upload/models/estratto_conto.dart';

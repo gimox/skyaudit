@@ -5,7 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:travel_check/core/db/isar_provider.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:travel_check/features/upload/models/log_history.dart';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';

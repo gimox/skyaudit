@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cross_file/cross_file.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:excel/excel.dart';
 import 'package:travel_check/core/db/isar_provider.dart';
 import '../models/estratto_conto.dart';

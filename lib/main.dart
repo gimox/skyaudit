@@ -8,7 +8,7 @@ import 'package:flutter/foundation.dart';
 import 'package:travel_check/core/config/app_config.dart';
 import 'package:travel_check/core/services/updater/updater.dart';
 import 'package:video_player_win/video_player_win_plugin.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:travel_check/core/db/isar_provider.dart';
 import 'package:travel_check/features/upload/models/tracciato_contabile.dart';

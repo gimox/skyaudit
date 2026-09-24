@@ -3,13 +3,16 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cross_file/cross_file.dart';
-import 'package:isar/isar.dart';
+import 'package:isar_community/isar.dart';
 import 'package:travel_check/core/db/isar_provider.dart';
 import '../models/tracciato_contabile.dart';
 import '../models/log_history.dart';
 import '../models/scarti_ec_sap.dart';
 import 'log_history_provider.dart';
 import 'scarti_ec_sap_provider.dart';
+import '../../sync_file/services/sharepoint_service.dart';
+import '../../auth/providers/auth_provider.dart';
+import '../../settings/providers/app_settings_provider.dart';
 
 class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
   @override
@@ -616,6 +619,131 @@ class TracciatoContabilesNotifier extends Notifier<List<TracciatoContabile>> {
     ref.invalidate(scartiEcSapProvider);
 
     state = await isar.tracciatoContabiles.where().anyId().findAll();
+  }
+
+  Future<void> updateBonifica(
+    Id id, {
+    required bool isBonificato,
+    String? nota,
+    String? bonificatoDa,
+  }) async {
+    final isar = ref.read(isarProvider);
+    TracciatoContabile? updated;
+    await isar.writeTxn(() async {
+      final record = await isar.tracciatoContabiles.get(id);
+      if (record != null) {
+        updated = record.copyWith(
+          isBonificato: isBonificato,
+          notaBonifica: isBonificato ? nota : null,
+          dataBonifica: isBonificato ? DateTime.now() : null,
+          bonificatoDa: isBonificato ? bonificatoDa : null,
+        );
+        await isar.tracciatoContabiles.put(updated!);
+      }
+    });
+
+    state = await isar.tracciatoContabiles.where().anyId().findAll();
+
+    // Sincronizzazione atomica in background su SharePoint List
+    if (updated != null) {
+      _syncSingleBonificaToSharePoint(updated!);
+    }
+  }
+
+  void _syncSingleBonificaToSharePoint(TracciatoContabile record) async {
+    try {
+      final token = await ref.read(authProvider.notifier).getValidAccessToken();
+      if (token == null) return;
+      final settings = ref.read(appSettingsProvider);
+      final siteName = settings.sharepointSiteName.isEmpty ? 'skyaudit' : settings.sharepointSiteName;
+      final key = SharePointBonificaItem.generateKey(
+        cid: record.cid,
+        numeroTrasferta: record.numeroTrasferta,
+        progressivo: record.progressivo,
+        numeroBolla: record.numeroBolla,
+      );
+
+      final spService = SharePointService();
+      await spService.saveOrUpdateBonifica(
+        accessToken: token,
+        siteName: siteName,
+        key: key,
+        cid: record.cid,
+        numeroTrasferta: record.numeroTrasferta,
+        progressivo: record.progressivo,
+        numeroBolla: record.numeroBolla,
+        dataSpesa: record.dataSpesa,
+        importo: record.importo,
+        isBonificato: record.isBonificato,
+        nota: record.notaBonifica,
+        operatore: record.bonificatoDa,
+        dataBonifica: record.dataBonifica,
+      );
+      debugPrint('[SharePoint] Bonifica per bolla ${record.numeroBolla} salvata con successo su SharePoint.');
+    } catch (e) {
+      debugPrint('[SharePoint] Errore salvataggio bonifica su SharePoint: $e');
+    }
+  }
+
+  /// Scarica da SharePoint tutte le bonifiche condivise e le applica ai record locali
+  Future<int> syncBonificheFromSharePoint() async {
+    try {
+      final token = await ref.read(authProvider.notifier).getValidAccessToken();
+      if (token == null) return 0;
+      final settings = ref.read(appSettingsProvider);
+      final siteName = settings.sharepointSiteName.isEmpty ? 'skyaudit' : settings.sharepointSiteName;
+
+      final spService = SharePointService();
+      final remoteBonifiche = await spService.fetchBonificheList(
+        accessToken: token,
+        siteName: siteName,
+      );
+
+      if (remoteBonifiche.isEmpty) return 0;
+
+      final isar = ref.read(isarProvider);
+      final localRecords = await isar.tracciatoContabiles.where().anyId().findAll();
+
+      // Mappa delle bonifiche remote per chiave univoca O(1)
+      final Map<String, SharePointBonificaItem> remoteMap = {
+        for (final b in remoteBonifiche) b.title: b,
+      };
+
+      final List<TracciatoContabile> toUpdate = [];
+      for (final local in localRecords) {
+        final key = SharePointBonificaItem.generateKey(
+          cid: local.cid,
+          numeroTrasferta: local.numeroTrasferta,
+          progressivo: local.progressivo,
+          numeroBolla: local.numeroBolla,
+        );
+        final remote = remoteMap[key];
+        if (remote != null) {
+          if (local.isBonificato != remote.isBonificato ||
+              local.notaBonifica != remote.nota ||
+              local.bonificatoDa != remote.operatore) {
+            toUpdate.add(local.copyWith(
+              isBonificato: remote.isBonificato,
+              notaBonifica: remote.isBonificato ? remote.nota : null,
+              dataBonifica: remote.isBonificato ? remote.dataBonifica : null,
+              bonificatoDa: remote.isBonificato ? remote.operatore : null,
+            ));
+          }
+        }
+      }
+
+      if (toUpdate.isNotEmpty) {
+        await isar.writeTxn(() async {
+          await isar.tracciatoContabiles.putAll(toUpdate);
+        });
+        state = await isar.tracciatoContabiles.where().anyId().findAll();
+      }
+
+      return toUpdate.length;
+    } catch (e) {
+      debugPrint('[SharePoint] Errore syncBonificheFromSharePoint: $e');
+      return 0;
+    }
   }
 }
 
