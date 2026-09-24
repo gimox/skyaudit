@@ -1848,11 +1848,62 @@ class _BatchVerificationDialogState extends ConsumerState<_BatchVerificationDial
       final sheet = excel['Verifica Trasferte'];
       excel.delete('Sheet1');
 
+      // STILI EXCEL
+      final headerStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#003399'), // TIM Blue
+        fontColorHex: ExcelColor.fromHexString('#FFFFFF'),
+        bold: true,
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final presentBadgeStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#D4EDDA'), // Verde chiaro
+        fontColorHex: ExcelColor.fromHexString('#155724'), // Verde scuro
+        bold: true,
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final presentRowStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#F0FDF4'), // Sfumatura verde
+        fontColorHex: ExcelColor.fromHexString('#0F172A'),
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final presentCenterStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#F0FDF4'),
+        fontColorHex: ExcelColor.fromHexString('#0F172A'),
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final missingBadgeStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#F8D7DA'), // Rosso chiaro
+        fontColorHex: ExcelColor.fromHexString('#721C24'), // Rosso scuro
+        bold: true,
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final missingRowStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#FEF2F2'), // Sfumatura rossa
+        fontColorHex: ExcelColor.fromHexString('#64748B'),
+        verticalAlign: VerticalAlign.Center,
+      );
+
+      final missingCenterStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#FEF2F2'),
+        fontColorHex: ExcelColor.fromHexString('#64748B'),
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
+
       sheet.appendRow([
         TextCellValue('Codice Trasferta'),
-        TextCellValue('Esito'),
+        TextCellValue('Esito Verifica'),
         TextCellValue('CID'),
-        TextCellValue('Nominativo'),
+        TextCellValue('Dipendente'),
         TextCellValue('Società'),
         TextCellValue('Data Inizio'),
         TextCellValue('Ora Inizio'),
@@ -1888,6 +1939,46 @@ class _BatchVerificationDialogState extends ConsumerState<_BatchVerificationDial
         }
       }
 
+      const colCount = 9;
+
+      // Applica stile intestazione
+      for (var col = 0; col < colCount; col++) {
+        final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
+        cell.cellStyle = headerStyle;
+      }
+      sheet.setRowHeight(0, 32);
+
+      // Applica stili alle righe dati
+      for (var i = 0; i < _items.length; i++) {
+        final rowIndex = i + 1;
+        final item = _items[i];
+        final isPresent = item.isPresent;
+
+        sheet.setRowHeight(rowIndex, 24);
+
+        for (var col = 0; col < colCount; col++) {
+          final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: rowIndex));
+          if (col == 1) {
+            cell.cellStyle = isPresent ? presentBadgeStyle : missingBadgeStyle;
+          } else if (col == 3) {
+            cell.cellStyle = isPresent ? presentRowStyle : missingRowStyle;
+          } else {
+            cell.cellStyle = isPresent ? presentCenterStyle : missingCenterStyle;
+          }
+        }
+      }
+
+      // Imposta larghezza colonne
+      sheet.setColumnWidth(0, 20); // Codice Trasferta
+      sheet.setColumnWidth(1, 18); // Esito Verifica
+      sheet.setColumnWidth(2, 14); // CID
+      sheet.setColumnWidth(3, 30); // Dipendente
+      sheet.setColumnWidth(4, 18); // Società
+      sheet.setColumnWidth(5, 16); // Data Inizio
+      sheet.setColumnWidth(6, 14); // Ora Inizio
+      sheet.setColumnWidth(7, 16); // Data Fine
+      sheet.setColumnWidth(8, 14); // Ora Fine
+
       final fileBytes = excel.encode();
       if (fileBytes == null) return;
 
@@ -1906,7 +1997,7 @@ class _BatchVerificationDialogState extends ConsumerState<_BatchVerificationDial
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text('File Excel salvato con successo!'),
+              content: Text('File Excel esportato con successo!'),
               backgroundColor: Colors.green,
             ),
           );
