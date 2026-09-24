@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -23,6 +25,7 @@ final tsPageProvider = StateProvider<int>((ref) => 0);
 final tsSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final tsSelectedContabileLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final tsSelectedSocietaProvider = StateProvider<Set<String>>((ref) => {});
+final tsSelectedTrasferteCodesProvider = StateProvider<Set<String>?>((ref) => null);
 
 class TrasferteSapView extends ConsumerStatefulWidget {
   const TrasferteSapView({super.key});
@@ -57,6 +60,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     final selectedLogHistoryIds = ref.watch(tsSelectedLogHistoryIdsProvider);
     final selectedContabileLogHistoryIds = ref.watch(tsSelectedContabileLogHistoryIdsProvider);
     final selectedSocieta = ref.watch(tsSelectedSocietaProvider);
+    final selectedTrasferteCodes = ref.watch(tsSelectedTrasferteCodesProvider);
     final allLogs = ref.watch(logHistoryProvider);
     final contabileRecords = ref.watch(tracciatoContabilesProvider);
     final allAnagrafica = ref.watch(anagraficaProvider);
@@ -131,6 +135,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
 
     final activeFiltersCount = [
       selectedQuery != null,
+      selectedTrasferteCodes != null && selectedTrasferteCodes.isNotEmpty,
       startDate != null,
       endDate != null,
       selectedLogHistoryIds.isNotEmpty,
@@ -143,6 +148,9 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
 
     // Filtra i record
     final filteredRecords = allRecords.where((r) {
+      if (selectedTrasferteCodes != null && selectedTrasferteCodes.isNotEmpty && !selectedTrasferteCodes.contains(r.numeroTrasferta.trim())) {
+        return false;
+      }
       if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) return false;
       if (selectedSocieta.isNotEmpty) {
         final rSocieta = contabileSocietaMap[r.numeroTrasferta.trim()] ?? anagraficaSocietaMap[r.cid.trim().padLeft(8, '0')] ?? '';
@@ -256,6 +264,24 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                       ),
                     ),
                     const SizedBox(width: 12),
+                    OutlinedButton.icon(
+                      onPressed: () => _showBatchVerificationDialog(context),
+                      icon: const Icon(Icons.checklist_rounded, size: 20),
+                      label: const Text('Verifica Codici'),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        side: BorderSide(
+                          color: (selectedTrasferteCodes != null && selectedTrasferteCodes.isNotEmpty)
+                              ? SkyTheme.timRed
+                              : SkyTheme.timBlue,
+                        ),
+                        foregroundColor: (selectedTrasferteCodes != null && selectedTrasferteCodes.isNotEmpty)
+                            ? SkyTheme.timRed
+                            : SkyTheme.timBlue,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
                     Builder(
                       builder: (context) => Stack(
                         clipBehavior: Clip.none,
@@ -298,6 +324,11 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                             ref.read(tsSelectedQueryProvider.notifier).state = null;
                             _searchController.clear();
                           }),
+                        if (selectedTrasferteCodes != null && selectedTrasferteCodes.isNotEmpty)
+                          _buildFilterChip(
+                            'Verifica codici: ${selectedTrasferteCodes.length}',
+                            () => ref.read(tsSelectedTrasferteCodesProvider.notifier).state = null,
+                          ),
                         if (startDate != null)
                           _buildFilterChip('Dal: ${startDate.day}/${startDate.month}/${startDate.year}', () => ref.read(tsStartDateProvider.notifier).state = null),
                         if (endDate != null)
@@ -708,6 +739,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
 
   void _resetAllFilters(WidgetRef ref) {
     ref.read(tsSelectedQueryProvider.notifier).state = null;
+    ref.read(tsSelectedTrasferteCodesProvider.notifier).state = null;
     ref.read(tsStartDateProvider.notifier).state = null;
     ref.read(tsEndDateProvider.notifier).state = null;
     ref.read(tsSelectedLogHistoryIdsProvider.notifier).state = {};
@@ -715,6 +747,14 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     ref.read(tsSelectedSocietaProvider.notifier).state = {};
     ref.read(tsPageProvider.notifier).state = 0;
     _searchController.clear();
+  }
+
+  void _showBatchVerificationDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) => const _BatchVerificationDialog(),
+    );
   }
 
   Widget _buildFilterChip(String label, VoidCallback onDeleted) {
@@ -1591,3 +1631,889 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     );
   }
 }
+
+class _VerificationItem {
+  final String code;
+  final bool isPresent;
+  final TrasferteSap? record;
+  final String? nominativo;
+  final String? societa;
+
+  _VerificationItem({
+    required this.code,
+    required this.isPresent,
+    this.record,
+    this.nominativo,
+    this.societa,
+  });
+}
+
+class _BatchVerificationDialog extends ConsumerStatefulWidget {
+  const _BatchVerificationDialog();
+
+  @override
+  ConsumerState<_BatchVerificationDialog> createState() => _BatchVerificationDialogState();
+}
+
+class _BatchVerificationDialogState extends ConsumerState<_BatchVerificationDialog> {
+  final _inputController = TextEditingController();
+  final _searchFilterController = TextEditingController();
+  bool _hasResults = false;
+  List<_VerificationItem> _items = [];
+  String _selectedTab = 'all'; // 'all', 'missing', 'present'
+  int _detectedInputCount = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _inputController.addListener(_updateInputCount);
+  }
+
+  @override
+  void dispose() {
+    _inputController.removeListener(_updateInputCount);
+    _inputController.dispose();
+    _searchFilterController.dispose();
+    super.dispose();
+  }
+
+  void _updateInputCount() {
+    final count = _extractCodes(_inputController.text).length;
+    if (count != _detectedInputCount) {
+      setState(() {
+        _detectedInputCount = count;
+      });
+    }
+  }
+
+  List<String> _extractCodes(String text) {
+    final tokens = text.split(RegExp(r'[\r\n\t,;\s]+'));
+    final unique = <String>[];
+    final seen = <String>{};
+    for (final raw in tokens) {
+      final c = raw.trim();
+      if (c.isNotEmpty && seen.add(c)) {
+        unique.add(c);
+      }
+    }
+    return unique;
+  }
+
+  void _runVerification() {
+    final codes = _extractCodes(_inputController.text);
+    if (codes.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Inserisci almeno un codice trasferta da verificare.'),
+          backgroundColor: Colors.orange,
+        ),
+      );
+      return;
+    }
+
+    final allTs = ref.read(trasferteSapProvider);
+    final mapByCode = <String, TrasferteSap>{};
+    for (final t in allTs) {
+      mapByCode[t.numeroTrasferta.trim()] = t;
+    }
+
+    final allAnagrafica = ref.read(anagraficaProvider);
+    final anagraficaMap = {
+      for (var a in allAnagrafica)
+        if (a.cid != null) a.cid!.trim().padLeft(8, '0'): (a.nominativo ?? '').trim()
+    };
+    final anagraficaSocietaMap = {
+      for (var a in allAnagrafica)
+        if (a.cid != null && a.societa != null) a.cid!.trim().padLeft(8, '0'): a.societa!.trim()
+    };
+    final contabileRecords = ref.read(tracciatoContabilesProvider);
+    final contabileSocietaMap = {
+      for (var tc in contabileRecords)
+        if (tc.numeroTrasferta.trim().isNotEmpty && tc.societa.trim().isNotEmpty)
+          tc.numeroTrasferta.trim(): tc.societa.trim()
+    };
+
+    final results = <_VerificationItem>[];
+    for (final code in codes) {
+      final rec = mapByCode[code];
+      if (rec != null) {
+        final cidPadded = rec.cid.trim().padLeft(8, '0');
+        final nom = anagraficaMap[cidPadded];
+        final soc = contabileSocietaMap[code] ?? anagraficaSocietaMap[cidPadded];
+        results.add(_VerificationItem(
+          code: code,
+          isPresent: true,
+          record: rec,
+          nominativo: (nom != null && nom.isNotEmpty) ? nom : null,
+          societa: (soc != null && soc.isNotEmpty) ? soc : null,
+        ));
+      } else {
+        results.add(_VerificationItem(
+          code: code,
+          isPresent: false,
+        ));
+      }
+    }
+
+    setState(() {
+      _items = results;
+      _hasResults = true;
+      _selectedTab = 'all';
+      _searchFilterController.clear();
+    });
+  }
+
+  Future<void> _pasteFromClipboard() async {
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    if (data?.text != null && data!.text!.trim().isNotEmpty) {
+      setState(() {
+        if (_inputController.text.trim().isEmpty) {
+          _inputController.text = data.text!;
+        } else {
+          _inputController.text = '${_inputController.text}\n${data.text!}';
+        }
+      });
+    }
+  }
+
+  Future<void> _loadFromFile() async {
+    try {
+      final result = await FilePicker.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['txt', 'csv'],
+        withData: true,
+      );
+      if (result != null && result.files.isNotEmpty) {
+        final file = result.files.first;
+        String content = '';
+        if (file.bytes != null) {
+          content = utf8.decode(file.bytes!);
+        } else if (!kIsWeb && file.path != null) {
+          content = await File(file.path!).readAsString();
+        }
+        if (content.isNotEmpty) {
+          setState(() {
+            _inputController.text = content;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Errore lettura file: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  void _copyMissingToClipboard() {
+    final missing = _items.where((i) => !i.isPresent).map((i) => i.code).toList();
+    if (missing.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Nessun codice mancante da copiare!'), backgroundColor: Colors.blue),
+      );
+      return;
+    }
+    Clipboard.setData(ClipboardData(text: missing.join('\n')));
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('${missing.length} codici NON presenti copiati negli appunti.'),
+        backgroundColor: Colors.green,
+      ),
+    );
+  }
+
+  void _copyAllToClipboard() {
+    if (_items.isEmpty) return;
+    final buffer = StringBuffer();
+    buffer.writeln('Codice Trasferta\tEsito\tCID\tDipendente\tSocietà\tData Inizio\tData Fine');
+    for (final item in _items) {
+      if (item.isPresent && item.record != null) {
+        buffer.writeln(
+          '${item.code}\tPRESENTE\t${item.record!.cid}\t${item.nominativo ?? ''}\t${item.societa ?? ''}\t${item.record!.dataInizioTrasferta}\t${item.record!.dataFineTrasferta}',
+        );
+      } else {
+        buffer.writeln('${item.code}\tNON PRESENTE\t-\t-\t-\t-\t-');
+      }
+    }
+    Clipboard.setData(ClipboardData(text: buffer.toString()));
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Report completo copiato negli appunti.'), backgroundColor: Colors.green),
+    );
+  }
+
+  Future<void> _exportResultsToExcel() async {
+    try {
+      final excel = Excel.createExcel();
+      final sheet = excel['Verifica Trasferte'];
+      excel.delete('Sheet1');
+
+      sheet.appendRow([
+        TextCellValue('Codice Trasferta'),
+        TextCellValue('Esito'),
+        TextCellValue('CID'),
+        TextCellValue('Nominativo'),
+        TextCellValue('Società'),
+        TextCellValue('Data Inizio'),
+        TextCellValue('Ora Inizio'),
+        TextCellValue('Data Fine'),
+        TextCellValue('Ora Fine'),
+      ]);
+
+      for (final item in _items) {
+        if (item.isPresent && item.record != null) {
+          sheet.appendRow([
+            TextCellValue(item.code),
+            TextCellValue('PRESENTE'),
+            TextCellValue(item.record!.cid),
+            TextCellValue(item.nominativo ?? ''),
+            TextCellValue(item.societa ?? ''),
+            TextCellValue(item.record!.dataInizioTrasferta),
+            TextCellValue(item.record!.oraInizioTrasferta),
+            TextCellValue(item.record!.dataFineTrasferta),
+            TextCellValue(item.record!.oraFineTrasferta),
+          ]);
+        } else {
+          sheet.appendRow([
+            TextCellValue(item.code),
+            TextCellValue('NON PRESENTE'),
+            TextCellValue('-'),
+            TextCellValue('-'),
+            TextCellValue('-'),
+            TextCellValue('-'),
+            TextCellValue('-'),
+            TextCellValue('-'),
+            TextCellValue('-'),
+          ]);
+        }
+      }
+
+      final fileBytes = excel.encode();
+      if (fileBytes == null) return;
+
+      final outputFile = await FilePicker.saveFile(
+        dialogTitle: 'Salva Esito Verifica Codici Trasferta',
+        fileName: 'verifica_trasferte_sap_${DateTime.now().millisecondsSinceEpoch}.xlsx',
+        type: FileType.custom,
+        allowedExtensions: ['xlsx'],
+      );
+
+      if (outputFile != null) {
+        if (!kIsWeb) {
+          final file = File(outputFile);
+          await file.writeAsBytes(fileBytes);
+        }
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('File Excel salvato con successo!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Errore esportazione: $e'), backgroundColor: Colors.red),
+        );
+      }
+    }
+  }
+
+  void _filterMainTableWithPresent() {
+    final presentCodes = _items.where((i) => i.isPresent).map((i) => i.code).toSet();
+    if (presentCodes.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Nessun codice presente da filtrare nella tabella.'), backgroundColor: Colors.orange),
+      );
+      return;
+    }
+    ref.read(tsSelectedTrasferteCodesProvider.notifier).state = presentCodes;
+    ref.read(tsPageProvider.notifier).state = 0;
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Tabella filtrata con le ${presentCodes.length} trasferte presenti.'),
+        backgroundColor: SkyTheme.timBlue,
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.sizeOf(context);
+    final dialogWidth = (screenSize.width * 0.92).clamp(880.0, 1200.0);
+    final dialogHeight = (screenSize.height * 0.90).clamp(650.0, 880.0);
+
+    return Dialog(
+      backgroundColor: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      clipBehavior: Clip.antiAlias,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxWidth: dialogWidth,
+          maxHeight: dialogHeight,
+        ),
+        child: Column(
+          children: [
+            // HEADER
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border(bottom: BorderSide(color: Colors.grey.shade200)),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: SkyTheme.timBlue.withAlpha(20),
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(Icons.fact_check_outlined, color: SkyTheme.timBlue, size: 24),
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Verifica Elenco Codici Trasferta SAP',
+                          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold, color: SkyTheme.timBlue),
+                        ),
+                        Text(
+                          _hasResults
+                              ? 'Riepilogo codici trasferta trovati e non trovati nel database SAP'
+                              : 'Inserisci o carica un elenco di codici per controllare la loro presenza',
+                          style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close_rounded),
+                    tooltip: 'Chiudi',
+                  ),
+                ],
+              ),
+            ),
+            // BODY
+            Expanded(
+              child: _hasResults ? _buildResultsView() : _buildInputView(),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputView() {
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              color: Colors.blue.shade50.withAlpha(120),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.blue.shade100),
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(Icons.info_outline_rounded, color: Colors.blue.shade800, size: 20),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    'Incolla o carica l\'elenco dei codici trasferta da controllare. Puoi separarli con a capo, virgole, punti e virgola o spazi. Il sistema cercherà le corrispondenze in SAP e ti mostrerà i codici presenti e quelli mancanti.',
+                    style: TextStyle(fontSize: 13, color: Colors.blue.shade900, height: 1.4),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Expanded(
+            child: TextField(
+              controller: _inputController,
+              maxLines: null,
+              expands: true,
+              textAlignVertical: TextAlignVertical.top,
+              style: const TextStyle(fontFamily: 'monospace', fontSize: 13, height: 1.4),
+              decoration: InputDecoration(
+                hintText: 'Incolla qui i codici trasferta...\n\nEsempio:\n10054321\n10054322\n10054323, 10054324\n10054325',
+                hintStyle: TextStyle(color: Colors.grey.shade400, fontFamily: 'monospace'),
+                filled: true,
+                fillColor: Colors.grey.shade50,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(color: Colors.grey.shade300),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: const BorderSide(color: SkyTheme.timBlue, width: 2),
+                ),
+                contentPadding: const EdgeInsets.all(16),
+              ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: _pasteFromClipboard,
+                    icon: const Icon(Icons.content_paste_rounded, size: 18),
+                    label: const Text('Incolla da Appunti'),
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: _loadFromFile,
+                    icon: const Icon(Icons.upload_file_rounded, size: 18),
+                    label: const Text('Carica File (.txt / .csv)'),
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                  if (_inputController.text.isNotEmpty)
+                    TextButton.icon(
+                      onPressed: () => _inputController.clear(),
+                      icon: const Icon(Icons.clear_all_rounded, size: 18),
+                      label: const Text('Pulisci'),
+                      style: TextButton.styleFrom(foregroundColor: Colors.red.shade700),
+                    ),
+                ],
+              ),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: _detectedInputCount > 0 ? SkyTheme.timBlue.withAlpha(20) : Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Text(
+                  '$_detectedInputCount codici unici rilevati',
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: _detectedInputCount > 0 ? SkyTheme.timBlue : Colors.grey.shade600,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          const Divider(height: 1),
+          const SizedBox(height: 16),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('ANNULLA'),
+              ),
+              const SizedBox(width: 12),
+              FilledButton.icon(
+                onPressed: _detectedInputCount > 0 ? _runVerification : null,
+                icon: const Icon(Icons.play_arrow_rounded),
+                label: Text('VERIFICA CODICI${_detectedInputCount > 0 ? ' ($_detectedInputCount)' : ''}'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: SkyTheme.timRed,
+                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildResultsView() {
+    final presentCount = _items.where((i) => i.isPresent).length;
+    final missingCount = _items.length - presentCount;
+    final totalCount = _items.length;
+    final presentPct = totalCount > 0 ? ((presentCount / totalCount) * 100).toStringAsFixed(1) : '0';
+    final missingPct = totalCount > 0 ? ((missingCount / totalCount) * 100).toStringAsFixed(1) : '0';
+
+    final searchQ = _searchFilterController.text.trim().toLowerCase();
+    final filtered = _items.where((item) {
+      if (_selectedTab == 'missing' && item.isPresent) return false;
+      if (_selectedTab == 'present' && !item.isPresent) return false;
+      if (searchQ.isNotEmpty) {
+        final matchesCode = item.code.toLowerCase().contains(searchQ);
+        final matchesCid = item.record?.cid.toLowerCase().contains(searchQ) ?? false;
+        final matchesNom = item.nominativo?.toLowerCase().contains(searchQ) ?? false;
+        if (!matchesCode && !matchesCid && !matchesNom) return false;
+      }
+      return true;
+    }).toList();
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 16),
+      child: Column(
+        children: [
+          // STATS CARDS
+          Row(
+            children: [
+              Expanded(
+                child: _buildMetricCard(
+                  label: 'TOTALE VERIFICATI',
+                  value: '$totalCount',
+                  icon: Icons.checklist_rounded,
+                  color: SkyTheme.timBlue,
+                  subtext: 'Codici unici analizzati',
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildMetricCard(
+                  label: 'PRESENTI IN SAP',
+                  value: '$presentCount',
+                  icon: Icons.check_circle_outline_rounded,
+                  color: Colors.green.shade700,
+                  subtext: '$presentPct% del totale',
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _buildMetricCard(
+                  label: 'NON PRESENTI',
+                  value: '$missingCount',
+                  icon: Icons.highlight_off_rounded,
+                  color: Colors.red.shade700,
+                  subtext: '$missingPct% del totale',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          // CONTROLLI TAB E RICERCA
+          Row(
+            children: [
+              Wrap(
+                spacing: 8,
+                children: [
+                  ChoiceChip(
+                    label: Text('Tutti ($totalCount)'),
+                    selected: _selectedTab == 'all',
+                    onSelected: (val) {
+                      if (val) setState(() => _selectedTab = 'all');
+                    },
+                    selectedColor: SkyTheme.timBlue.withAlpha(30),
+                  ),
+                  ChoiceChip(
+                    label: Text('Non Presenti ($missingCount)'),
+                    selected: _selectedTab == 'missing',
+                    onSelected: (val) {
+                      if (val) setState(() => _selectedTab = 'missing');
+                    },
+                    selectedColor: Colors.red.shade50,
+                    labelStyle: TextStyle(
+                      color: _selectedTab == 'missing' ? Colors.red.shade800 : Colors.black87,
+                      fontWeight: _selectedTab == 'missing' ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                  ChoiceChip(
+                    label: Text('Presenti ($presentCount)'),
+                    selected: _selectedTab == 'present',
+                    onSelected: (val) {
+                      if (val) setState(() => _selectedTab = 'present');
+                    },
+                    selectedColor: Colors.green.shade50,
+                    labelStyle: TextStyle(
+                      color: _selectedTab == 'present' ? Colors.green.shade800 : Colors.black87,
+                      fontWeight: _selectedTab == 'present' ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+              const Spacer(),
+              SizedBox(
+                width: 260,
+                height: 38,
+                child: TextField(
+                  controller: _searchFilterController,
+                  decoration: InputDecoration(
+                    hintText: 'Filtra per codice o nome...',
+                    hintStyle: const TextStyle(fontSize: 12),
+                    prefixIcon: const Icon(Icons.search, size: 18),
+                    suffixIcon: _searchFilterController.text.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear, size: 16),
+                            onPressed: () {
+                              _searchFilterController.clear();
+                              setState(() {});
+                            },
+                          )
+                        : null,
+                    isDense: true,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  style: const TextStyle(fontSize: 13),
+                  onChanged: (val) => setState(() {}),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // LISTA RISULTATI
+          Expanded(
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.grey.shade200),
+              ),
+              child: filtered.isEmpty
+                  ? Center(
+                      child: Text(
+                        'Nessun risultato corrispondente ai filtri.',
+                        style: TextStyle(color: Colors.grey.shade500),
+                      ),
+                    )
+                  : ListView.separated(
+                      padding: const EdgeInsets.all(12),
+                      itemCount: filtered.length,
+                      separatorBuilder: (context, i) => const SizedBox(height: 8),
+                      itemBuilder: (context, index) {
+                        final item = filtered[index];
+                        final isPresent = item.isPresent;
+
+                        return Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: isPresent ? Colors.green.shade200 : Colors.red.shade200,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withAlpha(4),
+                                blurRadius: 4,
+                                offset: const Offset(0, 2),
+                              ),
+                            ],
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                isPresent ? Icons.check_circle_rounded : Icons.cancel_rounded,
+                                color: isPresent ? Colors.green.shade600 : Colors.red.shade600,
+                                size: 22,
+                              ),
+                              const SizedBox(width: 12),
+                              SizedBox(
+                                width: 120,
+                                child: Text(
+                                  item.code,
+                                  style: const TextStyle(
+                                    fontFamily: 'monospace',
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: isPresent ? Colors.green.shade50 : Colors.red.shade50,
+                                  borderRadius: BorderRadius.circular(6),
+                                  border: Border.all(
+                                    color: isPresent ? Colors.green.shade300 : Colors.red.shade300,
+                                  ),
+                                ),
+                                child: Text(
+                                  isPresent ? 'PRESENTE' : 'NON PRESENTE',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    fontWeight: FontWeight.bold,
+                                    color: isPresent ? Colors.green.shade800 : Colors.red.shade800,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Expanded(
+                                child: isPresent && item.record != null
+                                    ? Text(
+                                        'CID: ${item.record!.cid}  •  ${item.nominativo ?? 'Dipendente N/D'}  •  Dal ${item.record!.dataInizioTrasferta} al ${item.record!.dataFineTrasferta}${item.societa != null ? '  •  ${item.societa}' : ''}',
+                                        style: TextStyle(fontSize: 12, color: Colors.grey.shade800),
+                                        overflow: TextOverflow.ellipsis,
+                                      )
+                                    : Text(
+                                        'Nessun record corrispondente trovato nel database Trasferte SAP',
+                                        style: TextStyle(fontSize: 12, color: Colors.red.shade400, fontStyle: FontStyle.italic),
+                                      ),
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.copy_rounded, size: 16),
+                                tooltip: 'Copia codice',
+                                onPressed: () {
+                                  Clipboard.setData(ClipboardData(text: item.code));
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Codice ${item.code} copiato'), duration: const Duration(seconds: 1)),
+                                  );
+                                },
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+            ),
+          ),
+          const SizedBox(height: 14),
+          const Divider(height: 1),
+          const SizedBox(height: 14),
+          // FOOTER ACTIONS
+          Wrap(
+            alignment: WrapAlignment.spaceBetween,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: 8,
+            runSpacing: 10,
+            children: [
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: () => setState(() => _hasResults = false),
+                    icon: const Icon(Icons.arrow_back_rounded, size: 18),
+                    label: const Text('Nuova Verifica'),
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: _copyMissingToClipboard,
+                    icon: const Icon(Icons.copy_rounded, size: 18),
+                    label: Text('Copia Non Presenti ($missingCount)'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.red.shade700,
+                      side: BorderSide(color: Colors.red.shade200),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                  OutlinedButton.icon(
+                    onPressed: _copyAllToClipboard,
+                    icon: const Icon(Icons.playlist_add_check_rounded, size: 18),
+                    label: const Text('Copia Report'),
+                    style: OutlinedButton.styleFrom(
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                ],
+              ),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  OutlinedButton.icon(
+                    onPressed: _exportResultsToExcel,
+                    icon: const Icon(Icons.table_view_rounded, size: 18),
+                    label: const Text('Esporta Excel'),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.green.shade700,
+                      side: BorderSide(color: Colors.green.shade300),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                    ),
+                  ),
+                  if (presentCount > 0)
+                    FilledButton.icon(
+                      onPressed: _filterMainTableWithPresent,
+                      icon: const Icon(Icons.filter_alt_rounded, size: 18),
+                      label: Text('Filtra in Tabella ($presentCount)'),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: SkyTheme.timBlue,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMetricCard({
+    required String label,
+    required String value,
+    required IconData icon,
+    required Color color,
+    required String subtext,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: color.withAlpha(12),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: color.withAlpha(40)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: color.withAlpha(25),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: color, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.5,
+                    color: Colors.grey.shade700,
+                  ),
+                ),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+                Text(
+                  subtext,
+                  style: TextStyle(fontSize: 11, color: Colors.grey.shade600),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
