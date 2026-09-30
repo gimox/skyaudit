@@ -50,8 +50,9 @@ class EstrattoContoNotifier extends Notifier<List<EstrattoConto>> {
       // Salva tutto come nuovi record
       await isar.estrattoContos.putAll(recordsToSave);
 
+      final cleanFileName = file.name.split(RegExp(r'[/\\]')).last.trim();
       final logWithStats = LogHistory(
-        fileName: file.name,
+        fileName: cleanFileName,
         date: DateTime.now(),
         uniqueCode: uniqueCode,
         totalRecords: newRecords.length,

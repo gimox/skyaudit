@@ -28,6 +28,11 @@ void main() async {
 
   // Inizializzazione Isar con pulizia una tantum per migrazione schema
   final dir = await getApplicationSupportDirectory();
+  if (!dir.existsSync()) {
+    try {
+      dir.createSync(recursive: true);
+    } catch (_) {}
+  }
   final resetFile = File('${dir.path}/isar_reset_v3.flag');
   if (!resetFile.existsSync()) {
     final files = [
@@ -44,7 +49,7 @@ void main() async {
       }
     }
     try {
-      resetFile.createSync();
+      resetFile.createSync(recursive: true);
     } catch (_) {}
   }
 

@@ -147,8 +147,9 @@ class AnagraficaNotifier extends Notifier<List<Anagrafica>> {
 
       await isar.anagraficas.putAll(recordsToSave);
 
+      final cleanFileName = file.name.split(RegExp(r'[/\\]')).last.trim();
       final log = LogHistory(
-        fileName: file.name,
+        fileName: cleanFileName,
         date: DateTime.now(),
         uniqueCode: uniqueCode,
         totalRecords: results.length,

@@ -70,8 +70,9 @@ class TracciatoSapNotifier extends Notifier<List<TracciatoSap>> {
     await isar.writeTxn(() async {
       await isar.tracciatoSaps.putAll(recordsToSave);
 
+      final cleanFileName = file.name.split(RegExp(r'[/\\]')).last.trim();
       final log = LogHistory(
-        fileName: file.name,
+        fileName: cleanFileName,
         date: DateTime.now(),
         uniqueCode: uniqueCode,
         totalRecords: recordsToSave.length,

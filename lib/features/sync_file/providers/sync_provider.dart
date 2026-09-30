@@ -58,6 +58,11 @@ class SyncNotifier extends StateNotifier<SyncState> {
     state = state.copyWith(showAdvancedConsole: !state.showAdvancedConsole);
   }
 
+  static String _cleanFileName(String? pathOrName) {
+    if (pathOrName == null || pathOrName.trim().isEmpty) return '';
+    return pathOrName.trim().split(RegExp(r'[/\\]')).last;
+  }
+
   void _log(String message) {
     final updatedLogs = List<String>.from(state.syncLogs);
     updatedLogs.insert(0, '[${DateTime.now().toIso8601String().substring(11, 19)}] $message');
@@ -109,11 +114,13 @@ class SyncNotifier extends StateNotifier<SyncState> {
       sourceType = 'Trasferte SAP';
     }
 
-    final existingFileLogs = await isar.logHistorys.filter()
-        .fileNameEqualTo(file.name)
-        .and()
+    final cleanTargetName = _cleanFileName(file.name);
+    final allLogsForType = await isar.logHistorys.filter()
         .sourceTypeEqualTo(sourceType)
         .findAll();
+    final existingFileLogs = allLogsForType
+        .where((log) => _cleanFileName(log.fileName) == cleanTargetName)
+        .toList();
 
     if (existingFileLogs.isNotEmpty) {
       _log('[$syncName] Rilevata importazione precedente di ${file.name}. Rimozione vecchi record in corso...');
@@ -213,9 +220,11 @@ class SyncNotifier extends StateNotifier<SyncState> {
 
       _log('[$syncName] Download completato. Esecuzione del parsing...');
       final tempDir = Directory.systemTemp;
-      final tempFile = File('${tempDir.path}/${file.name}');
+      final cleanName = _cleanFileName(file.name);
+      final separator = Platform.pathSeparator;
+      final tempFile = File('${tempDir.path}$separator$cleanName');
       await tempFile.writeAsBytes(bytes);
-      final xFile = XFile(tempFile.path);
+      final xFile = XFile(tempFile.path, name: cleanName);
 
       Map<String, dynamic> result = {};
       try {
@@ -419,8 +428,8 @@ class SyncNotifier extends StateNotifier<SyncState> {
               .findAll();
 
           if (state.alignWithRemote) {
-            final remoteFileNames = sharepointFiles.map((f) => f.name).toSet();
-            final logsToDelete = existingLogs.where((log) => !remoteFileNames.contains(log.fileName)).toList();
+            final remoteFileNames = sharepointFiles.map((f) => _cleanFileName(f.name)).toSet();
+            final logsToDelete = existingLogs.where((log) => !remoteFileNames.contains(_cleanFileName(log.fileName))).toList();
             
             if (logsToDelete.isNotEmpty) {
               _log('[$syncName] Allineamento con SharePoint: rilevati ${logsToDelete.length} file locali non più presenti in remoto. Rimozione in corso...');
@@ -445,8 +454,9 @@ class SyncNotifier extends StateNotifier<SyncState> {
             // Identifica e rimuove log duplicati per lo stesso file remoto (tiene solo il più recente)
             final Map<String, List<LogHistory>> logsByFileName = {};
             for (final log in existingLogs) {
-              if (remoteFileNames.contains(log.fileName)) {
-                logsByFileName.putIfAbsent(log.fileName, () => []).add(log);
+              final cName = _cleanFileName(log.fileName);
+              if (remoteFileNames.contains(cName)) {
+                logsByFileName.putIfAbsent(cName, () => []).add(log);
               }
             }
 
@@ -494,7 +504,8 @@ class SyncNotifier extends StateNotifier<SyncState> {
           }
 
           for (final file in filesToQueue) {
-            final fileLogs = existingLogs.where((log) => log.fileName == file.name).toList();
+            final cleanName = _cleanFileName(file.name);
+            final fileLogs = existingLogs.where((log) => _cleanFileName(log.fileName) == cleanName).toList();
             
             bool isAlreadyImported = false;
             int importedRecordsCount = 0;

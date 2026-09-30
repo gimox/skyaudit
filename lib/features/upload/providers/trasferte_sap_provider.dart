@@ -63,8 +63,9 @@ class TrasferteSapNotifier extends Notifier<List<TrasferteSap>> {
 
       await isar.trasferteSaps.putAll(recordsToSave);
 
+      final cleanFileName = file.name.split(RegExp(r'[/\\]')).last.trim();
       final log = LogHistory(
-        fileName: file.name,
+        fileName: cleanFileName,
         date: DateTime.now(),
         uniqueCode: uniqueCode,
         totalRecords: parsedData.length,
