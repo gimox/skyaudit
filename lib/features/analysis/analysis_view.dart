@@ -282,8 +282,9 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final endIndex = (startIndex + pageSize).clamp(0, filteredRecords.length);
     final paginatedRecords = filteredRecords.sublist(startIndex, endIndex);
 
-    final totalFiltered = filteredRecords.length;
-    final uniqueTravelNumbers = filteredRecords.map((r) => r.numeroTrasferta.trim()).where((t) => t.isNotEmpty).toSet();
+    final regularRecords = filteredRecords.where((r) => !r.isScarto).toList();
+    final totalFiltered = regularRecords.length;
+    final uniqueTravelNumbers = regularRecords.map((r) => r.numeroTrasferta.trim()).where((t) => t.isNotEmpty).toSet();
     final okTravels = uniqueTravelNumbers.where((t) => sapTrasferte.contains(t)).toSet();
     final koTravels = uniqueTravelNumbers.where((t) => !sapTrasferte.contains(t)).toSet();
 
@@ -291,11 +292,11 @@ class _AnalysisViewState extends ConsumerState<AnalysisView> {
     final koTravelsCount = koTravels.length;
     final totalFilteredTravels = uniqueTravelNumbers.length;
 
-    final double totalAmount = filteredRecords.fold(0.0, (sum, r) => sum + (r.isNegative ? -r.importo : r.importo));
-    final double okAmount = filteredRecords
+    final double totalAmount = regularRecords.fold(0.0, (sum, r) => sum + (r.isNegative ? -r.importo : r.importo));
+    final double okAmount = regularRecords
         .where((r) => okTravels.contains(r.numeroTrasferta.trim()))
         .fold(0.0, (sum, r) => sum + (r.isNegative ? -r.importo : r.importo));
-    final double koAmount = filteredRecords
+    final double koAmount = regularRecords
         .where((r) => koTravels.contains(r.numeroTrasferta.trim()))
         .fold(0.0, (sum, r) => sum + (r.isNegative ? -r.importo : r.importo));
 

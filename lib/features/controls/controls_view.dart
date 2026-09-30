@@ -92,7 +92,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
   @override
   Widget build(BuildContext context) {
-    final allRecords = ref.watch(tracciatoContabilesProvider).where((r) => !r.isScarto).toList();
+    final allRecords = ref.watch(tracciatoContabilesProvider)
+        .where((r) => !r.isScarto && !r.isBonificato)
+        .toList();
     final allEstrattiConto = ref.watch(estrattoContoProvider);
     final rawSapRecords = ref.watch(tracciatoSapProvider);
     final allLogs = ref.watch(logHistoryProvider);
@@ -142,7 +144,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     const pageSize = 50;
 
     final filteredAllRecords = selectedLogHistoryIds.isNotEmpty
-        ? allRecords.where((r) => selectedLogHistoryIds.contains(r.logHistoryId)).toList()
+        ? allRecords.where((r) => selectedLogHistoryIds.contains(r.logHistoryId) || (r.scartoLogHistoryId != null && selectedLogHistoryIds.contains(r.scartoLogHistoryId))).toList()
         : allRecords;
 
     final Map<String, List<TracciatoContabile>> groupedRecords = {};
@@ -152,25 +154,31 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
     var trasferte = groupedRecords.keys.toList();
 
-    if (searchQuery.isNotEmpty) {
-      final query = searchQuery.toLowerCase();
+    if (searchQuery.trim().isNotEmpty) {
+      final query = searchQuery.trim().toLowerCase();
+      final cleanQuery = _cleanT(query);
       trasferte = trasferte.where((t) {
         final records = groupedRecords[t] ?? [];
         
         // Verifica numero trasferta
-        if (t.toLowerCase().contains(query)) {
+        if (t.toLowerCase().contains(query) || (cleanQuery.isNotEmpty && _cleanT(t).contains(cleanQuery))) {
           return true;
         }
         
         // Verifica CID o Nominativo in qualsiasi record della trasferta
         if (records.any((r) {
           final cid = r.cid;
-          final name = anagraficaMap[cid] ?? '';
+          final name = anagraficaMap[cid] ?? anagraficaMap[cid.trim().padLeft(8, '0')] ?? '';
           return cid.toLowerCase().contains(query) || name.toLowerCase().contains(query);
         })) {
           return true;
         }
         
+        // Verifica numero bolla
+        if (records.any((r) => r.numeroBolla.toLowerCase().contains(query))) {
+          return true;
+        }
+
         // Verifica località in qualsiasi record della trasferta
         if (records.any((r) => r.localita.toLowerCase().contains(query))) {
           return true;
@@ -481,7 +489,10 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                       isDense: true,
                                     ),
                                     style: TextStyle(fontSize: isUltraCompact ? 12 : 14),
-                                    onChanged: (value) => ref.read(controlsSearchProvider.notifier).state = value,
+                                    onChanged: (value) {
+                                      ref.read(controlsSearchProvider.notifier).state = value;
+                                      ref.read(controlsPageProvider.notifier).state = 0;
+                                    },
                                   ),
                                 ),
                               ],
@@ -2896,8 +2907,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     WidgetRef ref, 
     Map<String, String> dictionaryMap
   ) {
-    // Re-use options calculation or pass them
-    final allTracciato = ref.watch(tracciatoContabilesProvider).where((r) => !r.isScarto).toList();
+    final allTracciato = ref.watch(tracciatoContabilesProvider)
+        .where((r) => !r.isScarto && !r.isBonificato)
+        .toList();
     final societaOptions = allTracciato.map((e) => e.societa).toSet().toList()..sort();
     final tipoDipendenteOptions = allTracciato.map((e) => e.tipoDipendente).toSet().toList()..sort();
     final allLogs = ref.watch(logHistoryProvider);
