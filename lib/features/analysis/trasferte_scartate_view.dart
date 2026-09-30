@@ -400,12 +400,13 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
   }
 
   Widget _buildDatePickerFilter(String label, DateTime? value, Function(DateTime?) onChanged) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
+    return Material(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Colors.grey.shade300),
+        side: BorderSide(color: Colors.grey.shade300),
       ),
+      clipBehavior: Clip.antiAlias,
       child: ListTile(
         title: Text(
           value != null ? '${value.day}/${value.month}/${value.year}' : label,

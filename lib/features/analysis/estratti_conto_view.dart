@@ -6,7 +6,10 @@ import 'package:excel/excel.dart' hide Border;
 import 'package:file_picker/file_picker.dart';
 import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
 import 'package:travel_check/features/upload/models/estratto_conto.dart';
-import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+import 'package:travel_check/features/upload/models/tracciato_sap.dart';
+import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
+import 'package:travel_check/features/upload/models/estratto_amex.dart';
+import 'package:travel_check/features/upload/providers/estratto_amex_provider.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
@@ -20,11 +23,13 @@ final ecStartDateProvider = StateProvider<DateTime?>((ref) => null);
 final ecEndDateProvider = StateProvider<DateTime?>((ref) => null);
 final ecSelectedTipiServizioProvider = StateProvider<Set<String>>((ref) => {});
 final ecSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
+final ecFilterOspitiProvider = StateProvider<bool>((ref) => false);
 final ecSortAscendingProvider = StateProvider<bool>((ref) => false);
 final ecPageProvider = StateProvider<int>((ref) => 0);
+final ecExpandAllProvider = StateProvider<bool>((ref) => true);
 
-enum EcTrasfertaPresenzaFilter { all, present, notPresent }
-final ecTrasfertaPresenzaFilterProvider = StateProvider<EcTrasfertaPresenzaFilter>((ref) => EcTrasfertaPresenzaFilter.all);
+enum EcSapMatchFilter { all, match, diff, missing }
+final ecSapMatchFilterProvider = StateProvider<EcSapMatchFilter>((ref) => EcSapMatchFilter.all);
 
 class EstrattiContoView extends ConsumerStatefulWidget {
   const EstrattiContoView({super.key});
@@ -36,35 +41,53 @@ class EstrattiContoView extends ConsumerStatefulWidget {
 class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
   final _trasfertaController = TextEditingController();
   final _scrollController = ScrollController();
-  final _horizontalScrollController = ScrollController();
+  bool _isOspitiInfoExpanded = false;
 
   @override
   void dispose() {
     _trasfertaController.dispose();
     _scrollController.dispose();
-    _horizontalScrollController.dispose();
     super.dispose();
   }
 
+  static String _cleanT(String? s) {
+    if (s == null) return '';
+    return s.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
+  }
+
+  static String _formatCidWithName(String cid, Map<String, String> anagraficaMap) {
+    final cleanCid = cid.trim();
+    final name = anagraficaMap[cleanCid];
+    if (name != null && name.isNotEmpty) {
+      return '$cleanCid - $name';
+    }
+    return cleanCid.isEmpty ? '-' : cleanCid;
+  }
 
   @override
   Widget build(BuildContext context) {
     final allRecords = ref.watch(estrattoContoProvider);
-    final contabileRecords = ref.watch(tracciatoContabilesProvider);
-    final contabileTrasferte = contabileRecords
-        .map((tc) => tc.numeroTrasferta.trim())
-        .where((t) => t.isNotEmpty)
-        .toSet();
+    final allSapRecords = ref.watch(tracciatoSapProvider);
+    final allAmexRecords = ref.watch(estrattoAmexProvider);
+    final allLogs = ref.watch(logHistoryProvider);
+    final filterOspiti = ref.watch(ecFilterOspitiProvider);
+    final logHistoryMap = {for (var log in allLogs) log.uniqueCode: log};
+    final ecLogIds = allRecords.map((r) => r.logHistoryId).whereType<String>().toSet();
+    final ecLogs = allLogs.where((log) => log.sourceType == 'Estratto Conto' || ecLogIds.contains(log.uniqueCode)).toList();
+    final ospitiLogs = ecLogs.where((log) => log.fileName.toUpperCase().contains('OSPITI')).toList();
+    final ospitiLogCodes = ospitiLogs.map((l) => l.uniqueCode).toSet();
+
     final selectedTrasferta = ref.watch(ecSelectedTrasfertaProvider);
     final selectedSocieta = ref.watch(ecSelectedSocietaProvider);
     final startDate = ref.watch(ecStartDateProvider);
     final endDate = ref.watch(ecEndDateProvider);
     final selectedTipi = ref.watch(ecSelectedTipiServizioProvider);
-    final trasfertaFilter = ref.watch(ecTrasfertaPresenzaFilterProvider);
+    final sapMatchFilter = ref.watch(ecSapMatchFilterProvider);
     final selectedLogHistoryIds = ref.watch(ecSelectedLogHistoryIdsProvider);
     final sortAscending = ref.watch(ecSortAscendingProvider);
     final currentPage = ref.watch(ecPageProvider);
-    final allLogs = ref.watch(logHistoryProvider);
+    final expandAll = ref.watch(ecExpandAllProvider);
+
     String? selectedLogFileName;
     if (selectedLogHistoryIds.length == 1) {
       for (final log in allLogs) {
@@ -74,12 +97,17 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         }
       }
     }
+
     final anagrafiche = ref.watch(anagraficaProvider);
     final anagraficheMap = {
       for (var a in anagrafiche)
         if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
     };
+
     const pageSize = 50;
+    final isCompactList = MediaQuery.of(context).size.width < 1100;
+    final isVeryCompact = MediaQuery.of(context).size.width < 900;
+    final isUltraCompact = MediaQuery.of(context).size.width < 700;
 
     if (allRecords.isEmpty) {
       return Center(
@@ -114,40 +142,18 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       startDate != null,
       endDate != null,
       selectedTipi.isNotEmpty,
-      trasfertaFilter != EcTrasfertaPresenzaFilter.all,
+      sapMatchFilter != EcSapMatchFilter.all,
       selectedLogHistoryIds.isNotEmpty,
+      filterOspiti,
     ].where((e) => e).length;
 
-    // Estrai società disponibili per il filtro
-    final availableSocieta = allRecords
-        .map((r) => r.ragioneSociale)
-        .where((s) => s.isNotEmpty)
-        .toSet()
-        .toList()
-      ..sort();
-    
-    final availableTipi = allRecords
-        .map((r) => r.tipoServizio)
-        .where((s) => s.isNotEmpty)
-        .toSet()
-        .toList()
-      ..sort();
-
-    // Filtra i record
+    // Filtra record Estratto Conto di base
     final filteredRecords = allRecords.where((r) {
+      if (filterOspiti && (r.logHistoryId == null || !ospitiLogCodes.contains(r.logHistoryId))) return false;
       if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) return false;
-      if (selectedTrasferta != null) {
-        final query = selectedTrasferta.toLowerCase();
-        final name = anagraficheMap[r.cid.trim()] ?? '';
-        if (!r.numeroTrasferta.toLowerCase().contains(query) &&
-            !r.cid.toLowerCase().contains(query) &&
-            !r.bolla.toLowerCase().contains(query) &&
-            !name.toLowerCase().contains(query)) {
-          return false;
-        }
-      }
       if (selectedSocieta != null && r.ragioneSociale != selectedSocieta) return false;
-      
+      if (selectedTipi.isNotEmpty && !selectedTipi.contains(r.tipoServizio)) return false;
+
       // Filtro Data Bolla
       if (startDate != null || endDate != null) {
         try {
@@ -157,39 +163,134 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
             if (startDate != null && date.isBefore(startDate)) return false;
             if (endDate != null && date.isAfter(endDate)) return false;
           }
-        } catch (_) {
-          // Skip date filter if format is invalid
-        }
-      }
-      
-      // Filtro Tipo Servizio
-      if (selectedTipi.isNotEmpty && !selectedTipi.contains(r.tipoServizio)) return false;
-      
-      // Filtro Presenza in Tracciato Contabile
-      if (trasfertaFilter != EcTrasfertaPresenzaFilter.all) {
-        final isPresent = contabileTrasferte.contains(r.numeroTrasferta.trim());
-        if (trasfertaFilter == EcTrasfertaPresenzaFilter.present && !isPresent) return false;
-        if (trasfertaFilter == EcTrasfertaPresenzaFilter.notPresent && isPresent) return false;
+        } catch (_) {}
       }
 
       return true;
-    }).toList()
-      ..sort((a, b) {
-        return sortAscending ? a.cid.compareTo(b.cid) : b.cid.compareTo(a.cid);
-      });
+    }).toList();
 
-    final totalPages = (filteredRecords.length / pageSize).ceil();
+    // Mappe di lookup O(1) per riscontro SAP ed AMEX
+    final Map<String, List<TracciatoSap>> sapMapByCleanedT = {};
+    for (final s in allSapRecords) {
+      final key = _cleanT(s.numeroTrasferta);
+      if (key.isNotEmpty) {
+        sapMapByCleanedT.putIfAbsent(key, () => []).add(s);
+      }
+    }
+
+    final Map<String, List<EstrattoAmex>> amexMapByT = {};
+    for (final a in allAmexRecords) {
+      final numTr = a.numeroTrasferta?.trim();
+      if (numTr != null && numTr.isNotEmpty) {
+        amexMapByT.putIfAbsent(numTr, () => []).add(a);
+      }
+    }
+
+    // Raggruppamento primario per trasferta basato su Estratto Conto
+    final Map<String, List<EstrattoConto>> groupedRecords = {};
+    for (final record in filteredRecords) {
+      final t = record.numeroTrasferta.trim().isEmpty ? 'SENZA TRASFERTA' : record.numeroTrasferta.trim();
+      groupedRecords.putIfAbsent(t, () => []).add(record);
+    }
+
+    var trasferte = groupedRecords.keys.toList();
+
+    // Filtro Ricerca testuale
+    if (selectedTrasferta != null && selectedTrasferta.trim().isNotEmpty) {
+      final query = selectedTrasferta.toLowerCase().trim();
+      trasferte = trasferte.where((t) {
+        if (t.toLowerCase().contains(query)) return true;
+        final list = groupedRecords[t] ?? [];
+        return list.any((r) {
+          final name = anagraficheMap[r.cid.trim()] ?? '';
+          final sourceFile = logHistoryMap[r.logHistoryId]?.fileName ?? '';
+          return r.cid.toLowerCase().contains(query) ||
+              name.toLowerCase().contains(query) ||
+              r.bolla.toLowerCase().contains(query) ||
+              r.descrizioneServizio.toLowerCase().contains(query) ||
+              r.fornitore.toLowerCase().contains(query) ||
+              sourceFile.toLowerCase().contains(query);
+        });
+      }).toList();
+    }
+
+    // Filtro Quadratura SAP
+    if (sapMatchFilter != EcSapMatchFilter.all) {
+      trasferte = trasferte.where((t) {
+        final list = groupedRecords[t] ?? [];
+        final tEC = list.fold<double>(0, (sum, r) => sum + r.totaleServizio);
+        final sapList = sapMapByCleanedT[_cleanT(t)] ?? const [];
+
+        if (sapMatchFilter == EcSapMatchFilter.missing) {
+          return sapList.isEmpty;
+        }
+
+        if (sapList.isEmpty) return false;
+        final tSap = sapList.fold<double>(0, (sum, s) => sum + s.importo);
+        final isMatching = (tEC - tSap).abs() < 0.01;
+
+        if (sapMatchFilter == EcSapMatchFilter.match) return isMatching;
+        if (sapMatchFilter == EcSapMatchFilter.diff) return !isMatching;
+        return true;
+      }).toList();
+    }
+
+    // Ordinamento trasferte
+    trasferte.sort((a, b) => sortAscending ? a.compareTo(b) : b.compareTo(a));
+
+    // Calcolo statistiche globali (Single-pass O(N))
+    double globalEC = 0.0;
+    double globalSap = 0.0;
+    double globalAmex = 0.0;
+    int ospitiRecordsCount = 0;
+
+    for (final t in trasferte) {
+      final list = groupedRecords[t] ?? [];
+      for (final r in list) {
+        globalEC += r.totaleServizio;
+        if (r.logHistoryId != null && ospitiLogCodes.contains(r.logHistoryId)) {
+          ospitiRecordsCount++;
+        }
+      }
+
+      final sapList = sapMapByCleanedT[_cleanT(t)] ?? const [];
+      for (final s in sapList) {
+        globalSap += s.importo;
+      }
+
+      final amexList = amexMapByT[t] ?? const [];
+      for (final a in amexList) {
+        globalAmex += a.importoLordo ?? 0;
+      }
+    }
+
+    final totalPages = (trasferte.length / pageSize).ceil();
     final safePage = (currentPage >= totalPages && totalPages > 0) ? 0 : currentPage;
-    final startIndex = (safePage * pageSize).clamp(0, filteredRecords.length);
-    final endIndex = (startIndex + pageSize).clamp(0, filteredRecords.length);
-    final paginatedRecords = filteredRecords.sublist(startIndex, endIndex);
+    final startIndex = (safePage * pageSize).clamp(0, trasferte.length);
+    final endIndex = (startIndex + pageSize).clamp(0, trasferte.length);
+    final paginatedTrasferte = trasferte.sublist(startIndex, endIndex);
+
+    // Società e Tipi disponibili per filtri
+    final availableSocieta = allRecords
+        .map((r) => r.ragioneSociale)
+        .where((s) => s.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
+
+    final availableTipi = allRecords
+        .map((r) => r.tipoServizio)
+        .where((s) => s.isNotEmpty)
+        .toSet()
+        .toList()
+      ..sort();
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      endDrawer: _buildFilterDrawer(context, ref, availableSocieta, availableTipi),
-      floatingActionButton: filteredRecords.isNotEmpty 
+      endDrawer: _buildFilterDrawer(context, ref, availableSocieta, availableTipi, ecLogs, ospitiLogs),
+      floatingActionButton: filteredRecords.isNotEmpty
           ? FloatingActionButton(
-              onPressed: () => _exportToExcel(filteredRecords),
+              onPressed: () => _exportToExcel(filteredRecords, logHistoryMap),
               backgroundColor: Colors.green.shade700,
               foregroundColor: Colors.white,
               tooltip: 'Esporta in Excel',
@@ -198,45 +299,60 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
           : null,
       body: Column(
         children: [
-          // HEADER
-          Container(
-            padding: const EdgeInsets.fromLTRB(24, 24, 24, 16),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withAlpha(12),
-                  blurRadius: 10,
-                  offset: const Offset(0, 2),
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    final isWideHeader = constraints.maxWidth > 800;
-                    const headerContent = SizedBox.shrink();
-                    final actionsContent = Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
+          // HEADER CON TOTALI IN ALTO, RICERCA E AZIONI RAPIDE
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final isCompact = constraints.maxWidth < 1100;
+              final isVeryCompact = constraints.maxWidth < 700;
+              final isUltraCompact = constraints.maxWidth < 500;
 
-
-                      ],
-                    );
-                    return isWideHeader ? Row(children: [Expanded(child: headerContent), actionsContent]) : Column(crossAxisAlignment: CrossAxisAlignment.start, children: [headerContent, const SizedBox(height: 16), actionsContent]);
-                  },
+              return Container(
+                padding: EdgeInsets.fromLTRB(
+                  isUltraCompact ? 4 : (isVeryCompact ? 8 : (isCompact ? 16 : 24)),
+                  isUltraCompact ? 4 : (isVeryCompact ? 6 : (isCompact ? 12 : 24)),
+                  isUltraCompact ? 4 : (isVeryCompact ? 8 : (isCompact ? 16 : 24)),
+                  isUltraCompact ? 4 : (isVeryCompact ? 6 : (isCompact ? 12 : 16)),
                 ),
-                const SizedBox(height: 24),
-                // SEARCHBAR & FILTER BUTTON
-                Row(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(12),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    SizedBox(height: isUltraCompact ? 4 : (isCompact ? 8 : 20)),
+                    // TOTALI SU RIGA DEDICATA (IDENTICO A CONTROLLI TRASFERTE)
+                    Wrap(
+                      spacing: isUltraCompact ? 4 : (isVeryCompact ? 6 : (isCompact ? 10 : 32)),
+                      runSpacing: isUltraCompact ? 2 : (isVeryCompact ? 4 : (isCompact ? 8 : 12)),
+                      alignment: WrapAlignment.start,
+                      children: [
+                        _buildGlobalTotal('E.C.', globalEC, Colors.purple.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                        _buildGlobalTotal('AMEX', globalAmex, Colors.orange.shade800, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                        _buildGlobalTotal('DISCREPANZA AMEX', globalEC - globalAmex, (globalEC - globalAmex).abs() < 0.01 ? Colors.green.shade700 : Colors.red.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                        _buildGlobalTotal('SAP', globalSap, Colors.green.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                        _buildGlobalTotal('DISCREPANZA SAP', globalEC - globalSap, (globalEC - globalSap).abs() < 0.01 ? Colors.green.shade700 : Colors.red.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                      ],
+                    ),
+                    SizedBox(height: isUltraCompact ? 6 : (isVeryCompact ? 6 : (isCompact ? 12 : 24))),
+                    // BARRA AZIONI E RICERCA
+                    Row(
+                      children: [
                     Expanded(
                       child: Container(
                         height: 48,
                         padding: const EdgeInsets.symmetric(horizontal: 16),
-                        decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(12), border: Border.all(color: Colors.grey.shade200)),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade100,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade200),
+                        ),
                         child: Row(
                           children: [
                             const Icon(Icons.search, color: Colors.grey, size: 20),
@@ -244,7 +360,11 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                             Expanded(
                               child: TextField(
                                 controller: _trasfertaController,
-                                decoration: const InputDecoration(hintText: 'Cerca per trasferta, CID o bolla...', border: InputBorder.none, isDense: true),
+                                decoration: const InputDecoration(
+                                  hintText: 'Cerca per trasferta, CID, nominativo, bolla, file...',
+                                  border: InputBorder.none,
+                                  isDense: true,
+                                ),
                                 style: const TextStyle(fontSize: 14),
                                 onChanged: (value) {
                                   ref.read(ecSelectedTrasfertaProvider.notifier).state = value.isEmpty ? null : value;
@@ -257,6 +377,56 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                       ),
                     ),
                     const SizedBox(width: 12),
+                    // Pulsante rapido Espandi/Comprimi tutti
+                    OutlinedButton.icon(
+                      onPressed: () {
+                        ref.read(ecExpandAllProvider.notifier).state = !expandAll;
+                      },
+                      icon: Icon(
+                        expandAll ? Icons.unfold_less : Icons.unfold_more,
+                        size: 18,
+                      ),
+                      label: Text(
+                        expandAll ? 'Comprimi' : 'Espandi',
+                        style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                      ),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        side: BorderSide(color: Colors.grey.shade300),
+                        foregroundColor: Colors.grey.shade800,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Pulsante rapido File OSPITI
+                    Tooltip(
+                      message: ospitiLogs.isNotEmpty
+                          ? 'Filtra i record dai ${ospitiLogs.length} file contenenti la parola "OSPITI"'
+                          : 'Nessun file Estratto Conto contiene "OSPITI" nel nome',
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          ref.read(ecFilterOspitiProvider.notifier).state = !filterOspiti;
+                          ref.read(ecPageProvider.notifier).state = 0;
+                        },
+                        icon: Icon(
+                          filterOspiti ? Icons.check_circle_rounded : Icons.people_alt_outlined,
+                          size: 18,
+                        ),
+                        label: Text('File OSPITI (${ospitiLogs.length})'),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          backgroundColor: filterOspiti ? Colors.orange.shade700 : Colors.white,
+                          foregroundColor: filterOspiti ? Colors.white : (ospitiLogs.isNotEmpty ? Colors.orange.shade900 : Colors.grey),
+                          side: BorderSide(
+                            color: filterOspiti ? Colors.orange.shade700 : (ospitiLogs.isNotEmpty ? Colors.orange.shade300 : Colors.grey.shade300),
+                            width: filterOspiti ? 1.5 : 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    // Tasto Filtri avanzati
                     Builder(
                       builder: (context) => Stack(
                         clipBehavior: Clip.none,
@@ -274,11 +444,15 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                           ),
                           if (activeFiltersCount > 0)
                             Positioned(
-                              top: -8, right: -8,
+                              top: -8,
+                              right: -8,
                               child: Container(
                                 padding: const EdgeInsets.all(6),
                                 decoration: const BoxDecoration(color: SkyTheme.timBlue, shape: BoxShape.circle),
-                                child: Text('$activeFiltersCount', style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                                child: Text(
+                                  '$activeFiltersCount',
+                                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                         ],
@@ -299,141 +473,881 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                             ref.read(ecSelectedTrasfertaProvider.notifier).state = null;
                             _trasfertaController.clear();
                           }),
-                        if (selectedSocieta != null) _buildFilterChip('Società: $selectedSocieta', () => ref.read(ecSelectedSocietaProvider.notifier).state = null),
-                        if (startDate != null) _buildFilterChip('Dal: ${startDate.day}/${startDate.month}/${startDate.year}', () => ref.read(ecStartDateProvider.notifier).state = null),
-                        if (endDate != null) _buildFilterChip('Al: ${endDate.day}/${endDate.month}/${endDate.year}', () => ref.read(ecEndDateProvider.notifier).state = null),
-                        if (selectedTipi.isNotEmpty) _buildFilterChip('Tipi: ${selectedTipi.length}', () => ref.read(ecSelectedTipiServizioProvider.notifier).state = {}),
-                        if (trasfertaFilter != EcTrasfertaPresenzaFilter.all)
+                        if (selectedSocieta != null)
+                          _buildFilterChip('Società: $selectedSocieta', () => ref.read(ecSelectedSocietaProvider.notifier).state = null),
+                        if (startDate != null)
+                          _buildFilterChip('Dal: ${startDate.day}/${startDate.month}/${startDate.year}', () => ref.read(ecStartDateProvider.notifier).state = null),
+                        if (endDate != null)
+                          _buildFilterChip('Al: ${endDate.day}/${endDate.month}/${endDate.year}', () => ref.read(ecEndDateProvider.notifier).state = null),
+                        if (selectedTipi.isNotEmpty)
+                          _buildFilterChip('Tipi: ${selectedTipi.length}', () => ref.read(ecSelectedTipiServizioProvider.notifier).state = {}),
+                        if (sapMatchFilter != EcSapMatchFilter.all)
                           _buildFilterChip(
-                            trasfertaFilter == EcTrasfertaPresenzaFilter.present
-                                ? 'Riscontro: Presenti'
-                                : 'Riscontro: Non Presenti',
-                            () => ref.read(ecTrasfertaPresenzaFilterProvider.notifier).state = EcTrasfertaPresenzaFilter.all,
+                            sapMatchFilter == EcSapMatchFilter.match
+                                ? 'Riscontro SAP: Quadrati (OK)'
+                                : (sapMatchFilter == EcSapMatchFilter.diff ? 'Riscontro SAP: Discrepanze (KO)' : 'Riscontro SAP: Assenti'),
+                            () => ref.read(ecSapMatchFilterProvider.notifier).state = EcSapMatchFilter.all,
                           ),
                         if (selectedLogHistoryIds.isNotEmpty)
                           _buildFilterChip(
-                            selectedLogFileName != null
-                                ? 'File: $selectedLogFileName'
-                                : 'File: ${selectedLogHistoryIds.length} selezionati',
+                            selectedLogFileName != null ? 'File: $selectedLogFileName' : 'File: ${selectedLogHistoryIds.length} selezionati',
                             () => ref.read(ecSelectedLogHistoryIdsProvider.notifier).state = {},
                           ),
-                        TextButton(onPressed: () => _resetAllFilters(ref), child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))),
+                        if (filterOspiti)
+                          _buildFilterChip(
+                            'File OSPITI (${ospitiLogs.length} file)',
+                            () {
+                              ref.read(ecFilterOspitiProvider.notifier).state = false;
+                              ref.read(ecPageProvider.notifier).state = 0;
+                            },
+                          ),
+                        TextButton(
+                          onPressed: () => _resetAllFilters(ref),
+                          child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red)),
+                        ),
                       ],
                     ),
                   ),
                 ],
               ],
             ),
-          ),
-          // MAIN TABLE
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Colors.white, 
-                  borderRadius: BorderRadius.circular(16), 
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withAlpha(5), 
-                      blurRadius: 15, 
-                      offset: const Offset(0, 5)
-                    )
-                  ]
-                ),
-                child: ClipRRect(
+          );
+        },
+      ),
+
+          // BANNER INFORMATIVO FILE OSPITI SE ATTIVO
+          if (filterOspiti)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+              child: Material(
+                color: Colors.orange.shade50,
+                shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
-                  child: Scrollbar(
-                    controller: _horizontalScrollController,
-                    thumbVisibility: true,
-                    trackVisibility: true,
-                    child: SingleChildScrollView(
-                      controller: _horizontalScrollController,
-                      scrollDirection: Axis.horizontal,
-                      child: Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: SizedBox(
-                          width: 1600,
-                          child: Column(
-                            children: [
-                              // HEADER FISSO
-                              Container(
-                                height: 56,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade50, 
-                                  border: Border(bottom: BorderSide(color: Colors.grey.shade200))
-                                ),
-                                child: Row(
-                                  children: [
-                                    _buildCell('AZIONI', 120, isHeader: true, alignment: Alignment.center),
-                                    _buildCell('CID', 200, isHeader: true),
-                                    _buildCell('NOMINATIVO', 220, isHeader: true),
-                                    _buildCell('TRASFERTA', 150, isHeader: true),
-                                    _buildCell('IMPORTO', 100, isHeader: true),
-                                    _buildCell('TIPO SERVIZIO', 150, isHeader: true),
-                                    _buildCell('BOLLA', 150, isHeader: true),
-                                    _buildCell('SOCIETÀ', 250, isHeader: true),
-                                    _buildCell('DATA BOLLA', 120, isHeader: true),
-                                    _buildCell('DATA COMP.', 140, isHeader: true),
-                                  ],
-                                ),
-                              ),
-                              // BODY SCROLLABILE
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  controller: _scrollController,
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    physics: const NeverScrollableScrollPhysics(),
-                                    itemCount: paginatedRecords.length,
-                                    itemBuilder: (context, index) {
-                                      final record = paginatedRecords[index];
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 == 0 ? Colors.white : Colors.grey.shade50.withAlpha(120), 
-                                          border: Border(bottom: BorderSide(color: Colors.grey.shade100))
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            _buildCell('', 120, alignment: Alignment.center, child: Row(mainAxisSize: MainAxisSize.min, children: [
-                                              IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-                                              const SizedBox(width: 12),
-                                              IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), onPressed: () => _showDeleteDialog(context, ref, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
-                                            ])),
-                                            _buildCopyableCell(record.cid, 200, typeLabel: 'CID', fontWeight: FontWeight.w500),
-                                            _buildCell(anagraficheMap[record.cid.trim()] ?? '', 220, fontWeight: FontWeight.w500),
-                                            _buildCopyableCell(
-                                              record.numeroTrasferta, 
-                                              150, 
-                                              typeLabel: 'Trasferta',
-                                              fontWeight: FontWeight.bold,
-                                              color: contabileTrasferte.contains(record.numeroTrasferta.trim())
-                                                  ? Colors.green.shade800
-                                                  : Colors.red.shade700,
-                                            ),
-                                            _buildCell('${record.totaleServizio.toStringAsFixed(2)} €', 100, fontWeight: FontWeight.bold, color: record.totaleServizio < 0 ? Colors.red.shade700 : Colors.green.shade800),
-                                            _buildCell(record.tipoServizio, 150),
-                                            _buildCopyableCell(record.bolla, 150, typeLabel: 'Bolla'),
-                                            _buildCell(record.ragioneSociale, 250),
-                                            _buildCell(record.dataBolla, 120),
-                                            _buildCell(record.dataCompetenza, 140),
-                                          ],
-                                        ),
-                                      );
-                                    },
+                  side: BorderSide(color: Colors.orange.shade300),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(Icons.people_alt_outlined, color: Colors.orange.shade900, size: 20),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'FILTRO OSPITI ATTIVO • $ospitiRecordsCount RECORD DA ${ospitiLogs.length} FILE',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: Colors.orange.shade900,
+                                    letterSpacing: 0.5,
                                   ),
                                 ),
-                              ),
-                            ],
+                                if (_isOspitiInfoExpanded) ...[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    ospitiLogs.isNotEmpty
+                                        ? 'Record estratti esclusivamente dai file contenenti la parola "OSPITI":'
+                                        : 'Nessun file Estratto Conto caricato contiene la parola "OSPITI" nel nome.',
+                                    style: TextStyle(fontSize: 11, color: Colors.orange.shade900.withAlpha(220)),
+                                  ),
+                                ],
+                              ],
+                            ),
                           ),
-                        ),
+                          if (ospitiLogs.isNotEmpty)
+                            TextButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  _isOspitiInfoExpanded = !_isOspitiInfoExpanded;
+                                });
+                              },
+                              icon: Icon(
+                                _isOspitiInfoExpanded ? Icons.expand_less : Icons.expand_more,
+                                size: 18,
+                                color: Colors.orange.shade900,
+                              ),
+                              label: Text(
+                                _isOspitiInfoExpanded ? 'Nascondi file' : 'Mostra file (${ospitiLogs.length})',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange.shade900,
+                                ),
+                              ),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                backgroundColor: Colors.orange.shade100.withAlpha(160),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
+                            ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.close, size: 18),
+                            color: Colors.orange.shade900,
+                            onPressed: () {
+                              ref.read(ecFilterOspitiProvider.notifier).state = false;
+                              ref.read(ecPageProvider.notifier).state = 0;
+                            },
+                            tooltip: 'Disattiva filtro OSPITI',
+                          ),
+                        ],
                       ),
-                    ),
+                      if (_isOspitiInfoExpanded && ospitiLogs.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: ospitiLogs.map((log) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.orange.shade200),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.orange.withAlpha(20),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.description_outlined, size: 14, color: Colors.orange.shade800),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    log.fileName,
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.orange.shade100,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      '${log.totalRecords} record',
+                                      style: TextStyle(
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.orange.shade900,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
               ),
             ),
+
+          // LISTA A CARD PER TRASFERTA (STILE CONTROLLI TRASFERTE)
+          Expanded(
+            child: paginatedTrasferte.isEmpty
+                ? Center(
+                    child: Text(
+                      'Nessuna trasferta corrisponde ai filtri selezionati.',
+                      style: TextStyle(color: Colors.grey.shade600, fontSize: 15),
+                    ),
+                  )
+                : ListView.builder(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    itemCount: paginatedTrasferte.length,
+                    itemBuilder: (context, index) {
+                      final numeroTrasferta = paginatedTrasferte[index];
+                      final recordsTrasferta = groupedRecords[numeroTrasferta] ?? [];
+                      final totaleEC = recordsTrasferta.fold<double>(0, (sum, r) => sum + r.totaleServizio);
+
+                      final sapForTrasferta = sapMapByCleanedT[_cleanT(numeroTrasferta)] ?? const [];
+                      final totaleSap = sapForTrasferta.fold<double>(0, (sum, s) => sum + s.importo);
+                      final hasSap = sapForTrasferta.isNotEmpty;
+                      final isSapMatching = hasSap && (totaleEC - totaleSap).abs() < 0.01;
+                      final hasSapDiff = hasSap && !isSapMatching;
+
+                      final amexForTrasferta = amexMapByT[numeroTrasferta] ?? const [];
+                      final totaleAmex = amexForTrasferta.fold<double>(0, (sum, a) => sum + (a.importoLordo ?? 0));
+                      final hasAmex = amexForTrasferta.isNotEmpty;
+                      final isAmexMatching = hasAmex && (totaleEC - totaleAmex).abs() < 0.01;
+
+                      final displayCid = recordsTrasferta.isNotEmpty ? recordsTrasferta.first.cid : '';
+
+                      final Color statusBorderColor = hasSapDiff
+                          ? Colors.red.shade300
+                          : (isSapMatching ? Colors.green.shade300 : Colors.grey.shade300);
+                      final Color statusBgColor = hasSapDiff
+                          ? Colors.red.shade50.withAlpha(50)
+                          : (isSapMatching ? Colors.green.shade50.withAlpha(50) : Colors.grey.shade50.withAlpha(120));
+
+                      return Card(
+                        margin: EdgeInsets.only(
+                          bottom: isUltraCompact ? 6 : (isVeryCompact ? 8 : (isCompactList ? 12 : 16)),
+                        ),
+                        elevation: 1,
+                        clipBehavior: Clip.antiAlias,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(isVeryCompact ? 10 : 14),
+                          side: BorderSide(color: statusBorderColor),
+                        ),
+                        child: ExpansionTile(
+                          key: Key('${numeroTrasferta}_$expandAll'),
+                          initiallyExpanded: expandAll,
+                          collapsedBackgroundColor: statusBgColor,
+                          backgroundColor: Colors.white,
+                          shape: const Border(),
+                          collapsedShape: const Border(),
+                          tilePadding: isUltraCompact
+                              ? const EdgeInsets.symmetric(horizontal: 8, vertical: 4)
+                              : (isVeryCompact
+                                  ? const EdgeInsets.symmetric(horizontal: 12, vertical: 6)
+                                  : const EdgeInsets.symmetric(horizontal: 16, vertical: 8)),
+                          leading: Icon(
+                            Icons.flight_takeoff,
+                            color: isSapMatching ? Colors.green.shade700 : (hasSapDiff ? Colors.red.shade700 : SkyTheme.timBlue),
+                            size: isVeryCompact ? 18 : 22,
+                          ),
+                          title: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Wrap(
+                                spacing: isUltraCompact ? 4 : (isVeryCompact ? 6 : 10),
+                                runSpacing: 4,
+                                crossAxisAlignment: WrapCrossAlignment.center,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'Trasferta: $numeroTrasferta',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: isUltraCompact ? 10 : (isVeryCompact ? 12 : 14),
+                                          color: Colors.black87,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 4),
+                                      Material(
+                                        color: Colors.transparent,
+                                        child: InkWell(
+                                          borderRadius: BorderRadius.circular(4),
+                                          onTap: () {
+                                            Clipboard.setData(ClipboardData(text: numeroTrasferta));
+                                            ScaffoldMessenger.of(context).showSnackBar(
+                                              SnackBar(
+                                                content: Text('Trasferta $numeroTrasferta copiata negli appunti'),
+                                                duration: const Duration(seconds: 1),
+                                                backgroundColor: SkyTheme.timBlue,
+                                              ),
+                                            );
+                                          },
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(4.0),
+                                            child: Icon(
+                                              Icons.copy_rounded,
+                                              size: isUltraCompact ? 10 : 12,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  Text(
+                                    '|  CID: ${_formatCidWithName(displayCid, anagraficheMap)}',
+                                    style: TextStyle(
+                                      fontSize: isUltraCompact ? 9 : (isVeryCompact ? 11 : 12),
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey.shade700,
+                                    ),
+                                  ),
+                                  // BADGE SAP
+                                  if (hasSap)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        color: isSapMatching ? Colors.green.shade50 : Colors.red.shade100,
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                          color: isSapMatching ? Colors.green.shade300 : Colors.red.shade300,
+                                          width: 0.5,
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            isSapMatching ? Icons.check_circle : Icons.warning_amber_rounded,
+                                            size: 12,
+                                            color: isSapMatching ? Colors.green.shade800 : Colors.red.shade800,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            isSapMatching
+                                                ? 'SAP OK'
+                                                : 'SAP DIFF: ${(totaleEC - totaleSap).toStringAsFixed(2)} €',
+                                            style: TextStyle(
+                                              fontSize: isUltraCompact ? 8 : 10,
+                                              fontWeight: FontWeight.bold,
+                                              color: isSapMatching ? Colors.green.shade800 : Colors.red.shade800,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  else
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.shade100,
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: Colors.grey.shade300, width: 0.5),
+                                      ),
+                                      child: Text(
+                                        'SAP ASSENTE',
+                                        style: TextStyle(
+                                          fontSize: isUltraCompact ? 8 : 10,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.grey.shade600,
+                                        ),
+                                      ),
+                                    ),
+                                  // BADGE AMEX (Arancione come in Controlli Trasferte)
+                                  if (hasAmex)
+                                    Builder(
+                                      builder: (context) {
+                                        final amexColor = isAmexMatching ? Colors.orange.shade800 : Colors.red.shade900;
+                                        final amexBg = isAmexMatching ? Colors.orange.shade50 : Colors.red.shade50;
+
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                          decoration: BoxDecoration(
+                                            color: amexBg,
+                                            borderRadius: BorderRadius.circular(12),
+                                            border: Border.all(color: isAmexMatching ? Colors.orange.shade200 : Colors.red.shade200),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                isAmexMatching ? Icons.credit_card_outlined : Icons.warning_amber_rounded,
+                                                size: isUltraCompact ? 10 : 12,
+                                                color: amexColor,
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Text(
+                                                isUltraCompact
+                                                    ? (isAmexMatching ? 'AMEX OK' : 'AMEX: ${(totaleEC - totaleAmex).toStringAsFixed(2)}€')
+                                                    : (isAmexMatching ? 'AMEX QUADRATA' : 'AMEX DISCREPANZA: ${(totaleEC - totaleAmex).toStringAsFixed(2)} €'),
+                                                style: TextStyle(
+                                                  fontSize: isUltraCompact ? 8 : 10,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: amexColor,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                ],
+                              ),
+                            ],
+                          ),
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                '${totaleEC.toStringAsFixed(2)} €',
+                                style: TextStyle(
+                                  fontSize: isUltraCompact ? 11 : (isVeryCompact ? 13 : 15),
+                                  fontWeight: FontWeight.bold,
+                                  color: totaleEC < 0 ? Colors.red.shade700 : Colors.green.shade800,
+                                ),
+                              ),
+                              Text(
+                                '${recordsTrasferta.length} ${recordsTrasferta.length == 1 ? "record" : "record"}',
+                                style: TextStyle(
+                                  fontSize: isUltraCompact ? 8 : 10,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                          children: [
+                            // 1. ELENCO RECORD ESTRATTO CONTO (MASTER)
+                            ...recordsTrasferta.map((record) {
+                              final sourceFile = logHistoryMap[record.logHistoryId]?.fileName ?? record.logHistoryId ?? '-';
+                              final isOspiti = sourceFile.toUpperCase().contains('OSPITI');
+
+                              return Container(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isVeryCompact ? 12 : 20,
+                                  vertical: isVeryCompact ? 8 : 12,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border(
+                                    left: BorderSide(
+                                      color: isOspiti ? Colors.orange.shade600 : SkyTheme.timBlue,
+                                      width: 4,
+                                    ),
+                                    bottom: BorderSide(color: Colors.grey.shade100),
+                                  ),
+                                ),
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Icon(
+                                      Icons.receipt_long_outlined,
+                                      size: isVeryCompact ? 16 : 20,
+                                      color: isOspiti ? Colors.orange.shade800 : SkyTheme.timBlue,
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: Text(
+                                                  record.descrizioneServizio.isEmpty ? 'Servizio non specificato' : record.descrizioneServizio,
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: isUltraCompact ? 10 : (isVeryCompact ? 11 : 13),
+                                                    color: Colors.black87,
+                                                  ),
+                                                ),
+                                              ),
+                                              Container(
+                                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                decoration: BoxDecoration(
+                                                  color: SkyTheme.timBlue.withAlpha(20),
+                                                  borderRadius: BorderRadius.circular(6),
+                                                ),
+                                                child: Text(
+                                                  record.tipoServizio,
+                                                  style: const TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: SkyTheme.timBlue,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 4),
+                                          Wrap(
+                                            spacing: 12,
+                                            runSpacing: 4,
+                                            children: [
+                                              Text(
+                                                'CID: ${_formatCidWithName(record.cid, anagraficheMap)}',
+                                                style: TextStyle(fontSize: 11, color: Colors.grey.shade700),
+                                              ),
+                                              Text(
+                                                'Bolla: ${record.bolla}',
+                                                style: TextStyle(fontSize: 11, color: Colors.grey.shade700),
+                                              ),
+                                              if (record.fornitore.isNotEmpty)
+                                                Text(
+                                                  'Fornitore: ${record.fornitore}',
+                                                  style: TextStyle(fontSize: 11, color: Colors.grey.shade700),
+                                                ),
+                                              if (record.ragioneSociale.isNotEmpty)
+                                                Text(
+                                                  'Società: ${record.ragioneSociale}',
+                                                  style: TextStyle(fontSize: 11, color: Colors.grey.shade700),
+                                                ),
+                                              Text(
+                                                'Data: ${record.dataBolla}',
+                                                style: TextStyle(fontSize: 11, color: Colors.grey.shade700),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 4),
+                                          // File sorgente chip
+                                          Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(
+                                                Icons.description_outlined,
+                                                size: 12,
+                                                color: isOspiti ? Colors.orange.shade800 : Colors.grey.shade600,
+                                              ),
+                                              const SizedBox(width: 4),
+                                              Flexible(
+                                                child: Text(
+                                                  'File: $sourceFile',
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight: isOspiti ? FontWeight.bold : FontWeight.normal,
+                                                    color: isOspiti ? Colors.orange.shade900 : Colors.grey.shade600,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              if (isOspiti) ...[
+                                                const SizedBox(width: 6),
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.orange.shade100,
+                                                    borderRadius: BorderRadius.circular(4),
+                                                  ),
+                                                  child: Text(
+                                                    'OSPITI',
+                                                    style: TextStyle(
+                                                      fontSize: 8,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.orange.shade900,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16),
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Text(
+                                          '${record.totaleServizio.toStringAsFixed(2)} €',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: isUltraCompact ? 10 : (isVeryCompact ? 11 : 13),
+                                            color: record.totaleServizio < 0 ? Colors.red.shade700 : Colors.green.shade800,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 4),
+                                        IconButton(
+                                          icon: Icon(Icons.visibility_outlined, color: Colors.blue, size: isVeryCompact ? 16 : 18),
+                                          onPressed: () => _showRecordDetails(context, record, logHistoryMap),
+                                          tooltip: 'Dettaglio Estratto Conto',
+                                          constraints: const BoxConstraints(),
+                                          padding: EdgeInsets.zero,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+
+                            // 2. RISCONTRO TRACCIATO SAP (se presente)
+                            if (hasSap) ...[
+                              Container(
+                                width: double.infinity,
+                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+                                color: Colors.blue.shade50.withAlpha(120),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.business_outlined, size: 14, color: Colors.blue.shade800),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'RISCONTRO TRACCIATO SAP (${sapForTrasferta.length} voci • Totale: ${_formatAmount(totaleSap)})',
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.blue.shade900,
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ...sapForTrasferta.map((sap) {
+                                return Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.blue.shade50.withAlpha(40),
+                                    border: Border(bottom: BorderSide(color: Colors.grey.shade100)),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              sap.tipoSpesaDescrizione.isEmpty ? sap.tipoSpesaCodice : sap.tipoSpesaDescrizione,
+                                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              'CID: ${_formatCidWithName(sap.cid, anagraficheMap)} • Data: ${sap.data} • Società: ${sap.societaCodice}',
+                                              style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Text(
+                                        '${sap.importo.toStringAsFixed(2)} €',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 12,
+                                          color: sap.importo < 0 ? Colors.red.shade700 : Colors.blue.shade800,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
+                            ],
+
+                            // 3. SEZIONE RECORD AMEX (Grafica identica a Controlli Trasferte)
+                            if (hasAmex) ...[
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(isVeryCompact ? 12 : 16, isVeryCompact ? 4 : 10, isVeryCompact ? 12 : 16, isVeryCompact ? 1 : 4),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.credit_card_outlined, size: isVeryCompact ? 10 : 14, color: Colors.orange.shade800),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Record Estratto AMEX (${amexForTrasferta.length} voci • Totale: ${_formatAmount(totaleAmex)})',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: isVeryCompact ? 9 : 11,
+                                        color: Colors.orange.shade800,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              ...amexForTrasferta.map((amex) => Container(
+                                margin: EdgeInsets.only(
+                                  left: isVeryCompact ? 4 : 20,
+                                  bottom: isVeryCompact ? 1 : 4,
+                                  right: isVeryCompact ? 2 : 8,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isVeryCompact ? 10 : 16,
+                                  vertical: isVeryCompact ? 2 : 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.orange.shade50.withAlpha(150),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.orange.shade100),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.payment_outlined, size: isVeryCompact ? 10 : 14, color: Colors.orange.shade700),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'AMEX',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.orange.shade700,
+                                        fontSize: isVeryCompact ? 9 : 11,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            amex.nomeEsercizio ?? amex.nomeFornitore ?? 'Esercizio non specificato',
+                                            style: TextStyle(
+                                              fontSize: isVeryCompact ? 9 : 11,
+                                              color: Colors.grey.shade800,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          Text(
+                                            'CID: ${_formatCidWithName(amex.cid ?? "", anagraficheMap)} • Bolla: ${amex.bolla ?? "-"}',
+                                            style: TextStyle(
+                                              fontSize: isVeryCompact ? 8 : 9,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 1),
+                                          Text(
+                                            'Data: ${amex.dataTransazione ?? "-"} • Fornitore: ${amex.nomeFornitore ?? "-"}',
+                                            style: TextStyle(fontSize: isVeryCompact ? 8 : 9, color: Colors.grey.shade600),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          '${(amex.importoLordo ?? 0).toStringAsFixed(2)} €',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.orange.shade800,
+                                            fontSize: isVeryCompact ? 10 : 12,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        IconButton(
+                                          icon: Icon(Icons.credit_card_outlined, color: Colors.orange, size: isVeryCompact ? 12 : 16),
+                                          onPressed: () => _showAmexRecordDetails(context, amex),
+                                          tooltip: 'Dettaglio AMEX',
+                                          constraints: const BoxConstraints(),
+                                          padding: const EdgeInsets.all(4),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )),
+                            ],
+
+                            // FOOTER DI TRASFERTA (RIEPILOGO TOTALI IDENTICO A CONTROLLI TRASFERTE)
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isVeryCompact ? 8 : 20,
+                                vertical: isVeryCompact ? 4 : 10,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade50,
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(16),
+                                  bottomRight: Radius.circular(16),
+                                ),
+                                border: Border(
+                                  top: BorderSide(color: Colors.grey.shade200, width: 1),
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'RIEPILOGO TOTALI',
+                                        style: TextStyle(
+                                          fontSize: isVeryCompact ? 7 : 9,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.grey.shade600,
+                                          letterSpacing: 1.2,
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Wrap(
+                                        spacing: isVeryCompact ? 8 : 20,
+                                        runSpacing: 4,
+                                        children: [
+                                          _buildTotalIndicator('Estratto Conto', totaleEC, SkyTheme.timBlue, isVeryCompact: isVeryCompact),
+                                          if (hasSap)
+                                            _buildTotalIndicator('SAP', totaleSap, Colors.green.shade700, isVeryCompact: isVeryCompact),
+                                          if (hasAmex)
+                                            _buildTotalIndicator('AMEX', totaleAmex, Colors.orange.shade700, isVeryCompact: isVeryCompact),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                  Builder(
+                                    builder: (context) {
+                                      final diffSap = totaleEC - totaleSap;
+                                      final diffAmex = totaleEC - totaleAmex;
+                                      final isAllMatching = (!hasSap || isSapMatching) && (!hasAmex || isAmexMatching);
+
+                                      if (isAllMatching) {
+                                        return Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: isVeryCompact ? 6 : 12,
+                                            vertical: isVeryCompact ? 2 : 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.green.shade50,
+                                            borderRadius: BorderRadius.circular(16),
+                                            border: Border.all(color: Colors.green.shade200),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(Icons.check_circle, color: Colors.green.shade700, size: isVeryCompact ? 12 : 16),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                'QUADRATO',
+                                                style: TextStyle(
+                                                  color: Colors.green.shade700,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: isVeryCompact ? 8 : 11,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      } else {
+                                        List<String> labels = [];
+                                        if (hasSap && !isSapMatching) labels.add('SAP: ${diffSap.toStringAsFixed(2)} €');
+                                        if (hasAmex && !isAmexMatching) labels.add('AMEX: ${diffAmex.toStringAsFixed(2)} €');
+
+                                        return Container(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: isVeryCompact ? 6 : 12,
+                                            vertical: isVeryCompact ? 2 : 6,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red.shade50,
+                                            borderRadius: BorderRadius.circular(16),
+                                            border: Border.all(color: Colors.red.shade200),
+                                          ),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Icon(Icons.warning_amber_rounded, color: Colors.red.shade700, size: isVeryCompact ? 12 : 16),
+                                              const SizedBox(width: 6),
+                                              Text(
+                                                'DISCREPANZA: ${labels.join(" | ")}',
+                                                style: TextStyle(
+                                                  color: Colors.red.shade700,
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: isVeryCompact ? 8 : 11,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
           ),
+
           // PAGINATION
           if (totalPages > 1)
             Padding(
@@ -455,12 +1369,14 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      onPressed: currentPage > 0 ? () {
-                        ref.read(ecPageProvider.notifier).state--;
-                        if (_scrollController.hasClients) {
-                          _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                        }
-                      } : null,
+                      onPressed: currentPage > 0
+                          ? () {
+                              ref.read(ecPageProvider.notifier).state--;
+                              if (_scrollController.hasClients) {
+                                _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                              }
+                            }
+                          : null,
                       icon: const Icon(Icons.chevron_left),
                     ),
                     const SizedBox(width: 8),
@@ -470,12 +1386,14 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                     ),
                     const SizedBox(width: 8),
                     IconButton(
-                      onPressed: currentPage < totalPages - 1 ? () {
-                        ref.read(ecPageProvider.notifier).state++;
-                        if (_scrollController.hasClients) {
-                          _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                        }
-                      } : null,
+                      onPressed: currentPage < totalPages - 1
+                          ? () {
+                              ref.read(ecPageProvider.notifier).state++;
+                              if (_scrollController.hasClients) {
+                                _scrollController.animateTo(0, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                              }
+                            }
+                          : null,
                       icon: const Icon(Icons.chevron_right),
                     ),
                     Container(
@@ -485,7 +1403,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                       margin: const EdgeInsets.symmetric(horizontal: 16),
                     ),
                     Text(
-                      'Totale record: ${filteredRecords.length}',
+                      'Totale trasferte: ${trasferte.length}',
                       style: const TextStyle(
                         color: SkyTheme.timBlue,
                         fontWeight: FontWeight.bold,
@@ -507,8 +1425,9 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     ref.read(ecStartDateProvider.notifier).state = null;
     ref.read(ecEndDateProvider.notifier).state = null;
     ref.read(ecSelectedTipiServizioProvider.notifier).state = {};
-    ref.read(ecTrasfertaPresenzaFilterProvider.notifier).state = EcTrasfertaPresenzaFilter.all;
+    ref.read(ecSapMatchFilterProvider.notifier).state = EcSapMatchFilter.all;
     ref.read(ecSelectedLogHistoryIdsProvider.notifier).state = {};
+    ref.read(ecFilterOspitiProvider.notifier).state = false;
     ref.read(ecPageProvider.notifier).state = 0;
     _trasfertaController.clear();
   }
@@ -527,9 +1446,15 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     );
   }
 
-  Widget _buildFilterDrawer(BuildContext context, WidgetRef ref, List<String> societa, List<String> availableTipi) {
-    final allLogs = ref.watch(logHistoryProvider);
-    final ecLogs = allLogs.where((log) => log.sourceType == 'Estratto Conto').toList();
+  Widget _buildFilterDrawer(
+    BuildContext context,
+    WidgetRef ref,
+    List<String> societa,
+    List<String> availableTipi,
+    List<LogHistory> ecLogs,
+    List<LogHistory> ospitiLogs,
+  ) {
+    final filterOspiti = ref.watch(ecFilterOspitiProvider);
     return Drawer(
       width: 350,
       child: Column(
@@ -565,8 +1490,8 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                     Text(
                       'FILTRI AVANZATI',
                       style: TextStyle(
-                        color: Colors.white, 
-                        fontWeight: FontWeight.bold, 
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
                         fontSize: 16,
                         letterSpacing: 0.5,
                       ),
@@ -574,7 +1499,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                     Text(
                       'Affina la tua ricerca',
                       style: TextStyle(
-                        color: Colors.white70, 
+                        color: Colors.white70,
                         fontSize: 10,
                         letterSpacing: 0.2,
                       ),
@@ -611,9 +1536,15 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                   (val) => ref.read(ecEndDateProvider.notifier).state = val,
                 ),
                 const SizedBox(height: 32),
-                _buildDrawerSectionTitle('ANAGRAFICA'),
+                _buildDrawerSectionTitle('ANAGRAFICA & SOCIETÀ'),
                 const SizedBox(height: 12),
-                _buildFilterDropdown<String?>('Società', ref.watch(ecSelectedSocietaProvider), societa, (val) => ref.read(ecSelectedSocietaProvider.notifier).state = val, icon: Icons.business),
+                _buildFilterDropdown<String?>(
+                  'Società',
+                  ref.watch(ecSelectedSocietaProvider),
+                  societa,
+                  (val) => ref.read(ecSelectedSocietaProvider.notifier).state = val,
+                  icon: Icons.business,
+                ),
                 const SizedBox(height: 24),
                 _buildChipsMultiSelectFilter(
                   'Tipo Servizio',
@@ -632,16 +1563,17 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                   icon: Icons.layers_outlined,
                 ),
                 const SizedBox(height: 32),
-                _buildDrawerSectionTitle('RISCONTRO CONTABILE'),
+                _buildDrawerSectionTitle('QUADRATURA SAP'),
                 const SizedBox(height: 12),
-                _buildChoiceFilter<EcTrasfertaPresenzaFilter>(
-                  ref.watch(ecTrasfertaPresenzaFilterProvider),
+                _buildChoiceFilter<EcSapMatchFilter>(
+                  ref.watch(ecSapMatchFilterProvider),
                   {
-                    EcTrasfertaPresenzaFilter.all: 'Tutte',
-                    EcTrasfertaPresenzaFilter.present: 'Presenti',
-                    EcTrasfertaPresenzaFilter.notPresent: 'Non Presenti',
+                    EcSapMatchFilter.all: 'Tutte',
+                    EcSapMatchFilter.match: 'Quadrati (OK)',
+                    EcSapMatchFilter.diff: 'Discrepanze (KO)',
+                    EcSapMatchFilter.missing: 'SAP Assente',
                   },
-                  (val) => ref.read(ecTrasfertaPresenzaFilterProvider.notifier).state = val,
+                  (val) => ref.read(ecSapMatchFilterProvider.notifier).state = val,
                 ),
                 const SizedBox(height: 32),
                 _buildDrawerSectionTitle('FILE CARICATI'),
@@ -656,6 +1588,84 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                   },
                   icon: Icons.insert_drive_file_outlined,
                 ),
+                const SizedBox(height: 32),
+                _buildDrawerSectionTitle('FILTRO OSPITI'),
+                const SizedBox(height: 12),
+                Material(
+                  color: filterOspiti ? Colors.orange.shade50 : Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(color: filterOspiti ? Colors.orange.shade300 : Colors.grey.shade200),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: [
+                      SwitchListTile(
+                        activeTrackColor: Colors.orange.shade600,
+                        title: const Text('Solo File OSPITI', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                        subtitle: Text(
+                          'Mostra solo record dai file con "OSPITI" (${ospitiLogs.length} file)',
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                        value: filterOspiti,
+                        onChanged: (val) {
+                          ref.read(ecFilterOspitiProvider.notifier).state = val;
+                          ref.read(ecPageProvider.notifier).state = 0;
+                        },
+                      ),
+                      if (ospitiLogs.isNotEmpty) ...[
+                        const Divider(height: 1),
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'File OSPITI rilevati:',
+                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87),
+                              ),
+                              const SizedBox(height: 8),
+                              ...ospitiLogs.map((log) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 6),
+                                    child: Row(
+                                      children: [
+                                        const Icon(Icons.description_outlined, size: 14, color: Colors.deepOrange),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                log.fileName,
+                                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              Text(
+                                                '${log.totalRecords} record • ${log.date.day}/${log.date.month}/${log.date.year}',
+                                                style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        ),
+                      ] else ...[
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+                          child: Text(
+                            'Nessun file Estratto Conto contiene la parola "OSPITI" nel nome.',
+                            style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -663,9 +1673,29 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
             padding: const EdgeInsets.all(20),
             child: Row(
               children: [
-                Expanded(child: OutlinedButton(onPressed: () => _resetAllFilters(ref), style: OutlinedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), foregroundColor: Colors.red, side: const BorderSide(color: Colors.red)), child: const Text('RESET FILTRI'))),
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => _resetAllFilters(ref),
+                    style: OutlinedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      foregroundColor: Colors.red,
+                      side: const BorderSide(color: Colors.red),
+                    ),
+                    child: const Text('RESET FILTRI'),
+                  ),
+                ),
                 const SizedBox(width: 12),
-                Expanded(child: ElevatedButton(onPressed: () => Navigator.pop(context), style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16), backgroundColor: SkyTheme.timBlue, foregroundColor: Colors.white), child: const Text('APPLICA'))),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      backgroundColor: SkyTheme.timBlue,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('APPLICA'),
+                  ),
+                ),
               ],
             ),
           ),
@@ -687,210 +1717,43 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         Row(
           children: [
             if (icon != null) ...[
-              Icon(icon, size: 18, color: Colors.grey),
+              Icon(icon, size: 16, color: SkyTheme.timBlue),
               const SizedBox(width: 8),
             ],
-            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
+            ),
           ],
         ),
         const SizedBox(height: 12),
         Wrap(
           spacing: 8,
           runSpacing: 8,
-          children: options.map((option) {
-            final isSelected = selectedValues.contains(option);
-            
+          children: options.map((opt) {
+            final isSelected = selectedValues.contains(opt);
             return FilterChip(
-              label: Text(
-                option, 
-                style: TextStyle(
-                  fontSize: 12, 
-                  color: isSelected ? Colors.white : Colors.black87,
-                  fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                )
-              ),
+              label: Text(opt.isEmpty ? '-' : opt),
               selected: isSelected,
-              onSelected: (_) => onToggle(option),
-              selectedColor: SkyTheme.timBlue,
-              checkmarkColor: Colors.white,
-              backgroundColor: Colors.grey.shade100,
+              onSelected: (_) => onToggle(opt),
+              selectedColor: SkyTheme.timBlue.withAlpha(40),
+              checkmarkColor: SkyTheme.timBlue,
+              labelStyle: TextStyle(
+                color: isSelected ? SkyTheme.timBlue : Colors.black87,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                fontSize: 12,
+              ),
+              backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
-                side: BorderSide(color: isSelected ? SkyTheme.timBlue : Colors.grey.shade300),
+                side: BorderSide(
+                  color: isSelected ? SkyTheme.timBlue : Colors.grey.shade300,
+                ),
               ),
-              showCheckmark: true,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             );
           }).toList(),
         ),
       ],
-    );
-  }
-
-  Widget _buildFileSelectionTrigger(
-    BuildContext context,
-    String label,
-    Set<String> selectedValues,
-    List<LogHistory> logs,
-    Function(Set<String>) onSelectedChanged, {
-    IconData? icon,
-  }) {
-    final selectedCount = selectedValues.length;
-    String displayText = 'Tutti i file';
-    if (selectedCount == 1) {
-      final matching = logs.where((l) => l.uniqueCode == selectedValues.first);
-      if (matching.isNotEmpty) {
-        displayText = matching.first.fileName;
-      }
-    } else if (selectedCount > 1) {
-      displayText = '$selectedCount file selezionati';
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            if (icon != null) ...[
-              Icon(icon, size: 18, color: Colors.grey),
-              const SizedBox(width: 8),
-            ],
-            Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-          ],
-        ),
-        const SizedBox(height: 8),
-        InkWell(
-          onTap: () => _showFileSelectionModal(context, selectedValues, logs, onSelectedChanged),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    displayText,
-                    style: TextStyle(
-                      color: selectedCount == 0 ? Colors.grey : Colors.black87,
-                      fontSize: 14,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ),
-                const Icon(Icons.arrow_drop_down, color: Colors.grey),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  void _showFileSelectionModal(
-    BuildContext context,
-    Set<String> initialSelected,
-    List<LogHistory> logs,
-    Function(Set<String>) onSelectedChanged,
-  ) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return FileSelectionDialog(
-          logs: logs,
-          initialSelected: initialSelected,
-          onSelectedChanged: onSelectedChanged,
-        );
-      },
-    );
-  }
-
-  Widget _buildDatePickerFilter(String label, DateTime? selectedDate, Function(DateTime?) onChanged) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(label, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
-        const SizedBox(height: 8),
-        InkWell(
-          onTap: () async {
-            final date = await showDatePicker(
-              context: context,
-              initialDate: selectedDate ?? DateTime.now(),
-              firstDate: DateTime(2020),
-              lastDate: DateTime(2030),
-              builder: (context, child) {
-                return Theme(
-                  data: Theme.of(context).copyWith(
-                    colorScheme: const ColorScheme.light(
-                      primary: SkyTheme.timBlue,
-                    ),
-                  ),
-                  child: child!,
-                );
-              },
-            );
-            if (date != null) onChanged(date);
-          },
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            decoration: BoxDecoration(
-              color: Colors.grey.shade100,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.grey.shade300),
-            ),
-            child: Row(
-              children: [
-                const Icon(Icons.calendar_today, size: 18, color: SkyTheme.timBlue),
-                const SizedBox(width: 12),
-                Text(
-                  selectedDate == null 
-                      ? 'Seleziona data' 
-                      : '${selectedDate.day}/${selectedDate.month}/${selectedDate.year}',
-                  style: TextStyle(
-                    color: selectedDate == null ? Colors.grey : Colors.black87,
-                    fontSize: 14,
-                  ),
-                ),
-                const Spacer(),
-                if (selectedDate != null)
-                  IconButton(
-                    icon: const Icon(Icons.close, size: 16),
-                    onPressed: () => onChanged(null),
-                    padding: EdgeInsets.zero,
-                    constraints: const BoxConstraints(),
-                  ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDrawerSectionTitle(String title) {
-    return Text(title, style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: SkyTheme.timBlue.withAlpha(150), letterSpacing: 1.2));
-  }
-
-
-  Widget _buildFilterDropdown<T>(String label, T value, List<T> items, Function(T) onChanged, {IconData? icon, String Function(T)? labelMapper}) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(color: Colors.grey.shade100, borderRadius: BorderRadius.circular(8), border: Border.all(color: Colors.grey.shade300)),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<T>(
-          value: value,
-          hint: Text(label, style: const TextStyle(fontSize: 14)),
-          isExpanded: true,
-          icon: Icon(icon ?? Icons.arrow_drop_down, size: 20),
-          items: [
-            DropdownMenuItem<T>(value: null as T, child: Text('Tutti ($label)', style: const TextStyle(fontSize: 14))),
-            ...items.map((item) => DropdownMenuItem<T>(value: item, child: Text(labelMapper != null ? labelMapper(item) : item.toString(), style: const TextStyle(fontSize: 14)))),
-          ],
-          onChanged: (val) { if (val != null || (null is T)) onChanged(val as T); },
-        ),
-      ),
     );
   }
 
@@ -902,8 +1765,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     return Container(
       decoration: BoxDecoration(
         color: Colors.grey.shade100,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200),
+        borderRadius: BorderRadius.circular(10),
       ),
       padding: const EdgeInsets.all(4),
       child: Row(
@@ -914,19 +1776,27 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
               onTap: () => onChanged(entry.key),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding: const EdgeInsets.symmetric(vertical: 10),
+                padding: const EdgeInsets.symmetric(vertical: 8),
                 decoration: BoxDecoration(
-                  color: isSelected ? SkyTheme.timRed : Colors.transparent,
+                  color: isSelected ? Colors.white : Colors.transparent,
                   borderRadius: BorderRadius.circular(8),
+                  boxShadow: isSelected
+                      ? [
+                          BoxShadow(
+                            color: Colors.black.withAlpha(10),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ]
+                      : null,
                 ),
-                child: Center(
-                  child: Text(
-                    entry.value,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                      color: isSelected ? Colors.white : Colors.grey.shade700,
-                    ),
+                child: Text(
+                  entry.value,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+                    color: isSelected ? SkyTheme.timBlue : Colors.grey.shade600,
                   ),
                 ),
               ),
@@ -937,81 +1807,448 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     );
   }
 
-  Widget _buildCopyableCell(
-    String text,
-    double width, {
-    required String typeLabel,
-    FontWeight? fontWeight,
-    Color? color,
+  Widget _buildFilterDropdown<T>(
+    String label,
+    T selectedValue,
+    List<T> items,
+    Function(T?) onChanged, {
+    IconData? icon,
   }) {
-    return _buildCell(
-      text,
-      width,
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              text,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 16, color: SkyTheme.timBlue),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              label,
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black87),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: Colors.grey.shade300),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<T>(
+              value: selectedValue,
+              isExpanded: true,
+              hint: Text('Tutti', style: TextStyle(fontSize: 13, color: Colors.grey.shade500)),
+              items: [
+                DropdownMenuItem<T>(
+                  value: null,
+                  child: const Text('Tutti', style: TextStyle(fontSize: 13)),
+                ),
+                ...items.map((item) {
+                  return DropdownMenuItem<T>(
+                    value: item,
+                    child: Text(item?.toString() ?? '', style: const TextStyle(fontSize: 13)),
+                  );
+                }),
+              ],
+              onChanged: onChanged,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDatePickerFilter(String label, DateTime? value, Function(DateTime?) onChanged) {
+    return Material(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+        side: BorderSide(color: Colors.grey.shade300),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: ListTile(
+        title: Text(
+          value != null ? '${value.day}/${value.month}/${value.year}' : label,
+          style: TextStyle(
+            fontSize: 13,
+            color: value != null ? Colors.black87 : Colors.grey.shade500,
+            fontFamily: 'TIMSans',
+          ),
+        ),
+        trailing: value != null
+            ? IconButton(
+                icon: const Icon(Icons.clear, size: 16, color: Colors.grey),
+                onPressed: () => onChanged(null),
+              )
+            : const Icon(Icons.calendar_today_outlined, size: 16, color: Colors.grey),
+        onTap: () async {
+          final picked = await showDatePicker(
+            context: context,
+            initialDate: value ?? DateTime.now(),
+            firstDate: DateTime(2020),
+            lastDate: DateTime(2030),
+            builder: (context, child) {
+              return Theme(
+                data: Theme.of(context).copyWith(
+                  colorScheme: const ColorScheme.light(
+                    primary: SkyTheme.timBlue,
+                    onPrimary: Colors.white,
+                    onSurface: Colors.black87,
+                  ),
+                ),
+                child: child!,
+              );
+            },
+          );
+          if (picked != null) {
+            onChanged(picked);
+          }
+        },
+      ),
+    );
+  }
+
+  Widget _buildFileSelectionTrigger(
+    BuildContext context,
+    String label,
+    Set<String> selectedCodes,
+    List<LogHistory> availableLogs,
+    Function(Set<String>) onChanged, {
+    IconData? icon,
+  }) {
+    final count = selectedCodes.length;
+    return InkWell(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (ctx) => FileSelectionDialog(
+            logs: availableLogs,
+            initialSelected: selectedCodes,
+            onSelectedChanged: onChanged,
+          ),
+        );
+      },
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: count > 0 ? SkyTheme.timBlue : Colors.grey.shade300,
+            width: count > 0 ? 1.5 : 1.0,
+          ),
+        ),
+        child: Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 18, color: count > 0 ? SkyTheme.timBlue : Colors.grey.shade600),
+              const SizedBox(width: 10),
+            ],
+            Expanded(
+              child: Text(
+                count == 0
+                    ? 'Tutti i file (${availableLogs.length})'
+                    : '$count file selezionat${count == 1 ? "o" : "i"}',
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: count > 0 ? FontWeight.bold : FontWeight.normal,
+                  color: count > 0 ? SkyTheme.timBlue : Colors.black87,
+                ),
+              ),
+            ),
+            const Icon(Icons.arrow_drop_down, color: Colors.grey),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDrawerSectionTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 11,
+        fontWeight: FontWeight.bold,
+        color: SkyTheme.timBlue,
+        letterSpacing: 1.2,
+      ),
+    );
+  }
+
+  Widget _buildGlobalTotal(String label, double value, Color color, {bool isCompact = false, bool isVeryCompact = false, bool isUltraCompact = false}) {
+    if (isUltraCompact) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+        decoration: BoxDecoration(
+          color: color.withAlpha(12),
+          borderRadius: BorderRadius.circular(4),
+          border: Border.all(color: color.withAlpha(30)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 7,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade700,
+                letterSpacing: 0.2,
+              ),
+            ),
+            const SizedBox(width: 2),
+            Text(
+              _formatAmount(value),
+              style: TextStyle(
+                fontSize: 8,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    if (isVeryCompact) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+        decoration: BoxDecoration(
+          color: color.withAlpha(12),
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: color.withAlpha(30)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 8,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade700,
+                letterSpacing: 0.3,
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              _formatAmount(value),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+    if (isCompact) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: color.withAlpha(12),
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: color.withAlpha(30)),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 9,
+                fontWeight: FontWeight.bold,
+                color: Colors.grey.shade700,
+                letterSpacing: 0.5,
+              ),
+            ),
+            const SizedBox(width: 6),
+            Text(
+              _formatAmount(value),
               style: TextStyle(
                 fontSize: 13,
-                fontWeight: fontWeight ?? FontWeight.normal,
-                color: color ?? Colors.black87,
-              ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              borderRadius: BorderRadius.circular(4),
-              onTap: () {
-                Clipboard.setData(ClipboardData(text: text));
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('$typeLabel $text copiato negli appunti'),
-                    duration: const Duration(seconds: 1),
-                    backgroundColor: SkyTheme.timBlue,
-                  ),
-                );
-              },
-              child: const Padding(
-                padding: EdgeInsets.all(4.0),
-                child: Icon(Icons.copy_rounded, size: 14, color: Colors.grey),
+                fontWeight: FontWeight.bold,
+                color: color,
               ),
             ),
+          ],
+        ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.bold,
+            color: Colors.grey.shade500,
+            letterSpacing: 1.0,
           ),
-        ],
-      ),
+        ),
+        Text(
+          _formatAmount(value),
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w300,
+            color: color,
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _buildCell(String text, double width, {bool isHeader = false, Color? color, FontWeight? fontWeight, Alignment alignment = Alignment.centerLeft, Widget? child}) {
-    return Container(
-      width: width, height: 56, padding: const EdgeInsets.symmetric(horizontal: 12), alignment: alignment,
-      child: child ?? Text(text, style: TextStyle(fontSize: isHeader ? 11 : 13, fontWeight: isHeader ? FontWeight.bold : (fontWeight ?? FontWeight.normal), color: isHeader ? Colors.grey.shade700 : (color ?? Colors.black87), letterSpacing: isHeader ? 1.0 : null), overflow: TextOverflow.ellipsis),
-    );
+  String _formatAmount(double amount, [String currency = '€']) {
+    final isNeg = amount < 0;
+    final absVal = amount.abs();
+    final parts = absVal.toStringAsFixed(2).split('.');
+    final whole = parts[0];
+    final decimals = parts[1];
+
+    final RegExp reg = RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+    final String formattedWhole = whole.replaceAllMapped(reg, (Match match) => '${match[1]}.');
+
+    return '${isNeg ? "-" : ""}$formattedWhole,$decimals $currency';
   }
 
-
-
-  void _showDeleteDialog(BuildContext context, WidgetRef ref, EstrattoConto record) {
+  void _showRecordDetails(BuildContext context, EstrattoConto record, Map<String, LogHistory> logHistoryMap) {
+    final sourceFile = logHistoryMap[record.logHistoryId]?.fileName ?? record.logHistoryId ?? '-';
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Elimina Record'),
-        content: const Text('Sei sicuro di voler eliminare questo record?'),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Annulla')),
-          ElevatedButton(
-            onPressed: () {
-              ref.read(estrattoContoProvider.notifier).deleteRecord(record.id);
-              Navigator.pop(context);
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Elimina', style: TextStyle(color: Colors.white)),
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.grey.shade50,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // HEADER
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.purple.shade700, Colors.purple.shade900],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(40),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 28),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'DETTAGLIO ESTRATTO CONTO',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Bolla: ${record.bolla}',
+                              style: TextStyle(
+                                color: Colors.white.withAlpha(200),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close, color: Colors.white),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white.withAlpha(20),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
+                // CONTENT
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      children: [
+                        _buildDetailSection('Anagrafica', Icons.person_outline, Colors.purple.shade700, [
+                          _buildDetailRow('CID', record.cid),
+                          _buildDetailRow('Passeggero', record.nomePasseggero),
+                          _buildDetailRow('Società', record.ragioneSociale),
+                          _buildDetailRow('Trasferta', record.numeroTrasferta),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Dettagli Servizio', Icons.receipt_long_outlined, Colors.purple.shade700, [
+                          _buildDetailRow('Tipo Servizio', record.tipoServizio),
+                          _buildDetailRow('Descrizione', record.descrizioneServizio),
+                          _buildDetailRow('Fornitore', record.fornitore),
+                          _buildDetailRow('Itinerario', record.itinerario),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Origine & File', Icons.insert_drive_file_outlined, Colors.purple.shade700, [
+                          _buildDetailRow('File Sorgente', sourceFile),
+                          _buildDetailRow('Riga File', '${record.sourceFileLine ?? '-'}'),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Contabilità', Icons.payments_outlined, Colors.purple.shade700, [
+                          _buildDetailRow('Importo Servizio', '${record.importoServizio.toStringAsFixed(2)} €'),
+                          _buildDetailRow('Tasse', '${record.tasse.toStringAsFixed(2)} €'),
+                          _buildDetailRow('Fee', '${record.fee.toStringAsFixed(2)} €'),
+                          _buildDetailRow('Totale Servizio', '${record.totaleServizio.toStringAsFixed(2)} €', isHighlight: true, highlightColor: Colors.purple.shade700),
+                          _buildDetailRow('Bolla', record.bolla),
+                          _buildDetailRow('Data Bolla', record.dataBolla),
+                          _buildDetailRow('Competenza', record.dataCompetenza),
+                        ]),
+                      ],
+                    ),
+                  ),
+                ),
+
+                // ACTIONS
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.purple.shade700,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                      ),
+                      child: const Text('CHIUDI', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -1099,7 +2336,30 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     );
   }
 
-  void _showRecordDetails(BuildContext context, EstrattoConto record) {
+  Widget _buildTotalIndicator(String label, double value, Color color, {bool isVeryCompact = false}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: isVeryCompact ? 8 : 10,
+            color: Colors.grey.shade600,
+          ),
+        ),
+        Text(
+          _formatAmount(value),
+          style: TextStyle(
+            fontSize: isVeryCompact ? 11 : 13,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
+      ],
+    );
+  }
+
+  void _showAmexRecordDetails(BuildContext context, EstrattoAmex record) {
     showDialog(
       context: context,
       builder: (context) {
@@ -1108,16 +2368,16 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
           clipBehavior: Clip.antiAlias,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500),
+            constraints: const BoxConstraints(maxWidth: 550, maxHeight: 800),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 // HEADER
                 Container(
                   padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [Colors.purple.shade700, Colors.purple.shade900],
+                      colors: [Colors.orange, Color(0xFFE65100)],
                       begin: Alignment.topLeft,
                       end: Alignment.bottomRight,
                     ),
@@ -1130,7 +2390,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                           color: Colors.white.withAlpha(40),
                           borderRadius: BorderRadius.circular(16),
                         ),
-                        child: const Icon(Icons.account_balance_wallet_outlined, color: Colors.white, size: 28),
+                        child: const Icon(Icons.credit_card_outlined, color: Colors.white, size: 28),
                       ),
                       const SizedBox(width: 20),
                       Expanded(
@@ -1138,7 +2398,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const Text(
-                              'DETTAGLIO ESTRATTO CONTO',
+                              'DETTAGLIO TRANSAZIONE AMEX',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontWeight: FontWeight.bold,
@@ -1148,7 +2408,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              'Bolla: ${record.bolla}',
+                              'ID: ${record.idTransazione ?? "-"}',
                               style: TextStyle(
                                 color: Colors.white.withAlpha(200),
                                 fontSize: 13,
@@ -1159,64 +2419,56 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                       ),
                       IconButton(
                         onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.close, color: Colors.white),
+                        icon: const Icon(Icons.close, color: Colors.white, size: 20),
                         style: IconButton.styleFrom(
                           backgroundColor: Colors.white.withAlpha(20),
+                          padding: const EdgeInsets.all(6),
                         ),
                       ),
                     ],
                   ),
                 ),
-                
                 // CONTENT
                 Flexible(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(24),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _buildDetailSection('Anagrafica', Icons.person_outline, Colors.purple.shade700, [
-                          _buildDetailRow('CID', record.cid),
-                          _buildDetailRow('Passeggero', record.nomePasseggero),
-                          _buildDetailRow('Società', record.ragioneSociale),
-                          _buildDetailRow('Trasferta', record.numeroTrasferta),
+                        _buildDetailSection('Anagrafica', Icons.info_outline, Colors.blue, [
+                          _buildDetailRow('CID', record.cid ?? '-'),
+                          _buildDetailRow('Numero Trasferta', record.numeroTrasferta ?? '-'),
+                          _buildDetailRow('Bolla (Trasformata)', record.bolla ?? '-'),
+                          _buildDetailRow('Bolla Originale', record.bollaOriginale ?? '-'),
+                          _buildDetailRow('Nome Viaggiatore', record.nomeViaggiatore ?? '-'),
+                          _buildDetailRow('Conto', record.conto ?? '-'),
+                          _buildDetailRow('Numero di conto', record.numeroConto ?? '-'),
                         ]),
                         const SizedBox(height: 24),
-                        _buildDetailSection('Dettagli Servizio', Icons.receipt_long_outlined, Colors.purple.shade700, [
-                          _buildDetailRow('Tipo Servizio', record.tipoServizio),
-                          _buildDetailRow('Descrizione', record.descrizioneServizio),
-                          _buildDetailRow('Fornitore', record.fornitore),
-                          _buildDetailRow('Itinerario', record.itinerario),
+                        _buildDetailSection('Economia', Icons.euro_symbol, Colors.green, [
+                          _buildDetailRow('Importo Lordo', '${record.importoLordo?.toStringAsFixed(2) ?? "0.00"} €', isHighlight: true, highlightColor: Colors.green.shade700),
+                          _buildDetailRow('Importo Netto', '${record.importoNetto?.toStringAsFixed(2) ?? "0.00"} €'),
+                          _buildDetailRow('Valuta', record.valuta ?? '-'),
                         ]),
                         const SizedBox(height: 24),
-                        _buildDetailSection('Contabilità', Icons.payments_outlined, Colors.purple.shade700, [
-                          _buildDetailRow('Importo Servizio', '${record.importoServizio.toStringAsFixed(2)} €'),
-                          _buildDetailRow('Tasse', '${record.tasse.toStringAsFixed(2)} €'),
-                          _buildDetailRow('Fee', '${record.fee.toStringAsFixed(2)} €'),
-                          _buildDetailRow('Totale Servizio', '${record.totaleServizio.toStringAsFixed(2)} €', isHighlight: true, highlightColor: Colors.purple.shade700),
-                          _buildDetailRow('Bolla', record.bolla),
-                          _buildDetailRow('Data Bolla', record.dataBolla),
-                          _buildDetailRow('Competenza', record.dataCompetenza),
+                        _buildDetailSection('Dati Transazione', Icons.payment_outlined, Colors.purple, [
+                          _buildDetailRow('Data Transazione', record.dataTransazione ?? '-'),
+                          _buildDetailRow('Fornitore', record.nomeFornitore ?? '-'),
+                          _buildDetailRow('Esercizio', record.nomeEsercizio ?? '-'),
+                          _buildDetailRow('Agenzia Viaggi', record.agenziaViaggi ?? '-'),
                         ]),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.orange.shade800,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                          child: const Text('CHIUDI', style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
                       ],
-                    ),
-                  ),
-                ),
-                
-                // ACTIONS
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple.shade700,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        elevation: 0,
-                      ),
-                      child: const Text('CHIUDI', style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ),
                 ),
@@ -1228,7 +2480,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     );
   }
 
-  Future<void> _exportToExcel(List<EstrattoConto> records) async {
+  Future<void> _exportToExcel(List<EstrattoConto> records, Map<String, LogHistory> logHistoryMap) async {
     try {
       final excel = Excel.createExcel();
       final sheet = excel['EstrattiConto'];
@@ -1300,6 +2552,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         TextCellValue('Descrizione Spedire A'),
         TextCellValue('Descrizione Righe Pratiche'),
         TextCellValue('Riga File Originale'),
+        TextCellValue('File Sorgente'),
       ]);
 
       for (final r in records) {
@@ -1363,6 +2616,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
           TextCellValue(r.descrizioneSpedireA),
           TextCellValue(r.descrizioneRighePratiche),
           IntCellValue(r.sourceFileLine ?? 0),
+          TextCellValue(logHistoryMap[r.logHistoryId]?.fileName ?? r.logHistoryId ?? '-'),
         ]);
       }
 

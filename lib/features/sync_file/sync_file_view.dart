@@ -138,16 +138,18 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
     final hasFailed = syncState.syncStep.contains('Errore') || syncState.syncStep.contains('fallita');
     final isCompleted = syncState.syncProgress == 1.0 && !syncState.isSyncing;
 
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+    return Material(
+      color: Colors.grey.shade50,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        side: BorderSide(color: Colors.grey.shade200),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
+      clipBehavior: Clip.antiAlias,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -266,8 +268,10 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
             const SizedBox(height: 20),
             Theme(
               data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-              child: ExpansionTile(
-                tilePadding: EdgeInsets.zero,
+              child: Material(
+                color: Colors.transparent,
+                child: ExpansionTile(
+                  tilePadding: EdgeInsets.zero,
                 iconColor: SkyTheme.timBlue,
                 title: Text(
                   'Elenco dettagliato file (${syncState.syncQueue.length})',
@@ -345,19 +349,22 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
                 ],
               ),
             ),
-          ],
+          ),
         ],
+      ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildClearDbOption(SyncState syncState) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+    return Material(
+      color: Colors.grey.shade50,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        side: BorderSide(color: Colors.grey.shade200),
       ),
+      clipBehavior: Clip.antiAlias,
       child: SwitchListTile(
         activeTrackColor: SkyTheme.timBlue,
         title: const Text(
@@ -382,12 +389,13 @@ class _SyncFileViewState extends ConsumerState<SyncFileView> with SingleTickerPr
   }
 
   Widget _buildAlignWithRemoteOption(SyncState syncState) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
+    return Material(
+      color: Colors.grey.shade50,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.grey.shade200),
+        side: BorderSide(color: Colors.grey.shade200),
       ),
+      clipBehavior: Clip.antiAlias,
       child: SwitchListTile(
         activeTrackColor: SkyTheme.timBlue,
         title: const Text(
