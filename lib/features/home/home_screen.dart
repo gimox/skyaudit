@@ -22,6 +22,7 @@ import 'package:travel_check/features/analysis/scarti_ec_view.dart';
 import 'package:travel_check/features/sync_file/sync_file_view.dart';
 import 'package:travel_check/features/analysis/trasferte_sap_view.dart';
 import 'package:travel_check/features/analysis/trasferte_scartate_view.dart';
+import 'package:travel_check/features/analysis/crea_tracciato_view.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -162,6 +163,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (_selectedIndex == 15) {
       return const TrasferteScartateView();
     }
+    if (_selectedIndex == 16) {
+      return const CreaTracciatoView();
+    }
 
     return Center(
       child: Column(
@@ -227,6 +231,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return Icons.help_outline;
       case 15:
         return Icons.block_outlined;
+      case 16:
+        return Icons.post_add_outlined;
       default:
         return Icons.home_outlined;
     }
@@ -266,6 +272,8 @@ class _HomeScreenState extends State<HomeScreen> {
         return 'Supporto';
       case 15:
         return 'Trasferte Scartate';
+      case 16:
+        return 'Crea Tracciato';
       default:
         return 'Home';
     }

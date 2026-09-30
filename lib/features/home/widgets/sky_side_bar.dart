@@ -76,6 +76,12 @@ const List<SidebarItemData> travelItems = [
     icon: Icons.block_outlined,
     selectedIcon: Icons.block,
   ),
+  SidebarItemData(
+    index: 16,
+    title: 'Crea Tracciato',
+    icon: Icons.post_add_outlined,
+    selectedIcon: Icons.post_add,
+  ),
 ];
 
 const SidebarItemData anagraficaItem = SidebarItemData(
@@ -143,7 +149,7 @@ class _SkySideBarState extends State<SkySideBar> {
   @override
   void initState() {
     super.initState();
-    _isTravelExpanded = (widget.selectedIndex >= 0 && widget.selectedIndex <= 8) || widget.selectedIndex == 15;
+    _isTravelExpanded = (widget.selectedIndex >= 0 && widget.selectedIndex <= 8) || widget.selectedIndex == 15 || widget.selectedIndex == 16;
     _isHroExpanded = widget.selectedIndex == 9;
   }
 
@@ -157,7 +163,7 @@ class _SkySideBarState extends State<SkySideBar> {
   @override
   void didUpdateWidget(covariant SkySideBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    final isTravelSelected = (widget.selectedIndex >= 0 && widget.selectedIndex <= 8) || widget.selectedIndex == 15;
+    final isTravelSelected = (widget.selectedIndex >= 0 && widget.selectedIndex <= 8) || widget.selectedIndex == 15 || widget.selectedIndex == 16;
     final isHroSelected = widget.selectedIndex == 9;
 
     if (isTravelSelected && !_isTravelExpanded) {
@@ -370,7 +376,7 @@ class _SkySideBarState extends State<SkySideBar> {
   }
 
   Widget buildExpanded(BuildContext context) {
-    final isTravelSelected = (widget.selectedIndex >= 0 && widget.selectedIndex <= 8) || widget.selectedIndex == 15;
+    final isTravelSelected = (widget.selectedIndex >= 0 && widget.selectedIndex <= 8) || widget.selectedIndex == 15 || widget.selectedIndex == 16;
     return Container(
       color: Colors.white,
       child: ListView(
@@ -528,7 +534,7 @@ class _SkySideBarState extends State<SkySideBar> {
   Widget buildCollapsed(BuildContext context) {
     final GlobalKey travelKey = GlobalKey();
     final GlobalKey hroKey = GlobalKey();
-    final bool isTravelSelected = (widget.selectedIndex >= 0 && widget.selectedIndex <= 8) || widget.selectedIndex == 15;
+    final bool isTravelSelected = (widget.selectedIndex >= 0 && widget.selectedIndex <= 8) || widget.selectedIndex == 15 || widget.selectedIndex == 16;
     final bool isHroSelected = widget.selectedIndex == 9;
 
     return Container(
