@@ -1,4 +1,5 @@
-import 'dart:io';
+import 'package:universal_io/io.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,8 @@ import 'package:travel_check/features/upload/models/tracciato_sap.dart';
 import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
 import 'package:travel_check/features/upload/models/estratto_amex.dart';
 import 'package:travel_check/features/upload/providers/estratto_amex_provider.dart';
+import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
+import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
@@ -69,6 +72,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     final allRecords = ref.watch(estrattoContoProvider);
     final allSapRecords = ref.watch(tracciatoSapProvider);
     final allAmexRecords = ref.watch(estrattoAmexProvider);
+    final allContabileRecords = ref.watch(tracciatoContabilesProvider);
     final allLogs = ref.watch(logHistoryProvider);
     final filterOspiti = ref.watch(ecFilterOspitiProvider);
     final logHistoryMap = {for (var log in allLogs) log.uniqueCode: log};
@@ -290,7 +294,16 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       endDrawer: _buildFilterDrawer(context, ref, availableSocieta, availableTipi, ecLogs, ospitiLogs),
       floatingActionButton: filteredRecords.isNotEmpty
           ? FloatingActionButton(
-              onPressed: () => _exportToExcel(filteredRecords, logHistoryMap),
+              onPressed: () => _exportToExcel(
+                trasferte,
+                groupedRecords,
+                allSapRecords,
+                allAmexRecords,
+                allContabileRecords,
+                anagraficheMap,
+                logHistoryMap,
+                filteredRecords,
+              ),
               backgroundColor: Colors.green.shade700,
               foregroundColor: Colors.white,
               tooltip: 'Esporta in Excel',
@@ -2480,83 +2493,397 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     );
   }
 
-  Future<void> _exportToExcel(List<EstrattoConto> records, Map<String, LogHistory> logHistoryMap) async {
+  String _normalizeDate(String dateStr) {
+    if (dateStr.trim().isEmpty) return '';
+    final d = dateStr.trim();
+    try {
+      final slashMatch = RegExp(r'^(\d{1,2})/(\d{1,2})/(\d{2,4})').firstMatch(d);
+      if (slashMatch != null) {
+        final day = slashMatch.group(1)!.padLeft(2, '0');
+        final month = slashMatch.group(2)!.padLeft(2, '0');
+        var year = slashMatch.group(3)!;
+        if (year.length == 2) {
+          year = "20$year";
+        }
+        return "$day/$month/$year";
+      }
+
+      final dt = DateTime.tryParse(d);
+      if (dt != null) {
+        return DateFormat('dd/MM/yyyy').format(dt);
+      }
+      
+      if (d.length == 8 && RegExp(r'^\d{8}$').hasMatch(d)) {
+        return "${d.substring(6, 8)}/${d.substring(4, 6)}/${d.substring(0, 4)}";
+      }
+
+      return d;
+    } catch (_) {
+      return d;
+    }
+  }
+
+  Future<void> _exportToExcel(
+    List<String> trasferte,
+    Map<String, List<EstrattoConto>> groupedRecords,
+    List<TracciatoSap> allSapRecords,
+    List<EstrattoAmex> allAmexRecords,
+    List<TracciatoContabile> allContabileRecords,
+    Map<String, String> anagraficaMap,
+    Map<String, LogHistory> logHistoryMap,
+    List<EstrattoConto> rawRecords,
+  ) async {
     try {
       final excel = Excel.createExcel();
-      final sheet = excel['EstrattiConto'];
+      final sheet = excel['ControlliEstrattiConto'];
       excel.delete('Sheet1');
 
-      final anagrafiche = ref.read(anagraficaProvider);
-      final anagraficheMap = {
-        for (var a in anagrafiche)
-          if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
-      };
+      // STILI (Identici a Controlli Trasferte)
+      final headerStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#003399'), // TIM Blue
+        fontColorHex: ExcelColor.fromHexString('#FFFFFF'),
+        bold: true,
+        horizontalAlign: HorizontalAlign.Center,
+        verticalAlign: VerticalAlign.Center,
+      );
 
-      sheet.appendRow([
-        TextCellValue('ID'),
-        TextCellValue('Nr Estratto Conto'),
-        TextCellValue('Nr Bolla'),
-        TextCellValue('Bolla Calcolata'),
-        TextCellValue('Data Bolla'),
-        TextCellValue('Data Competenza'),
-        TextCellValue('Codice Cliente'),
-        TextCellValue('Ragione Sociale'),
-        TextCellValue('Tipo Transazione'),
-        TextCellValue('Tipo Servizio'),
-        TextCellValue('Descrizione Servizio'),
-        TextCellValue('Itinerario'),
-        TextCellValue('Fornitore'),
-        TextCellValue('Codice Viaggio'),
-        TextCellValue('Nr Pax'),
-        TextCellValue('Nr Tkt Bolla'),
-        TextCellValue('Nome Passeggero'),
-        TextCellValue('Met Pagamento Serv'),
-        TextCellValue('Met Pagamento Fee'),
-        TextCellValue('Importo Servizio'),
-        TextCellValue('Tasse'),
-        TextCellValue('Fee'),
-        TextCellValue('Codice Iva'),
-        TextCellValue('Iva Servizio'),
-        TextCellValue('Iva Tasse'),
-        TextCellValue('Iva Fee'),
-        TextCellValue('Totale Servizio'),
-        TextCellValue('Totale Tasse'),
-        TextCellValue('Totale Servizio Generale'),
-        TextCellValue('Totale Fee'),
-        TextCellValue('Data In'),
-        TextCellValue('Data Out'),
-        TextCellValue('Località Partenza'),
-        TextCellValue('Località Arrivo'),
-        TextCellValue('Codice Trattamento'),
-        TextCellValue('Codice Sistemazione'),
-        TextCellValue('Richiedente'),
-        TextCellValue('CID'),
-        TextCellValue('Nominativo'),
-        TextCellValue('Centro Costo'),
-        TextCellValue('Numero Trasferta'),
-        TextCellValue('Campo Statistico 4'),
-        TextCellValue('Riga CRM'),
-        TextCellValue('SAP NO SAP'),
-        TextCellValue('Campo Statistico 7'),
-        TextCellValue('Campo Statistico 8'),
-        TextCellValue('Campo Statistico 9'),
-        TextCellValue('Campo Statistico 10'),
-        TextCellValue('Numero CC Servizio'),
-        TextCellValue('Numero CC Fee'),
-        TextCellValue('Numero Docum Servizio'),
-        TextCellValue('Numero Docum Fee'),
-        TextCellValue('Nr Notti'),
-        TextCellValue('Segue Fattura Servizi'),
-        TextCellValue('Servizio Da Pagare'),
-        TextCellValue('Merchant Fee'),
-        TextCellValue('Descrizione Spedire A'),
-        TextCellValue('Descrizione Righe Pratiche'),
-        TextCellValue('Riga File Originale'),
-        TextCellValue('File Sorgente'),
-      ]);
+      final tripHeaderStyle = CellStyle(
+        backgroundColorHex: ExcelColor.fromHexString('#F0F2F5'),
+        bold: true,
+      );
 
-      for (final r in records) {
-        sheet.appendRow([
+      final ecStyle = CellStyle(fontColorHex: ExcelColor.fromHexString('#6B21A8')); // Purple
+      final sapStyle = CellStyle(fontColorHex: ExcelColor.fromHexString('#15803D')); // Green
+      final amexStyle = CellStyle(fontColorHex: ExcelColor.fromHexString('#C2410C')); // Orange
+      final tracciatoStyle = CellStyle(fontColorHex: ExcelColor.fromHexString('#003399')); // Blue
+
+      // Header principale
+      final headers = [
+        'TIPO RIGA', 'TRASFERTA', 'CID / PASSEGGERO', 'BOLLA', 
+        'DATA INIZIO / DATA', 'DATA FINE',
+        'LOCALITÀ / ITINERARIO', 'GIUSTIFICATIVO / SERVIZIO', 
+        'SOCIETÀ', 'DATA BOLLA/SPESA', 'IMPORTO €', 'DISC. SAP €', 'DISC. AMEX €', 'DISC. TRACCIATO €',
+        'DISC. SAP (SI/NO)', 'DISC. AMEX (SI/NO)', 'DISC. TRACCIATO (SI/NO)'
+      ];
+      
+      for (var i = 0; i < headers.length; i++) {
+        var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0));
+        cell.value = TextCellValue(headers[i]);
+        cell.cellStyle = headerStyle;
+      }
+      sheet.setRowHeight(0, 30);
+
+      // Pre-indicizzazione O(1) per lookup veloce
+      final Map<String, List<TracciatoSap>> sapMap = {};
+      for (final s in allSapRecords) {
+        final key = _cleanT(s.numeroTrasferta);
+        if (key.isNotEmpty) {
+          sapMap.putIfAbsent(key, () => []).add(s);
+        }
+      }
+
+      final Map<String, List<EstrattoAmex>> amexMap = {};
+      for (final a in allAmexRecords) {
+        final key = a.numeroTrasferta?.trim() ?? '';
+        if (key.isNotEmpty) {
+          amexMap.putIfAbsent(key, () => []).add(a);
+        }
+      }
+
+      final Map<String, List<TracciatoContabile>> contabileMap = {};
+      for (final c in allContabileRecords) {
+        if (!c.isScarto) {
+          final key = c.numeroTrasferta.trim();
+          if (key.isNotEmpty) {
+            contabileMap.putIfAbsent(key, () => []).add(c);
+          }
+        }
+      }
+
+      int currentRow = 1;
+      for (final t in trasferte) {
+        final records = groupedRecords[t] ?? [];
+        final sapForT = sapMap[_cleanT(t)] ?? const [];
+        final amexForT = amexMap[t] ?? const [];
+        final contabileForT = contabileMap[t] ?? const [];
+
+        final firstEc = records.isNotEmpty ? records.first : null;
+        final cid = firstEc?.cid ?? (sapForT.isNotEmpty ? sapForT.first.cid : (contabileForT.isNotEmpty ? contabileForT.first.cid : ''));
+        final dataInizio = firstEc?.dataIn ?? (contabileForT.isNotEmpty ? contabileForT.first.dataInizio : (sapForT.isNotEmpty ? sapForT.first.data : ''));
+        final dataFine = firstEc?.dataOut ?? (contabileForT.isNotEmpty ? contabileForT.first.dataFine : (sapForT.isNotEmpty ? sapForT.first.data : ''));
+        final societa = firstEc?.ragioneSociale ?? (sapForT.isNotEmpty ? sapForT.first.societaDescrizione : (contabileForT.isNotEmpty ? contabileForT.first.societa : ''));
+
+        final double totEC = records.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
+        final double totSap = sapForT.fold<double>(0, (sum, sap) => sum + sap.importo);
+        final double totAmex = amexForT.fold<double>(0, (sum, ame) => sum + (ame.importoLordo ?? 0));
+        final double totTracciato = contabileForT.fold<double>(0, (sum, r) => sum + (r.isNegative ? -r.importo : r.importo));
+
+        final diffSap = totEC - totSap;
+        final diffAmex = totEC - totAmex;
+        final diffTracciato = totEC - totTracciato;
+
+        final isMatchingSap = sapForT.isEmpty || diffSap.abs() < 0.01;
+        final isMatchingAmex = amexForT.isEmpty || diffAmex.abs() < 0.01;
+        final isMatchingTracciato = contabileForT.isEmpty || diffTracciato.abs() < 0.01;
+
+        final statusStr = 'SAP: ${sapForT.isEmpty ? "-" : (isMatchingSap ? "OK" : "KO")} | AMEX: ${amexForT.isEmpty ? "-" : (isMatchingAmex ? "OK" : "KO")}${contabileForT.isNotEmpty ? " | TRACC.: ${isMatchingTracciato ? 'OK' : 'KO'}" : ""}';
+
+        // RIGA TRASFERTA (RIEPILOGO)
+        final tripHeaderRow = [
+          'TRASFERTA', t, 'CID: ${_formatCidWithName(cid, anagraficaMap)}', '', 
+          _normalizeDate(dataInizio), _normalizeDate(dataFine),
+          statusStr, '', societa, '', totEC, diffSap, diffAmex, diffTracciato,
+          isMatchingSap ? 'NO' : 'SI',
+          isMatchingAmex ? 'NO' : 'SI',
+          isMatchingTracciato ? 'NO' : 'SI',
+        ];
+
+        for (var i = 0; i < tripHeaderRow.length; i++) {
+          var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
+          final val = tripHeaderRow[i];
+          if (val is double) {
+            cell.value = DoubleCellValue(val);
+          } else {
+            cell.value = TextCellValue(val.toString());
+          }
+          cell.cellStyle = tripHeaderStyle;
+        }
+        currentRow++;
+
+        // RIGHE ESTRATTO CONTO
+        for (final ec in records) {
+          final rowData = [
+            '  > E. CONTO', '', ec.nomePasseggero.isNotEmpty ? ec.nomePasseggero : ec.cid, ec.bolla, 
+            _normalizeDate(ec.dataIn), _normalizeDate(ec.dataOut), ec.itinerario, 
+            ec.descrizioneServizio, ec.ragioneSociale, _normalizeDate(ec.dataBolla), ec.totaleServizio, '', '', '', '', '', ''
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = DoubleCellValue(val);
+            } else {
+              cell.value = TextCellValue(val.toString());
+            }
+            cell.cellStyle = ecStyle;
+          }
+          currentRow++;
+        }
+
+        // RIGHE SAP
+        for (final sap in sapForT) {
+          final rowData = [
+            '  > SAP', '', sap.cid, sap.cdRichiesta ?? '', 
+            _normalizeDate(sap.data), '', sap.tipoSpesaDescrizione, 
+            sap.tipoSpesaCodice, sap.societaDescrizione, _normalizeDate(sap.data), sap.importo, '', '', '', '', '', ''
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = DoubleCellValue(val);
+            } else {
+              cell.value = TextCellValue(val.toString());
+            }
+            cell.cellStyle = sapStyle;
+          }
+          currentRow++;
+        }
+
+        // RIGHE AMEX
+        for (final ame in amexForT) {
+          final rowData = [
+            '  > AMEX', '', ame.cid ?? '', ame.bolla ?? '', 
+            _normalizeDate(ame.dataTransazione ?? ''), '', ame.nomeEsercizio ?? ame.nomeFornitore ?? 'Esercizio AMEX', 
+            'AMEX Transaction', '', _normalizeDate(ame.dataTransazione ?? ''), ame.importoLordo ?? 0, '', '', '', '', '', ''
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = DoubleCellValue(val);
+            } else {
+              cell.value = TextCellValue(val.toString());
+            }
+            cell.cellStyle = amexStyle;
+          }
+          currentRow++;
+        }
+
+        // RIGHE TRACCIATO CONTABILE (se presenti)
+        for (final r in contabileForT) {
+          final rowData = [
+            '  > TRACCIATO', '', r.cid, r.numeroBolla, 
+            _normalizeDate(r.dataInizio), _normalizeDate(r.dataFine), r.localita, 
+            r.giustificativoSpesa, r.societa, _normalizeDate(r.dataSpesa), r.isNegative ? -r.importo : r.importo, '', '', '', '', '', ''
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = DoubleCellValue(val);
+            } else {
+              cell.value = TextCellValue(val.toString());
+            }
+            cell.cellStyle = tracciatoStyle;
+          }
+          currentRow++;
+        }
+
+        currentRow++; // Riga vuota separatrice
+      }
+
+      // Larghezze colonne
+      sheet.setColumnWidth(0, 15);
+      sheet.setColumnWidth(1, 15);
+      sheet.setColumnWidth(2, 25);
+      sheet.setColumnWidth(3, 15);
+      sheet.setColumnWidth(4, 20);
+      sheet.setColumnWidth(5, 20);
+      sheet.setColumnWidth(6, 40);
+      sheet.setColumnWidth(7, 30);
+      sheet.setColumnWidth(8, 25);
+      sheet.setColumnWidth(9, 15);
+      sheet.setColumnWidth(10, 15);
+      sheet.setColumnWidth(11, 15);
+      sheet.setColumnWidth(12, 15);
+      sheet.setColumnWidth(13, 15);
+      sheet.setColumnWidth(14, 20);
+      sheet.setColumnWidth(15, 20);
+      sheet.setColumnWidth(16, 20);
+
+      // FOGLIO 2: DETTAGLIO FLAT (RIGA PER RIGA)
+      final detailSheet = excel['DettaglioFlat'];
+      final detailHeaders = [
+        'TRASFERTA', 'FONTE', 'CID', 'PASSEGGERO / DETTAGLIO', 'BOLLA', 
+        'DATA', 'LOCALITÀ / DESCRIZIONE', 'GIUSTIFICATIVO / SERVIZIO', 
+        'IMPORTO €', 'SOCIETÀ', 'FILE SORGENTE'
+      ];
+
+      for (var i = 0; i < detailHeaders.length; i++) {
+        var cell = detailSheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0));
+        cell.value = TextCellValue(detailHeaders[i]);
+        cell.cellStyle = headerStyle;
+      }
+      detailSheet.setRowHeight(0, 30);
+
+      int dRow = 1;
+      for (final t in trasferte) {
+        // Records EC
+        for (final ec in groupedRecords[t] ?? []) {
+          final rowData = [
+            t, 'E. CONTO', ec.cid, ec.nomePasseggero, ec.bolla, 
+            _normalizeDate(ec.dataBolla), ec.itinerario, ec.descrizioneServizio, 
+            ec.totaleServizio, ec.ragioneSociale, logHistoryMap[ec.logHistoryId]?.fileName ?? ec.logHistoryId ?? '-'
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = detailSheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = DoubleCellValue(val);
+            } else {
+              cell.value = TextCellValue(val.toString());
+            }
+          }
+          dRow++;
+        }
+
+        // Records SAP
+        for (final sap in sapMap[_cleanT(t)] ?? const []) {
+          final rowData = [
+            t, 'SAP', sap.cid, '', sap.cdRichiesta ?? '', 
+            _normalizeDate(sap.data), sap.tipoSpesaDescrizione, sap.tipoSpesaCodice, 
+            sap.importo, sap.societaDescrizione, '-'
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = detailSheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = DoubleCellValue(val);
+            } else {
+              cell.value = TextCellValue(val.toString());
+            }
+          }
+          dRow++;
+        }
+
+        // Records AMEX
+        for (final ame in amexMap[t] ?? const []) {
+          final rowData = [
+            t, 'AMEX', ame.cid ?? '', ame.nomeViaggiatore ?? '', ame.bolla ?? '', 
+            _normalizeDate(ame.dataTransazione ?? ''), ame.nomeEsercizio ?? ame.nomeFornitore ?? '', 'AMEX', 
+            ame.importoLordo ?? 0, '', '-'
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = detailSheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = DoubleCellValue(val);
+            } else {
+              cell.value = TextCellValue(val.toString());
+            }
+          }
+          dRow++;
+        }
+
+        // Records Tracciato
+        for (final r in contabileMap[t] ?? const []) {
+          final rowData = [
+            t, 'TRACCIATO', r.cid, '', r.numeroBolla, 
+            _normalizeDate(r.dataSpesa), r.localita, 
+            r.giustificativoSpesa, r.isNegative ? -r.importo : r.importo, r.societa, '-'
+          ];
+          for (var i = 0; i < rowData.length; i++) {
+            var cell = detailSheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
+            final val = rowData[i];
+            if (val is double) {
+              cell.value = DoubleCellValue(val);
+            } else {
+              cell.value = TextCellValue(val.toString());
+            }
+          }
+          dRow++;
+        }
+      }
+
+      detailSheet.setColumnWidth(0, 15);
+      detailSheet.setColumnWidth(1, 15);
+      detailSheet.setColumnWidth(2, 15);
+      detailSheet.setColumnWidth(3, 25);
+      detailSheet.setColumnWidth(4, 15);
+      detailSheet.setColumnWidth(5, 15);
+      detailSheet.setColumnWidth(6, 40);
+      detailSheet.setColumnWidth(7, 30);
+      detailSheet.setColumnWidth(8, 15);
+      detailSheet.setColumnWidth(9, 25);
+      detailSheet.setColumnWidth(10, 25);
+
+      // FOGLIO 3: DATI ORIGINALI ESTRATTO CONTO
+      final rawSheet = excel['DatiCompletiEC'];
+      final rawHeaders = [
+        'ID', 'Nr Estratto Conto', 'Nr Bolla', 'Bolla Calcolata', 'Data Bolla', 'Data Competenza',
+        'Codice Cliente', 'Ragione Sociale', 'Tipo Transazione', 'Tipo Servizio', 'Descrizione Servizio',
+        'Itinerario', 'Fornitore', 'Codice Viaggio', 'Nr Pax', 'Nr Tkt Bolla', 'Nome Passeggero',
+        'Met Pagamento Serv', 'Met Pagamento Fee', 'Importo Servizio', 'Tasse', 'Fee', 'Codice Iva',
+        'Iva Servizio', 'Iva Tasse', 'Iva Fee', 'Totale Servizio', 'Totale Tasse', 'Totale Servizio Generale',
+        'Totale Fee', 'Data In', 'Data Out', 'Località Partenza', 'Località Arrivo', 'Codice Trattamento',
+        'Codice Sistemazione', 'Richiedente', 'CID', 'Nominativo', 'Centro Costo', 'Numero Trasferta',
+        'Campo Statistico 4', 'Riga CRM', 'SAP NO SAP', 'Campo Statistico 7', 'Campo Statistico 8',
+        'Campo Statistico 9', 'Campo Statistico 10', 'Numero CC Servizio', 'Numero CC Fee',
+        'Numero Docum Servizio', 'Numero Docum Fee', 'Nr Notti', 'Segue Fattura Servizi',
+        'Servizio Da Pagare', 'Merchant Fee', 'Descrizione Spedire A', 'Descrizione Righe Pratiche',
+        'Riga File Originale', 'File Sorgente'
+      ];
+      for (var i = 0; i < rawHeaders.length; i++) {
+        var cell = rawSheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0));
+        cell.value = TextCellValue(rawHeaders[i]);
+        cell.cellStyle = headerStyle;
+      }
+      rawSheet.setRowHeight(0, 30);
+
+      int rRow = 1;
+      for (final r in rawRecords) {
+        final rowVals = [
           IntCellValue(r.id),
           TextCellValue(r.nrEstrattoConto),
           TextCellValue(r.nrBolla),
@@ -2595,7 +2922,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
           TextCellValue(r.codiceSistemazione),
           TextCellValue(r.richiedente),
           TextCellValue(r.cid),
-          TextCellValue(anagraficheMap[r.cid.trim()] ?? ''),
+          TextCellValue(anagraficaMap[r.cid.trim()] ?? ''),
           TextCellValue(r.centroCosto),
           TextCellValue(r.numeroTrasferta),
           TextCellValue(r.campoStatistico4),
@@ -2617,15 +2944,20 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
           TextCellValue(r.descrizioneRighePratiche),
           IntCellValue(r.sourceFileLine ?? 0),
           TextCellValue(logHistoryMap[r.logHistoryId]?.fileName ?? r.logHistoryId ?? '-'),
-        ]);
+        ];
+        for (var i = 0; i < rowVals.length; i++) {
+          var cell = rawSheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: rRow));
+          cell.value = rowVals[i];
+        }
+        rRow++;
       }
 
       final fileBytes = excel.encode();
       if (fileBytes == null) return;
 
       final outputFile = await FilePicker.saveFile(
-        dialogTitle: 'Salva Export Excel',
-        fileName: 'export_estratti_conto_${DateTime.now().millisecondsSinceEpoch}.xlsx',
+        dialogTitle: 'Salva Export Estratti Conto',
+        fileName: 'SkyAudit_EstrattiConto_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.xlsx',
         type: FileType.custom,
         allowedExtensions: ['xlsx'],
       );
@@ -2635,20 +2967,14 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         await file.writeAsBytes(fileBytes);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Esportazione completata con successo!'),
-              backgroundColor: Colors.green,
-            ),
+            const SnackBar(content: Text('Export completato con successo'), backgroundColor: Colors.green),
           );
         }
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Errore durante l\'esportazione: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Errore durante l\'export: $e'), backgroundColor: Colors.red),
         );
       }
     }

@@ -93,7 +93,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
   @override
   Widget build(BuildContext context) {
     final allRecords = ref.watch(tracciatoContabilesProvider)
-        .where((r) => !r.isScarto && !r.isBonificato)
+        .where((r) => !r.isBonificato)
         .toList();
     final allEstrattiConto = ref.watch(estrattoContoProvider);
     final rawSapRecords = ref.watch(tracciatoSapProvider);
@@ -262,7 +262,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     if (showOnlyOrphans) {
       trasferte = trasferte.where((t) {
         final recordsTrasferta = groupedRecords[t]!;
-        final bolleInTracciato = recordsTrasferta.map((r) => r.numeroBolla).toSet();
+        final bolleInTracciato = recordsTrasferta.where((r) => !r.isScarto).map((r) => r.numeroBolla).toSet();
         final ecForT = ecMapByT[t] ?? const [];
         
         final orphans = ecForT.where((ec) => !bolleInTracciato.contains(ec.bolla));
@@ -273,7 +273,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
     final showOnlySapOrphans = ref.watch(controlsShowOnlySapOrphansProvider);
     if (showOnlySapOrphans) {
-      final contabileCleanSet = filteredAllRecords.map((r) => _cleanT(r.numeroTrasferta)).toSet();
+      final contabileCleanSet = filteredAllRecords.where((r) => !r.isScarto).map((r) => _cleanT(r.numeroTrasferta)).toSet();
       final orphanSapSet = allSapRecords
           .where((sap) => _cleanT(sap.numeroTrasferta).isNotEmpty && !contabileCleanSet.contains(_cleanT(sap.numeroTrasferta)))
           .map((sap) => sap.numeroTrasferta)
@@ -291,7 +291,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         final recordsTrasferta = groupedRecords[t] ?? [];
         double tTracciato = 0;
         for (var r in recordsTrasferta) {
-          tTracciato += r.isNegative ? -r.importo : r.importo;
+          if (!r.isScarto) {
+            tTracciato += r.isNegative ? -r.importo : r.importo;
+          }
         }
 
         final ecForTrasferta = ecMapByT[t] ?? const [];
@@ -319,7 +321,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         if (cidMismatchFilter) {
           final Set<String> cids = {};
           for (var r in recordsTrasferta) {
-            cids.add(r.cid);
+            if (!r.isScarto) {
+              cids.add(r.cid);
+            }
           }
           for (var ec in ecForTrasferta) {
             cids.add(ec.cid);
@@ -345,6 +349,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       trasferte = trasferte.where((t) {
         final recordsTrasferta = groupedRecords[t] ?? [];
         final hotelCount = recordsTrasferta.where((r) {
+          if (r.isScarto) return false;
           final code = r.giustificativoSpesa.trim().toUpperCase();
           final desc = (dictionaryMap[r.giustificativoSpesa] ?? '').toLowerCase();
           return code.contains('ALP') || desc.contains('alloggio') || desc.contains('hotel');
@@ -361,7 +366,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     for (final t in trasferte) {
       final records = groupedRecords[t] ?? [];
       for (final r in records) {
-        globalTracciato += r.isNegative ? -r.importo : r.importo;
+        if (!r.isScarto) {
+          globalTracciato += r.isNegative ? -r.importo : r.importo;
+        }
       }
       final ecForT = ecMapByT[t] ?? const [];
       for (final ec in ecForT) {
@@ -633,20 +640,24 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
                 final numeroTrasferta = paginatedTrasferte[index];
                 final recordsTrasferta = groupedRecords[numeroTrasferta] ?? [];
-                final firstRecord = recordsTrasferta.isNotEmpty ? recordsTrasferta.first : null;
+                final regularRecords = recordsTrasferta.where((r) => !r.isScarto).toList();
+                final scartiRecords = recordsTrasferta.where((r) => r.isScarto).toList();
+                final firstRecord = regularRecords.isNotEmpty 
+                    ? regularRecords.first 
+                    : (recordsTrasferta.isNotEmpty ? recordsTrasferta.first : null);
 
                 double totaleTrasferta = 0.0;
-                for (var r in recordsTrasferta) {
+                for (var r in regularRecords) {
                   totaleTrasferta += r.isNegative ? -r.importo : r.importo;
                 }
 
-                // 1-to-1 matching for AMEX
+                // 1-to-1 matching for AMEX (only on regular records)
                 final amexForThisT = allAmexRecords.where((ame) => ame.numeroTrasferta == numeroTrasferta).toList();
                 final Map<int, EstrattoAmex> tracciatoToAmexMatch = {};
                 final Set<int> matchedAmexIds = {};
                 
                 // Pass 1: exact/close amount matches and exact bolla for AMEX
-                for (final record in recordsTrasferta) {
+                for (final record in regularRecords) {
                   final recordImporto = record.isNegative ? -record.importo : record.importo;
                   EstrattoAmex? bestAmexMatch;
                   for (final ame in amexForThisT) {
@@ -665,7 +676,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 }
 
                 // Pass 2: exact/close amount matches and fuzzy bolla for AMEX
-                for (final record in recordsTrasferta) {
+                for (final record in regularRecords) {
                   if (tracciatoToAmexMatch.containsKey(record.id)) continue;
                   final recordImporto = record.isNegative ? -record.importo : record.importo;
                   EstrattoAmex? bestAmexMatch;
@@ -685,7 +696,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 }
 
                 // Pass 3: exact/close amount matches only (within the same trip)
-                for (final record in recordsTrasferta) {
+                for (final record in regularRecords) {
                   if (tracciatoToAmexMatch.containsKey(record.id)) continue;
                   final recordImporto = record.isNegative ? -record.importo : record.importo;
                   EstrattoAmex? bestAmexMatch;
@@ -704,7 +715,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 }
                 
                 // Pass 4: remaining matches by exact bolla only for AMEX (discrepancies in amount)
-                for (final record in recordsTrasferta) {
+                for (final record in regularRecords) {
                   if (tracciatoToAmexMatch.containsKey(record.id)) continue;
                   EstrattoAmex? bestAmexMatch;
                   for (final ame in amexForThisT) {
@@ -722,7 +733,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 }
 
                 // Pass 5: remaining matches by fuzzy bolla only for AMEX (discrepancies in amount)
-                for (final record in recordsTrasferta) {
+                for (final record in regularRecords) {
                   if (tracciatoToAmexMatch.containsKey(record.id)) continue;
                   EstrattoAmex? bestAmexMatch;
                   for (final ame in amexForThisT) {
@@ -739,13 +750,13 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                   }
                 }
 
-                // 1-to-1 matching for EC
+                // 1-to-1 matching for EC (only on regular records)
                 final ecForThisT = allEstrattiConto.where((ec) => ec.numeroTrasferta == numeroTrasferta).toList();
                 final Map<int, EstrattoConto> tracciatoToEcMatch = {};
                 final Set<int> matchedEcIds = {};
                 
                 // Pass 1: exact/close amount matches and exact bolla for EC
-                for (final record in recordsTrasferta) {
+                for (final record in regularRecords) {
                   final recordImporto = record.isNegative ? -record.importo : record.importo;
                   EstrattoConto? bestEcMatch;
                   for (final ec in ecForThisT) {
@@ -764,7 +775,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 }
 
                 // Pass 2: exact/close amount matches and fuzzy bolla for EC
-                for (final record in recordsTrasferta) {
+                for (final record in regularRecords) {
                   if (tracciatoToEcMatch.containsKey(record.id)) continue;
                   final recordImporto = record.isNegative ? -record.importo : record.importo;
                   EstrattoConto? bestEcMatch;
@@ -784,7 +795,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 }
 
                 // Pass 3: exact/close amount matches only (within the same trip)
-                for (final record in recordsTrasferta) {
+                for (final record in regularRecords) {
                   if (tracciatoToEcMatch.containsKey(record.id)) continue;
                   final recordImporto = record.isNegative ? -record.importo : record.importo;
                   EstrattoConto? bestEcMatch;
@@ -803,7 +814,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 }
                 
                 // Pass 4: remaining matches by exact bolla only for EC (discrepancies in amount)
-                for (final record in recordsTrasferta) {
+                for (final record in regularRecords) {
                   if (tracciatoToEcMatch.containsKey(record.id)) continue;
                   EstrattoConto? bestEcMatch;
                   for (final ec in ecForThisT) {
@@ -821,7 +832,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 }
 
                 // Pass 5: remaining matches by fuzzy bolla only for EC (discrepancies in amount)
-                for (final record in recordsTrasferta) {
+                for (final record in regularRecords) {
                   if (tracciatoToEcMatch.containsKey(record.id)) continue;
                   EstrattoConto? bestEcMatch;
                   for (final ec in ecForThisT) {
@@ -854,7 +865,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 final totaleAmex = amexForTrasferta.fold<double>(0, (sum, ame) => sum + (ame.importoLordo ?? 0));
 
                 final Set<String> allCids = {};
-                for (var r in recordsTrasferta) {
+                for (var r in regularRecords) {
                   allCids.add(r.cid);
                 }
                 for (var ec in ecForTrasferta) {
@@ -868,7 +879,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 }
                 final bool hasCidMismatch = allCids.length > 1;
 
-                final hotelRecordsCount = recordsTrasferta.where((r) {
+                final hotelRecordsCount = regularRecords.where((r) {
                   final code = r.giustificativoSpesa.trim().toUpperCase();
                   final desc = (dictionaryMap[r.giustificativoSpesa] ?? '').toLowerCase();
                   return code.contains('ALP') || desc.contains('alloggio') || desc.contains('hotel');
@@ -1174,8 +1185,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                     ),
                     subtitle: Text(
                       isUltraCompact
-                          ? '${recordsTrasferta.length} rec • $displayDataInizio - $displayDataFine • Soc: $displaySocieta • Tipo: $displayTipo'
-                          : '${recordsTrasferta.length} record • Dal $displayDataInizio al $displayDataFine • Società: $displaySocieta${dictionaryMap[displaySocieta] != null ? " (${dictionaryMap[displaySocieta]})" : ""} • Tipo: $displayTipo${dictionaryMap[displayTipo] != null ? " (${dictionaryMap[displayTipo]})" : ""}',
+                          ? '${recordsTrasferta.length} rec${scartiRecords.isNotEmpty ? " (${scartiRecords.length} scarti)" : ""} • $displayDataInizio - $displayDataFine • Soc: $displaySocieta • Tipo: $displayTipo'
+                          : '${recordsTrasferta.length} record${scartiRecords.isNotEmpty ? " (${scartiRecords.length} scarti)" : ""} • Dal $displayDataInizio al $displayDataFine • Società: $displaySocieta${dictionaryMap[displaySocieta] != null ? " (${dictionaryMap[displaySocieta]})" : ""} • Tipo: $displayTipo${dictionaryMap[displayTipo] != null ? " (${dictionaryMap[displayTipo]})" : ""}',
                       style: TextStyle(fontSize: isUltraCompact ? 8 : (isVeryCompact ? 9 : (isCompactList ? 11 : 12))),
                     ),
                     leading: isUltraCompact
@@ -1186,7 +1197,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             size: isVeryCompact ? 14 : (isCompactList ? 20 : 24),
                           ),
                     children: [
-                      ...recordsTrasferta.expand<Widget>((record) {
+                      ...regularRecords.expand<Widget>((record) {
                         final matchedEC = tracciatoToEcMatch[record.id];
                         final matchedAmex = tracciatoToAmexMatch[record.id];
                         final hasMatch = matchedEC != null;
@@ -1851,6 +1862,133 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                           );
                         },
                       ),
+                      // SEZIONE RECORD SCARTATI (Mettili alla fine con sfondo rosso, senza incroci)
+                      if (scartiRecords.isNotEmpty) ...[
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(
+                            isVeryCompact ? 12 : 16, 
+                            isVeryCompact ? 4 : (isCompactList ? 10 : 16), 
+                            isVeryCompact ? 12 : 16, 
+                            isVeryCompact ? 1 : (isCompactList ? 4 : 8),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(Icons.cancel_outlined, size: isVeryCompact ? 10 : (isCompactList ? 14 : 16), color: Colors.red.shade800),
+                              SizedBox(width: isVeryCompact ? 4 : 8),
+                              Text(
+                                'Record Scartati (${scartiRecords.length})',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: isVeryCompact ? 9 : (isCompactList ? 11 : 12),
+                                  color: Colors.red.shade800,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        ...scartiRecords.map((record) => Container(
+                          margin: EdgeInsets.only(
+                            left: isVeryCompact ? 4 : (isCompactList ? 12 : 20),
+                            bottom: isVeryCompact ? 2 : (isCompactList ? 4 : 6),
+                            right: isVeryCompact ? 2 : 8,
+                          ),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: horizontalPadding,
+                            vertical: recordVerticalPadding,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.red.shade50,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.red.shade200),
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Row(
+                                      children: [
+                                        Expanded(
+                                          child: Text(
+                                            record.localita.isEmpty ? 'Località non specificata' : record.localita,
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: isUltraCompact ? 9 : (isVeryCompact ? 11 : (isCompactList ? 12 : 14)),
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                          decoration: BoxDecoration(
+                                            color: Colors.red.shade100,
+                                            borderRadius: BorderRadius.circular(4),
+                                            border: Border.all(color: Colors.red.shade300, width: 0.5),
+                                          ),
+                                          child: Text(
+                                            'SCARTO',
+                                            style: TextStyle(
+                                              color: Colors.red.shade900,
+                                              fontSize: isUltraCompact ? 6 : (isVeryCompact ? 8 : 9),
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      'CID: ${_formatCidWithName(record.cid, anagraficaMap)}',
+                                      style: TextStyle(
+                                        fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
+                                        color: Colors.grey.shade700,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 1),
+                                    Text(
+                                      'Bolla: ${record.numeroBolla} • ${record.giustificativoSpesa}${dictionaryMap[record.giustificativoSpesa] != null ? " (${dictionaryMap[record.giustificativoSpesa]})" : ""}',
+                                      style: TextStyle(
+                                        fontSize: isUltraCompact ? 7 : (isVeryCompact ? 8 : (isCompactList ? 9 : 10)), 
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                width: trailingWidth,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      '${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: isUltraCompact ? 9 : (isVeryCompact ? 10 : (isCompactList ? 12 : 14)),
+                                        color: Colors.red.shade900,
+                                      ),
+                                    ),
+                                    SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.visibility_outlined, 
+                                        color: Colors.red.shade700, 
+                                        size: isUltraCompact ? 12 : (isVeryCompact ? 14 : (isCompactList ? 18 : 20)),
+                                      ),
+                                      onPressed: () => _showRecordDetails(context, record),
+                                      tooltip: 'Dettaglio Scarto',
+                                      constraints: const BoxConstraints(),
+                                      padding: EdgeInsets.all(isUltraCompact ? 1 : (isVeryCompact ? 2 : 8)),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        )),
+                        const SizedBox(height: 8),
+                      ],
                       // RIGA RIEPILOGO TOTALI TRASFERTA
                       Container(
                         margin: EdgeInsets.fromLTRB(
@@ -2558,7 +2696,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         
         double totTracciato = 0;
         for (var r in records) {
-          totTracciato += r.isNegative ? -r.importo : r.importo;
+          if (!r.isScarto) {
+            totTracciato += r.isNegative ? -r.importo : r.importo;
+          }
         }
         
         double totEC = ecForT.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
@@ -2908,7 +3048,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     Map<String, String> dictionaryMap
   ) {
     final allTracciato = ref.watch(tracciatoContabilesProvider)
-        .where((r) => !r.isScarto && !r.isBonificato)
+        .where((r) => !r.isBonificato)
         .toList();
     final societaOptions = allTracciato.map((e) => e.societa).toSet().toList()..sort();
     final tipoDipendenteOptions = allTracciato.map((e) => e.tipoDipendente).toSet().toList()..sort();
