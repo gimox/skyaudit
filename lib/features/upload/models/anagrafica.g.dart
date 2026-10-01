@@ -17,303 +17,308 @@ const AnagraficaSchema = CollectionSchema(
   name: r'Anagrafica',
   id: 5423421987839097655,
   properties: {
-    r'cid': PropertySchema(id: 0, name: r'cid', type: IsarType.string),
+    r'areaFascia': PropertySchema(
+      id: 0,
+      name: r'areaFascia',
+      type: IsarType.string,
+    ),
+    r'cid': PropertySchema(id: 1, name: r'cid', type: IsarType.string),
     r'cidGestore': PropertySchema(
-      id: 1,
+      id: 2,
       name: r'cidGestore',
       type: IsarType.string,
     ),
     r'cidKeyAccount': PropertySchema(
-      id: 2,
+      id: 3,
       name: r'cidKeyAccount',
       type: IsarType.string,
     ),
     r'cidResponsabileUO': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'cidResponsabileUO',
       type: IsarType.string,
     ),
     r'codiceFiscale': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'codiceFiscale',
       type: IsarType.string,
     ),
     r'contrSolidarieta': PropertySchema(
-      id: 5,
+      id: 6,
       name: r'contrSolidarieta',
       type: IsarType.string,
     ),
     r'dataAssunzione': PropertySchema(
-      id: 6,
+      id: 7,
       name: r'dataAssunzione',
       type: IsarType.string,
     ),
     r'dataAssunzioneGruppo': PropertySchema(
-      id: 7,
+      id: 8,
       name: r'dataAssunzioneGruppo',
       type: IsarType.string,
     ),
     r'dataNascita': PropertySchema(
-      id: 8,
+      id: 9,
       name: r'dataNascita',
       type: IsarType.string,
     ),
     r'formazione': PropertySchema(
-      id: 9,
+      id: 10,
       name: r'formazione',
       type: IsarType.string,
     ),
     r'gradoOccupaz': PropertySchema(
-      id: 10,
+      id: 11,
       name: r'gradoOccupaz',
       type: IsarType.string,
     ),
     r'gradoOccupazInSol': PropertySchema(
-      id: 11,
+      id: 12,
       name: r'gradoOccupazInSol',
       type: IsarType.string,
     ),
     r'importBatch': PropertySchema(
-      id: 12,
+      id: 13,
       name: r'importBatch',
       type: IsarType.string,
     ),
     r'indirizzoMail': PropertySchema(
-      id: 13,
+      id: 14,
       name: r'indirizzoMail',
       type: IsarType.string,
     ),
     r'lastUpdate': PropertySchema(
-      id: 14,
+      id: 15,
       name: r'lastUpdate',
       type: IsarType.dateTime,
     ),
-    r'livello': PropertySchema(id: 15, name: r'livello', type: IsarType.string),
+    r'livello': PropertySchema(id: 16, name: r'livello', type: IsarType.string),
     r'luogoNascita': PropertySchema(
-      id: 16,
+      id: 17,
       name: r'luogoNascita',
       type: IsarType.string,
     ),
     r'mailGestore': PropertySchema(
-      id: 17,
+      id: 18,
       name: r'mailGestore',
       type: IsarType.string,
     ),
     r'mailKeyAccount': PropertySchema(
-      id: 18,
+      id: 19,
       name: r'mailKeyAccount',
       type: IsarType.string,
     ),
     r'mailResponsabileUO': PropertySchema(
-      id: 19,
+      id: 20,
       name: r'mailResponsabileUO',
       type: IsarType.string,
     ),
     r'mansione': PropertySchema(
-      id: 20,
+      id: 21,
       name: r'mansione',
       type: IsarType.string,
     ),
     r'matricolaAziendaleUID': PropertySchema(
-      id: 21,
+      id: 22,
       name: r'matricolaAziendaleUID',
       type: IsarType.string,
     ),
     r'nominativo': PropertySchema(
-      id: 22,
+      id: 23,
       name: r'nominativo',
       type: IsarType.string,
     ),
     r'nominativoGestore': PropertySchema(
-      id: 23,
+      id: 24,
       name: r'nominativoGestore',
       type: IsarType.string,
     ),
     r'nominativoKeyAccount': PropertySchema(
-      id: 24,
+      id: 25,
       name: r'nominativoKeyAccount',
       type: IsarType.string,
     ),
     r'nominativoResponsabileUO': PropertySchema(
-      id: 25,
+      id: 26,
       name: r'nominativoResponsabileUO',
       type: IsarType.string,
     ),
     r'nuovoSistProfAmbito': PropertySchema(
-      id: 26,
+      id: 27,
       name: r'nuovoSistProfAmbito',
       type: IsarType.string,
     ),
     r'nuovoSistProfArea': PropertySchema(
-      id: 27,
+      id: 28,
       name: r'nuovoSistProfArea',
       type: IsarType.string,
     ),
     r'nuovoSistProfFamiglia': PropertySchema(
-      id: 28,
+      id: 29,
       name: r'nuovoSistProfFamiglia',
       type: IsarType.string,
     ),
     r'nuovoSistProfJob': PropertySchema(
-      id: 29,
+      id: 30,
       name: r'nuovoSistProfJob',
       type: IsarType.string,
     ),
-    r'paese': PropertySchema(id: 30, name: r'paese', type: IsarType.string),
+    r'paese': PropertySchema(id: 31, name: r'paese', type: IsarType.string),
     r'partTimeFullTime': PropertySchema(
-      id: 31,
+      id: 32,
       name: r'partTimeFullTime',
       type: IsarType.string,
     ),
     r'posizione': PropertySchema(
-      id: 32,
+      id: 33,
       name: r'posizione',
       type: IsarType.string,
     ),
     r'provincia': PropertySchema(
-      id: 33,
+      id: 34,
       name: r'provincia',
       type: IsarType.string,
     ),
-    r'regione': PropertySchema(id: 34, name: r'regione', type: IsarType.string),
+    r'regione': PropertySchema(id: 35, name: r'regione', type: IsarType.string),
     r'responsabileSINO': PropertySchema(
-      id: 35,
+      id: 36,
       name: r'responsabileSINO',
       type: IsarType.string,
     ),
-    r'sedeCap': PropertySchema(id: 36, name: r'sedeCap', type: IsarType.string),
+    r'sedeCap': PropertySchema(id: 37, name: r'sedeCap', type: IsarType.string),
     r'sedeComune': PropertySchema(
-      id: 37,
+      id: 38,
       name: r'sedeComune',
       type: IsarType.string,
     ),
     r'sedeIndirizzo': PropertySchema(
-      id: 38,
+      id: 39,
       name: r'sedeIndirizzo',
       type: IsarType.string,
     ),
     r'sedeProvincia': PropertySchema(
-      id: 39,
+      id: 40,
       name: r'sedeProvincia',
       type: IsarType.string,
     ),
-    r'sesso': PropertySchema(id: 40, name: r'sesso', type: IsarType.string),
-    r'societa': PropertySchema(id: 41, name: r'societa', type: IsarType.string),
+    r'sesso': PropertySchema(id: 41, name: r'sesso', type: IsarType.string),
+    r'societa': PropertySchema(id: 42, name: r'societa', type: IsarType.string),
     r'societaContabile': PropertySchema(
-      id: 42,
+      id: 43,
       name: r'societaContabile',
       type: IsarType.string,
     ),
-    r'status': PropertySchema(id: 43, name: r'status', type: IsarType.string),
+    r'status': PropertySchema(id: 44, name: r'status', type: IsarType.string),
     r'tipoContratto': PropertySchema(
-      id: 44,
+      id: 45,
       name: r'tipoContratto',
       type: IsarType.string,
     ),
-    r'tipoDip': PropertySchema(id: 45, name: r'tipoDip', type: IsarType.string),
+    r'tipoDip': PropertySchema(id: 46, name: r'tipoDip', type: IsarType.string),
     r'tipoScuola': PropertySchema(
-      id: 46,
+      id: 47,
       name: r'tipoScuola',
       type: IsarType.string,
     ),
     r'tipologiaResponsabile': PropertySchema(
-      id: 47,
+      id: 48,
       name: r'tipologiaResponsabile',
       type: IsarType.string,
     ),
-    r'under35': PropertySchema(id: 48, name: r'under35', type: IsarType.string),
+    r'under35': PropertySchema(id: 49, name: r'under35', type: IsarType.string),
     r'unitaOrg3': PropertySchema(
-      id: 49,
+      id: 50,
       name: r'unitaOrg3',
       type: IsarType.string,
     ),
     r'unitaOrg3Des': PropertySchema(
-      id: 50,
+      id: 51,
       name: r'unitaOrg3Des',
       type: IsarType.string,
     ),
     r'unitaOrg4': PropertySchema(
-      id: 51,
+      id: 52,
       name: r'unitaOrg4',
       type: IsarType.string,
     ),
     r'unitaOrg4Des': PropertySchema(
-      id: 52,
+      id: 53,
       name: r'unitaOrg4Des',
       type: IsarType.string,
     ),
     r'unitaOrg5': PropertySchema(
-      id: 53,
+      id: 54,
       name: r'unitaOrg5',
       type: IsarType.string,
     ),
     r'unitaOrg5Des': PropertySchema(
-      id: 54,
+      id: 55,
       name: r'unitaOrg5Des',
       type: IsarType.string,
     ),
     r'unitaOrg6': PropertySchema(
-      id: 55,
+      id: 56,
       name: r'unitaOrg6',
       type: IsarType.string,
     ),
     r'unitaOrg6Des': PropertySchema(
-      id: 56,
+      id: 57,
       name: r'unitaOrg6Des',
       type: IsarType.string,
     ),
     r'unitaOrg7': PropertySchema(
-      id: 57,
+      id: 58,
       name: r'unitaOrg7',
       type: IsarType.string,
     ),
     r'unitaOrg7Des': PropertySchema(
-      id: 58,
+      id: 59,
       name: r'unitaOrg7Des',
       type: IsarType.string,
     ),
     r'unitaOrg8': PropertySchema(
-      id: 59,
+      id: 60,
       name: r'unitaOrg8',
       type: IsarType.string,
     ),
     r'unitaOrg8Des': PropertySchema(
-      id: 60,
+      id: 61,
       name: r'unitaOrg8Des',
       type: IsarType.string,
     ),
     r'unitaOrg9': PropertySchema(
-      id: 61,
+      id: 62,
       name: r'unitaOrg9',
       type: IsarType.string,
     ),
     r'unitaOrg9Des': PropertySchema(
-      id: 62,
+      id: 63,
       name: r'unitaOrg9Des',
       type: IsarType.string,
     ),
     r'unitaOrganizzativa': PropertySchema(
-      id: 63,
+      id: 64,
       name: r'unitaOrganizzativa',
       type: IsarType.string,
     ),
     r'utenteCOD': PropertySchema(
-      id: 64,
+      id: 65,
       name: r'utenteCOD',
       type: IsarType.string,
     ),
     r'utenteKA': PropertySchema(
-      id: 65,
+      id: 66,
       name: r'utenteKA',
       type: IsarType.string,
     ),
     r'utenteRU': PropertySchema(
-      id: 66,
+      id: 67,
       name: r'utenteRU',
       type: IsarType.string,
     ),
     r'utenteRUBU': PropertySchema(
-      id: 67,
+      id: 68,
       name: r'utenteRUBU',
       type: IsarType.string,
     ),
@@ -354,6 +359,12 @@ int _anagraficaEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  {
+    final value = object.areaFascia;
+    if (value != null) {
+      bytesCount += 3 + value.length * 3;
+    }
+  }
   {
     final value = object.cid;
     if (value != null) {
@@ -765,74 +776,75 @@ void _anagraficaSerialize(
   List<int> offsets,
   Map<Type, List<int>> allOffsets,
 ) {
-  writer.writeString(offsets[0], object.cid);
-  writer.writeString(offsets[1], object.cidGestore);
-  writer.writeString(offsets[2], object.cidKeyAccount);
-  writer.writeString(offsets[3], object.cidResponsabileUO);
-  writer.writeString(offsets[4], object.codiceFiscale);
-  writer.writeString(offsets[5], object.contrSolidarieta);
-  writer.writeString(offsets[6], object.dataAssunzione);
-  writer.writeString(offsets[7], object.dataAssunzioneGruppo);
-  writer.writeString(offsets[8], object.dataNascita);
-  writer.writeString(offsets[9], object.formazione);
-  writer.writeString(offsets[10], object.gradoOccupaz);
-  writer.writeString(offsets[11], object.gradoOccupazInSol);
-  writer.writeString(offsets[12], object.importBatch);
-  writer.writeString(offsets[13], object.indirizzoMail);
-  writer.writeDateTime(offsets[14], object.lastUpdate);
-  writer.writeString(offsets[15], object.livello);
-  writer.writeString(offsets[16], object.luogoNascita);
-  writer.writeString(offsets[17], object.mailGestore);
-  writer.writeString(offsets[18], object.mailKeyAccount);
-  writer.writeString(offsets[19], object.mailResponsabileUO);
-  writer.writeString(offsets[20], object.mansione);
-  writer.writeString(offsets[21], object.matricolaAziendaleUID);
-  writer.writeString(offsets[22], object.nominativo);
-  writer.writeString(offsets[23], object.nominativoGestore);
-  writer.writeString(offsets[24], object.nominativoKeyAccount);
-  writer.writeString(offsets[25], object.nominativoResponsabileUO);
-  writer.writeString(offsets[26], object.nuovoSistProfAmbito);
-  writer.writeString(offsets[27], object.nuovoSistProfArea);
-  writer.writeString(offsets[28], object.nuovoSistProfFamiglia);
-  writer.writeString(offsets[29], object.nuovoSistProfJob);
-  writer.writeString(offsets[30], object.paese);
-  writer.writeString(offsets[31], object.partTimeFullTime);
-  writer.writeString(offsets[32], object.posizione);
-  writer.writeString(offsets[33], object.provincia);
-  writer.writeString(offsets[34], object.regione);
-  writer.writeString(offsets[35], object.responsabileSINO);
-  writer.writeString(offsets[36], object.sedeCap);
-  writer.writeString(offsets[37], object.sedeComune);
-  writer.writeString(offsets[38], object.sedeIndirizzo);
-  writer.writeString(offsets[39], object.sedeProvincia);
-  writer.writeString(offsets[40], object.sesso);
-  writer.writeString(offsets[41], object.societa);
-  writer.writeString(offsets[42], object.societaContabile);
-  writer.writeString(offsets[43], object.status);
-  writer.writeString(offsets[44], object.tipoContratto);
-  writer.writeString(offsets[45], object.tipoDip);
-  writer.writeString(offsets[46], object.tipoScuola);
-  writer.writeString(offsets[47], object.tipologiaResponsabile);
-  writer.writeString(offsets[48], object.under35);
-  writer.writeString(offsets[49], object.unitaOrg3);
-  writer.writeString(offsets[50], object.unitaOrg3Des);
-  writer.writeString(offsets[51], object.unitaOrg4);
-  writer.writeString(offsets[52], object.unitaOrg4Des);
-  writer.writeString(offsets[53], object.unitaOrg5);
-  writer.writeString(offsets[54], object.unitaOrg5Des);
-  writer.writeString(offsets[55], object.unitaOrg6);
-  writer.writeString(offsets[56], object.unitaOrg6Des);
-  writer.writeString(offsets[57], object.unitaOrg7);
-  writer.writeString(offsets[58], object.unitaOrg7Des);
-  writer.writeString(offsets[59], object.unitaOrg8);
-  writer.writeString(offsets[60], object.unitaOrg8Des);
-  writer.writeString(offsets[61], object.unitaOrg9);
-  writer.writeString(offsets[62], object.unitaOrg9Des);
-  writer.writeString(offsets[63], object.unitaOrganizzativa);
-  writer.writeString(offsets[64], object.utenteCOD);
-  writer.writeString(offsets[65], object.utenteKA);
-  writer.writeString(offsets[66], object.utenteRU);
-  writer.writeString(offsets[67], object.utenteRUBU);
+  writer.writeString(offsets[0], object.areaFascia);
+  writer.writeString(offsets[1], object.cid);
+  writer.writeString(offsets[2], object.cidGestore);
+  writer.writeString(offsets[3], object.cidKeyAccount);
+  writer.writeString(offsets[4], object.cidResponsabileUO);
+  writer.writeString(offsets[5], object.codiceFiscale);
+  writer.writeString(offsets[6], object.contrSolidarieta);
+  writer.writeString(offsets[7], object.dataAssunzione);
+  writer.writeString(offsets[8], object.dataAssunzioneGruppo);
+  writer.writeString(offsets[9], object.dataNascita);
+  writer.writeString(offsets[10], object.formazione);
+  writer.writeString(offsets[11], object.gradoOccupaz);
+  writer.writeString(offsets[12], object.gradoOccupazInSol);
+  writer.writeString(offsets[13], object.importBatch);
+  writer.writeString(offsets[14], object.indirizzoMail);
+  writer.writeDateTime(offsets[15], object.lastUpdate);
+  writer.writeString(offsets[16], object.livello);
+  writer.writeString(offsets[17], object.luogoNascita);
+  writer.writeString(offsets[18], object.mailGestore);
+  writer.writeString(offsets[19], object.mailKeyAccount);
+  writer.writeString(offsets[20], object.mailResponsabileUO);
+  writer.writeString(offsets[21], object.mansione);
+  writer.writeString(offsets[22], object.matricolaAziendaleUID);
+  writer.writeString(offsets[23], object.nominativo);
+  writer.writeString(offsets[24], object.nominativoGestore);
+  writer.writeString(offsets[25], object.nominativoKeyAccount);
+  writer.writeString(offsets[26], object.nominativoResponsabileUO);
+  writer.writeString(offsets[27], object.nuovoSistProfAmbito);
+  writer.writeString(offsets[28], object.nuovoSistProfArea);
+  writer.writeString(offsets[29], object.nuovoSistProfFamiglia);
+  writer.writeString(offsets[30], object.nuovoSistProfJob);
+  writer.writeString(offsets[31], object.paese);
+  writer.writeString(offsets[32], object.partTimeFullTime);
+  writer.writeString(offsets[33], object.posizione);
+  writer.writeString(offsets[34], object.provincia);
+  writer.writeString(offsets[35], object.regione);
+  writer.writeString(offsets[36], object.responsabileSINO);
+  writer.writeString(offsets[37], object.sedeCap);
+  writer.writeString(offsets[38], object.sedeComune);
+  writer.writeString(offsets[39], object.sedeIndirizzo);
+  writer.writeString(offsets[40], object.sedeProvincia);
+  writer.writeString(offsets[41], object.sesso);
+  writer.writeString(offsets[42], object.societa);
+  writer.writeString(offsets[43], object.societaContabile);
+  writer.writeString(offsets[44], object.status);
+  writer.writeString(offsets[45], object.tipoContratto);
+  writer.writeString(offsets[46], object.tipoDip);
+  writer.writeString(offsets[47], object.tipoScuola);
+  writer.writeString(offsets[48], object.tipologiaResponsabile);
+  writer.writeString(offsets[49], object.under35);
+  writer.writeString(offsets[50], object.unitaOrg3);
+  writer.writeString(offsets[51], object.unitaOrg3Des);
+  writer.writeString(offsets[52], object.unitaOrg4);
+  writer.writeString(offsets[53], object.unitaOrg4Des);
+  writer.writeString(offsets[54], object.unitaOrg5);
+  writer.writeString(offsets[55], object.unitaOrg5Des);
+  writer.writeString(offsets[56], object.unitaOrg6);
+  writer.writeString(offsets[57], object.unitaOrg6Des);
+  writer.writeString(offsets[58], object.unitaOrg7);
+  writer.writeString(offsets[59], object.unitaOrg7Des);
+  writer.writeString(offsets[60], object.unitaOrg8);
+  writer.writeString(offsets[61], object.unitaOrg8Des);
+  writer.writeString(offsets[62], object.unitaOrg9);
+  writer.writeString(offsets[63], object.unitaOrg9Des);
+  writer.writeString(offsets[64], object.unitaOrganizzativa);
+  writer.writeString(offsets[65], object.utenteCOD);
+  writer.writeString(offsets[66], object.utenteKA);
+  writer.writeString(offsets[67], object.utenteRU);
+  writer.writeString(offsets[68], object.utenteRUBU);
 }
 
 Anagrafica _anagraficaDeserialize(
@@ -842,75 +854,76 @@ Anagrafica _anagraficaDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Anagrafica();
-  object.cid = reader.readStringOrNull(offsets[0]);
-  object.cidGestore = reader.readStringOrNull(offsets[1]);
-  object.cidKeyAccount = reader.readStringOrNull(offsets[2]);
-  object.cidResponsabileUO = reader.readStringOrNull(offsets[3]);
-  object.codiceFiscale = reader.readStringOrNull(offsets[4]);
-  object.contrSolidarieta = reader.readStringOrNull(offsets[5]);
-  object.dataAssunzione = reader.readStringOrNull(offsets[6]);
-  object.dataAssunzioneGruppo = reader.readStringOrNull(offsets[7]);
-  object.dataNascita = reader.readStringOrNull(offsets[8]);
-  object.formazione = reader.readStringOrNull(offsets[9]);
-  object.gradoOccupaz = reader.readStringOrNull(offsets[10]);
-  object.gradoOccupazInSol = reader.readStringOrNull(offsets[11]);
+  object.areaFascia = reader.readStringOrNull(offsets[0]);
+  object.cid = reader.readStringOrNull(offsets[1]);
+  object.cidGestore = reader.readStringOrNull(offsets[2]);
+  object.cidKeyAccount = reader.readStringOrNull(offsets[3]);
+  object.cidResponsabileUO = reader.readStringOrNull(offsets[4]);
+  object.codiceFiscale = reader.readStringOrNull(offsets[5]);
+  object.contrSolidarieta = reader.readStringOrNull(offsets[6]);
+  object.dataAssunzione = reader.readStringOrNull(offsets[7]);
+  object.dataAssunzioneGruppo = reader.readStringOrNull(offsets[8]);
+  object.dataNascita = reader.readStringOrNull(offsets[9]);
+  object.formazione = reader.readStringOrNull(offsets[10]);
+  object.gradoOccupaz = reader.readStringOrNull(offsets[11]);
+  object.gradoOccupazInSol = reader.readStringOrNull(offsets[12]);
   object.id = id;
-  object.importBatch = reader.readStringOrNull(offsets[12]);
-  object.indirizzoMail = reader.readStringOrNull(offsets[13]);
-  object.lastUpdate = reader.readDateTimeOrNull(offsets[14]);
-  object.livello = reader.readStringOrNull(offsets[15]);
-  object.luogoNascita = reader.readStringOrNull(offsets[16]);
-  object.mailGestore = reader.readStringOrNull(offsets[17]);
-  object.mailKeyAccount = reader.readStringOrNull(offsets[18]);
-  object.mailResponsabileUO = reader.readStringOrNull(offsets[19]);
-  object.mansione = reader.readStringOrNull(offsets[20]);
-  object.matricolaAziendaleUID = reader.readStringOrNull(offsets[21]);
-  object.nominativo = reader.readStringOrNull(offsets[22]);
-  object.nominativoGestore = reader.readStringOrNull(offsets[23]);
-  object.nominativoKeyAccount = reader.readStringOrNull(offsets[24]);
-  object.nominativoResponsabileUO = reader.readStringOrNull(offsets[25]);
-  object.nuovoSistProfAmbito = reader.readStringOrNull(offsets[26]);
-  object.nuovoSistProfArea = reader.readStringOrNull(offsets[27]);
-  object.nuovoSistProfFamiglia = reader.readStringOrNull(offsets[28]);
-  object.nuovoSistProfJob = reader.readStringOrNull(offsets[29]);
-  object.paese = reader.readStringOrNull(offsets[30]);
-  object.partTimeFullTime = reader.readStringOrNull(offsets[31]);
-  object.posizione = reader.readStringOrNull(offsets[32]);
-  object.provincia = reader.readStringOrNull(offsets[33]);
-  object.regione = reader.readStringOrNull(offsets[34]);
-  object.responsabileSINO = reader.readStringOrNull(offsets[35]);
-  object.sedeCap = reader.readStringOrNull(offsets[36]);
-  object.sedeComune = reader.readStringOrNull(offsets[37]);
-  object.sedeIndirizzo = reader.readStringOrNull(offsets[38]);
-  object.sedeProvincia = reader.readStringOrNull(offsets[39]);
-  object.sesso = reader.readStringOrNull(offsets[40]);
-  object.societa = reader.readStringOrNull(offsets[41]);
-  object.societaContabile = reader.readStringOrNull(offsets[42]);
-  object.status = reader.readStringOrNull(offsets[43]);
-  object.tipoContratto = reader.readStringOrNull(offsets[44]);
-  object.tipoDip = reader.readStringOrNull(offsets[45]);
-  object.tipoScuola = reader.readStringOrNull(offsets[46]);
-  object.tipologiaResponsabile = reader.readStringOrNull(offsets[47]);
-  object.under35 = reader.readStringOrNull(offsets[48]);
-  object.unitaOrg3 = reader.readStringOrNull(offsets[49]);
-  object.unitaOrg3Des = reader.readStringOrNull(offsets[50]);
-  object.unitaOrg4 = reader.readStringOrNull(offsets[51]);
-  object.unitaOrg4Des = reader.readStringOrNull(offsets[52]);
-  object.unitaOrg5 = reader.readStringOrNull(offsets[53]);
-  object.unitaOrg5Des = reader.readStringOrNull(offsets[54]);
-  object.unitaOrg6 = reader.readStringOrNull(offsets[55]);
-  object.unitaOrg6Des = reader.readStringOrNull(offsets[56]);
-  object.unitaOrg7 = reader.readStringOrNull(offsets[57]);
-  object.unitaOrg7Des = reader.readStringOrNull(offsets[58]);
-  object.unitaOrg8 = reader.readStringOrNull(offsets[59]);
-  object.unitaOrg8Des = reader.readStringOrNull(offsets[60]);
-  object.unitaOrg9 = reader.readStringOrNull(offsets[61]);
-  object.unitaOrg9Des = reader.readStringOrNull(offsets[62]);
-  object.unitaOrganizzativa = reader.readStringOrNull(offsets[63]);
-  object.utenteCOD = reader.readStringOrNull(offsets[64]);
-  object.utenteKA = reader.readStringOrNull(offsets[65]);
-  object.utenteRU = reader.readStringOrNull(offsets[66]);
-  object.utenteRUBU = reader.readStringOrNull(offsets[67]);
+  object.importBatch = reader.readStringOrNull(offsets[13]);
+  object.indirizzoMail = reader.readStringOrNull(offsets[14]);
+  object.lastUpdate = reader.readDateTimeOrNull(offsets[15]);
+  object.livello = reader.readStringOrNull(offsets[16]);
+  object.luogoNascita = reader.readStringOrNull(offsets[17]);
+  object.mailGestore = reader.readStringOrNull(offsets[18]);
+  object.mailKeyAccount = reader.readStringOrNull(offsets[19]);
+  object.mailResponsabileUO = reader.readStringOrNull(offsets[20]);
+  object.mansione = reader.readStringOrNull(offsets[21]);
+  object.matricolaAziendaleUID = reader.readStringOrNull(offsets[22]);
+  object.nominativo = reader.readStringOrNull(offsets[23]);
+  object.nominativoGestore = reader.readStringOrNull(offsets[24]);
+  object.nominativoKeyAccount = reader.readStringOrNull(offsets[25]);
+  object.nominativoResponsabileUO = reader.readStringOrNull(offsets[26]);
+  object.nuovoSistProfAmbito = reader.readStringOrNull(offsets[27]);
+  object.nuovoSistProfArea = reader.readStringOrNull(offsets[28]);
+  object.nuovoSistProfFamiglia = reader.readStringOrNull(offsets[29]);
+  object.nuovoSistProfJob = reader.readStringOrNull(offsets[30]);
+  object.paese = reader.readStringOrNull(offsets[31]);
+  object.partTimeFullTime = reader.readStringOrNull(offsets[32]);
+  object.posizione = reader.readStringOrNull(offsets[33]);
+  object.provincia = reader.readStringOrNull(offsets[34]);
+  object.regione = reader.readStringOrNull(offsets[35]);
+  object.responsabileSINO = reader.readStringOrNull(offsets[36]);
+  object.sedeCap = reader.readStringOrNull(offsets[37]);
+  object.sedeComune = reader.readStringOrNull(offsets[38]);
+  object.sedeIndirizzo = reader.readStringOrNull(offsets[39]);
+  object.sedeProvincia = reader.readStringOrNull(offsets[40]);
+  object.sesso = reader.readStringOrNull(offsets[41]);
+  object.societa = reader.readStringOrNull(offsets[42]);
+  object.societaContabile = reader.readStringOrNull(offsets[43]);
+  object.status = reader.readStringOrNull(offsets[44]);
+  object.tipoContratto = reader.readStringOrNull(offsets[45]);
+  object.tipoDip = reader.readStringOrNull(offsets[46]);
+  object.tipoScuola = reader.readStringOrNull(offsets[47]);
+  object.tipologiaResponsabile = reader.readStringOrNull(offsets[48]);
+  object.under35 = reader.readStringOrNull(offsets[49]);
+  object.unitaOrg3 = reader.readStringOrNull(offsets[50]);
+  object.unitaOrg3Des = reader.readStringOrNull(offsets[51]);
+  object.unitaOrg4 = reader.readStringOrNull(offsets[52]);
+  object.unitaOrg4Des = reader.readStringOrNull(offsets[53]);
+  object.unitaOrg5 = reader.readStringOrNull(offsets[54]);
+  object.unitaOrg5Des = reader.readStringOrNull(offsets[55]);
+  object.unitaOrg6 = reader.readStringOrNull(offsets[56]);
+  object.unitaOrg6Des = reader.readStringOrNull(offsets[57]);
+  object.unitaOrg7 = reader.readStringOrNull(offsets[58]);
+  object.unitaOrg7Des = reader.readStringOrNull(offsets[59]);
+  object.unitaOrg8 = reader.readStringOrNull(offsets[60]);
+  object.unitaOrg8Des = reader.readStringOrNull(offsets[61]);
+  object.unitaOrg9 = reader.readStringOrNull(offsets[62]);
+  object.unitaOrg9Des = reader.readStringOrNull(offsets[63]);
+  object.unitaOrganizzativa = reader.readStringOrNull(offsets[64]);
+  object.utenteCOD = reader.readStringOrNull(offsets[65]);
+  object.utenteKA = reader.readStringOrNull(offsets[66]);
+  object.utenteRU = reader.readStringOrNull(offsets[67]);
+  object.utenteRUBU = reader.readStringOrNull(offsets[68]);
   return object;
 }
 
@@ -950,9 +963,9 @@ P _anagraficaDeserializeProp<P>(
     case 13:
       return (reader.readStringOrNull(offset)) as P;
     case 14:
-      return (reader.readDateTimeOrNull(offset)) as P;
-    case 15:
       return (reader.readStringOrNull(offset)) as P;
+    case 15:
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 16:
       return (reader.readStringOrNull(offset)) as P;
     case 17:
@@ -1056,6 +1069,8 @@ P _anagraficaDeserializeProp<P>(
     case 66:
       return (reader.readStringOrNull(offset)) as P;
     case 67:
+      return (reader.readStringOrNull(offset)) as P;
+    case 68:
       return (reader.readStringOrNull(offset)) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -1296,6 +1311,168 @@ extension AnagraficaQueryWhere
 
 extension AnagraficaQueryFilter
     on QueryBuilder<Anagrafica, Anagrafica, QFilterCondition> {
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  areaFasciaIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNull(property: r'areaFascia'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  areaFasciaIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        const FilterCondition.isNotNull(property: r'areaFascia'),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> areaFasciaEqualTo(
+    String? value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(
+          property: r'areaFascia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  areaFasciaGreaterThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(
+          include: include,
+          property: r'areaFascia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  areaFasciaLessThan(
+    String? value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.lessThan(
+          include: include,
+          property: r'areaFascia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> areaFasciaBetween(
+    String? lower,
+    String? upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.between(
+          property: r'areaFascia',
+          lower: lower,
+          includeLower: includeLower,
+          upper: upper,
+          includeUpper: includeUpper,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  areaFasciaStartsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.startsWith(
+          property: r'areaFascia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  areaFasciaEndsWith(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.endsWith(
+          property: r'areaFascia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  areaFasciaContains(String value, {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.contains(
+          property: r'areaFascia',
+          value: value,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> areaFasciaMatches(
+    String pattern, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.matches(
+          property: r'areaFascia',
+          wildcard: pattern,
+          caseSensitive: caseSensitive,
+        ),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  areaFasciaIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.equalTo(property: r'areaFascia', value: ''),
+      );
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition>
+  areaFasciaIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(
+        FilterCondition.greaterThan(property: r'areaFascia', value: ''),
+      );
+    });
+  }
+
   QueryBuilder<Anagrafica, Anagrafica, QAfterFilterCondition> cidIsNull() {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(
@@ -12262,6 +12439,18 @@ extension AnagraficaQueryLinks
 
 extension AnagraficaQuerySortBy
     on QueryBuilder<Anagrafica, Anagrafica, QSortBy> {
+  QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy> sortByAreaFascia() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'areaFascia', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy> sortByAreaFasciaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'areaFascia', Sort.desc);
+    });
+  }
+
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy> sortByCid() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cid', Sort.asc);
@@ -13110,6 +13299,18 @@ extension AnagraficaQuerySortBy
 
 extension AnagraficaQuerySortThenBy
     on QueryBuilder<Anagrafica, Anagrafica, QSortThenBy> {
+  QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy> thenByAreaFascia() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'areaFascia', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy> thenByAreaFasciaDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'areaFascia', Sort.desc);
+    });
+  }
+
   QueryBuilder<Anagrafica, Anagrafica, QAfterSortBy> thenByCid() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'cid', Sort.asc);
@@ -13970,6 +14171,14 @@ extension AnagraficaQuerySortThenBy
 
 extension AnagraficaQueryWhereDistinct
     on QueryBuilder<Anagrafica, Anagrafica, QDistinct> {
+  QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByAreaFascia({
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'areaFascia', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Anagrafica, Anagrafica, QDistinct> distinctByCid({
     bool caseSensitive = true,
   }) {
@@ -14589,6 +14798,12 @@ extension AnagraficaQueryProperty
   QueryBuilder<Anagrafica, int, QQueryOperations> idProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'id');
+    });
+  }
+
+  QueryBuilder<Anagrafica, String?, QQueryOperations> areaFasciaProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'areaFascia');
     });
   }
 

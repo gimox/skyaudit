@@ -20,7 +20,8 @@ class Anagrafica {
   String? tipoScuola; // Colonna I (8)
   String? formazione; // Colonna J (9)
   String? livello; // Colonna K (10)
-  String? tipoDip; // Colonna L (11)
+  String? areaFascia; // Colonna L (11) nei nuovi file
+  String? tipoDip; // Colonna L (11) nei vecchi / M (12) nei nuovi
   String? gradoOccupaz; // Colonna M (12)
   String? gradoOccupazInSol; // Colonna N (13)
   String? contrSolidarieta; // Colonna O (14)

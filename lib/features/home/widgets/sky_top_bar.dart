@@ -307,18 +307,14 @@ class _FlashingSyncBadge extends ConsumerStatefulWidget {
 
 class _FlashingSyncBadgeState extends ConsumerState<_FlashingSyncBadge> with SingleTickerProviderStateMixin {
   late final AnimationController _controller;
-  late final Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
     _controller = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(seconds: 2),
       vsync: this,
-    )..repeat(reverse: true);
-    _animation = Tween<double>(begin: 0.2, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    )..repeat();
   }
 
   @override
@@ -329,41 +325,100 @@ class _FlashingSyncBadgeState extends ConsumerState<_FlashingSyncBadge> with Sin
 
   @override
   Widget build(BuildContext context) {
-    final progress = ref.watch(syncProvider).syncProgress;
+    final syncState = ref.watch(syncProvider);
+    final progress = syncState.syncProgress;
     final percentage = (progress * 100).clamp(0.0, 100.0).toInt();
 
-    return FadeTransition(
-      opacity: _animation,
+    String syncTarget = '';
+    if (syncState.currentFile.isNotEmpty) {
+      syncTarget = syncState.currentFile;
+      if (syncState.currentFileStatus.isNotEmpty) {
+        syncTarget += ' (${syncState.currentFileStatus})';
+      }
+    } else if (syncState.syncStep.isNotEmpty) {
+      syncTarget = syncState.syncStep;
+    } else {
+      syncTarget = 'Dati cloud';
+    }
+
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isCompact = screenWidth < 900;
+    final isUltraCompact = screenWidth < 650;
+
+    final maxBadgeWidth = isUltraCompact
+        ? 180.0
+        : (isCompact ? 280.0 : 420.0);
+
+    final tooltipMessage = StringBuffer()
+      ..write('Sincronizzazione dati in corso ($percentage%)')
+      ..write('\nAttività: $syncTarget');
+    if (syncState.totalFilesFound > 0) {
+      tooltipMessage.write('\nFile elaborati: ${syncState.processedFilesCount} di ${syncState.totalFilesFound}');
+    }
+    if (syncState.totalRecordsImported > 0) {
+      tooltipMessage.write('\nRecord importati: ${syncState.totalRecordsImported}');
+    }
+
+    return Tooltip(
+      message: tooltipMessage.toString(),
       child: Center(
         child: Container(
+          constraints: BoxConstraints(maxWidth: maxBadgeWidth),
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(
             color: SkyTheme.timRed,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: SkyTheme.timRed.withValues(alpha: 0.4),
+                color: SkyTheme.timRed.withValues(alpha: 0.35),
                 blurRadius: 6,
-                spreadRadius: 1.5,
-              )
+                spreadRadius: 1.0,
+              ),
             ],
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(
-                Icons.sync,
-                size: 14,
-                color: Colors.white,
+              RotationTransition(
+                turns: _controller,
+                child: const Icon(
+                  Icons.sync,
+                  size: 14,
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(width: 6),
               Text(
-                'Sincronizzazione dati in corso ($percentage%)',
+                isUltraCompact
+                    ? '$percentage%'
+                    : (isCompact ? 'Sync ($percentage%)' : 'Sincronizzazione ($percentage%)'),
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 12,
                   fontWeight: FontWeight.bold,
-                  letterSpacing: 0.5,
+                  letterSpacing: 0.3,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Container(
+                width: 3,
+                height: 3,
+                decoration: const BoxDecoration(
+                  color: Colors.white70,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  syncTarget,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
               ),
             ],

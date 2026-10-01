@@ -8,6 +8,7 @@ import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
 import 'package:travel_check/features/upload/providers/trasferte_sap_provider.dart';
 import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
 import 'package:travel_check/features/dashboard/providers/dashboard_providers.dart';
+import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 
 final dashboardYearProvider = StateProvider<int>((ref) => DateTime.now().year);
 
@@ -84,6 +85,17 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
 
     final stats = ref.watch(dashboardStatsProvider);
     final filteredRecords = ref.watch(dashboardFilteredRecordsProvider);
+    final anagrafiche = ref.watch(anagraficaProvider);
+    final anagraficaMap = <String, String>{};
+    for (final a in anagrafiche) {
+      if (a.cid != null) {
+        final cid = a.cid!.trim();
+        final name = a.nominativo?.trim() ?? '';
+        anagraficaMap[cid] = name;
+        anagraficaMap[cid.padLeft(8, '0')] = name;
+        anagraficaMap[cid.replaceAll(RegExp(r'^0+'), '')] = name;
+      }
+    }
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -431,6 +443,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                           .map((e) => MapEntry(e.key, e.value.toDouble()))
                           .toList(),
                       isCurrency: false,
+                      anagraficaMap: anagraficaMap,
                     ),
                     const SizedBox(height: 32),
                     _buildTopCidCard(
@@ -438,6 +451,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                       subtitle: 'I 20 CID con la spesa complessiva più elevata',
                       data: topCidsByAmount,
                       isCurrency: true,
+                      anagraficaMap: anagraficaMap,
                       color: SkyTheme.timRed,
                     ),
                   ],
@@ -455,6 +469,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                             .map((e) => MapEntry(e.key, e.value.toDouble()))
                             .toList(),
                         isCurrency: false,
+                        anagraficaMap: anagraficaMap,
                       ),
                     ),
                     const SizedBox(width: 24),
@@ -465,6 +480,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                             'I 20 CID con la spesa complessiva più elevata',
                         data: topCidsByAmount,
                         isCurrency: true,
+                        anagraficaMap: anagraficaMap,
                         color: SkyTheme.timRed,
                       ),
                     ),
@@ -620,6 +636,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     required String subtitle,
     required List<MapEntry<String, double>> data,
     required bool isCurrency,
+    Map<String, String>? anagraficaMap,
     Color? color,
   }) {
     return Container(
@@ -657,6 +674,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
             child: _TopCidBarChart(
               data: data,
               isCurrency: isCurrency,
+              anagraficaMap: anagraficaMap,
               color: color,
             ),
           ),
@@ -1358,12 +1376,14 @@ class _ImportiLineChart extends StatelessWidget {
 class _TopCidBarChart extends StatelessWidget {
   final List<MapEntry<String, double>> data;
   final bool isCurrency;
+  final Map<String, String>? anagraficaMap;
   final Color? color;
   final bool multiColor;
 
   const _TopCidBarChart({
     required this.data,
     required this.isCurrency,
+    this.anagraficaMap,
     this.color,
     this.multiColor = false,
   });
@@ -1458,8 +1478,14 @@ class _TopCidBarChart extends StatelessWidget {
             getTooltipItem: (group, groupIndex, rod, rodIndex) {
               final label = data[groupIndex].key;
               final val = data[groupIndex].value;
+              final cleanLabel = label.trim();
+              final name = anagraficaMap?[cleanLabel] ??
+                  anagraficaMap?[cleanLabel.padLeft(8, '0')] ??
+                  anagraficaMap?[cleanLabel.replaceAll(RegExp(r'^0+'), '')];
+              final hasName = name != null && name.isNotEmpty;
+
               return BarTooltipItem(
-                '$label\n',
+                hasName ? '$label - $name\n' : '$label\n',
                 const TextStyle(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
