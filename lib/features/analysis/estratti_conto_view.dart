@@ -70,6 +70,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
   @override
   Widget build(BuildContext context) {
     final allRecords = ref.watch(estrattoContoProvider);
+    final allPositiveCount = allRecords.where((r) => r.totaleServizio > 0.001).length;
     final allSapRecords = ref.watch(tracciatoSapProvider);
     final allAmexRecords = ref.watch(estrattoAmexProvider);
     final allContabileRecords = ref.watch(tracciatoContabilesProvider);
@@ -244,14 +245,22 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
 
     // Calcolo statistiche globali (Single-pass O(N))
     double globalEC = 0.0;
+    double globalPositiveEC = 0.0;
     double globalSap = 0.0;
     double globalAmex = 0.0;
     int ospitiRecordsCount = 0;
+    int totalRecordsCount = 0;
+    int totalPositiveRecordsCount = 0;
 
     for (final t in trasferte) {
       final list = groupedRecords[t] ?? [];
+      totalRecordsCount += list.length;
       for (final r in list) {
         globalEC += r.totaleServizio;
+        if (r.totaleServizio > 0.001) {
+          totalPositiveRecordsCount++;
+          globalPositiveEC += r.totaleServizio;
+        }
         if (r.logHistoryId != null && ospitiLogCodes.contains(r.logHistoryId)) {
           ospitiRecordsCount++;
         }
@@ -346,6 +355,26 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                       runSpacing: isUltraCompact ? 2 : (isVeryCompact ? 4 : (isCompact ? 8 : 12)),
                       alignment: WrapAlignment.start,
                       children: [
+                        _buildGlobalRecordCount(
+                          'TOTALE RECORD',
+                          totalRecordsCount,
+                          allRecords.length,
+                          SkyTheme.timBlue,
+                          isCompact: isCompact,
+                          isVeryCompact: isVeryCompact,
+                          isUltraCompact: isUltraCompact,
+                        ),
+                        _buildGlobalRecordCount(
+                          'RECORD (> 0 €)',
+                          totalPositiveRecordsCount,
+                          allPositiveCount,
+                          Colors.teal.shade700,
+                          tooltip: 'Record con importo > 0 € (Totale: ${_formatAmount(globalPositiveEC)})',
+                          isCompact: isCompact,
+                          isVeryCompact: isVeryCompact,
+                          isUltraCompact: isUltraCompact,
+                        ),
+                        _buildGlobalTotal('E.C. (> 0 €)', globalPositiveEC, Colors.indigo.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
                         _buildGlobalTotal('E.C.', globalEC, Colors.purple.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
                         _buildGlobalTotal('AMEX', globalAmex, Colors.orange.shade800, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
                         _buildGlobalTotal('DISCREPANZA AMEX', globalEC - globalAmex, (globalEC - globalAmex).abs() < 0.01 ? Colors.green.shade700 : Colors.red.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
@@ -1993,7 +2022,14 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     );
   }
 
-  Widget _buildGlobalTotal(String label, double value, Color color, {bool isCompact = false, bool isVeryCompact = false, bool isUltraCompact = false}) {
+  Widget _buildGlobalMetric(
+    String label,
+    String valueText,
+    Color color, {
+    bool isCompact = false,
+    bool isVeryCompact = false,
+    bool isUltraCompact = false,
+  }) {
     if (isUltraCompact) {
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
@@ -2016,7 +2052,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
             ),
             const SizedBox(width: 2),
             Text(
-              _formatAmount(value),
+              valueText,
               style: TextStyle(
                 fontSize: 8,
                 fontWeight: FontWeight.bold,
@@ -2049,7 +2085,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
             ),
             const SizedBox(width: 4),
             Text(
-              _formatAmount(value),
+              valueText,
               style: TextStyle(
                 fontSize: 10,
                 fontWeight: FontWeight.bold,
@@ -2082,7 +2118,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
             ),
             const SizedBox(width: 6),
             Text(
-              _formatAmount(value),
+              valueText,
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: FontWeight.bold,
@@ -2106,7 +2142,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
           ),
         ),
         Text(
-          _formatAmount(value),
+          valueText,
           style: TextStyle(
             fontSize: 22,
             fontWeight: FontWeight.w300,
@@ -2115,6 +2151,56 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         ),
       ],
     );
+  }
+
+  Widget _buildGlobalTotal(String label, double value, Color color, {bool isCompact = false, bool isVeryCompact = false, bool isUltraCompact = false}) {
+    return _buildGlobalMetric(
+      label,
+      _formatAmount(value),
+      color,
+      isCompact: isCompact,
+      isVeryCompact: isVeryCompact,
+      isUltraCompact: isUltraCompact,
+    );
+  }
+
+  Widget _buildGlobalRecordCount(
+    String label,
+    int currentCount,
+    int totalCount,
+    Color color, {
+    String? tooltip,
+    bool isCompact = false,
+    bool isVeryCompact = false,
+    bool isUltraCompact = false,
+  }) {
+    final text = currentCount == totalCount
+        ? _formatCount(totalCount)
+        : '${_formatCount(currentCount)} / ${_formatCount(totalCount)}';
+    final widget = _buildGlobalMetric(
+      label,
+      text,
+      color,
+      isCompact: isCompact,
+      isVeryCompact: isVeryCompact,
+      isUltraCompact: isUltraCompact,
+    );
+    if (tooltip != null) {
+      return Tooltip(message: tooltip, child: widget);
+    }
+    return widget;
+  }
+
+  String _formatCount(int count) {
+    final s = count.toString();
+    final buffer = StringBuffer();
+    for (int i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 == 0) {
+        buffer.write('.');
+      }
+      buffer.write(s[i]);
+    }
+    return buffer.toString();
   }
 
   String _formatAmount(double amount, [String currency = '€']) {

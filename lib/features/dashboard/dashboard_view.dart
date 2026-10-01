@@ -676,6 +676,7 @@ class _TrasferteLineChart extends StatelessWidget {
   Widget build(BuildContext context) {
     // Organizza i dati: Anno -> Mese -> Set di numeroTrasferta
     final Map<int, Map<int, Set<String>>> data = {};
+    int maxMonth = 0;
 
     for (final r in records) {
       final parts = r.dataSpesa.split('/');
@@ -686,10 +687,14 @@ class _TrasferteLineChart extends StatelessWidget {
           data.putIfAbsent(year, () => {});
           data[year]!.putIfAbsent(month, () => {});
           data[year]![month]!.add(r.numeroTrasferta);
+          if (month > maxMonth && r.importo.abs() > 0.001) {
+            maxMonth = month;
+          }
         }
       }
     }
 
+    final effectiveMaxMonth = maxMonth > 0 ? maxMonth : 12;
     final years = data.keys.toList()..sort();
     final List<LineChartBarData> lineBarsData = [];
 
@@ -707,7 +712,7 @@ class _TrasferteLineChart extends StatelessWidget {
       final monthData = data[year]!;
       final List<FlSpot> spots = [];
 
-      for (int m = 1; m <= 12; m++) {
+      for (int m = 1; m <= effectiveMaxMonth; m++) {
         final count = monthData[m]?.length ?? 0;
         spots.add(FlSpot(m.toDouble(), count.toDouble()));
       }
@@ -730,6 +735,8 @@ class _TrasferteLineChart extends StatelessWidget {
 
     return LineChart(
       LineChartData(
+        minX: 1,
+        maxX: effectiveMaxMonth < 2 ? 2.0 : effectiveMaxMonth.toDouble(),
         minY: 0,
         gridData: FlGridData(
           show: true,
@@ -759,6 +766,7 @@ class _TrasferteLineChart extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
+              interval: 1,
               getTitlesWidget: (value, meta) {
                 const months = [
                   'GEN',
@@ -774,11 +782,12 @@ class _TrasferteLineChart extends StatelessWidget {
                   'NOV',
                   'DIC',
                 ];
-                if (value >= 1 && value <= 12) {
+                final intVal = value.toInt();
+                if (value == intVal.toDouble() && intVal >= 1 && intVal <= effectiveMaxMonth) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      months[value.toInt() - 1],
+                      months[intVal - 1],
                       style: const TextStyle(fontSize: 10, color: Colors.grey),
                     ),
                   );
@@ -820,6 +829,7 @@ class _ImportiLineChart extends StatelessWidget {
   Widget build(BuildContext context) {
     // Organizza i dati: Mese -> Somma Importi
     final Map<int, double> monthData = {};
+    int maxMonth = 0;
 
     for (final r in records) {
       final parts = r.dataSpesa.split('/');
@@ -828,18 +838,24 @@ class _ImportiLineChart extends StatelessWidget {
         if (month != null) {
           final value = r.isNegative ? -r.importo : r.importo;
           monthData[month] = (monthData[month] ?? 0) + value;
+          if (month > maxMonth && r.importo.abs() > 0.001) {
+            maxMonth = month;
+          }
         }
       }
     }
 
+    final effectiveMaxMonth = maxMonth > 0 ? maxMonth : 12;
     final List<FlSpot> spots = [];
-    for (int m = 1; m <= 12; m++) {
+    for (int m = 1; m <= effectiveMaxMonth; m++) {
       final total = monthData[m] ?? 0.0;
       spots.add(FlSpot(m.toDouble(), total));
     }
 
     return LineChart(
       LineChartData(
+        minX: 1,
+        maxX: effectiveMaxMonth < 2 ? 2.0 : effectiveMaxMonth.toDouble(),
         minY: 0,
         gridData: FlGridData(
           show: true,
@@ -881,6 +897,7 @@ class _ImportiLineChart extends StatelessWidget {
           bottomTitles: AxisTitles(
             sideTitles: SideTitles(
               showTitles: true,
+              interval: 1,
               getTitlesWidget: (value, meta) {
                 const months = [
                   'GEN',
@@ -896,11 +913,12 @@ class _ImportiLineChart extends StatelessWidget {
                   'NOV',
                   'DIC',
                 ];
-                if (value >= 1 && value <= 12) {
+                final intVal = value.toInt();
+                if (value == intVal.toDouble() && intVal >= 1 && intVal <= effectiveMaxMonth) {
                   return Padding(
                     padding: const EdgeInsets.only(top: 8.0),
                     child: Text(
-                      months[value.toInt() - 1],
+                      months[intVal - 1],
                       style: const TextStyle(fontSize: 10, color: Colors.grey),
                     ),
                   );

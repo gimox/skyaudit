@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
 import 'package:travel_check/features/upload/providers/estratto_conto_provider.dart';
 import '../dashboard_view.dart';
 
@@ -30,8 +31,23 @@ final dashboardStatsProvider = Provider((ref) {
     return false;
   }).toList();
 
-  final totalTickets = records.length;
-  final totalTrasferte = records.map((r) => r.numeroTrasferta).toSet().length;
+  final totalTickets = records.where((r) => !r.isNegative && r.importo > 0.001).length;
+  final Map<String, List<TracciatoContabile>> recordsByTrasferta = {};
+  for (final r in records) {
+    recordsByTrasferta.putIfAbsent(r.numeroTrasferta, () => []).add(r);
+  }
+  final totalTrasferte = recordsByTrasferta.values.where((list) {
+    final regularRecords = list.where((r) => !r.isScarto);
+    if (regularRecords.isEmpty) return false;
+
+    final totalSum = list.fold<double>(0.0, (acc, r) => acc + (r.isNegative ? -r.importo : r.importo));
+    if (totalSum.abs() < 0.001) return false;
+
+    final regularSum = regularRecords.fold<double>(0.0, (acc, r) => acc + (r.isNegative ? -r.importo : r.importo));
+    if (regularSum.abs() < 0.001) return false;
+
+    return true;
+  }).length;
 
   double totalAmountTC = 0;
   for (final r in records) {
