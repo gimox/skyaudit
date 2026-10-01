@@ -5,9 +5,19 @@ import 'package:intl/intl.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
 import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
+import 'package:travel_check/features/upload/providers/trasferte_sap_provider.dart';
+import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
 import 'package:travel_check/features/dashboard/providers/dashboard_providers.dart';
 
 final dashboardYearProvider = StateProvider<int>((ref) => DateTime.now().year);
+
+String _formatAmount(double amount) {
+  return NumberFormat.currency(
+    locale: 'it_IT',
+    symbol: '',
+    decimalDigits: 2,
+  ).format(amount).trim();
+}
 
 class DashboardView extends ConsumerStatefulWidget {
   const DashboardView({super.key});
@@ -18,10 +28,12 @@ class DashboardView extends ConsumerStatefulWidget {
 
 class _DashboardViewState extends ConsumerState<DashboardView> {
   final _statsScrollController = ScrollController();
+  final _sapStatsScrollController = ScrollController();
 
   @override
   void dispose() {
     _statsScrollController.dispose();
+    _sapStatsScrollController.dispose();
     super.dispose();
   }
 
@@ -29,14 +41,19 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
   Widget build(BuildContext context) {
     final ref = this.ref;
     final allRecords = ref.watch(tracciatoContabilesProvider);
+    final trasferteSapList = ref.watch(trasferteSapProvider);
+    final tracciatoSapList = ref.watch(tracciatoSapProvider);
     final selectedYear = ref.watch(dashboardYearProvider);
     final topCidsByTrips = ref.watch(dashboardTopCidByTripsProvider);
     final topCidsByAmount = ref.watch(dashboardTopCidByAmountProvider);
     final amountByType = ref.watch(dashboardAmountByTypeProvider);
     final tripsByType = ref.watch(dashboardTripsByTypeProvider);
     final avgCostByTypeData = ref.watch(dashboardAvgCostByTypeProvider);
+    final sapStats = ref.watch(dashboardSapStatsProvider);
+    final sapMonthly = ref.watch(dashboardSapMonthlyProvider);
+    final sapTopCids = ref.watch(dashboardSapTopCidsProvider);
 
-    if (allRecords.isEmpty) {
+    if (allRecords.isEmpty && trasferteSapList.isEmpty && tracciatoSapList.isEmpty) {
       return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -373,7 +390,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
-                            'Media Globale: €${avgCostByTypeData.overallAvg.toStringAsFixed(2)}',
+                            'Media Globale: € ${_formatAmount(avgCostByTypeData.overallAvg)}',
                             style: TextStyle(
                               color: Colors.green.shade700,
                               fontWeight: FontWeight.bold,
@@ -453,6 +470,18 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                     ),
                   ],
                 ),
+
+              const SizedBox(height: 48),
+
+              // Sezione Grafici e Dati Trasferte SAP
+              _buildSapSection(
+                context: context,
+                isMobile: isMobile,
+                selectedYear: selectedYear,
+                sapStats: sapStats,
+                sapMonthly: sapMonthly,
+                sapTopCids: sapTopCids,
+              ),
             ],
           ),
         );
@@ -460,13 +489,6 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     );
   }
 
-  String _formatAmount(double amount) {
-    return NumberFormat.currency(
-      locale: 'it_IT',
-      symbol: '',
-      decimalDigits: 2,
-    ).format(amount);
-  }
 
   Widget _buildStatCard({
     required BuildContext context,
@@ -474,6 +496,7 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
     required String value,
     required IconData icon,
     required Color color,
+    String? subtitle,
   }) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -527,6 +550,18 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                 ),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 10,
+                      color: Colors.grey.shade600,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
               ],
             ),
           ),
@@ -663,6 +698,363 @@ class _DashboardViewState extends ConsumerState<DashboardView> {
           },
         ),
       ),
+    );
+  }
+
+  Widget _buildSapSection({
+    required BuildContext context,
+    required bool isMobile,
+    required int selectedYear,
+    required DashboardSapStats sapStats,
+    required List<MapEntry<String, int>> sapMonthly,
+    required List<MapEntry<String, int>> sapTopCids,
+  }) {
+    final card1 = _buildStatCard(
+      context: context,
+      title: 'TOTALE TRASFERTE SAP',
+      value: sapStats.totalTrasferteSap.toString(),
+      subtitle: 'Ordini di missione',
+      icon: Icons.flight_takeoff_rounded,
+      color: SkyTheme.timBlue,
+    );
+    final card2 = _buildStatCard(
+      context: context,
+      title: 'TOTALE IMPORTI SAP',
+      value: '€ ${_formatAmount(sapStats.totalAmountSap)}',
+      subtitle: 'Spese complessive SAP',
+      icon: Icons.euro_symbol,
+      color: SkyTheme.timBlue,
+    );
+    final card3 = _buildStatCard(
+      context: context,
+      title: 'RISCONTRATE IN TC',
+      value: sapStats.okCount.toString(),
+      subtitle: sapStats.totalTrasferteSap > 0
+          ? '${(sapStats.okCount / sapStats.totalTrasferteSap * 100).toStringAsFixed(1)}% in contabilità'
+          : 'Incrocio con TC',
+      icon: Icons.check_circle_outline,
+      color: Colors.green.shade700,
+    );
+    final card4 = _buildStatCard(
+      context: context,
+      title: 'NON RISCONTRATE (KO)',
+      value: sapStats.koCount.toString(),
+      subtitle: sapStats.totalTrasferteSap > 0
+          ? '${(sapStats.koCount / sapStats.totalTrasferteSap * 100).toStringAsFixed(1)}% assenti in TC'
+          : 'Non presenti in TC',
+      icon: Icons.cancel_outlined,
+      color: SkyTheme.timRed,
+    );
+    final card5 = _buildStatCard(
+      context: context,
+      title: 'DIPENDENTI (CID)',
+      value: sapStats.uniqueCids.toString(),
+      subtitle: 'Risorse uniche',
+      icon: Icons.people_outline,
+      color: Colors.orange.shade700,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Intestazione Sezione SAP
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: SkyTheme.timBlue.withAlpha(20),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: const Icon(
+                    Icons.flight_takeoff_rounded,
+                    color: SkyTheme.timBlue,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'SEZIONE TRASFERTE SAP',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    Text(
+                      'Monitoraggio, incrocio contabile e volumi di missione per l\'anno $selectedYear',
+                      style: const TextStyle(fontSize: 12, color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+        const SizedBox(height: 20),
+
+        // Indicatori Statistiche SAP
+        Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade100.withAlpha(120),
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: Colors.grey.shade200),
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth >= 1200) {
+                return Row(
+                  children: [
+                    Expanded(child: card1),
+                    const SizedBox(width: 12),
+                    Expanded(child: card2),
+                    const SizedBox(width: 12),
+                    Expanded(child: card3),
+                    const SizedBox(width: 12),
+                    Expanded(child: card4),
+                    const SizedBox(width: 12),
+                    Expanded(child: card5),
+                  ],
+                );
+              } else {
+                return Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        if (_sapStatsScrollController.hasClients) {
+                          _sapStatsScrollController.animateTo(
+                            (_sapStatsScrollController.offset - 200).clamp(0, _sapStatsScrollController.position.maxScrollExtent),
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.chevron_left_rounded, color: SkyTheme.timBlue),
+                      hoverColor: SkyTheme.timBlue.withAlpha(20),
+                    ),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        controller: _sapStatsScrollController,
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            SizedBox(width: 240, child: card1),
+                            const SizedBox(width: 12),
+                            SizedBox(width: 240, child: card2),
+                            const SizedBox(width: 12),
+                            SizedBox(width: 240, child: card3),
+                            const SizedBox(width: 12),
+                            SizedBox(width: 240, child: card4),
+                            const SizedBox(width: 12),
+                            SizedBox(width: 240, child: card5),
+                          ],
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        if (_sapStatsScrollController.hasClients) {
+                          _sapStatsScrollController.animateTo(
+                            (_sapStatsScrollController.offset + 200).clamp(0, _sapStatsScrollController.position.maxScrollExtent),
+                            duration: const Duration(milliseconds: 300),
+                            curve: Curves.easeInOut,
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.chevron_right_rounded, color: SkyTheme.timBlue),
+                      hoverColor: SkyTheme.timBlue.withAlpha(20),
+                    ),
+                  ],
+                );
+              }
+            },
+          ),
+        ),
+
+        const SizedBox(height: 32),
+
+        if (!sapStats.hasData)
+          Container(
+            padding: const EdgeInsets.all(28),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: Colors.grey.shade200),
+            ),
+            child: Center(
+              child: Column(
+                children: [
+                  Icon(Icons.flight_takeoff_outlined, size: 48, color: Colors.grey.shade400),
+                  const SizedBox(height: 12),
+                  Text(
+                    'NESSUN DATO TRASFERTE SAP PER IL $selectedYear',
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1.1,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Carica i file Trasferte SAP o Tracciato SAP da Ingestion o sincronizza da SharePoint per visualizzare i grafici.',
+                    style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                  ),
+                ],
+              ),
+            ),
+          )
+        else ...[
+          // Grafici Riscontro & Mensile
+          if (isMobile) ...[
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withAlpha(5), blurRadius: 15, offset: const Offset(0, 5)),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'STATO RISCONTRO TRASFERTE SAP',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Percentuale trasferte SAP presenti nel Tracciato Contabile (Anno $selectedYear)',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    height: 250,
+                    child: _SapRiscontroPieChart(okCount: sapStats.okCount, koCount: sapStats.koCount),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 32),
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(color: Colors.black.withAlpha(5), blurRadius: 15, offset: const Offset(0, 5)),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'DISTRIBUZIONE MENSILE TRASFERTE SAP',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Numero di ordini di missione distribuiti per mese nell\'anno $selectedYear',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    height: 250,
+                    child: _SapMonthlyBarChart(data: sapMonthly),
+                  ),
+                ],
+              ),
+            ),
+          ] else ...[
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black.withAlpha(5), blurRadius: 15, offset: const Offset(0, 5)),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'STATO RISCONTRO TRASFERTE SAP',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Percentuale trasferte SAP presenti nel Tracciato Contabile (Anno $selectedYear)',
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                        const SizedBox(height: 32),
+                        SizedBox(
+                          height: 250,
+                          child: _SapRiscontroPieChart(okCount: sapStats.okCount, koCount: sapStats.koCount),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 24),
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(color: Colors.black.withAlpha(5), blurRadius: 15, offset: const Offset(0, 5)),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'DISTRIBUZIONE MENSILE TRASFERTE SAP',
+                          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1.1),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Numero di ordini di missione distribuiti per mese nell\'anno $selectedYear',
+                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                        ),
+                        const SizedBox(height: 32),
+                        SizedBox(
+                          height: 250,
+                          child: _SapMonthlyBarChart(data: sapMonthly),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+
+          if (sapTopCids.isNotEmpty) ...[
+            const SizedBox(height: 32),
+            _buildTopCidCard(
+              title: 'TOP 15 DIPENDENTI (TRASFERTE SAP)',
+              subtitle: 'I dipendenti (CID) con il maggior numero di trasferte SAP nell\'anno $selectedYear',
+              data: sapTopCids.map((e) => MapEntry(e.key, e.value.toDouble())).toList(),
+              isCurrency: false,
+              color: SkyTheme.timBlue,
+            ),
+          ],
+        ],
+      ],
     );
   }
 }
@@ -948,7 +1340,7 @@ class _ImportiLineChart extends StatelessWidget {
             getTooltipItems: (touchedSpots) {
               return touchedSpots.map((spot) {
                 return LineTooltipItem(
-                  '${spot.y.toStringAsFixed(2)} €',
+                  '€ ${_formatAmount(spot.y)}',
                   const TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -1075,7 +1467,7 @@ class _TopCidBarChart extends StatelessWidget {
                 children: [
                   TextSpan(
                     text: isCurrency
-                        ? '${val.toStringAsFixed(2)} €'
+                        ? '€ ${_formatAmount(val)}'
                         : '${val.toInt()} viaggi',
                     style: const TextStyle(
                       color: Colors.white,
@@ -1164,7 +1556,7 @@ class _TipoDipendentePieChart extends StatelessWidget {
                     Expanded(
                       child: Text(
                         isCurrency
-                            ? '${mapEntry.key}: €${mapEntry.value.toStringAsFixed(2)}'
+                            ? '${mapEntry.key}: € ${_formatAmount(mapEntry.value)}'
                             : '${mapEntry.key}: ${mapEntry.value.toInt()}',
                         style: const TextStyle(
                           fontSize: 13,
@@ -1210,3 +1602,215 @@ class _Badge extends StatelessWidget {
     );
   }
 }
+
+class _SapRiscontroPieChart extends StatelessWidget {
+  final int okCount;
+  final int koCount;
+
+  const _SapRiscontroPieChart({required this.okCount, required this.koCount});
+
+  @override
+  Widget build(BuildContext context) {
+    final total = okCount + koCount;
+    if (total == 0) {
+      return const Center(
+        child: Text('Nessun dato trasferte disponibile', style: TextStyle(color: Colors.grey)),
+      );
+    }
+
+    final okPerc = (okCount / total * 100);
+    final koPerc = (koCount / total * 100);
+
+    return Row(
+      children: [
+        Expanded(
+          flex: 2,
+          child: PieChart(
+            PieChartData(
+              sectionsSpace: 3,
+              centerSpaceRadius: 45,
+              sections: [
+                if (okCount > 0)
+                  PieChartSectionData(
+                    color: Colors.green.shade600,
+                    value: okCount.toDouble(),
+                    title: '',
+                    radius: 55,
+                    badgeWidget: _Badge('${okPerc.toStringAsFixed(1)}%'),
+                    badgePositionPercentageOffset: 1.25,
+                  ),
+                if (koCount > 0)
+                  PieChartSectionData(
+                    color: SkyTheme.timRed,
+                    value: koCount.toDouble(),
+                    title: '',
+                    radius: 55,
+                    badgeWidget: _Badge('${koPerc.toStringAsFixed(1)}%'),
+                    badgePositionPercentageOffset: 1.25,
+                  ),
+              ],
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildLegendRow(
+                color: Colors.green.shade600,
+                label: 'Riscontrate (OK)',
+                value: '$okCount (${okPerc.toStringAsFixed(1)}%)',
+              ),
+              const SizedBox(height: 14),
+              _buildLegendRow(
+                color: SkyTheme.timRed,
+                label: 'Non Riscontrate (KO)',
+                value: '$koCount (${koPerc.toStringAsFixed(1)}%)',
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLegendRow({required Color color, required String label, required String value}) {
+    return Row(
+      children: [
+        Container(
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              ),
+              Text(
+                value,
+                style: const TextStyle(fontSize: 11, color: Colors.grey),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SapMonthlyBarChart extends StatelessWidget {
+  final List<MapEntry<String, int>> data;
+
+  const _SapMonthlyBarChart({required this.data});
+
+  @override
+  Widget build(BuildContext context) {
+    final totalCount = data.fold<int>(0, (sum, e) => sum + e.value);
+    if (totalCount == 0) {
+      return const Center(
+        child: Text(
+          'Nessuna trasferta SAP con data registrata nei mesi di questo anno',
+          style: TextStyle(color: Colors.grey, fontSize: 13),
+        ),
+      );
+    }
+
+    final maxVal = data.fold<int>(0, (max, e) => e.value > max ? e.value : max);
+    final maxY = (maxVal > 0 ? (maxVal * 1.25).ceilToDouble() : 10).toDouble();
+
+    return BarChart(
+      BarChartData(
+        alignment: BarChartAlignment.spaceAround,
+        minY: 0,
+        maxY: maxY,
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: (maxY / 4).clamp(1, double.infinity),
+          getDrawingHorizontalLine: (value) => FlLine(
+            color: Colors.grey.shade100,
+            strokeWidth: 1,
+          ),
+        ),
+        borderData: FlBorderData(show: false),
+        titlesData: FlTitlesData(
+          show: true,
+          topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 32,
+              getTitlesWidget: (value, meta) => Text(
+                value.toInt().toString(),
+                style: const TextStyle(fontSize: 10, color: Colors.grey),
+              ),
+            ),
+          ),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 26,
+              interval: 1,
+              getTitlesWidget: (value, meta) {
+                final idx = value.toInt();
+                if (value == idx.toDouble() && idx >= 0 && idx < data.length) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      data[idx].key,
+                      style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        ),
+        barGroups: List.generate(data.length, (i) {
+          return BarChartGroupData(
+            x: i,
+            barRods: [
+              BarChartRodData(
+                toY: data[i].value.toDouble(),
+                color: SkyTheme.timBlue,
+                width: 12,
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                backDrawRodData: BackgroundBarChartRodData(
+                  show: true,
+                  toY: maxY,
+                  color: Colors.grey.shade100,
+                ),
+              ),
+            ],
+          );
+        }),
+        barTouchData: BarTouchData(
+          touchTooltipData: BarTouchTooltipData(
+            getTooltipItem: (group, groupIndex, rod, rodIndex) {
+              return BarTooltipItem(
+                '${data[groupIndex].key}\n',
+                const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                children: [
+                  TextSpan(
+                    text: '${data[groupIndex].value} trasferte',
+                    style: const TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
