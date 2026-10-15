@@ -167,6 +167,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         if (!(r.numeroTrasferta?.toLowerCase().contains(query) ?? false) &&
             !(r.cid?.toLowerCase().contains(query) ?? false) &&
             !(r.bolla?.toLowerCase().contains(query) ?? false) &&
+            !(r.dataEstrattoConto?.toLowerCase().contains(query) ?? false) &&
             !nominativo.toLowerCase().contains(query)) {
           return false;
         }
@@ -463,7 +464,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SizedBox(
-                          width: 1980,
+                          width: 2140,
                           child: Column(
                             children: [
                           // HEADER FISSO
@@ -486,6 +487,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                 _buildCell('FILE IMPORTAZIONE', 200, isHeader: true),
                                 _buildCell('FORNITORE', 250, isHeader: true),
                                 _buildCell('DATA TRANS.', 120, isHeader: true),
+                                _buildCell('DATA ESTRATTO CONTO', 160, isHeader: true),
                               ],
                             ),
                           ),
@@ -529,6 +531,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                         _buildCell(record.logHistoryId != null ? (logsMap[record.logHistoryId] ?? '-') : '-', 200),
                                         _buildCell(record.nomeFornitore ?? '-', 250),
                                         _buildCell(record.dataTransazione ?? '-', 120),
+                                        _buildCell(record.dataEstrattoConto ?? '-', 160),
                                       ],
                                     ),
                                   );
@@ -1278,6 +1281,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                         const SizedBox(height: 24),
                         _buildDetailSection('DETTAGLI TRANSAZIONE', Icons.payment_outlined, Colors.purple, [
                           _buildDetailRow('Data Transazione', record.dataTransazione ?? '-'),
+                          _buildDetailRow('Data Estratto Conto', record.dataEstrattoConto ?? '-'),
                           _buildDetailRow('Fornitore', record.nomeFornitore ?? '-'),
                           _buildDetailRow('Esercizio', record.nomeEsercizio ?? '-'),
                           _buildDetailRow('ID Transazione', record.idTransazione ?? '-'),
@@ -1434,6 +1438,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         TextCellValue('FILE IMPORTAZIONE'),
         TextCellValue('FORNITORE'),
         TextCellValue('DATA TRANS.'),
+        TextCellValue('DATA ESTRATTO CONTO'),
         TextCellValue('VALUTA'),
         TextCellValue('RISCONTRO (TRACCIATO CONTABILE)'),
       ]);
@@ -1453,6 +1458,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
           TextCellValue(r.logHistoryId != null ? (logsMap[r.logHistoryId] ?? '') : ''),
           TextCellValue(r.nomeFornitore ?? ''),
           TextCellValue(r.dataTransazione ?? ''),
+          TextCellValue(r.dataEstrattoConto ?? ''),
           TextCellValue(r.valuta ?? ''),
           TextCellValue(isMatched ? 'PRESENTI' : 'IN ATTESA'),
         ]);
@@ -1507,7 +1513,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         verticalAlign: VerticalAlign.Center,
       );
 
-      const colCount = 13;
+      const colCount = 14;
       for (var col = 0; col < colCount; col++) {
         final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
         cell.cellStyle = headerStyle;
@@ -1526,7 +1532,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
           final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: rowIndex));
           if (col == 3) { // Importo
             cell.cellStyle = amountStyle;
-          } else if (col == 0 || col == 2 || col == 4 || col == 8 || col == 10 || col == 11 || col == 12) { // CID, Trasferta, Numero Conto, File, Data, Valuta, Riscontro
+          } else if (col == 0 || col == 2 || col == 4 || col == 8 || col == 10 || col == 11 || col == 12 || col == 13) { // CID, Trasferta, Numero Conto, File, Data Trans., Data E.C., Valuta, Riscontro
             cell.cellStyle = centerStyle;
           } else {
             cell.cellStyle = rowStyle;
