@@ -501,7 +501,7 @@ class _CreaTracciatoViewState extends ConsumerState<CreaTracciatoView> {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                _buildTopHeader(theme),
+                _buildTopHeader(theme, constraints),
                 if (_isLoading)
                   const LinearProgressIndicator(
                     color: SkyTheme.timBlue,
@@ -520,6 +520,7 @@ class _CreaTracciatoViewState extends ConsumerState<CreaTracciatoView> {
                           startIndex: startIndex,
                           endIndex: endIndex,
                           pageRecords: pageRecords,
+                          constraints: constraints,
                         ),
                 ),
               ],
@@ -530,211 +531,239 @@ class _CreaTracciatoViewState extends ConsumerState<CreaTracciatoView> {
     );
   }
 
-  Widget _buildTopHeader(ThemeData theme) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      color: Colors.white,
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: SkyTheme.timBlue.withValues(alpha: 0.08),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.post_add_rounded,
-              color: SkyTheme.timBlue,
-              size: 28,
-            ),
+  Widget _buildTopHeader(ThemeData theme, BoxConstraints constraints) {
+    final isCompact = constraints.maxWidth < 1100;
+
+    final titleSection = Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: SkyTheme.timBlue.withValues(alpha: 0.08),
+            borderRadius: BorderRadius.circular(12),
           ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Text(
-                      'CREA TRACCIATO CONTABILE',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        letterSpacing: 0.8,
+          child: const Icon(
+            Icons.post_add_rounded,
+            color: SkyTheme.timBlue,
+            size: 28,
+          ),
+        ),
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Wrap(
+                spacing: 10,
+                runSpacing: 4,
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text(
+                    'CREA TRACCIATO CONTABILE',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 0.8,
+                    ),
+                  ),
+                  if (_loadedFileName != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(6),
+                        border: Border.all(color: Colors.grey.shade300),
+                      ),
+                      child: Text(
+                        _loadedFileName!,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.grey.shade700,
+                        ),
                       ),
                     ),
-                    if (_loadedFileName != null) ...[
-                      const SizedBox(width: 10),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade100,
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: Colors.grey.shade300),
-                        ),
-                        child: Text(
-                          _loadedFileName!,
-                          style: TextStyle(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.grey.shade700,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  'Generazione file TXT Uvet / SAP Fixed-Width (167 char) a partire da upload file Excel',
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.grey.shade600,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              if (_generatorResult != null) ...[
-                OutlinedButton.icon(
-                  onPressed: _showTxtPreviewDialog,
-                  icon: const Icon(Icons.remove_red_eye_outlined, size: 16),
-                  label: const Text('Anteprima TXT'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: SkyTheme.timBlue,
-                    side: const BorderSide(color: SkyTheme.timBlue),
-                  ),
-                ),
-                OutlinedButton.icon(
-                  onPressed: _importDirectlyToDatabase,
-                  icon: const Icon(Icons.save_alt, size: 16),
-                  label: const Text('Importa in DB'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: Colors.green.shade700,
-                    side: BorderSide(color: Colors.green.shade700),
-                  ),
-                ),
-                ElevatedButton.icon(
-                  onPressed: _exportTxtFile,
-                  icon: const Icon(Icons.download, size: 16),
-                  label: const Text('Scarica Tracciato (.txt)'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: SkyTheme.timBlue,
-                    foregroundColor: Colors.white,
-                  ),
-                ),
-              ],
-              ElevatedButton.icon(
-                onPressed: _isLoading ? null : _pickAndProcessExcel,
-                icon: const Icon(Icons.upload_file, size: 16),
-                label: Text(
-                  _generatorResult == null ? 'Carica File Excel' : 'Altro File',
-                ),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: _generatorResult == null
-                      ? SkyTheme.timBlue
-                      : Colors.grey.shade800,
-                  foregroundColor: Colors.white,
+                ],
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'Generazione file TXT Uvet / SAP Fixed-Width (167 char) a partire da upload file Excel',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: Colors.grey.shade600,
                 ),
               ),
             ],
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildEmptyDropzone(ThemeData theme) {
-    return Center(
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        constraints: const BoxConstraints(maxWidth: 620),
-        padding: const EdgeInsets.all(40),
-        margin: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: _isDragging
-              ? SkyTheme.timBlue.withValues(alpha: 0.05)
-              : Colors.white,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: _isDragging ? SkyTheme.timBlue : Colors.grey.shade300,
-            width: _isDragging ? 2.5 : 1.0,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: _isDragging
-                  ? SkyTheme.timBlue.withValues(alpha: 0.15)
-                  : Colors.black.withValues(alpha: 0.04),
-              blurRadius: _isDragging ? 24 : 20,
-              offset: const Offset(0, 4),
-            ),
-          ],
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
+      ],
+    );
+
+    final actionsSection = Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: [
+        if (_generatorResult != null) ...[
+          OutlinedButton.icon(
+            onPressed: _showTxtPreviewDialog,
+            icon: const Icon(Icons.remove_red_eye_outlined, size: 16),
+            label: const Text('Anteprima TXT'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: SkyTheme.timBlue,
+              side: const BorderSide(color: SkyTheme.timBlue),
+            ),
+          ),
+          OutlinedButton.icon(
+            onPressed: _importDirectlyToDatabase,
+            icon: const Icon(Icons.save_alt, size: 16),
+            label: const Text('Importa in DB'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.green.shade700,
+              side: BorderSide(color: Colors.green.shade700),
+            ),
+          ),
+          ElevatedButton.icon(
+            onPressed: _exportTxtFile,
+            icon: const Icon(Icons.download, size: 16),
+            label: const Text('Scarica Tracciato (.txt)'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: SkyTheme.timBlue,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+        ElevatedButton.icon(
+          onPressed: _isLoading ? null : _pickAndProcessExcel,
+          icon: const Icon(Icons.upload_file, size: 16),
+          label: Text(
+            _generatorResult == null ? 'Carica File Excel' : 'Altro File',
+          ),
+          style: ElevatedButton.styleFrom(
+            backgroundColor: _generatorResult == null
+                ? SkyTheme.timBlue
+                : Colors.grey.shade100,
+            foregroundColor: _generatorResult == null
+                ? Colors.white
+                : Colors.grey.shade800,
+          ),
+        ),
+      ],
+    );
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      color: Colors.white,
+      child: isCompact
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                titleSection,
+                const SizedBox(height: 12),
+                actionsSection,
+              ],
+            )
+          : Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(child: titleSection),
+                const SizedBox(width: 16),
+                actionsSection,
+              ],
+            ),
+    );
+  }  Widget _buildEmptyDropzone(ThemeData theme) {
+    return Center(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          constraints: const BoxConstraints(maxWidth: 620),
+          padding: const EdgeInsets.all(40),
+          margin: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: _isDragging
+                ? SkyTheme.timBlue.withValues(alpha: 0.05)
+                : Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(
+              color: _isDragging ? SkyTheme.timBlue : Colors.grey.shade300,
+              width: _isDragging ? 2.5 : 1.0,
+            ),
+            boxShadow: [
+              BoxShadow(
                 color: _isDragging
                     ? SkyTheme.timBlue.withValues(alpha: 0.15)
-                    : SkyTheme.timBlue.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
+                    : Colors.black.withValues(alpha: 0.04),
+                blurRadius: _isDragging ? 24 : 20,
+                offset: const Offset(0, 4),
               ),
-              child: Icon(
-                _isDragging
-                    ? Icons.file_download_rounded
-                    : Icons.upload_file_rounded,
-                size: 48,
-                color: SkyTheme.timBlue,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              _isDragging
-                  ? 'Rilascia il file Excel qui'
-                  : 'Carica o trascina il file Excel di Input',
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: _isDragging ? SkyTheme.timBlue : null,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Trascina e rilascia qui il file .xlsx o .xls, oppure utilizza il pulsante sottostante per selezionarlo.',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.grey.shade600, height: 1.5),
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton.icon(
-              onPressed: _pickAndProcessExcel,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: SkyTheme.timBlue,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
+            ],
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              AnimatedContainer(
+                duration: const Duration(milliseconds: 200),
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: _isDragging
+                      ? SkyTheme.timBlue.withValues(alpha: 0.15)
+                      : SkyTheme.timBlue.withValues(alpha: 0.08),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  _isDragging
+                      ? Icons.file_download_rounded
+                      : Icons.upload_file_rounded,
+                  size: 48,
+                  color: SkyTheme.timBlue,
                 ),
               ),
-              icon: const Icon(Icons.folder_open_rounded),
-              label: const Text(
-                'SELEZIONA FILE EXCEL',
-                style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5),
+              const SizedBox(height: 20),
+              Text(
+                _isDragging
+                    ? 'Rilascia il file Excel qui'
+                    : 'Carica o trascina il file Excel di Input',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: _isDragging ? SkyTheme.timBlue : null,
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'Supporta drag & drop per file .xlsx e .xls • Specifiche SAP R/3 SBT',
-              style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
-            ),
-          ],
+              const SizedBox(height: 8),
+              Text(
+                'Trascina e rilascia qui il file .xlsx o .xls, oppure utilizza il pulsante sottostante per selezionarlo.',
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey.shade600, height: 1.5),
+              ),
+              const SizedBox(height: 24),
+              ElevatedButton.icon(
+                onPressed: _pickAndProcessExcel,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: SkyTheme.timBlue,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 16),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+                icon: const Icon(Icons.folder_open_rounded),
+                label: const Text(
+                  'SELEZIONA FILE EXCEL',
+                  style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                'Supporta drag & drop per file .xlsx e .xls • Specifiche SAP R/3 SBT',
+                style: TextStyle(fontSize: 11, color: Colors.grey.shade500),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -748,8 +777,10 @@ class _CreaTracciatoViewState extends ConsumerState<CreaTracciatoView> {
     required int startIndex,
     required int endIndex,
     required List<GeneratedTracciatoRecord> pageRecords,
+    required BoxConstraints constraints,
   }) {
     final res = _generatorResult!;
+    final isCompactCards = constraints.maxWidth < 950;
 
     return SingleChildScrollView(
       controller: _scrollController,
@@ -758,49 +789,99 @@ class _CreaTracciatoViewState extends ConsumerState<CreaTracciatoView> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Stat Cards
-          Row(
-            children: [
-              Expanded(
-                child: _buildMetricCard(
-                  title: 'TOTALE RECORD',
-                  value: '${res.totalRecords}',
-                  subtitle: '${res.uniqueTrasferteCount} trasferte • ${res.uniqueCidCount} dipendenti',
-                  icon: Icons.format_list_numbered,
-                  iconColor: SkyTheme.timBlue,
+          if (isCompactCards) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: _buildMetricCard(
+                    title: 'TOTALE RECORD',
+                    value: '${res.totalRecords}',
+                    subtitle: '${res.uniqueTrasferteCount} trasferte • ${res.uniqueCidCount} dipendenti',
+                    icon: Icons.format_list_numbered,
+                    iconColor: SkyTheme.timBlue,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildMetricCard(
-                  title: 'ADDEBITI',
-                  value: _formatAmount(res.totalPositiveAmount),
-                  subtitle: '${res.records.where((r) => !r.isNegative).length} righe addebito',
-                  icon: Icons.trending_up,
-                  iconColor: Colors.blue.shade700,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildMetricCard(
+                    title: 'ADDEBITI',
+                    value: _formatAmount(res.totalPositiveAmount),
+                    subtitle: '${res.records.where((r) => !r.isNegative).length} righe addebito',
+                    icon: Icons.trending_up,
+                    iconColor: Colors.blue.shade700,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildMetricCard(
-                  title: 'RIMBORSI / ANNULLAMENTI',
-                  value: _formatAmount(res.totalNegativeAmount),
-                  subtitle: '${res.records.where((r) => r.isNegative).length} righe "R"',
-                  icon: Icons.trending_down,
-                  iconColor: Colors.orange.shade700,
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _buildMetricCard(
+                    title: 'RIMBORSI / ANNULLAMENTI',
+                    value: _formatAmount(res.totalNegativeAmount),
+                    subtitle: '${res.records.where((r) => r.isNegative).length} righe "R"',
+                    icon: Icons.trending_down,
+                    iconColor: Colors.orange.shade700,
+                  ),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildMetricCard(
-                  title: 'SALDO NETTO TRACCIATO',
-                  value: _formatAmount(res.netAmount),
-                  subtitle: 'Valuta EUR',
-                  icon: Icons.account_balance_wallet_outlined,
-                  iconColor: Colors.green.shade700,
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildMetricCard(
+                    title: 'SALDO NETTO TRACCIATO',
+                    value: _formatAmount(res.netAmount),
+                    subtitle: 'Valuta EUR',
+                    icon: Icons.account_balance_wallet_outlined,
+                    iconColor: Colors.green.shade700,
+                  ),
                 ),
-              ),
-            ],
-          ),
+              ],
+            ),
+          ] else ...[
+            Row(
+              children: [
+                Expanded(
+                  child: _buildMetricCard(
+                    title: 'TOTALE RECORD',
+                    value: '${res.totalRecords}',
+                    subtitle: '${res.uniqueTrasferteCount} trasferte • ${res.uniqueCidCount} dipendenti',
+                    icon: Icons.format_list_numbered,
+                    iconColor: SkyTheme.timBlue,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildMetricCard(
+                    title: 'ADDEBITI',
+                    value: _formatAmount(res.totalPositiveAmount),
+                    subtitle: '${res.records.where((r) => !r.isNegative).length} righe addebito',
+                    icon: Icons.trending_up,
+                    iconColor: Colors.blue.shade700,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildMetricCard(
+                    title: 'RIMBORSI / ANNULLAMENTI',
+                    value: _formatAmount(res.totalNegativeAmount),
+                    subtitle: '${res.records.where((r) => r.isNegative).length} righe "R"',
+                    icon: Icons.trending_down,
+                    iconColor: Colors.orange.shade700,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: _buildMetricCard(
+                    title: 'SALDO NETTO TRACCIATO',
+                    value: _formatAmount(res.netAmount),
+                    subtitle: 'Valuta EUR',
+                    icon: Icons.account_balance_wallet_outlined,
+                    iconColor: Colors.green.shade700,
+                  ),
+                ),
+              ],
+            ),
+          ],
           const SizedBox(height: 20),
 
           // Filters & Search Bar
@@ -1219,15 +1300,20 @@ class _CreaTracciatoViewState extends ConsumerState<CreaTracciatoView> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 0.8,
-                  color: Colors.grey,
+              Expanded(
+                child: Text(
+                  title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.8,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
+              const SizedBox(width: 8),
               Container(
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
@@ -1250,6 +1336,8 @@ class _CreaTracciatoViewState extends ConsumerState<CreaTracciatoView> {
           const SizedBox(height: 4),
           Text(
             subtitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               fontSize: 11,
               color: Colors.grey.shade600,

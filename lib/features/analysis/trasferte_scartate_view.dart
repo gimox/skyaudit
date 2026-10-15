@@ -12,8 +12,10 @@ import 'package:travel_check/features/settings/providers/dictionary_provider.dar
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
 import 'package:travel_check/features/upload/models/log_history.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+import 'package:travel_check/features/upload/models/tracciato_contabile.dart';
+import 'package:travel_check/features/auth/providers/auth_provider.dart';
 
-enum ReinseritoFilter { all, daReinserire, reinseriti }
+enum ReinseritoFilter { all, daReinserire, reinseriti, bonificati }
 
 class GroupedScarto {
   final String numeroTrasferta;
@@ -246,6 +248,7 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
                     ReinseritoFilter.all: 'Tutti',
                     ReinseritoFilter.daReinserire: 'Da Reinserire',
                     ReinseritoFilter.reinseriti: 'Reinseriti',
+                    ReinseritoFilter.bonificati: 'Bonificati',
                   },
                   (val) => setState(() {
                     _statusFilter = val;
@@ -542,7 +545,7 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
 
   Widget _buildExpandedSection(GroupedScarto group, Map<String, String> dictionaryMap, List<LogHistory> allLogs) {
     return Container(
-      width: 1600,
+      width: 1680,
       padding: const EdgeInsets.only(left: 50, right: 0, top: 8, bottom: 16),
       color: Colors.grey.shade50.withAlpha(230),
       child: Column(
@@ -740,6 +743,7 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
   Future<void> _exportToExcel(
     List<GroupedScarto> groups,
     Map<String, bool> groupMatchCache,
+    Map<String, TracciatoContabile?> groupContabileMap,
     Map<String, String> anagraficaMap,
     Map<String, String> anagraficaSocietaMap,
     Map<String, String> anagraficaTipoDipMap,
@@ -844,6 +848,7 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
       String statusStr = 'Tutti';
       if (_statusFilter == ReinseritoFilter.daReinserire) statusStr = 'Da Reinserire';
       if (_statusFilter == ReinseritoFilter.reinseriti) statusStr = 'Reinseriti';
+      if (_statusFilter == ReinseritoFilter.bonificati) statusStr = 'Bonificati';
       sheet.cell(CellIndex.indexByColumnRow(columnIndex: 0, rowIndex: 3))
         ..value = TextCellValue('Stato Reinserimento:')
         ..cellStyle = filterLabelStyle;
@@ -969,6 +974,11 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
 
         sheet.setRowHeight(rowIndex, 22);
 
+        final effectiveTc = groupContabileMap[groupKey];
+        final String statusLabel = effectiveTc?.isBonificato == true
+            ? 'BONIFICATO'
+            : (isReinserted ? 'REINSERITO' : 'DA REINSERIRE');
+
         // Cells definition
         final rowCells = [
           TextCellValue(group.cid),
@@ -980,7 +990,7 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
           TextCellValue(group.items.first.dataInvio),
           TextCellValue(group.items.last.dataInvio),
           IntCellValue(group.items.length),
-          TextCellValue(isReinserted ? 'REINSERITO' : 'DA REINSERIRE'),
+          TextCellValue(statusLabel),
           DoubleCellValue(group.importo),
         ];
 
@@ -1031,6 +1041,298 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
         );
       }
     }
+  }
+
+  void _onBonificaPressed(BuildContext context, TracciatoContabile? record) {
+    if (record == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Nessun record corrispondente trovato nel tracciato contabile.'),
+          backgroundColor: Colors.orange,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return;
+    }
+    final authState = ref.read(authProvider);
+    if (!authState.isAuthenticated) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          title: const Row(
+            children: [
+              Icon(Icons.lock_outline, color: SkyTheme.timRed, size: 24),
+              SizedBox(width: 10),
+              Text('Autenticazione Richiesta'),
+            ],
+          ),
+          content: const Text(
+            'Per eseguire o visualizzare la bonifica di un record è necessario effettuare l\'accesso con il proprio account operatore.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.grey.shade700,
+              ),
+              child: const Text('Annulla'),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton.icon(
+              onPressed: () async {
+                Navigator.pop(ctx);
+                await ref.read(authProvider.notifier).login();
+              },
+              icon: const Icon(Icons.login, size: 18),
+              label: const Text('Accedi'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: SkyTheme.timBlue,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+    _showBonificaDialog(context, record);
+  }
+
+  void _showBonificaDialog(BuildContext context, TracciatoContabile record) {
+    final authState = ref.read(authProvider);
+    final currentOperator = authState.userName ?? authState.userEmail ?? 'Operatore';
+    final noteController = TextEditingController(text: record.notaBonifica ?? '');
+    bool isBonificato = record.isBonificato;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: isBonificato ? Colors.purple.shade50 : Colors.blue.shade50,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              isBonificato ? Icons.verified : Icons.verified_outlined,
+                              color: isBonificato ? Colors.purple.shade700 : SkyTheme.timBlue,
+                              size: 26,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  isBonificato ? 'Record Bonificato' : 'Bonifica Record',
+                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  'Bolla: ${record.numeroBolla} | CID: ${record.cid}',
+                                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () => Navigator.pop(dialogContext),
+                            icon: const Icon(Icons.close, size: 20),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      // Info sintetica
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade200),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Trasferta: ${record.numeroTrasferta}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                                    const SizedBox(height: 2),
+                                    Text('Data: ${record.dataSpesa}', style: TextStyle(color: Colors.grey.shade700, fontSize: 12)),
+                                  ],
+                                ),
+                                Text(
+                                  '${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: record.isNegative ? Colors.red.shade700 : Colors.green.shade800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(height: 16),
+                            Row(
+                              children: [
+                                Icon(Icons.person_pin, size: 16, color: Colors.purple.shade700),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    'Operatore: $currentOperator',
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.purple.shade900),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (record.isBonificato && record.bonificatoDa != null) ...[
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(Icons.history, size: 14, color: Colors.grey.shade500),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      'Precedente bonifica di ${record.bonificatoDa}${record.dataBonifica != null ? " il ${record.dataBonifica!.day}/${record.dataBonifica!.month}/${record.dataBonifica!.year}" : ""}',
+                                      style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey.shade600),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Switch stato bonifica
+                      SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: const Text('Segna come Bonificato', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                        subtitle: Text(
+                          isBonificato ? 'Il record risulterà bonificato con evidenziazione grafica viola' : 'Attiva per considerare la spesa bonificata',
+                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        ),
+                        value: isBonificato,
+                        activeThumbColor: Colors.purple.shade700,
+                        onChanged: (val) {
+                          setDialogState(() {
+                            isBonificato = val;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      // Campo Note
+                      const Text(
+                        'Note di bonifica',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                      ),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: noteController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          hintText: 'Inserisci motivazione o dettagli (es. giustificativo cartaceo verificato, accordo...)',
+                          hintStyle: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade300)),
+                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: SkyTheme.timBlue, width: 1.5)),
+                          contentPadding: const EdgeInsets.all(12),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // Bottoni
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (record.isBonificato)
+                            TextButton.icon(
+                              onPressed: () async {
+                                await ref.read(tracciatoContabilesProvider.notifier).updateBonifica(
+                                  record.id,
+                                  isBonificato: false,
+                                  nota: null,
+                                  bonificatoDa: null,
+                                );
+                                if (dialogContext.mounted) {
+                                  Navigator.pop(dialogContext);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Bonifica rimossa con successo'),
+                                      backgroundColor: Colors.orange,
+                                      behavior: SnackBarBehavior.floating,
+                                    ),
+                                  );
+                                }
+                              },
+                              icon: const Icon(Icons.delete_outline, color: Colors.red, size: 18),
+                              label: const Text('Rimuovi', style: TextStyle(color: Colors.red)),
+                            ),
+                          const Spacer(),
+                          OutlinedButton(
+                            onPressed: () => Navigator.pop(dialogContext),
+                            style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                            child: const Text('Annulla'),
+                          ),
+                          const SizedBox(width: 10),
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              final text = noteController.text.trim();
+                              await ref.read(tracciatoContabilesProvider.notifier).updateBonifica(
+                                record.id,
+                                isBonificato: isBonificato,
+                                nota: text.isNotEmpty ? text : null,
+                                bonificatoDa: isBonificato ? currentOperator : null,
+                              );
+                              if (dialogContext.mounted) {
+                                Navigator.pop(dialogContext);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(isBonificato ? 'Record bonificato da $currentOperator' : 'Modifiche salvate'),
+                                    backgroundColor: Colors.purple.shade700,
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.check, size: 18),
+                            label: const Text('Salva'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.purple.shade700,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -1123,6 +1425,7 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
 
     // Determine matching status cache for each group
     final Map<String, bool> groupMatchCache = {};
+    final Map<String, TracciatoContabile?> groupContabileMap = {};
     for (final group in groupedList) {
       final groupKey = "${group.numeroTrasferta}_${group.importo}_${group.cid}_${group.spesa}";
 
@@ -1147,11 +1450,10 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
       final scartoSpesa = group.spesa.trim().toUpperCase();
       final scartoImporto = group.importo;
 
-      for (final tc in contabileRecords) {
-        if (tc.logHistoryId == null) continue;
-        final filePeriod = logPeriodMap[tc.logHistoryId];
-        if (filePeriod == null || filePeriod < minPeriod) continue;
+      TracciatoContabile? matchedTc;
+      TracciatoContabile? fallbackTc;
 
+      for (final tc in contabileRecords) {
         // Check CID
         final tcCid = tc.cid.trim().padLeft(8, '0');
         if (tcCid != scartoCid) continue;
@@ -1168,17 +1470,32 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
         final tcImporto = tc.isNegative ? -tc.importo : tc.importo;
         if ((tcImporto - scartoImporto).abs() > 0.005) continue;
 
-        isReinserted = true;
-        break;
+        if (tc.isBonificato) {
+          fallbackTc = tc;
+        } else {
+          fallbackTc ??= tc;
+        }
+
+        if (tc.logHistoryId != null) {
+          final filePeriod = logPeriodMap[tc.logHistoryId];
+          if (filePeriod != null && filePeriod >= minPeriod) {
+            matchedTc = tc;
+            isReinserted = true;
+            if (tc.isBonificato) break;
+          }
+        }
       }
 
       groupMatchCache[groupKey] = isReinserted;
+      groupContabileMap[groupKey] = matchedTc ?? fallbackTc;
     }
 
     // Filter grouped records based on query and advanced filters
     final filteredGroups = groupedList.where((g) {
       final groupKey = "${g.numeroTrasferta}_${g.importo}_${g.cid}_${g.spesa}";
       final isReinserted = groupMatchCache[groupKey] ?? false;
+      final effectiveTc = groupContabileMap[groupKey];
+      final isBonificato = effectiveTc?.isBonificato ?? false;
 
       // 1. Search Query
       if (_searchQuery.isNotEmpty) {
@@ -1195,7 +1512,8 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
       }
 
       // 2. Stato Reinserimento
-      if (_statusFilter == ReinseritoFilter.daReinserire && isReinserted) return false;
+      if (_statusFilter == ReinseritoFilter.bonificati && !isBonificato) return false;
+      if (_statusFilter == ReinseritoFilter.daReinserire && (isReinserted || isBonificato)) return false;
       if (_statusFilter == ReinseritoFilter.reinseriti && !isReinserted) return false;
 
       // 3. Società
@@ -1374,6 +1692,7 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
                           onPressed: () => _exportToExcel(
                             filteredGroups,
                             groupMatchCache,
+                            groupContabileMap,
                             anagraficaMap,
                             anagraficaSocietaMap,
                             anagraficaTipoDipMap,
@@ -1428,7 +1747,9 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
                               _buildActiveFilterChip(
                                 _statusFilter == ReinseritoFilter.daReinserire
                                     ? 'Stato: Da Reinserire'
-                                    : 'Stato: Reinseriti',
+                                    : _statusFilter == ReinseritoFilter.reinseriti
+                                        ? 'Stato: Reinseriti'
+                                        : 'Stato: Bonificati',
                                 () {
                                   setState(() {
                                     _statusFilter = ReinseritoFilter.all;
@@ -1625,7 +1946,7 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
                                         controller: _horizontalScrollController,
                                         scrollDirection: Axis.horizontal,
                                         child: SizedBox(
-                                          width: 1600,
+                                          width: 1680,
                                           child: Column(
                                             children: [
                                               // Header Table Row
@@ -1645,6 +1966,7 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
                                                     _buildCell('OCCORRENZE', 100, isHeader: true, alignment: Alignment.center),
                                                     _buildCell('REINSERITO', 150, isHeader: true, alignment: Alignment.center),
                                                     _buildCell('IMPORTO', 120, isHeader: true, alignment: Alignment.centerRight),
+                                                    _buildCell('BONIFICA', 80, isHeader: true, alignment: Alignment.center),
                                                   ],
                                                 ),
                                               ),
@@ -1689,6 +2011,7 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
                                                       final groupKey = "${group.numeroTrasferta}_${group.importo}_${group.cid}_${group.spesa}";
                                                       final isExpanded = _expandedGroups.contains(groupKey);
                                                       final isReinserted = groupMatchCache[groupKey] ?? false;
+                                                      final matchedTc = groupContabileMap[groupKey];
 
                                                       return Column(
                                                         mainAxisSize: MainAxisSize.min,
@@ -1865,27 +2188,48 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
                                                                   child: Container(
                                                                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                                                                     decoration: BoxDecoration(
-                                                                      color: isReinserted
-                                                                          ? Colors.green.shade50
-                                                                          : Colors.orange.shade50,
+                                                                      color: matchedTc?.isBonificato == true
+                                                                          ? Colors.purple.shade50
+                                                                          : (isReinserted
+                                                                              ? Colors.green.shade50
+                                                                              : Colors.orange.shade50),
                                                                       borderRadius: BorderRadius.circular(8),
                                                                       border: Border.all(
-                                                                        color: isReinserted
-                                                                            ? Colors.green.shade200
-                                                                            : Colors.orange.shade200,
+                                                                        color: matchedTc?.isBonificato == true
+                                                                            ? Colors.purple.shade200
+                                                                            : (isReinserted
+                                                                                ? Colors.green.shade200
+                                                                                : Colors.orange.shade200),
                                                                       ),
                                                                     ),
-                                                                    child: Text(
-                                                                      isReinserted ? 'REINSERITO' : 'DA REINSERIRE',
-                                                                      style: TextStyle(
-                                                                        fontSize: 10,
-                                                                        fontWeight: FontWeight.bold,
-                                                                        color: isReinserted
-                                                                            ? Colors.green.shade800
-                                                                            : Colors.orange.shade800,
-                                                                        fontFamily: 'TIMSans',
-                                                                      ),
-                                                                    ),
+                                                                    child: matchedTc?.isBonificato == true
+                                                                        ? Row(
+                                                                            mainAxisSize: MainAxisSize.min,
+                                                                            children: [
+                                                                              Icon(Icons.verified, size: 12, color: Colors.purple.shade700),
+                                                                              const SizedBox(width: 4),
+                                                                              Text(
+                                                                                'BONIFICATO',
+                                                                                style: TextStyle(
+                                                                                  fontSize: 10,
+                                                                                  fontWeight: FontWeight.bold,
+                                                                                  color: Colors.purple.shade700,
+                                                                                  fontFamily: 'TIMSans',
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          )
+                                                                        : Text(
+                                                                            isReinserted ? 'REINSERITO' : 'DA REINSERIRE',
+                                                                            style: TextStyle(
+                                                                              fontSize: 10,
+                                                                              fontWeight: FontWeight.bold,
+                                                                              color: isReinserted
+                                                                                  ? Colors.green.shade800
+                                                                                  : Colors.orange.shade800,
+                                                                              fontFamily: 'TIMSans',
+                                                                            ),
+                                                                          ),
                                                                   ),
                                                                 ),
                                                                 _buildCell(
@@ -1894,6 +2238,30 @@ class _TrasferteScartateViewState extends ConsumerState<TrasferteScartateView> {
                                                                   alignment: Alignment.centerRight,
                                                                   fontWeight: FontWeight.bold,
                                                                   color: amountColor,
+                                                                ),
+                                                                _buildCell(
+                                                                  '',
+                                                                  80,
+                                                                  alignment: Alignment.center,
+                                                                  child: IconButton(
+                                                                    icon: Icon(
+                                                                      matchedTc?.isBonificato == true
+                                                                          ? Icons.verified
+                                                                          : Icons.verified_outlined,
+                                                                      size: 20,
+                                                                      color: matchedTc == null
+                                                                          ? Colors.grey.shade300
+                                                                          : (matchedTc.isBonificato
+                                                                              ? Colors.purple.shade700
+                                                                              : Colors.blueGrey.shade400),
+                                                                    ),
+                                                                    tooltip: matchedTc == null
+                                                                        ? 'Nessun record tracciato trovato'
+                                                                        : (matchedTc.isBonificato
+                                                                            ? 'Record Bonificato da ${matchedTc.bonificatoDa ?? "Operatore"}'
+                                                                            : 'Bonifica Tracciato'),
+                                                                    onPressed: () => _onBonificaPressed(context, matchedTc),
+                                                                  ),
                                                                 ),
                                                               ],
                                                             ),

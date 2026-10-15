@@ -18,6 +18,7 @@ import 'package:travel_check/features/upload/providers/anagrafica_provider.dart'
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
 import 'package:travel_check/features/upload/models/log_history.dart';
 import 'package:travel_check/shared/widgets/file_selection_dialog.dart';
+import 'package:travel_check/features/auth/providers/auth_provider.dart';
 import 'package:intl/intl.dart';
 
 final controlsMonthProvider = StateProvider<Set<String>>((ref) => {});
@@ -44,6 +45,7 @@ final controlsMinDiffProvider = StateProvider<double?>((ref) => null);
 final controlsMaxDiffProvider = StateProvider<double?>((ref) => null);
 final controlsCidMismatchProvider = StateProvider<bool>((ref) => false);
 final controlsMultipleHotelsProvider = StateProvider<bool>((ref) => false);
+final controlsIncludeBonificatiProvider = StateProvider<bool>((ref) => false);
 
 class ControlsView extends ConsumerStatefulWidget {
   const ControlsView({super.key});
@@ -92,8 +94,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
   @override
   Widget build(BuildContext context) {
+    final includeBonificati = ref.watch(controlsIncludeBonificatiProvider);
     final allRecords = ref.watch(tracciatoContabilesProvider)
-        .where((r) => !r.isBonificato)
+        .where((r) => includeBonificati || !r.isBonificato)
         .toList();
     final allEstrattiConto = ref.watch(estrattoContoProvider);
     final rawSapRecords = ref.watch(tracciatoSapProvider);
@@ -634,7 +637,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 final badgeIconSize = isUltraCompact ? 7.0 : (isVeryCompact ? 8.0 : (isCompactList ? 10.0 : 12.0));
                 final badgeFontSize = isUltraCompact ? 7.0 : (isVeryCompact ? 8.0 : (isCompactList ? 9.0 : 10.0));
 
-                final double trailingWidth = isUltraCompact ? 85.0 : (isVeryCompact ? 100.0 : (isCompactList ? 130.0 : 160.0));
+                final double trailingWidth = isUltraCompact ? 105.0 : (isVeryCompact ? 125.0 : (isCompactList ? 160.0 : 190.0));
                 final double horizontalPadding = isUltraCompact ? 2.0 : (isVeryCompact ? 4.0 : (isCompactList ? 10.0 : 16.0));
                 final double recordVerticalPadding = isUltraCompact ? 1.5 : (isVeryCompact ? 2.0 : (isCompactList ? 6.0 : 12.0));
 
@@ -1250,6 +1253,25 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                               ),
                                             ),
                                           ],
+                                          if (record.isBonificato) ...[
+                                            const SizedBox(width: 8),
+                                            Container(
+                                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: Colors.purple.shade50,
+                                                borderRadius: BorderRadius.circular(4),
+                                                border: Border.all(color: Colors.purple.shade200, width: 0.5),
+                                              ),
+                                              child: Text(
+                                                'BONIFICATO',
+                                                style: TextStyle(
+                                                  color: Colors.purple.shade800,
+                                                  fontSize: isUltraCompact ? 6 : (isVeryCompact ? 8 : 9),
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ],
                                       ),
                                       const SizedBox(height: 2),
@@ -1284,6 +1306,20 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                           fontSize: isUltraCompact ? 9 : (isVeryCompact ? 10 : (isCompactList ? 12 : 14)),
                                           color: record.isNegative ? Colors.red.shade700 : Colors.green.shade800,
                                         ),
+                                      ),
+                                      SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
+                                      IconButton(
+                                        icon: Icon(
+                                          record.isBonificato ? Icons.verified : Icons.verified_outlined,
+                                          color: record.isBonificato ? Colors.purple.shade700 : Colors.grey.shade400,
+                                          size: isUltraCompact ? 12 : (isVeryCompact ? 14 : (isCompactList ? 18 : 20)),
+                                        ),
+                                        tooltip: record.isBonificato 
+                                            ? 'Bonificato: ${record.notaBonifica?.isNotEmpty == true ? record.notaBonifica : "(nessuna nota)"}'
+                                            : 'Marca come bonificato',
+                                        onPressed: () => _onBonificaPressed(context, record),
+                                        constraints: const BoxConstraints(),
+                                        padding: EdgeInsets.all(isUltraCompact ? 1 : (isVeryCompact ? 2 : 4)),
                                       ),
                                       SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
                                       IconButton(
@@ -1897,9 +1933,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             vertical: recordVerticalPadding,
                           ),
                           decoration: BoxDecoration(
-                            color: Colors.red.shade50,
+                            color: record.isBonificato ? Colors.purple.shade50.withAlpha(150) : Colors.red.shade50,
                             borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.red.shade200),
+                            border: Border.all(color: record.isBonificato ? Colors.purple.shade200 : Colors.red.shade200),
                           ),
                           child: Row(
                             children: [
@@ -1922,14 +1958,14 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                         Container(
                                           padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
                                           decoration: BoxDecoration(
-                                            color: Colors.red.shade100,
+                                            color: record.isBonificato ? Colors.purple.shade100 : Colors.red.shade100,
                                             borderRadius: BorderRadius.circular(4),
-                                            border: Border.all(color: Colors.red.shade300, width: 0.5),
+                                            border: Border.all(color: record.isBonificato ? Colors.purple.shade300 : Colors.red.shade300, width: 0.5),
                                           ),
                                           child: Text(
-                                            'SCARTO',
+                                            record.isBonificato ? 'BONIFICATO' : 'SCARTO',
                                             style: TextStyle(
-                                              color: Colors.red.shade900,
+                                              color: record.isBonificato ? Colors.purple.shade900 : Colors.red.shade900,
                                               fontSize: isUltraCompact ? 6 : (isVeryCompact ? 8 : 9),
                                               fontWeight: FontWeight.bold,
                                             ),
@@ -1968,6 +2004,20 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                         fontSize: isUltraCompact ? 9 : (isVeryCompact ? 10 : (isCompactList ? 12 : 14)),
                                         color: Colors.red.shade900,
                                       ),
+                                    ),
+                                    SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
+                                    IconButton(
+                                      icon: Icon(
+                                        record.isBonificato ? Icons.verified : Icons.verified_outlined,
+                                        color: record.isBonificato ? Colors.purple.shade700 : Colors.grey.shade400,
+                                        size: isUltraCompact ? 12 : (isVeryCompact ? 14 : (isCompactList ? 18 : 20)),
+                                      ),
+                                      tooltip: record.isBonificato 
+                                          ? 'Bonificato: ${record.notaBonifica?.isNotEmpty == true ? record.notaBonifica : "(nessuna nota)"}'
+                                          : 'Marca come bonificato',
+                                      onPressed: () => _onBonificaPressed(context, record),
+                                      constraints: const BoxConstraints(),
+                                      padding: EdgeInsets.all(isUltraCompact ? 1 : (isVeryCompact ? 2 : 4)),
                                     ),
                                     SizedBox(width: isUltraCompact ? 2 : (isVeryCompact ? 4 : 8)),
                                     IconButton(
@@ -3036,6 +3086,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     ref.read(controlsShowOnlyOrphansProvider.notifier).state = false;
     ref.read(controlsShowOnlySapOrphansProvider.notifier).state = false;
     ref.read(controlsSelectedLogHistoryIdsProvider.notifier).state = {};
+    ref.read(controlsIncludeBonificatiProvider.notifier).state = false;
 
     _searchController.clear();
     _minDiffController.clear();
@@ -3047,8 +3098,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     WidgetRef ref, 
     Map<String, String> dictionaryMap
   ) {
+    final includeBonificati = ref.watch(controlsIncludeBonificatiProvider);
     final allTracciato = ref.watch(tracciatoContabilesProvider)
-        .where((r) => !r.isBonificato)
+        .where((r) => includeBonificati || !r.isBonificato)
         .toList();
     final societaOptions = allTracciato.map((e) => e.societa).toSet().toList()..sort();
     final tipoDipendenteOptions = allTracciato.map((e) => e.tipoDipendente).toSet().toList()..sort();
@@ -3279,6 +3331,14 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                   value: ref.watch(controlsMultipleHotelsProvider),
                   onChanged: (v) => ref.read(controlsMultipleHotelsProvider.notifier).state = v,
                   activeThumbColor: SkyTheme.timBlue,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                SwitchListTile(
+                  title: const Text('Includi Bonificati', style: TextStyle(fontSize: 14)),
+                  subtitle: const Text('Mostra anche i record con bonifica approvata', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                  value: ref.watch(controlsIncludeBonificatiProvider),
+                  onChanged: (v) => ref.read(controlsIncludeBonificatiProvider.notifier).state = v,
+                  activeThumbColor: Colors.purple.shade700,
                   contentPadding: EdgeInsets.zero,
                 ),
                 const SizedBox(height: 24),
@@ -3823,6 +3883,20 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                               isHighlight: true,
                               highlightColor: Colors.red.shade700,
                             ),
+                          if (record.isBonificato) ...[
+                            _buildDetailRow(
+                              'Stato Bonifica', 
+                              'BONIFICATO',
+                              isHighlight: true,
+                              highlightColor: Colors.purple.shade700,
+                            ),
+                            if (record.bonificatoDa != null)
+                              _buildDetailRow('Bonificato da', record.bonificatoDa!),
+                            if (record.dataBonifica != null)
+                              _buildDetailRow('Data Bonifica', '${record.dataBonifica!.day.toString().padLeft(2, '0')}/${record.dataBonifica!.month.toString().padLeft(2, '0')}/${record.dataBonifica!.year}'),
+                            if (record.notaBonifica != null && record.notaBonifica!.isNotEmpty)
+                              _buildDetailRow('Note Bonifica', record.notaBonifica!),
+                          ],
                         ]),
                       ],
                     ),
@@ -3832,24 +3906,342 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                 // ACTIONS
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
-                  child: SizedBox(
-                    width: double.infinity,
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.pop(context),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: SkyTheme.timBlue,
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                        elevation: 0,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () {
+                            Navigator.pop(context);
+                            _onBonificaPressed(context, record);
+                          },
+                          icon: Icon(
+                            record.isBonificato ? Icons.edit_note : Icons.verified_outlined,
+                            size: 18,
+                            color: Colors.purple.shade700,
+                          ),
+                          label: Text(
+                            record.isBonificato ? 'MODIFICA BONIFICA' : 'BONIFICA RECORD',
+                            style: TextStyle(color: Colors.purple.shade700, fontWeight: FontWeight.bold),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            side: BorderSide(color: Colors.purple.shade700),
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                        ),
                       ),
-                      child: const Text('CHIUDI', style: TextStyle(fontWeight: FontWeight.bold)),
-                    ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: ElevatedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: SkyTheme.timBlue,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                            elevation: 0,
+                          ),
+                          child: const Text('CHIUDI', style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
             ),
           ),
+        );
+      },
+    );
+  }
+
+  void _onBonificaPressed(BuildContext context, TracciatoContabile record) {
+    final authState = ref.read(authProvider);
+    if (!authState.isAuthenticated) {
+      showDialog(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          icon: Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: Colors.purple.shade50,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(Icons.lock_outline, color: Colors.purple.shade700, size: 36),
+          ),
+          title: const Text(
+            'Autenticazione Richiesta',
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            textAlign: TextAlign.center,
+          ),
+          content: const Text(
+            'La bonifica delle spese può essere effettuata esclusivamente da utenti autenticati, in modo da registrare il nominativo dell\'operatore e la data/ora di modifica per garantire la tracciabilità delle operazioni.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 13, height: 1.4),
+          ),
+          actionsAlignment: MainAxisAlignment.center,
+          actions: [
+            OutlinedButton(
+              onPressed: () => Navigator.pop(ctx),
+              style: OutlinedButton.styleFrom(
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+              child: const Text('Annulla'),
+            ),
+            const SizedBox(width: 8),
+            ElevatedButton.icon(
+              onPressed: () async {
+                Navigator.pop(ctx);
+                await ref.read(authProvider.notifier).login();
+              },
+              icon: const Icon(Icons.login, size: 18),
+              label: const Text('Accedi'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: SkyTheme.timBlue,
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              ),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
+    _showBonificaDialog(context, record);
+  }
+
+  void _showBonificaDialog(BuildContext context, TracciatoContabile record) {
+    final authState = ref.read(authProvider);
+    final currentOperator = authState.userName ?? authState.userEmail ?? 'Operatore';
+    final noteController = TextEditingController(text: record.notaBonifica ?? '');
+    bool isBonificato = record.isBonificato;
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) {
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return Dialog(
+              backgroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Header
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: isBonificato ? Colors.purple.shade50 : Colors.blue.shade50,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Icon(
+                              isBonificato ? Icons.verified : Icons.verified_outlined,
+                              color: isBonificato ? Colors.purple.shade700 : SkyTheme.timBlue,
+                              size: 26,
+                            ),
+                          ),
+                          const SizedBox(width: 14),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  isBonificato ? 'Record Bonificato' : 'Bonifica Record',
+                                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                ),
+                                Text(
+                                  'Bolla: ${record.numeroBolla} | CID: ${record.cid}',
+                                  style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: () => Navigator.pop(dialogContext),
+                            icon: const Icon(Icons.close, size: 20),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      // Info sintetica
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade50,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade200),
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text('Trasferta: ${record.numeroTrasferta}', style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                                    const SizedBox(height: 2),
+                                    Text('Data: ${record.dataSpesa}', style: TextStyle(color: Colors.grey.shade700, fontSize: 12)),
+                                  ],
+                                ),
+                                Text(
+                                  '${record.isNegative ? "-" : ""}${record.importo.toStringAsFixed(2)} ${record.valuta}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14,
+                                    color: record.isNegative ? Colors.red.shade700 : Colors.green.shade800,
+                                  ),
+                                ),
+                              ],
+                            ),
+                            const Divider(height: 16),
+                            Row(
+                              children: [
+                                Icon(Icons.person_pin, size: 16, color: Colors.purple.shade700),
+                                const SizedBox(width: 6),
+                                Expanded(
+                                  child: Text(
+                                    'Operatore: $currentOperator',
+                                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: Colors.purple.shade900),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            if (record.isBonificato && record.bonificatoDa != null) ...[
+                              const SizedBox(height: 4),
+                              Row(
+                                children: [
+                                  Icon(Icons.history, size: 14, color: Colors.grey.shade500),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      'Precedente bonifica di ${record.bonificatoDa}${record.dataBonifica != null ? " il ${record.dataBonifica!.day}/${record.dataBonifica!.month}/${record.dataBonifica!.year}" : ""}',
+                                      style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey.shade600),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Switch stato bonifica
+                      SwitchListTile(
+                        contentPadding: EdgeInsets.zero,
+                        title: const Text('Segna come Bonificato', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                        subtitle: Text(
+                          isBonificato ? 'Il record risulterà bonificato con evidenziazione grafica viola' : 'Attiva per considerare la spesa bonificata',
+                          style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+                        ),
+                        value: isBonificato,
+                        activeThumbColor: Colors.purple.shade700,
+                        onChanged: (val) {
+                          setDialogState(() {
+                            isBonificato = val;
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      // Campo Note
+                      const Text(
+                        'Note di bonifica',
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                      ),
+                      const SizedBox(height: 6),
+                      TextField(
+                        controller: noteController,
+                        maxLines: 3,
+                        decoration: InputDecoration(
+                          hintText: 'Inserisci motivazione o dettagli (es. giustificativo cartaceo verificato, accordo...)',
+                          hintStyle: TextStyle(fontSize: 12, color: Colors.grey.shade400),
+                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide(color: Colors.grey.shade300)),
+                          focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: const BorderSide(color: SkyTheme.timBlue, width: 1.5)),
+                          contentPadding: const EdgeInsets.all(12),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      // Bottoni
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (record.isBonificato)
+                            TextButton.icon(
+                              onPressed: () async {
+                                await ref.read(tracciatoContabilesProvider.notifier).updateBonifica(
+                                  record.id,
+                                  isBonificato: false,
+                                  nota: null,
+                                  bonificatoDa: null,
+                                );
+                                if (dialogContext.mounted) {
+                                  Navigator.pop(dialogContext);
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                      content: Text('Bonifica rimossa con successo'),
+                                      backgroundColor: Colors.orange,
+                                      behavior: SnackBarBehavior.floating,
+                                    ),
+                                  );
+                                }
+                              },
+                              icon: const Icon(Icons.delete_outline, color: Colors.red, size: 18),
+                              label: const Text('Rimuovi', style: TextStyle(color: Colors.red)),
+                            ),
+                          const Spacer(),
+                          OutlinedButton(
+                            onPressed: () => Navigator.pop(dialogContext),
+                            style: OutlinedButton.styleFrom(
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                            child: const Text('Annulla'),
+                          ),
+                          const SizedBox(width: 10),
+                          ElevatedButton.icon(
+                            onPressed: () async {
+                              final text = noteController.text.trim();
+                              await ref.read(tracciatoContabilesProvider.notifier).updateBonifica(
+                                record.id,
+                                isBonificato: isBonificato,
+                                nota: text.isNotEmpty ? text : null,
+                                bonificatoDa: isBonificato ? currentOperator : null,
+                              );
+                              if (dialogContext.mounted) {
+                                Navigator.pop(dialogContext);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(isBonificato ? 'Record bonificato da $currentOperator' : 'Modifiche salvate'),
+                                    backgroundColor: Colors.purple.shade700,
+                                    behavior: SnackBarBehavior.floating,
+                                  ),
+                                );
+                              }
+                            },
+                            icon: const Icon(Icons.check, size: 18),
+                            label: const Text('Salva'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.purple.shade700,
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
         );
       },
     );
