@@ -22,9 +22,15 @@ import 'package:travel_check/features/upload/models/anagrafica.dart';
 import 'package:travel_check/features/upload/models/scarti_ec_sap.dart';
 import 'package:travel_check/features/upload/models/trasferte_sap.dart';
 import 'package:travel_check/core/services/proxy_service.dart';
+import 'package:travel_check/core/utils/webview_helper.dart';
 
-void main() async {
+void main(List<String> args) async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Se questo processo è una sottofinestra webview di autenticazione su Windows/Linux, gestisci la titlebar ed esci
+  if (runWebViewTitleBar(args)) {
+    return;
+  }
 
   // Inizializzazione Isar con pulizia una tantum per migrazione schema
   final dir = await getApplicationSupportDirectory();

@@ -125,11 +125,29 @@ class AuthNotifier extends StateNotifier<AuthState> {
       // Definisce lo schema di callback richiesto da flutter_web_auth_2
       final callbackScheme = kIsWeb ? 'http' : AuthConfig.desktopCallbackScheme;
 
-      // Apre il browser di sistema o popup web
-      final result = await FlutterWebAuth2.authenticate(
-        url: authorizationUrl.toString(),
-        callbackUrlScheme: callbackScheme,
-      );
+      // Apre il browser di sistema o popup web con fallback automatico su browser predefinito per Windows
+      String result;
+      try {
+        result = await FlutterWebAuth2.authenticate(
+          url: authorizationUrl.toString(),
+          callbackUrlScheme: callbackScheme,
+        );
+      } catch (authError) {
+        final errorStr = authError.toString().toLowerCase();
+        final isCanceled = errorStr.contains('canceled') || errorStr.contains('user cancel');
+        if (!kIsWeb && Platform.isWindows && !isCanceled) {
+          debugPrint('Autenticazione WebView non disponibile o fallita ($authError), avvio fallback su browser di sistema...');
+          result = await FlutterWebAuth2.authenticate(
+            url: authorizationUrl.toString(),
+            callbackUrlScheme: 'http://localhost:${AuthConfig.desktopPort}',
+            options: const FlutterWebAuth2Options(
+              useWebview: false,
+            ),
+          );
+        } else {
+          rethrow;
+        }
+      }
 
       // Riceve il codice di reindirizzamento e finalizza lo scambio
       final responseUri = Uri.parse(result);
