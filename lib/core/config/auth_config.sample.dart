@@ -33,7 +33,7 @@ class AuthConfig {
     if (!kIsWeb && Platform.isMacOS) {
       return 'sky-audit';
     }
-    return 'http';
+    return 'http://localhost:$desktopPort';
   }
 
   // Web configuration (Single-page app redirect callback page)

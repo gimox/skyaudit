@@ -125,29 +125,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
       // Definisce lo schema di callback richiesto da flutter_web_auth_2
       final callbackScheme = kIsWeb ? 'http' : AuthConfig.desktopCallbackScheme;
 
-      // Apre il browser di sistema o popup web con fallback automatico su browser predefinito per Windows
-      String result;
-      try {
-        result = await FlutterWebAuth2.authenticate(
-          url: authorizationUrl.toString(),
-          callbackUrlScheme: callbackScheme,
-        );
-      } catch (authError) {
-        final errorStr = authError.toString().toLowerCase();
-        final isCanceled = errorStr.contains('canceled') || errorStr.contains('user cancel');
-        if (!kIsWeb && Platform.isWindows && !isCanceled) {
-          debugPrint('Autenticazione WebView non disponibile o fallita ($authError), avvio fallback su browser di sistema...');
-          result = await FlutterWebAuth2.authenticate(
-            url: authorizationUrl.toString(),
-            callbackUrlScheme: 'http://localhost:${AuthConfig.desktopPort}',
-            options: const FlutterWebAuth2Options(
-              useWebview: false,
-            ),
-          );
-        } else {
-          rethrow;
-        }
-      }
+      // Su Windows e Linux viene utilizzato direttamente il browser di sistema predefinito (useWebview: false)
+      // tramite loopback HTTP locale, evitando schermate bianche della WebView nativa
+      // e consentendo il caricamento della pagina di autenticazione Entra ID e il Single Sign-On.
+      final result = await FlutterWebAuth2.authenticate(
+        url: authorizationUrl.toString(),
+        callbackUrlScheme: callbackScheme,
+        options: const FlutterWebAuth2Options(
+          useWebview: false,
+        ),
+      );
 
       // Riceve il codice di reindirizzamento e finalizza lo scambio
       final responseUri = Uri.parse(result);
@@ -176,13 +163,21 @@ class AuthNotifier extends StateNotifier<AuthState> {
         }
       });
     } catch (e) {
-      state = AuthState.error(e.toString());
-      // Rimane scollegato in caso di errore
-      Future.delayed(const Duration(seconds: 4), () {
-        if (state.status == AuthStatus.error) {
-          state = AuthState.unauthenticated();
-        }
-      });
+      final errorStr = e.toString().toLowerCase();
+      final isCanceled = errorStr.contains('canceled') || errorStr.contains('user cancel');
+      if (isCanceled) {
+        debugPrint('Autenticazione annullata dall\'utente.');
+        state = AuthState.unauthenticated();
+      } else {
+        debugPrint('Errore durante l\'autenticazione: $e');
+        state = AuthState.error(e.toString());
+        // Rimane scollegato in caso di errore
+        Future.delayed(const Duration(seconds: 4), () {
+          if (state.status == AuthStatus.error) {
+            state = AuthState.unauthenticated();
+          }
+        });
+      }
     }
   }
 
