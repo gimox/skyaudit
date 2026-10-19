@@ -46,6 +46,8 @@ final controlsMaxDiffProvider = StateProvider<double?>((ref) => null);
 final controlsCidMismatchProvider = StateProvider<bool>((ref) => false);
 final controlsMultipleHotelsProvider = StateProvider<bool>((ref) => false);
 final controlsIncludeBonificatiProvider = StateProvider<bool>((ref) => false);
+final controlsFilterOspitiProvider = StateProvider<bool>((ref) => false);
+final controlsFilterTopProvider = StateProvider<bool>((ref) => false);
 
 class ControlsView extends ConsumerStatefulWidget {
   const ControlsView({super.key});
@@ -59,6 +61,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
   final _minDiffController = TextEditingController();
   final _maxDiffController = TextEditingController();
   final _scrollController = ScrollController();
+  bool _isOspitiInfoExpanded = false;
+  bool _isTopInfoExpanded = false;
   
   static const Map<String, String> monthNames = {
     '01': 'Gennaio',
@@ -95,10 +99,12 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
   @override
   Widget build(BuildContext context) {
     final includeBonificati = ref.watch(controlsIncludeBonificatiProvider);
+    final filterOspiti = ref.watch(controlsFilterOspitiProvider);
+    final filterTop = ref.watch(controlsFilterTopProvider);
     final allRecords = ref.watch(tracciatoContabilesProvider)
         .where((r) => includeBonificati || !r.isBonificato)
         .toList();
-    final allEstrattiConto = ref.watch(estrattoContoProvider);
+    final rawEstrattiConto = ref.watch(estrattoContoProvider);
     final rawSapRecords = ref.watch(tracciatoSapProvider);
     final allLogs = ref.watch(logHistoryProvider);
     final sapLogs = allLogs.where((log) => log.sourceType == 'Tracciato SAP').toList()
@@ -107,7 +113,126 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     final List<TracciatoSap> allSapRecords = latestSapLogId != null
         ? rawSapRecords.where((sap) => sap.logHistoryId == latestSapLogId).toList()
         : rawSapRecords;
-    final allAmexRecords = ref.watch(estrattoAmexProvider);
+    final rawAmexRecords = ref.watch(estrattoAmexProvider);
+
+    final ospitiLogs = allLogs.where((log) => log.fileName.toUpperCase().contains('OSPITI')).toList();
+    final ospitiLogCodes = ospitiLogs.expand((l) => [l.uniqueCode, l.fileName]).toSet();
+
+    final topLogs = allLogs.where((log) => log.fileName.toUpperCase().contains('TOP')).toList();
+    final topLogCodes = topLogs.expand((l) => [l.uniqueCode, l.fileName]).toSet();
+
+    bool isOspitiRecord(String? logId) {
+      if (logId != null && ospitiLogCodes.contains(logId)) return true;
+      return false;
+    }
+
+    bool isTopRecord(String? logId) {
+      if (logId != null && topLogCodes.contains(logId)) return true;
+      return false;
+    }
+
+    final Set<String> ospitiTrasferte = {};
+    for (final ec in rawEstrattiConto) {
+      if (ec.numeroTrasferta.isNotEmpty && isOspitiRecord(ec.logHistoryId)) {
+        ospitiTrasferte.add(ec.numeroTrasferta);
+      }
+    }
+    for (final ame in rawAmexRecords) {
+      final numTr = ame.numeroTrasferta;
+      if (numTr != null && numTr.isNotEmpty && isOspitiRecord(ame.logHistoryId)) {
+        ospitiTrasferte.add(numTr);
+      }
+    }
+    for (final tc in allRecords) {
+      if (isOspitiRecord(tc.logHistoryId) || (tc.scartoLogHistoryId != null && isOspitiRecord(tc.scartoLogHistoryId))) {
+        ospitiTrasferte.add(tc.numeroTrasferta);
+      }
+    }
+    for (final sap in allSapRecords) {
+      if (isOspitiRecord(sap.logHistoryId)) {
+        ospitiTrasferte.add(sap.numeroTrasferta);
+      }
+    }
+
+    final Set<String> topTrasferte = {};
+    for (final ec in rawEstrattiConto) {
+      if (ec.numeroTrasferta.isNotEmpty && isTopRecord(ec.logHistoryId)) {
+        topTrasferte.add(ec.numeroTrasferta);
+      }
+    }
+    for (final ame in rawAmexRecords) {
+      final numTr = ame.numeroTrasferta;
+      if (numTr != null && numTr.isNotEmpty && isTopRecord(ame.logHistoryId)) {
+        topTrasferte.add(numTr);
+      }
+    }
+    for (final tc in allRecords) {
+      if (isTopRecord(tc.logHistoryId) || (tc.scartoLogHistoryId != null && isTopRecord(tc.scartoLogHistoryId))) {
+        topTrasferte.add(tc.numeroTrasferta);
+      }
+    }
+    for (final sap in allSapRecords) {
+      if (isTopRecord(sap.logHistoryId)) {
+        topTrasferte.add(sap.numeroTrasferta);
+      }
+    }
+
+    int ospitiRecordsCount = 0;
+    for (final ec in rawEstrattiConto) {
+      if (isOspitiRecord(ec.logHistoryId)) {
+        ospitiRecordsCount++;
+      }
+    }
+    for (final ame in rawAmexRecords) {
+      if (isOspitiRecord(ame.logHistoryId)) {
+        ospitiRecordsCount++;
+      }
+    }
+    for (final tc in allRecords) {
+      if (isOspitiRecord(tc.logHistoryId) || (tc.scartoLogHistoryId != null && isOspitiRecord(tc.scartoLogHistoryId))) {
+        ospitiRecordsCount++;
+      }
+    }
+    if (ospitiRecordsCount == 0 && ospitiLogs.isNotEmpty) {
+      ospitiRecordsCount = ospitiLogs.fold<int>(0, (sum, l) => sum + l.totalRecords);
+    }
+
+    int topRecordsCount = 0;
+    for (final ec in rawEstrattiConto) {
+      if (isTopRecord(ec.logHistoryId)) {
+        topRecordsCount++;
+      }
+    }
+    for (final ame in rawAmexRecords) {
+      if (isTopRecord(ame.logHistoryId)) {
+        topRecordsCount++;
+      }
+    }
+    for (final tc in allRecords) {
+      if (isTopRecord(tc.logHistoryId) || (tc.scartoLogHistoryId != null && isTopRecord(tc.scartoLogHistoryId))) {
+        topRecordsCount++;
+      }
+    }
+    if (topRecordsCount == 0 && topLogs.isNotEmpty) {
+      topRecordsCount = topLogs.fold<int>(0, (sum, l) => sum + l.totalRecords);
+    }
+
+    final List<EstrattoConto> allEstrattiConto = (filterOspiti && filterTop)
+        ? rawEstrattiConto.where((ec) => isOspitiRecord(ec.logHistoryId) && isTopRecord(ec.logHistoryId)).toList()
+        : (filterOspiti
+            ? rawEstrattiConto.where((ec) => isOspitiRecord(ec.logHistoryId)).toList()
+            : (filterTop
+                ? rawEstrattiConto.where((ec) => isTopRecord(ec.logHistoryId)).toList()
+                : rawEstrattiConto));
+
+    final List<EstrattoAmex> allAmexRecords = (filterOspiti && filterTop)
+        ? rawAmexRecords.where((ame) => isOspitiRecord(ame.logHistoryId) && isTopRecord(ame.logHistoryId)).toList()
+        : (filterOspiti
+            ? rawAmexRecords.where((ame) => isOspitiRecord(ame.logHistoryId)).toList()
+            : (filterTop
+                ? rawAmexRecords.where((ame) => isTopRecord(ame.logHistoryId)).toList()
+                : rawAmexRecords));
+
     final selectedLogHistoryIds = ref.watch(controlsSelectedLogHistoryIdsProvider);
     String? selectedLogFileName;
     if (selectedLogHistoryIds.length == 1) {
@@ -154,8 +279,25 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     for (final record in filteredAllRecords) {
       groupedRecords.putIfAbsent(record.numeroTrasferta, () => []).add(record);
     }
+    if (filterOspiti) {
+      for (final t in ospitiTrasferte) {
+        groupedRecords.putIfAbsent(t, () => []);
+      }
+    }
+    if (filterTop) {
+      for (final t in topTrasferte) {
+        groupedRecords.putIfAbsent(t, () => []);
+      }
+    }
 
     var trasferte = groupedRecords.keys.toList();
+
+    if (filterOspiti) {
+      trasferte = trasferte.where((t) => ospitiTrasferte.contains(t)).toList();
+    }
+    if (filterTop) {
+      trasferte = trasferte.where((t) => topTrasferte.contains(t)).toList();
+    }
 
     if (searchQuery.trim().isNotEmpty) {
       final query = searchQuery.trim().toLowerCase();
@@ -408,6 +550,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       showMultipleHotelsOnly,
       searchQuery.isNotEmpty,
       selectedLogHistoryIds.isNotEmpty,
+      filterOspiti,
+      filterTop,
     ].where((e) => e).length;
 
     return Scaffold(
@@ -421,7 +565,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
           allSapRecords,
           allAmexRecords,
           dictionaryMap,
-          anagraficaMap
+          anagraficaMap,
+          isOspitiFilter: filterOspiti,
+          isTopFilter: filterTop,
         ),
         backgroundColor: Colors.green.shade700,
         foregroundColor: Colors.white,
@@ -509,7 +655,75 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                             ),
                           ),
                         ),
-                        SizedBox(width: isUltraCompact ? 6 : 12),
+                        SizedBox(width: isUltraCompact ? 4 : 8),
+                        // Pulsante rapido File OSPITI
+                        Tooltip(
+                          message: ospitiLogs.isNotEmpty
+                              ? 'Filtra i record dai ${ospitiLogs.length} file contenenti la parola "OSPITI"'
+                              : 'Nessun file caricato contiene "OSPITI" nel nome',
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              ref.read(controlsFilterOspitiProvider.notifier).state = !filterOspiti;
+                              ref.read(controlsPageProvider.notifier).state = 0;
+                            },
+                            icon: Icon(
+                              filterOspiti ? Icons.check_circle_rounded : Icons.people_alt_outlined,
+                              size: isUltraCompact ? 14 : 18,
+                            ),
+                            label: Text(
+                              isVeryCompact ? 'OSPITI (${ospitiLogs.length})' : 'File OSPITI (${ospitiLogs.length})',
+                              style: TextStyle(fontSize: isUltraCompact ? 11 : (isVeryCompact ? 12 : 14)),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isUltraCompact ? 8 : (isVeryCompact ? 12 : 16),
+                                vertical: isUltraCompact ? 8 : (isVeryCompact ? 10 : 14),
+                              ),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isUltraCompact ? 8 : 12)),
+                              backgroundColor: filterOspiti ? Colors.orange.shade700 : Colors.white,
+                              foregroundColor: filterOspiti ? Colors.white : (ospitiLogs.isNotEmpty ? Colors.orange.shade900 : Colors.grey),
+                              side: BorderSide(
+                                color: filterOspiti ? Colors.orange.shade700 : (ospitiLogs.isNotEmpty ? Colors.orange.shade300 : Colors.grey.shade300),
+                                width: filterOspiti ? 1.5 : 1,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: isUltraCompact ? 4 : 8),
+                        // Pulsante rapido File TOP
+                        Tooltip(
+                          message: topLogs.isNotEmpty
+                              ? 'Filtra i record dai ${topLogs.length} file contenenti la parola "TOP"'
+                              : 'Nessun file caricato contiene "TOP" nel nome',
+                          child: OutlinedButton.icon(
+                            onPressed: () {
+                              ref.read(controlsFilterTopProvider.notifier).state = !filterTop;
+                              ref.read(controlsPageProvider.notifier).state = 0;
+                            },
+                            icon: Icon(
+                              filterTop ? Icons.check_circle_rounded : Icons.star_rounded,
+                              size: isUltraCompact ? 14 : 18,
+                            ),
+                            label: Text(
+                              isVeryCompact ? 'TOP (${topLogs.length})' : 'File TOP (${topLogs.length})',
+                              style: TextStyle(fontSize: isUltraCompact ? 11 : (isVeryCompact ? 12 : 14)),
+                            ),
+                            style: OutlinedButton.styleFrom(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isUltraCompact ? 8 : (isVeryCompact ? 12 : 16),
+                                vertical: isUltraCompact ? 8 : (isVeryCompact ? 10 : 14),
+                              ),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(isUltraCompact ? 8 : 12)),
+                              backgroundColor: filterTop ? Colors.teal.shade700 : Colors.white,
+                              foregroundColor: filterTop ? Colors.white : (topLogs.isNotEmpty ? Colors.teal.shade900 : Colors.grey),
+                              side: BorderSide(
+                                color: filterTop ? Colors.teal.shade700 : (topLogs.isNotEmpty ? Colors.teal.shade300 : Colors.grey.shade300),
+                                width: filterTop ? 1.5 : 1,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: isUltraCompact ? 4 : 8),
                         // BOTTONE FILTRI AVANZATI
                         Builder(
                           builder: (context) => Stack(
@@ -606,6 +820,16 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                                     : 'File: ${selectedLogHistoryIds.length} selezionati',
                                 () => ref.read(controlsSelectedLogHistoryIdsProvider.notifier).state = {},
                               ),
+                            if (filterOspiti)
+                              _buildFilterChip(
+                                'File OSPITI (${ospitiLogs.length} file)',
+                                () => ref.read(controlsFilterOspitiProvider.notifier).state = false,
+                              ),
+                            if (filterTop)
+                              _buildFilterChip(
+                                'File TOP (${topLogs.length} file)',
+                                () => ref.read(controlsFilterTopProvider.notifier).state = false,
+                              ),
                             
                             TextButton(
                               onPressed: () => _resetAllFilters(ref),
@@ -620,6 +844,318 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
               );
             },
           ),
+
+          // BANNER INFORMATIVO FILE OSPITI SE ATTIVO
+          if (filterOspiti)
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                MediaQuery.of(context).size.width < 700 ? 12 : 24,
+                0,
+                MediaQuery.of(context).size.width < 700 ? 12 : 24,
+                16,
+              ),
+              child: Material(
+                color: Colors.orange.shade50,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: Colors.orange.shade300),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.orange.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(Icons.people_alt_outlined, color: Colors.orange.shade900, size: 20),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'FILTRO OSPITI ATTIVO • $ospitiRecordsCount RECORD DA ${ospitiLogs.length} FILE',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: Colors.orange.shade900,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                if (_isOspitiInfoExpanded) ...[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    ospitiLogs.isNotEmpty
+                                        ? 'Record estratti esclusivamente dai file contenenti la parola "OSPITI":'
+                                        : 'Nessun file caricato contiene la parola "OSPITI" nel nome.',
+                                    style: TextStyle(fontSize: 11, color: Colors.orange.shade900.withAlpha(220)),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          if (ospitiLogs.isNotEmpty)
+                            TextButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  _isOspitiInfoExpanded = !_isOspitiInfoExpanded;
+                                });
+                              },
+                              icon: Icon(
+                                _isOspitiInfoExpanded ? Icons.expand_less : Icons.expand_more,
+                                size: 18,
+                                color: Colors.orange.shade900,
+                              ),
+                              label: Text(
+                                _isOspitiInfoExpanded ? 'Nascondi file' : 'Mostra file (${ospitiLogs.length})',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.orange.shade900,
+                                ),
+                              ),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                backgroundColor: Colors.orange.shade100.withAlpha(160),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
+                            ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.close, size: 18),
+                            color: Colors.orange.shade900,
+                            onPressed: () {
+                              ref.read(controlsFilterOspitiProvider.notifier).state = false;
+                              ref.read(controlsPageProvider.notifier).state = 0;
+                            },
+                            tooltip: 'Disattiva filtro OSPITI',
+                          ),
+                        ],
+                      ),
+                      if (_isOspitiInfoExpanded && ospitiLogs.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: ospitiLogs.map((log) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.orange.shade200),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.orange.withAlpha(20),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.insert_drive_file_outlined, size: 14, color: Colors.orange.shade800),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    log.fileName,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.orange.shade900,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.orange.shade100,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      '${log.totalRecords} rec',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.orange.shade900,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+          // BANNER INFORMATIVO FILE TOP SE ATTIVO
+          if (filterTop)
+            Padding(
+              padding: EdgeInsets.fromLTRB(
+                MediaQuery.of(context).size.width < 700 ? 12 : 24,
+                0,
+                MediaQuery.of(context).size.width < 700 ? 12 : 24,
+                16,
+              ),
+              child: Material(
+                color: Colors.teal.shade50,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: Colors.teal.shade300),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.teal.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(Icons.star_rounded, color: Colors.teal.shade900, size: 20),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'FILTRO TOP ATTIVO • $topRecordsCount RECORD DA ${topLogs.length} FILE',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: Colors.teal.shade900,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                if (_isTopInfoExpanded) ...[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    topLogs.isNotEmpty
+                                        ? 'Record estratti esclusivamente dai file contenenti la parola "TOP":'
+                                        : 'Nessun file caricato contiene la parola "TOP" nel nome.',
+                                    style: TextStyle(fontSize: 11, color: Colors.teal.shade900.withAlpha(220)),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          if (topLogs.isNotEmpty)
+                            TextButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  _isTopInfoExpanded = !_isTopInfoExpanded;
+                                });
+                              },
+                              icon: Icon(
+                                _isTopInfoExpanded ? Icons.expand_less : Icons.expand_more,
+                                size: 18,
+                                color: Colors.teal.shade900,
+                              ),
+                              label: Text(
+                                _isTopInfoExpanded ? 'Nascondi file' : 'Mostra file (${topLogs.length})',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal.shade900,
+                                ),
+                              ),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                backgroundColor: Colors.teal.shade100.withAlpha(160),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
+                            ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.close, size: 18),
+                            color: Colors.teal.shade900,
+                            onPressed: () {
+                              ref.read(controlsFilterTopProvider.notifier).state = false;
+                              ref.read(controlsPageProvider.notifier).state = 0;
+                            },
+                            tooltip: 'Disattiva filtro TOP',
+                          ),
+                        ],
+                      ),
+                      if (_isTopInfoExpanded && topLogs.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: topLogs.map((log) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.teal.shade200),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.teal.withAlpha(20),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.insert_drive_file_outlined, size: 14, color: Colors.teal.shade800),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    log.fileName,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.teal.shade900,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.teal.shade100,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      '${log.totalRecords} rec',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.teal.shade900,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
 
           SizedBox(height: MediaQuery.of(context).size.width < 700 ? 8 : 24),
           Expanded(
@@ -2691,8 +3227,10 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     List<TracciatoSap> allSapRecords,
     List<EstrattoAmex> allAmexRecords,
     Map<String, String> dictionaryMap,
-    Map<String, String> anagraficaMap,
-  ) async {
+    Map<String, String> anagraficaMap, {
+    bool isOspitiFilter = false,
+    bool isTopFilter = false,
+  }) async {
     try {
       final excel = excel_pkg.Excel.createExcel();
       final sheet = excel['ControlliTrasferte'];
@@ -2995,9 +3533,27 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       final fileBytes = excel.encode();
       if (fileBytes == null) return;
 
+      String exportSuffix = '';
+      if (isOspitiFilter && isTopFilter) {
+        exportSuffix = '_OSPITI_TOP';
+      } else if (isOspitiFilter) {
+        exportSuffix = '_OSPITI';
+      } else if (isTopFilter) {
+        exportSuffix = '_TOP';
+      }
+
+      String dialogTitle = 'Salva Export Controlli';
+      if (isOspitiFilter && isTopFilter) {
+        dialogTitle = 'Salva Export Controlli Trasferte (File OSPITI + TOP)';
+      } else if (isOspitiFilter) {
+        dialogTitle = 'Salva Export Controlli Trasferte (File OSPITI)';
+      } else if (isTopFilter) {
+        dialogTitle = 'Salva Export Controlli Trasferte (File TOP)';
+      }
+
       final outputFile = await FilePicker.saveFile(
-        dialogTitle: 'Salva Export Controlli',
-        fileName: 'SkyAudit_Controlli_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.xlsx',
+        dialogTitle: dialogTitle,
+        fileName: 'SkyAudit_Controlli${exportSuffix}_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.xlsx',
         type: FileType.custom,
         allowedExtensions: ['xlsx'],
       );
@@ -3087,6 +3643,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     ref.read(controlsShowOnlySapOrphansProvider.notifier).state = false;
     ref.read(controlsSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(controlsIncludeBonificatiProvider.notifier).state = false;
+    ref.read(controlsFilterOspitiProvider.notifier).state = false;
+    ref.read(controlsFilterTopProvider.notifier).state = false;
 
     _searchController.clear();
     _minDiffController.clear();
@@ -3106,6 +3664,8 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     final tipoDipendenteOptions = allTracciato.map((e) => e.tipoDipendente).toSet().toList()..sort();
     final allLogs = ref.watch(logHistoryProvider);
     final tcLogs = allLogs.where((log) => log.sourceType == 'Tracciato Contabile').toList();
+    final ospitiLogs = allLogs.where((log) => log.fileName.toUpperCase().contains('OSPITI')).toList();
+    final topLogs = allLogs.where((log) => log.fileName.toUpperCase().contains('TOP')).toList();
 
     return Drawer(
       width: 350,
@@ -3339,6 +3899,28 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
                   value: ref.watch(controlsIncludeBonificatiProvider),
                   onChanged: (v) => ref.read(controlsIncludeBonificatiProvider.notifier).state = v,
                   activeThumbColor: Colors.purple.shade700,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                SwitchListTile(
+                  title: Text('Filtro File OSPITI (${ospitiLogs.length})', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                  subtitle: const Text('Mostra solo trasferte da file contenenti "OSPITI"', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                  value: ref.watch(controlsFilterOspitiProvider),
+                  onChanged: (v) {
+                    ref.read(controlsFilterOspitiProvider.notifier).state = v;
+                    ref.read(controlsPageProvider.notifier).state = 0;
+                  },
+                  activeThumbColor: Colors.orange.shade700,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                SwitchListTile(
+                  title: Text('Filtro File TOP (${topLogs.length})', style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+                  subtitle: const Text('Mostra solo trasferte da file contenenti "TOP"', style: TextStyle(fontSize: 11, color: Colors.grey)),
+                  value: ref.watch(controlsFilterTopProvider),
+                  onChanged: (v) {
+                    ref.read(controlsFilterTopProvider.notifier).state = v;
+                    ref.read(controlsPageProvider.notifier).state = 0;
+                  },
+                  activeThumbColor: Colors.teal.shade700,
                   contentPadding: EdgeInsets.zero,
                 ),
                 const SizedBox(height: 24),

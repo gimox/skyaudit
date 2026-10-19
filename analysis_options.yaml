@@ -39,3 +39,5 @@ analyzer:
     - windows/**
     - macos/**
     - linux/**
+    - mock_template/**
+    - mick_template/**

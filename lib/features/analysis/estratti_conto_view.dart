@@ -58,6 +58,23 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     return s.trim().split('.')[0].replaceAll(RegExp(r'^0+'), '');
   }
 
+  static bool _isValidTrasferta(String? s) {
+    if (s == null) return false;
+    final trimmed = s.trim();
+    if (trimmed.isEmpty) return false;
+    final clean = _cleanT(trimmed);
+    if (clean.isEmpty) return false;
+    final upper = trimmed.toUpperCase();
+    if (upper == 'SENZA TRASFERTA' ||
+        upper == 'NA' ||
+        upper == 'N/A' ||
+        upper == 'ID TRASFERTA' ||
+        upper == 'NULL') {
+      return false;
+    }
+    return true;
+  }
+
   static String _formatCidWithName(String cid, Map<String, String> anagraficaMap) {
     final cleanCid = cid.trim();
     final name = anagraficaMap[cleanCid];
@@ -80,7 +97,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     final ecLogIds = allRecords.map((r) => r.logHistoryId).whereType<String>().toSet();
     final ecLogs = allLogs.where((log) => log.sourceType == 'Estratto Conto' || ecLogIds.contains(log.uniqueCode)).toList();
     final ospitiLogs = ecLogs.where((log) => log.fileName.toUpperCase().contains('OSPITI')).toList();
-    final ospitiLogCodes = ospitiLogs.map((l) => l.uniqueCode).toSet();
+    final ospitiLogCodes = ospitiLogs.expand((l) => [l.uniqueCode, l.fileName]).toSet();
 
     final selectedTrasferta = ref.watch(ecSelectedTrasfertaProvider);
     final selectedSocieta = ref.watch(ecSelectedSocietaProvider);
@@ -178,7 +195,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     final Map<String, List<TracciatoSap>> sapMapByCleanedT = {};
     for (final s in allSapRecords) {
       final key = _cleanT(s.numeroTrasferta);
-      if (key.isNotEmpty) {
+      if (key.isNotEmpty && _isValidTrasferta(s.numeroTrasferta)) {
         sapMapByCleanedT.putIfAbsent(key, () => []).add(s);
       }
     }
@@ -186,7 +203,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     final Map<String, List<EstrattoAmex>> amexMapByT = {};
     for (final a in allAmexRecords) {
       final numTr = a.numeroTrasferta?.trim();
-      if (numTr != null && numTr.isNotEmpty) {
+      if (numTr != null && numTr.isNotEmpty && _isValidTrasferta(numTr)) {
         amexMapByT.putIfAbsent(numTr, () => []).add(a);
       }
     }
@@ -306,12 +323,13 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
               onPressed: () => _exportToExcel(
                 trasferte,
                 groupedRecords,
-                allSapRecords,
-                allAmexRecords,
-                allContabileRecords,
+                filterOspiti ? const [] : allSapRecords,
+                filterOspiti ? const [] : allAmexRecords,
+                filterOspiti ? const [] : allContabileRecords,
                 anagraficheMap,
                 logHistoryMap,
-                filteredRecords,
+                trasferte.expand((t) => groupedRecords[t] ?? <EstrattoConto>[]).toList(),
+                isOspitiFilter: filterOspiti,
               ),
               backgroundColor: Colors.green.shade700,
               foregroundColor: Colors.white,
@@ -726,13 +744,18 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                       final recordsTrasferta = groupedRecords[numeroTrasferta] ?? [];
                       final totaleEC = recordsTrasferta.fold<double>(0, (sum, r) => sum + r.totaleServizio);
 
-                      final sapForTrasferta = sapMapByCleanedT[_cleanT(numeroTrasferta)] ?? const [];
+                      final isValidT = _isValidTrasferta(numeroTrasferta);
+                      final sapForTrasferta = (isValidT && !filterOspiti)
+                          ? (sapMapByCleanedT[_cleanT(numeroTrasferta)] ?? const [])
+                          : const <TracciatoSap>[];
                       final totaleSap = sapForTrasferta.fold<double>(0, (sum, s) => sum + s.importo);
                       final hasSap = sapForTrasferta.isNotEmpty;
                       final isSapMatching = hasSap && (totaleEC - totaleSap).abs() < 0.01;
                       final hasSapDiff = hasSap && !isSapMatching;
 
-                      final amexForTrasferta = amexMapByT[numeroTrasferta] ?? const [];
+                      final amexForTrasferta = (isValidT && !filterOspiti)
+                          ? (amexMapByT[numeroTrasferta] ?? const [])
+                          : const <EstrattoAmex>[];
                       final totaleAmex = amexForTrasferta.fold<double>(0, (sum, a) => sum + (a.importoLordo ?? 0));
                       final hasAmex = amexForTrasferta.isNotEmpty;
                       final isAmexMatching = hasAmex && (totaleEC - totaleAmex).abs() < 0.01;
@@ -2617,8 +2640,9 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     List<TracciatoContabile> allContabileRecords,
     Map<String, String> anagraficaMap,
     Map<String, LogHistory> logHistoryMap,
-    List<EstrattoConto> rawRecords,
-  ) async {
+    List<EstrattoConto> rawRecords, {
+    bool isOspitiFilter = false,
+  }) async {
     try {
       final excel = Excel.createExcel();
       final sheet = excel['ControlliEstrattiConto'];
@@ -2661,27 +2685,33 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
 
       // Pre-indicizzazione O(1) per lookup veloce
       final Map<String, List<TracciatoSap>> sapMap = {};
-      for (final s in allSapRecords) {
-        final key = _cleanT(s.numeroTrasferta);
-        if (key.isNotEmpty) {
-          sapMap.putIfAbsent(key, () => []).add(s);
+      if (!isOspitiFilter) {
+        for (final s in allSapRecords) {
+          final key = _cleanT(s.numeroTrasferta);
+          if (key.isNotEmpty && _isValidTrasferta(s.numeroTrasferta)) {
+            sapMap.putIfAbsent(key, () => []).add(s);
+          }
         }
       }
 
       final Map<String, List<EstrattoAmex>> amexMap = {};
-      for (final a in allAmexRecords) {
-        final key = a.numeroTrasferta?.trim() ?? '';
-        if (key.isNotEmpty) {
-          amexMap.putIfAbsent(key, () => []).add(a);
+      if (!isOspitiFilter) {
+        for (final a in allAmexRecords) {
+          final key = a.numeroTrasferta?.trim() ?? '';
+          if (key.isNotEmpty && _isValidTrasferta(key)) {
+            amexMap.putIfAbsent(key, () => []).add(a);
+          }
         }
       }
 
       final Map<String, List<TracciatoContabile>> contabileMap = {};
-      for (final c in allContabileRecords) {
-        if (!c.isScarto) {
-          final key = c.numeroTrasferta.trim();
-          if (key.isNotEmpty) {
-            contabileMap.putIfAbsent(key, () => []).add(c);
+      if (!isOspitiFilter) {
+        for (final c in allContabileRecords) {
+          if (!c.isScarto) {
+            final key = c.numeroTrasferta.trim();
+            if (key.isNotEmpty && _isValidTrasferta(key)) {
+              contabileMap.putIfAbsent(key, () => []).add(c);
+            }
           }
         }
       }
@@ -2689,30 +2719,33 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       int currentRow = 1;
       for (final t in trasferte) {
         final records = groupedRecords[t] ?? [];
-        final sapForT = sapMap[_cleanT(t)] ?? const [];
-        final amexForT = amexMap[t] ?? const [];
-        final contabileForT = contabileMap[t] ?? const [];
+        final isValidT = _isValidTrasferta(t);
+        final sapForT = (isValidT && !isOspitiFilter) ? (sapMap[_cleanT(t)] ?? const []) : const <TracciatoSap>[];
+        final amexForT = (isValidT && !isOspitiFilter) ? (amexMap[t] ?? const []) : const <EstrattoAmex>[];
+        final contabileForT = (isValidT && !isOspitiFilter) ? (contabileMap[t] ?? const []) : const <TracciatoContabile>[];
 
         final firstEc = records.isNotEmpty ? records.first : null;
-        final cid = firstEc?.cid ?? (sapForT.isNotEmpty ? sapForT.first.cid : (contabileForT.isNotEmpty ? contabileForT.first.cid : ''));
-        final dataInizio = firstEc?.dataIn ?? (contabileForT.isNotEmpty ? contabileForT.first.dataInizio : (sapForT.isNotEmpty ? sapForT.first.data : ''));
-        final dataFine = firstEc?.dataOut ?? (contabileForT.isNotEmpty ? contabileForT.first.dataFine : (sapForT.isNotEmpty ? sapForT.first.data : ''));
-        final societa = firstEc?.ragioneSociale ?? (sapForT.isNotEmpty ? sapForT.first.societaDescrizione : (contabileForT.isNotEmpty ? contabileForT.first.societa : ''));
+        final cid = firstEc?.cid ?? (isOspitiFilter ? '' : (sapForT.isNotEmpty ? sapForT.first.cid : (contabileForT.isNotEmpty ? contabileForT.first.cid : '')));
+        final dataInizio = firstEc?.dataIn ?? (isOspitiFilter ? '' : (contabileForT.isNotEmpty ? contabileForT.first.dataInizio : (sapForT.isNotEmpty ? sapForT.first.data : '')));
+        final dataFine = firstEc?.dataOut ?? (isOspitiFilter ? '' : (contabileForT.isNotEmpty ? contabileForT.first.dataFine : (sapForT.isNotEmpty ? sapForT.first.data : '')));
+        final societa = firstEc?.ragioneSociale ?? (isOspitiFilter ? '' : (sapForT.isNotEmpty ? sapForT.first.societaDescrizione : (contabileForT.isNotEmpty ? contabileForT.first.societa : '')));
 
         final double totEC = records.fold<double>(0, (sum, ec) => sum + ec.totaleServizio);
         final double totSap = sapForT.fold<double>(0, (sum, sap) => sum + sap.importo);
         final double totAmex = amexForT.fold<double>(0, (sum, ame) => sum + (ame.importoLordo ?? 0));
         final double totTracciato = contabileForT.fold<double>(0, (sum, r) => sum + (r.isNegative ? -r.importo : r.importo));
 
-        final diffSap = totEC - totSap;
-        final diffAmex = totEC - totAmex;
-        final diffTracciato = totEC - totTracciato;
+        final diffSap = isOspitiFilter ? 0.0 : (totEC - totSap);
+        final diffAmex = isOspitiFilter ? 0.0 : (totEC - totAmex);
+        final diffTracciato = isOspitiFilter ? 0.0 : (totEC - totTracciato);
 
-        final isMatchingSap = sapForT.isEmpty || diffSap.abs() < 0.01;
-        final isMatchingAmex = amexForT.isEmpty || diffAmex.abs() < 0.01;
-        final isMatchingTracciato = contabileForT.isEmpty || diffTracciato.abs() < 0.01;
+        final isMatchingSap = isOspitiFilter || sapForT.isEmpty || diffSap.abs() < 0.01;
+        final isMatchingAmex = isOspitiFilter || amexForT.isEmpty || diffAmex.abs() < 0.01;
+        final isMatchingTracciato = isOspitiFilter || contabileForT.isEmpty || diffTracciato.abs() < 0.01;
 
-        final statusStr = 'SAP: ${sapForT.isEmpty ? "-" : (isMatchingSap ? "OK" : "KO")} | AMEX: ${amexForT.isEmpty ? "-" : (isMatchingAmex ? "OK" : "KO")}${contabileForT.isNotEmpty ? " | TRACC.: ${isMatchingTracciato ? 'OK' : 'KO'}" : ""}';
+        final statusStr = isOspitiFilter
+            ? 'FILE OSPITI'
+            : 'SAP: ${sapForT.isEmpty ? "-" : (isMatchingSap ? "OK" : "KO")} | AMEX: ${amexForT.isEmpty ? "-" : (isMatchingAmex ? "OK" : "KO")}${contabileForT.isNotEmpty ? " | TRACC.: ${isMatchingTracciato ? 'OK' : 'KO'}" : ""}';
 
         // RIGA TRASFERTA (RIEPILOGO)
         final tripHeaderRow = [
@@ -2757,63 +2790,69 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         }
 
         // RIGHE SAP
-        for (final sap in sapForT) {
-          final rowData = [
-            '  > SAP', '', sap.cid, sap.cdRichiesta ?? '', 
-            _normalizeDate(sap.data), '', sap.tipoSpesaDescrizione, 
-            sap.tipoSpesaCodice, sap.societaDescrizione, _normalizeDate(sap.data), sap.importo, '', '', '', '', '', ''
-          ];
-          for (var i = 0; i < rowData.length; i++) {
-            var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
-            final val = rowData[i];
-            if (val is double) {
-              cell.value = DoubleCellValue(val);
-            } else {
-              cell.value = TextCellValue(val.toString());
+        if (!isOspitiFilter) {
+          for (final sap in sapForT) {
+            final rowData = [
+              '  > SAP', '', sap.cid, sap.cdRichiesta ?? '', 
+              _normalizeDate(sap.data), '', sap.tipoSpesaDescrizione, 
+              sap.tipoSpesaCodice, sap.societaDescrizione, _normalizeDate(sap.data), sap.importo, '', '', '', '', '', ''
+            ];
+            for (var i = 0; i < rowData.length; i++) {
+              var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
+              final val = rowData[i];
+              if (val is double) {
+                cell.value = DoubleCellValue(val);
+              } else {
+                cell.value = TextCellValue(val.toString());
+              }
+              cell.cellStyle = sapStyle;
             }
-            cell.cellStyle = sapStyle;
+            currentRow++;
           }
-          currentRow++;
         }
 
         // RIGHE AMEX
-        for (final ame in amexForT) {
-          final rowData = [
-            '  > AMEX', '', ame.cid ?? '', ame.bolla ?? '', 
-            _normalizeDate(ame.dataTransazione ?? ''), '', ame.nomeEsercizio ?? ame.nomeFornitore ?? 'Esercizio AMEX', 
-            'AMEX Transaction', '', _normalizeDate(ame.dataTransazione ?? ''), ame.importoLordo ?? 0, '', '', '', '', '', ''
-          ];
-          for (var i = 0; i < rowData.length; i++) {
-            var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
-            final val = rowData[i];
-            if (val is double) {
-              cell.value = DoubleCellValue(val);
-            } else {
-              cell.value = TextCellValue(val.toString());
+        if (!isOspitiFilter) {
+          for (final ame in amexForT) {
+            final rowData = [
+              '  > AMEX', '', ame.cid ?? '', ame.bolla ?? '', 
+              _normalizeDate(ame.dataTransazione ?? ''), '', ame.nomeEsercizio ?? ame.nomeFornitore ?? 'Esercizio AMEX', 
+              'AMEX Transaction', '', _normalizeDate(ame.dataTransazione ?? ''), ame.importoLordo ?? 0, '', '', '', '', '', ''
+            ];
+            for (var i = 0; i < rowData.length; i++) {
+              var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
+              final val = rowData[i];
+              if (val is double) {
+                cell.value = DoubleCellValue(val);
+              } else {
+                cell.value = TextCellValue(val.toString());
+              }
+              cell.cellStyle = amexStyle;
             }
-            cell.cellStyle = amexStyle;
+            currentRow++;
           }
-          currentRow++;
         }
 
         // RIGHE TRACCIATO CONTABILE (se presenti)
-        for (final r in contabileForT) {
-          final rowData = [
-            '  > TRACCIATO', '', r.cid, r.numeroBolla, 
-            _normalizeDate(r.dataInizio), _normalizeDate(r.dataFine), r.localita, 
-            r.giustificativoSpesa, r.societa, _normalizeDate(r.dataSpesa), r.isNegative ? -r.importo : r.importo, '', '', '', '', '', ''
-          ];
-          for (var i = 0; i < rowData.length; i++) {
-            var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
-            final val = rowData[i];
-            if (val is double) {
-              cell.value = DoubleCellValue(val);
-            } else {
-              cell.value = TextCellValue(val.toString());
+        if (!isOspitiFilter) {
+          for (final r in contabileForT) {
+            final rowData = [
+              '  > TRACCIATO', '', r.cid, r.numeroBolla, 
+              _normalizeDate(r.dataInizio), _normalizeDate(r.dataFine), r.localita, 
+              r.giustificativoSpesa, r.societa, _normalizeDate(r.dataSpesa), r.isNegative ? -r.importo : r.importo, '', '', '', '', '', ''
+            ];
+            for (var i = 0; i < rowData.length; i++) {
+              var cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: currentRow));
+              final val = rowData[i];
+              if (val is double) {
+                cell.value = DoubleCellValue(val);
+              } else {
+                cell.value = TextCellValue(val.toString());
+              }
+              cell.cellStyle = tracciatoStyle;
             }
-            cell.cellStyle = tracciatoStyle;
+            currentRow++;
           }
-          currentRow++;
         }
 
         currentRow++; // Riga vuota separatrice
@@ -2875,60 +2914,66 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         }
 
         // Records SAP
-        for (final sap in sapMap[_cleanT(t)] ?? const []) {
-          final rowData = [
-            t, 'SAP', sap.cid, '', sap.cdRichiesta ?? '', 
-            _normalizeDate(sap.data), sap.tipoSpesaDescrizione, sap.tipoSpesaCodice, 
-            sap.importo, sap.societaDescrizione, '-'
-          ];
-          for (var i = 0; i < rowData.length; i++) {
-            var cell = detailSheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
-            final val = rowData[i];
-            if (val is double) {
-              cell.value = DoubleCellValue(val);
-            } else {
-              cell.value = TextCellValue(val.toString());
+        if (!isOspitiFilter) {
+          for (final sap in sapMap[_cleanT(t)] ?? const []) {
+            final rowData = [
+              t, 'SAP', sap.cid, '', sap.cdRichiesta ?? '', 
+              _normalizeDate(sap.data), sap.tipoSpesaDescrizione, sap.tipoSpesaCodice, 
+              sap.importo, sap.societaDescrizione, '-'
+            ];
+            for (var i = 0; i < rowData.length; i++) {
+              var cell = detailSheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
+              final val = rowData[i];
+              if (val is double) {
+                cell.value = DoubleCellValue(val);
+              } else {
+                cell.value = TextCellValue(val.toString());
+              }
             }
+            dRow++;
           }
-          dRow++;
         }
 
         // Records AMEX
-        for (final ame in amexMap[t] ?? const []) {
-          final rowData = [
-            t, 'AMEX', ame.cid ?? '', ame.nomeViaggiatore ?? '', ame.bolla ?? '', 
-            _normalizeDate(ame.dataTransazione ?? ''), ame.nomeEsercizio ?? ame.nomeFornitore ?? '', 'AMEX', 
-            ame.importoLordo ?? 0, '', '-'
-          ];
-          for (var i = 0; i < rowData.length; i++) {
-            var cell = detailSheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
-            final val = rowData[i];
-            if (val is double) {
-              cell.value = DoubleCellValue(val);
-            } else {
-              cell.value = TextCellValue(val.toString());
+        if (!isOspitiFilter) {
+          for (final ame in amexMap[t] ?? const []) {
+            final rowData = [
+              t, 'AMEX', ame.cid ?? '', ame.nomeViaggiatore ?? '', ame.bolla ?? '', 
+              _normalizeDate(ame.dataTransazione ?? ''), ame.nomeEsercizio ?? ame.nomeFornitore ?? '', 'AMEX', 
+              ame.importoLordo ?? 0, '', '-'
+            ];
+            for (var i = 0; i < rowData.length; i++) {
+              var cell = detailSheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
+              final val = rowData[i];
+              if (val is double) {
+                cell.value = DoubleCellValue(val);
+              } else {
+                cell.value = TextCellValue(val.toString());
+              }
             }
+            dRow++;
           }
-          dRow++;
         }
 
         // Records Tracciato
-        for (final r in contabileMap[t] ?? const []) {
-          final rowData = [
-            t, 'TRACCIATO', r.cid, '', r.numeroBolla, 
-            _normalizeDate(r.dataSpesa), r.localita, 
-            r.giustificativoSpesa, r.isNegative ? -r.importo : r.importo, r.societa, '-'
-          ];
-          for (var i = 0; i < rowData.length; i++) {
-            var cell = detailSheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
-            final val = rowData[i];
-            if (val is double) {
-              cell.value = DoubleCellValue(val);
-            } else {
-              cell.value = TextCellValue(val.toString());
+        if (!isOspitiFilter) {
+          for (final r in contabileMap[t] ?? const []) {
+            final rowData = [
+              t, 'TRACCIATO', r.cid, '', r.numeroBolla, 
+              _normalizeDate(r.dataSpesa), r.localita, 
+              r.giustificativoSpesa, r.isNegative ? -r.importo : r.importo, r.societa, '-'
+            ];
+            for (var i = 0; i < rowData.length; i++) {
+              var cell = detailSheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: dRow));
+              final val = rowData[i];
+              if (val is double) {
+                cell.value = DoubleCellValue(val);
+              } else {
+                cell.value = TextCellValue(val.toString());
+              }
             }
+            dRow++;
           }
-          dRow++;
         }
       }
 
@@ -3042,8 +3087,10 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       if (fileBytes == null) return;
 
       final outputFile = await FilePicker.saveFile(
-        dialogTitle: 'Salva Export Estratti Conto',
-        fileName: 'SkyAudit_EstrattiConto_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.xlsx',
+        dialogTitle: isOspitiFilter ? 'Salva Export Estratti Conto (File OSPITI)' : 'Salva Export Estratti Conto',
+        fileName: isOspitiFilter
+            ? 'SkyAudit_EstrattiConto_OSPITI_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.xlsx'
+            : 'SkyAudit_EstrattiConto_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.xlsx',
         type: FileType.custom,
         allowedExtensions: ['xlsx'],
       );
