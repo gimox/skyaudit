@@ -17,6 +17,9 @@ import 'package:travel_check/features/upload/providers/anagrafica_provider.dart'
 import 'package:travel_check/core/theme/app_theme.dart';
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
 import 'package:travel_check/features/upload/models/log_history.dart';
+import 'package:travel_check/features/upload/models/trasferte_sap.dart';
+import 'package:travel_check/features/upload/providers/trasferte_sap_provider.dart';
+import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
 import 'package:travel_check/shared/widgets/file_selection_dialog.dart';
 
 // Filter providers for Estratti Conto
@@ -25,11 +28,15 @@ final ecSelectedSocietaProvider = StateProvider<String?>((ref) => null);
 final ecStartDateProvider = StateProvider<DateTime?>((ref) => null);
 final ecEndDateProvider = StateProvider<DateTime?>((ref) => null);
 final ecSelectedTipiServizioProvider = StateProvider<Set<String>>((ref) => {});
+final ecSelectedTipiDipendenteProvider = StateProvider<Set<String>>((ref) => {});
 final ecSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final ecFilterOspitiProvider = StateProvider<bool>((ref) => false);
 final ecSortAscendingProvider = StateProvider<bool>((ref) => false);
 final ecPageProvider = StateProvider<int>((ref) => 0);
 final ecExpandAllProvider = StateProvider<bool>((ref) => true);
+
+enum EcIncrocioSapFilter { all, matched, notMatched }
+final ecIncrocioSapFilterProvider = StateProvider<EcIncrocioSapFilter>((ref) => EcIncrocioSapFilter.all);
 
 enum EcSapMatchFilter { all, match, diff, missing }
 final ecSapMatchFilterProvider = StateProvider<EcSapMatchFilter>((ref) => EcSapMatchFilter.all);
@@ -89,6 +96,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     final allRecords = ref.watch(estrattoContoProvider);
     final allPositiveCount = allRecords.where((r) => r.totaleServizio > 0.001).length;
     final allSapRecords = ref.watch(tracciatoSapProvider);
+    final allTrasferteSap = ref.watch(trasferteSapProvider);
     final allAmexRecords = ref.watch(estrattoAmexProvider);
     final allContabileRecords = ref.watch(tracciatoContabilesProvider);
     final allLogs = ref.watch(logHistoryProvider);
@@ -104,6 +112,8 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     final startDate = ref.watch(ecStartDateProvider);
     final endDate = ref.watch(ecEndDateProvider);
     final selectedTipi = ref.watch(ecSelectedTipiServizioProvider);
+    final selectedTipiDip = ref.watch(ecSelectedTipiDipendenteProvider);
+    final incrocioSapFilter = ref.watch(ecIncrocioSapFilterProvider);
     final sapMatchFilter = ref.watch(ecSapMatchFilterProvider);
     final selectedLogHistoryIds = ref.watch(ecSelectedLogHistoryIdsProvider);
     final sortAscending = ref.watch(ecSortAscendingProvider);
@@ -120,11 +130,78 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       }
     }
 
+    final dictionaries = ref.watch(dictionaryProvider);
+    final dictionaryMap = {
+      for (final entry in dictionaries)
+        entry.code.trim().toUpperCase(): entry.value.trim()
+    };
+
     final anagrafiche = ref.watch(anagraficaProvider);
     final anagraficheMap = {
       for (var a in anagrafiche)
         if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
     };
+
+    final Map<String, String> cidToTipoDipMap = {};
+    for (var a in anagrafiche) {
+      final cid = (a.cid ?? '').trim();
+      final tipo = (a.tipoDip ?? '').trim().toUpperCase();
+      if (cid.isNotEmpty && tipo.isNotEmpty) {
+        cidToTipoDipMap[cid] = tipo;
+        cidToTipoDipMap[cid.padLeft(8, '0')] = tipo;
+        cidToTipoDipMap[cid.replaceAll(RegExp(r'^0+'), '')] = tipo;
+      }
+    }
+    for (final s in allSapRecords) {
+      final cid = s.cid.trim();
+      final tipo = s.tipoDipendente.trim().toUpperCase();
+      if (cid.isNotEmpty && tipo.isNotEmpty) {
+        cidToTipoDipMap.putIfAbsent(cid, () => tipo);
+        cidToTipoDipMap.putIfAbsent(cid.padLeft(8, '0'), () => tipo);
+        cidToTipoDipMap.putIfAbsent(cid.replaceAll(RegExp(r'^0+'), ''), () => tipo);
+      }
+    }
+    for (final c in allContabileRecords) {
+      final cid = c.cid.trim();
+      final tipo = c.tipoDipendente.trim().toUpperCase();
+      if (cid.isNotEmpty && tipo.isNotEmpty) {
+        cidToTipoDipMap.putIfAbsent(cid, () => tipo);
+        cidToTipoDipMap.putIfAbsent(cid.padLeft(8, '0'), () => tipo);
+        cidToTipoDipMap.putIfAbsent(cid.replaceAll(RegExp(r'^0+'), ''), () => tipo);
+      }
+    }
+
+    final Map<String, String> trasfertaToTipoDipMap = {};
+    for (final s in allSapRecords) {
+      final key = _cleanT(s.numeroTrasferta);
+      final tipo = s.tipoDipendente.trim().toUpperCase();
+      if (key.isNotEmpty && tipo.isNotEmpty) {
+        trasfertaToTipoDipMap.putIfAbsent(key, () => tipo);
+      }
+    }
+    for (final c in allContabileRecords) {
+      final key = _cleanT(c.numeroTrasferta);
+      final tipo = c.tipoDipendente.trim().toUpperCase();
+      if (key.isNotEmpty && tipo.isNotEmpty) {
+        trasfertaToTipoDipMap.putIfAbsent(key, () => tipo);
+      }
+    }
+
+    String getTipoDip(EstrattoConto r) {
+      final cleanCid = r.cid.trim();
+      if (cleanCid.isNotEmpty) {
+        final tipo = cidToTipoDipMap[cleanCid] ??
+            cidToTipoDipMap[cleanCid.padLeft(8, '0')] ??
+            cidToTipoDipMap[cleanCid.replaceAll(RegExp(r'^0+'), '')];
+        if (tipo != null && tipo.isNotEmpty) return tipo;
+      }
+      final cleanTr = _cleanT(r.numeroTrasferta);
+      if (cleanTr.isNotEmpty) {
+        final tipo = trasfertaToTipoDipMap[cleanTr];
+        if (tipo != null && tipo.isNotEmpty) return tipo;
+      }
+      return '';
+    }
 
     const pageSize = 50;
     final isCompactList = MediaQuery.of(context).size.width < 1100;
@@ -164,6 +241,8 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       startDate != null,
       endDate != null,
       selectedTipi.isNotEmpty,
+      selectedTipiDip.isNotEmpty,
+      incrocioSapFilter != EcIncrocioSapFilter.all,
       sapMatchFilter != EcSapMatchFilter.all,
       selectedLogHistoryIds.isNotEmpty,
       filterOspiti,
@@ -175,6 +254,10 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) return false;
       if (selectedSocieta != null && r.ragioneSociale != selectedSocieta) return false;
       if (selectedTipi.isNotEmpty && !selectedTipi.contains(r.tipoServizio)) return false;
+      if (selectedTipiDip.isNotEmpty) {
+        final tipo = getTipoDip(r);
+        if (!selectedTipiDip.contains(tipo)) return false;
+      }
 
       // Filtro Data Bolla
       if (startDate != null || endDate != null) {
@@ -198,6 +281,22 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       if (key.isNotEmpty && _isValidTrasferta(s.numeroTrasferta)) {
         sapMapByCleanedT.putIfAbsent(key, () => []).add(s);
       }
+    }
+
+    final Map<String, TrasferteSap> trasferteSapMap = {};
+    for (final ts in allTrasferteSap) {
+      final key = _cleanT(ts.numeroTrasferta);
+      if (key.isNotEmpty && _isValidTrasferta(ts.numeroTrasferta)) {
+        trasferteSapMap.putIfAbsent(key, () => ts);
+      }
+    }
+
+    bool hasSapIncrocioForT(String t) {
+      final clean = _cleanT(t);
+      if (clean.isEmpty) return false;
+      final sapList = sapMapByCleanedT[clean];
+      if (sapList != null && sapList.isNotEmpty) return true;
+      return trasferteSapMap.containsKey(clean);
     }
 
     final Map<String, List<EstrattoAmex>> amexMapByT = {};
@@ -233,6 +332,16 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
               r.fornitore.toLowerCase().contains(query) ||
               sourceFile.toLowerCase().contains(query);
         });
+      }).toList();
+    }
+
+    // Filtro Incrocio SAP
+    if (incrocioSapFilter != EcIncrocioSapFilter.all) {
+      trasferte = trasferte.where((t) {
+        final hasIncrocio = hasSapIncrocioForT(t);
+        if (incrocioSapFilter == EcIncrocioSapFilter.matched && !hasIncrocio) return false;
+        if (incrocioSapFilter == EcIncrocioSapFilter.notMatched && hasIncrocio) return false;
+        return true;
       }).toList();
     }
 
@@ -315,9 +424,34 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         .toList()
       ..sort();
 
+    final Set<String> detectedTipiDip = {};
+    for (final r in allRecords) {
+      final t = getTipoDip(r);
+      if (t.isNotEmpty) detectedTipiDip.add(t);
+    }
+    final dictTipoDip = dictionaries
+        .where((d) => d.category == 'tipo_dipendente')
+        .map((d) => d.code.trim().toUpperCase())
+        .where((c) => c.isNotEmpty);
+    if (detectedTipiDip.isEmpty) {
+      detectedTipiDip.addAll(dictTipoDip.isNotEmpty ? dictTipoDip : const {'DR', 'IM', 'QD', 'RS'});
+    } else {
+      detectedTipiDip.addAll(dictTipoDip);
+    }
+    final availableTipiDip = detectedTipiDip.toList()..sort();
+
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      endDrawer: _buildFilterDrawer(context, ref, availableSocieta, availableTipi, ecLogs, ospitiLogs),
+      endDrawer: _buildFilterDrawer(
+        context,
+        ref,
+        availableSocieta,
+        availableTipi,
+        availableTipiDip,
+        dictionaryMap,
+        ecLogs,
+        ospitiLogs,
+      ),
       floatingActionButton: filteredRecords.isNotEmpty
           ? FloatingActionButton(
               onPressed: () => _exportToExcel(
@@ -541,6 +675,20 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                           _buildFilterChip('Al: ${endDate.day}/${endDate.month}/${endDate.year}', () => ref.read(ecEndDateProvider.notifier).state = null),
                         if (selectedTipi.isNotEmpty)
                           _buildFilterChip('Tipi: ${selectedTipi.length}', () => ref.read(ecSelectedTipiServizioProvider.notifier).state = {}),
+                        if (selectedTipiDip.isNotEmpty)
+                          _buildFilterChip(
+                            selectedTipiDip.length == 1
+                                ? 'Tipo Dip: ${selectedTipiDip.first}'
+                                : 'Tipo Dip: ${selectedTipiDip.length} selezionati',
+                            () => ref.read(ecSelectedTipiDipendenteProvider.notifier).state = {},
+                          ),
+                        if (incrocioSapFilter != EcIncrocioSapFilter.all)
+                          _buildFilterChip(
+                            incrocioSapFilter == EcIncrocioSapFilter.matched
+                                ? 'Incrocio SAP: Incrociati'
+                                : 'Incrocio SAP: Non Incrociati',
+                            () => ref.read(ecIncrocioSapFilterProvider.notifier).state = EcIncrocioSapFilter.all,
+                          ),
                         if (sapMatchFilter != EcSapMatchFilter.all)
                           _buildFilterChip(
                             sapMatchFilter == EcSapMatchFilter.match
@@ -745,13 +893,19 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                       final totaleEC = recordsTrasferta.fold<double>(0, (sum, r) => sum + r.totaleServizio);
 
                       final isValidT = _isValidTrasferta(numeroTrasferta);
+                      final cleanT = _cleanT(numeroTrasferta);
                       final sapForTrasferta = (isValidT && !filterOspiti)
-                          ? (sapMapByCleanedT[_cleanT(numeroTrasferta)] ?? const [])
+                          ? (sapMapByCleanedT[cleanT] ?? const [])
                           : const <TracciatoSap>[];
+                      final tsForTrasferta = (isValidT && !filterOspiti)
+                          ? trasferteSapMap[cleanT]
+                          : null;
                       final totaleSap = sapForTrasferta.fold<double>(0, (sum, s) => sum + s.importo);
-                      final hasSap = sapForTrasferta.isNotEmpty;
-                      final isSapMatching = hasSap && (totaleEC - totaleSap).abs() < 0.01;
-                      final hasSapDiff = hasSap && !isSapMatching;
+                      final hasSapRecords = sapForTrasferta.isNotEmpty;
+                      final hasSapOrder = tsForTrasferta != null;
+                      final hasSap = hasSapRecords || hasSapOrder;
+                      final isSapMatching = hasSapRecords && (totaleEC - totaleSap).abs() < 0.01;
+                      final hasSapDiff = hasSapRecords && !isSapMatching;
 
                       final amexForTrasferta = (isValidT && !filterOspiti)
                           ? (amexMapByT[numeroTrasferta] ?? const [])
@@ -764,10 +918,10 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
 
                       final Color statusBorderColor = hasSapDiff
                           ? Colors.red.shade300
-                          : (isSapMatching ? Colors.green.shade300 : Colors.grey.shade300);
+                          : (isSapMatching ? Colors.green.shade300 : (hasSapOrder ? SkyTheme.timBlue.withAlpha(120) : Colors.grey.shade300));
                       final Color statusBgColor = hasSapDiff
                           ? Colors.red.shade50.withAlpha(50)
-                          : (isSapMatching ? Colors.green.shade50.withAlpha(50) : Colors.grey.shade50.withAlpha(120));
+                          : (isSapMatching ? Colors.green.shade50.withAlpha(50) : (hasSapOrder ? Colors.blue.shade50.withAlpha(30) : Colors.grey.shade50.withAlpha(120)));
 
                       return Card(
                         margin: EdgeInsets.only(
@@ -851,7 +1005,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                                     ),
                                   ),
                                   // BADGE SAP
-                                  if (hasSap)
+                                  if (hasSapRecords)
                                     Container(
                                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                                       decoration: BoxDecoration(
@@ -879,6 +1033,30 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                                               fontSize: isUltraCompact ? 8 : 10,
                                               fontWeight: FontWeight.bold,
                                               color: isSapMatching ? Colors.green.shade800 : Colors.red.shade800,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    )
+                                  else if (hasSapOrder)
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                                      decoration: BoxDecoration(
+                                        color: Colors.blue.shade50,
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(color: Colors.blue.shade300, width: 0.5),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.assignment_turned_in, size: 12, color: Colors.blue.shade800),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            'SAP ORDINE OK',
+                                            style: TextStyle(
+                                              fontSize: isUltraCompact ? 8 : 10,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blue.shade800,
                                             ),
                                           ),
                                         ],
@@ -969,6 +1147,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                             ...recordsTrasferta.map((record) {
                               final sourceFile = logHistoryMap[record.logHistoryId]?.fileName ?? record.logHistoryId ?? '-';
                               final isOspiti = sourceFile.toUpperCase().contains('OSPITI');
+                              final matchedSap = sapForTrasferta.where((s) => (s.importo - record.totaleServizio).abs() < 0.01).firstOrNull;
 
                               return Container(
                                 padding: EdgeInsets.symmetric(
@@ -1057,45 +1236,73 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                                             ],
                                           ),
                                           const SizedBox(height: 4),
-                                          // File sorgente chip
-                                          Row(
-                                            mainAxisSize: MainAxisSize.min,
+                                          // File sorgente chip e Badge Incrocio SAP
+                                          Wrap(
+                                            spacing: 8,
+                                            runSpacing: 4,
+                                            crossAxisAlignment: WrapCrossAlignment.center,
                                             children: [
-                                              Icon(
-                                                Icons.description_outlined,
-                                                size: 12,
-                                                color: isOspiti ? Colors.orange.shade800 : Colors.grey.shade600,
-                                              ),
-                                              const SizedBox(width: 4),
-                                              Flexible(
-                                                child: Text(
-                                                  'File: $sourceFile',
-                                                  style: TextStyle(
-                                                    fontSize: 10,
-                                                    fontWeight: isOspiti ? FontWeight.bold : FontWeight.normal,
-                                                    color: isOspiti ? Colors.orange.shade900 : Colors.grey.shade600,
+                                              Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Icon(
+                                                    Icons.description_outlined,
+                                                    size: 12,
+                                                    color: isOspiti ? Colors.orange.shade800 : Colors.grey.shade600,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
-                                                ),
-                                              ),
-                                              if (isOspiti) ...[
-                                                const SizedBox(width: 6),
-                                                Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.orange.shade100,
-                                                    borderRadius: BorderRadius.circular(4),
-                                                  ),
-                                                  child: Text(
-                                                    'OSPITI',
+                                                  const SizedBox(width: 4),
+                                                  Text(
+                                                    'File: $sourceFile',
                                                     style: TextStyle(
-                                                      fontSize: 8,
-                                                      fontWeight: FontWeight.bold,
-                                                      color: Colors.orange.shade900,
+                                                      fontSize: 10,
+                                                      fontWeight: isOspiti ? FontWeight.bold : FontWeight.normal,
+                                                      color: isOspiti ? Colors.orange.shade900 : Colors.grey.shade600,
                                                     ),
                                                   ),
+                                                  if (isOspiti) ...[
+                                                    const SizedBox(width: 6),
+                                                    Container(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.orange.shade100,
+                                                        borderRadius: BorderRadius.circular(4),
+                                                      ),
+                                                      child: Text(
+                                                        'OSPITI',
+                                                        style: TextStyle(
+                                                          fontSize: 8,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Colors.orange.shade900,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ],
+                                              ),
+                                              if (matchedSap != null)
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.blue.shade50,
+                                                    borderRadius: BorderRadius.circular(6),
+                                                    border: Border.all(color: Colors.blue.shade200, width: 0.5),
+                                                  ),
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Icon(Icons.link, size: 10, color: Colors.blue.shade800),
+                                                      const SizedBox(width: 4),
+                                                      Text(
+                                                        'Incrocio SAP (${matchedSap.tipoSpesaCodice.isNotEmpty ? matchedSap.tipoSpesaCodice : "OK"})',
+                                                        style: TextStyle(
+                                                          fontSize: 9,
+                                                          fontWeight: FontWeight.bold,
+                                                          color: Colors.blue.shade900,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
-                                              ],
                                             ],
                                           ),
                                         ],
@@ -1116,7 +1323,13 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                                         const SizedBox(height: 4),
                                         IconButton(
                                           icon: Icon(Icons.visibility_outlined, color: Colors.blue, size: isVeryCompact ? 16 : 18),
-                                          onPressed: () => _showRecordDetails(context, record, logHistoryMap),
+                                          onPressed: () => _showRecordDetails(
+                                            context,
+                                            record,
+                                            logHistoryMap,
+                                            matchedSap: matchedSap,
+                                            matchedTs: tsForTrasferta,
+                                          ),
                                           tooltip: 'Dettaglio Estratto Conto',
                                           constraints: const BoxConstraints(),
                                           padding: EdgeInsets.zero,
@@ -1128,65 +1341,166 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                               );
                             }),
 
-                            // 2. RISCONTRO TRACCIATO SAP (se presente)
-                            if (hasSap) ...[
-                              Container(
-                                width: double.infinity,
-                                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                                color: Colors.blue.shade50.withAlpha(120),
+                            // 2. SEZIONE RECORD SAP (Grafica identica ad AMEX ma in verde)
+                            if (hasSapRecords) ...[
+                              Padding(
+                                padding: EdgeInsets.fromLTRB(isVeryCompact ? 12 : 16, isVeryCompact ? 4 : 10, isVeryCompact ? 12 : 16, isVeryCompact ? 1 : 4),
                                 child: Row(
                                   children: [
-                                    Icon(Icons.business_outlined, size: 14, color: Colors.blue.shade800),
+                                    Icon(Icons.business_outlined, size: isVeryCompact ? 10 : 14, color: Colors.green.shade800),
                                     const SizedBox(width: 8),
                                     Text(
-                                      'RISCONTRO TRACCIATO SAP (${sapForTrasferta.length} voci • Totale: ${_formatAmount(totaleSap)})',
+                                      'Record Tracciato SAP (${sapForTrasferta.length} voci • Totale: ${_formatAmount(totaleSap)})',
                                       style: TextStyle(
-                                        fontSize: 11,
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.blue.shade900,
-                                        letterSpacing: 0.5,
+                                        fontSize: isVeryCompact ? 9 : 11,
+                                        color: Colors.green.shade800,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                              ...sapForTrasferta.map((sap) {
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue.shade50.withAlpha(40),
-                                    border: Border(bottom: BorderSide(color: Colors.grey.shade100)),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              sap.tipoSpesaDescrizione.isEmpty ? sap.tipoSpesaCodice : sap.tipoSpesaDescrizione,
-                                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
-                                            ),
-                                            const SizedBox(height: 2),
-                                            Text(
-                                              'CID: ${_formatCidWithName(sap.cid, anagraficheMap)} • Data: ${sap.data} • Società: ${sap.societaCodice}',
-                                              style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
-                                            ),
-                                          ],
-                                        ),
+                              ...sapForTrasferta.map((sap) => Container(
+                                margin: EdgeInsets.only(
+                                  left: isVeryCompact ? 4 : 20,
+                                  bottom: isVeryCompact ? 1 : 4,
+                                  right: isVeryCompact ? 2 : 8,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isVeryCompact ? 10 : 16,
+                                  vertical: isVeryCompact ? 2 : 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.shade50.withAlpha(150),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.green.shade100),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.business_outlined, size: isVeryCompact ? 10 : 14, color: Colors.green.shade700),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'SAP',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green.shade700,
+                                        fontSize: isVeryCompact ? 9 : 11,
                                       ),
-                                      Text(
-                                        '${sap.importo.toStringAsFixed(2)} €',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12,
-                                          color: sap.importo < 0 ? Colors.red.shade700 : Colors.blue.shade800,
-                                        ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            sap.tipoSpesaDescrizione.isEmpty ? sap.tipoSpesaCodice : sap.tipoSpesaDescrizione,
+                                            style: TextStyle(
+                                              fontSize: isVeryCompact ? 9 : 11,
+                                              color: Colors.grey.shade800,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          Text(
+                                            'CID: ${_formatCidWithName(sap.cid, anagraficheMap)} • Data: ${sap.data}',
+                                            style: TextStyle(
+                                              fontSize: isVeryCompact ? 8 : 9,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 1),
+                                          Text(
+                                            'Società: ${sap.societaCodice}${sap.progressivoGiustificativo != null && sap.progressivoGiustificativo!.isNotEmpty ? " • Progr.: ${sap.progressivoGiustificativo}" : ""}',
+                                            style: TextStyle(fontSize: isVeryCompact ? 8 : 9, color: Colors.grey.shade600),
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                );
-                              }),
+                                    ),
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          '${sap.importo.toStringAsFixed(2)} €',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            color: sap.importo < 0 ? Colors.red.shade700 : Colors.green.shade800,
+                                            fontSize: isVeryCompact ? 10 : 12,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                        IconButton(
+                                          icon: Icon(Icons.info_outline, color: Colors.green, size: isVeryCompact ? 12 : 16),
+                                          onPressed: () => _showSapRecordDetails(context, sap),
+                                          tooltip: 'Dettaglio SAP',
+                                          constraints: const BoxConstraints(),
+                                          padding: const EdgeInsets.all(4),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              )),
+                            ],
+                            if (tsForTrasferta != null) ...[
+                              Container(
+                                margin: EdgeInsets.only(
+                                  left: isVeryCompact ? 4 : 20,
+                                  bottom: isVeryCompact ? 1 : 4,
+                                  right: isVeryCompact ? 2 : 8,
+                                ),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: isVeryCompact ? 10 : 16,
+                                  vertical: isVeryCompact ? 2 : 6,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: Colors.green.shade50.withAlpha(100),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(color: Colors.green.shade200),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.assignment_turned_in_outlined, size: isVeryCompact ? 10 : 14, color: Colors.green.shade800),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'ORDINE SAP',
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.green.shade800,
+                                        fontSize: isVeryCompact ? 9 : 11,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            'Trasferta: ${tsForTrasferta.numeroTrasferta}',
+                                            style: TextStyle(
+                                              fontSize: isVeryCompact ? 9 : 11,
+                                              color: Colors.grey.shade800,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                          Text(
+                                            'Dipendente: ${_formatCidWithName(tsForTrasferta.cid, anagraficheMap)}',
+                                            style: TextStyle(
+                                              fontSize: isVeryCompact ? 8 : 9,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 1),
+                                          Text(
+                                            'Periodo: ${tsForTrasferta.dataInizioTrasferta} - ${tsForTrasferta.dataFineTrasferta}',
+                                            style: TextStyle(fontSize: isVeryCompact ? 8 : 9, color: Colors.grey.shade600),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ],
 
                             // 3. SEZIONE RECORD AMEX (Grafica identica a Controlli Trasferte)
@@ -1490,6 +1804,8 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     ref.read(ecStartDateProvider.notifier).state = null;
     ref.read(ecEndDateProvider.notifier).state = null;
     ref.read(ecSelectedTipiServizioProvider.notifier).state = {};
+    ref.read(ecSelectedTipiDipendenteProvider.notifier).state = {};
+    ref.read(ecIncrocioSapFilterProvider.notifier).state = EcIncrocioSapFilter.all;
     ref.read(ecSapMatchFilterProvider.notifier).state = EcSapMatchFilter.all;
     ref.read(ecSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(ecFilterOspitiProvider.notifier).state = false;
@@ -1516,6 +1832,8 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     WidgetRef ref,
     List<String> societa,
     List<String> availableTipi,
+    List<String> availableTipiDip,
+    Map<String, String> dictionaryMap,
     List<LogHistory> ecLogs,
     List<LogHistory> ospitiLogs,
   ) {
@@ -1612,6 +1930,25 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                 ),
                 const SizedBox(height: 24),
                 _buildChipsMultiSelectFilter(
+                  'Tipo Dipendente',
+                  ref.watch(ecSelectedTipiDipendenteProvider),
+                  availableTipiDip,
+                  (val) {
+                    final current = ref.read(ecSelectedTipiDipendenteProvider);
+                    final next = Set<String>.from(current);
+                    if (next.contains(val)) {
+                      next.remove(val);
+                    } else {
+                      next.add(val);
+                    }
+                    ref.read(ecSelectedTipiDipendenteProvider.notifier).state = next;
+                    ref.read(ecPageProvider.notifier).state = 0;
+                  },
+                  icon: Icons.badge_outlined,
+                  labelMap: dictionaryMap,
+                ),
+                const SizedBox(height: 24),
+                _buildChipsMultiSelectFilter(
                   'Tipo Servizio',
                   ref.watch(ecSelectedTipiServizioProvider),
                   availableTipi,
@@ -1628,7 +1965,22 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                   icon: Icons.layers_outlined,
                 ),
                 const SizedBox(height: 32),
-                _buildDrawerSectionTitle('QUADRATURA SAP'),
+                _buildDrawerSectionTitle('INCROCI CON SAP'),
+                const SizedBox(height: 12),
+                _buildChoiceFilter<EcIncrocioSapFilter>(
+                  ref.watch(ecIncrocioSapFilterProvider),
+                  {
+                    EcIncrocioSapFilter.all: 'Tutti',
+                    EcIncrocioSapFilter.matched: 'Incrociati SAP',
+                    EcIncrocioSapFilter.notMatched: 'Non Incrociati',
+                  },
+                  (val) {
+                    ref.read(ecIncrocioSapFilterProvider.notifier).state = val;
+                    ref.read(ecPageProvider.notifier).state = 0;
+                  },
+                ),
+                const SizedBox(height: 24),
+                _buildDrawerSectionTitle('QUADRATURA IMPORTI SAP'),
                 const SizedBox(height: 12),
                 _buildChoiceFilter<EcSapMatchFilter>(
                   ref.watch(ecSapMatchFilterProvider),
@@ -1638,7 +1990,10 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                     EcSapMatchFilter.diff: 'Discrepanze (KO)',
                     EcSapMatchFilter.missing: 'SAP Assente',
                   },
-                  (val) => ref.read(ecSapMatchFilterProvider.notifier).state = val,
+                  (val) {
+                    ref.read(ecSapMatchFilterProvider.notifier).state = val;
+                    ref.read(ecPageProvider.notifier).state = 0;
+                  },
                 ),
                 const SizedBox(height: 32),
                 _buildDrawerSectionTitle('FILE CARICATI'),
@@ -1775,6 +2130,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     List<String> options,
     Function(String) onToggle, {
     IconData? icon,
+    Map<String, String>? labelMap,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -1797,8 +2153,14 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
           runSpacing: 8,
           children: options.map((opt) {
             final isSelected = selectedValues.contains(opt);
+            final displayLabel = labelMap != null
+                ? (labelMap[opt.toUpperCase()] ?? opt)
+                : opt;
+            final chipText = (labelMap != null && opt != displayLabel)
+                ? '$opt - $displayLabel'
+                : (opt.isEmpty ? '-' : opt);
             return FilterChip(
-              label: Text(opt.isEmpty ? '-' : opt),
+              label: Text(chipText),
               selected: isSelected,
               onSelected: (_) => onToggle(opt),
               selectedColor: SkyTheme.timBlue.withAlpha(40),
@@ -2239,7 +2601,13 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     return '${isNeg ? "-" : ""}$formattedWhole,$decimals $currency';
   }
 
-  void _showRecordDetails(BuildContext context, EstrattoConto record, Map<String, LogHistory> logHistoryMap) {
+  void _showRecordDetails(
+    BuildContext context, 
+    EstrattoConto record, 
+    Map<String, LogHistory> logHistoryMap, {
+    TracciatoSap? matchedSap,
+    TrasferteSap? matchedTs,
+  }) {
     final sourceFile = logHistoryMap[record.logHistoryId]?.fileName ?? record.logHistoryId ?? '-';
     showDialog(
       context: context,
@@ -2321,6 +2689,22 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                           _buildDetailRow('Società', record.ragioneSociale),
                           _buildDetailRow('Trasferta', record.numeroTrasferta),
                         ]),
+                        if (matchedSap != null || matchedTs != null) ...[
+                          const SizedBox(height: 24),
+                          _buildDetailSection('Incrocio SAP', Icons.sync_alt, Colors.blue.shade700, [
+                            _buildDetailRow('Stato Incrocio', matchedSap != null ? 'Riscontrato con spesa SAP' : 'Presenza ordine trasferta SAP'),
+                            if (matchedSap != null) ...[
+                              _buildDetailRow('Spesa SAP', matchedSap.tipoSpesaDescrizione.isNotEmpty ? matchedSap.tipoSpesaDescrizione : matchedSap.tipoSpesaCodice),
+                              _buildDetailRow('Importo SAP', '${matchedSap.importo.toStringAsFixed(2)} €', isHighlight: true, highlightColor: Colors.blue.shade700),
+                              _buildDetailRow('Data SAP', matchedSap.data),
+                              _buildDetailRow('Società SAP', matchedSap.societaCodice),
+                            ],
+                            if (matchedTs != null) ...[
+                              _buildDetailRow('Ordine Trasferta SAP', matchedTs.numeroTrasferta),
+                              _buildDetailRow('Periodo SAP', '${matchedTs.dataInizioTrasferta} - ${matchedTs.dataFineTrasferta}'.trim()),
+                            ],
+                          ]),
+                        ],
                         const SizedBox(height: 24),
                         _buildDetailSection('Dettagli Servizio', Icons.receipt_long_outlined, Colors.purple.shade700, [
                           _buildDetailRow('Tipo Servizio', record.tipoServizio),
@@ -2584,6 +2968,127 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                           onPressed: () => Navigator.pop(context),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.orange.shade800,
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 16),
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                          ),
+                          child: const Text('CHIUDI', style: TextStyle(fontWeight: FontWeight.bold)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showSapRecordDetails(BuildContext context, TracciatoSap record) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.grey.shade50,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 550, maxHeight: 800),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // HEADER
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.green.shade700, Colors.green.shade900],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(40),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(Icons.analytics_outlined, color: Colors.white, size: 28),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'DETTAGLIO RECORD SAP',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'Trasferta: ${record.numeroTrasferta}',
+                              style: TextStyle(
+                                color: Colors.white.withAlpha(200),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white.withAlpha(20),
+                          padding: const EdgeInsets.all(6),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // CONTENT
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildDetailSection('Dipendente', Icons.person_outline, Colors.green.shade700, [
+                          _buildDetailRow('CID', record.cid),
+                          _buildDetailRow('Nome', record.nomeDipendente),
+                          _buildDetailRow('Tipo', record.tipoDipendente),
+                          _buildDetailRow('Classe Retr.', record.classeRetributiva),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Società e Trasferta', Icons.business_outlined, Colors.green.shade700, [
+                          _buildDetailRow('Società', '${record.societaDescrizione} (${record.societaCodice})'),
+                          _buildDetailRow('Trasferta', record.numeroTrasferta),
+                          _buildDetailRow('Data', record.data),
+                          if (record.progressivoGiustificativo != null && record.progressivoGiustificativo!.isNotEmpty)
+                            _buildDetailRow('Progressivo Giustificativo', record.progressivoGiustificativo!),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('Spesa ed Economia', Icons.payments_outlined, Colors.green.shade700, [
+                          _buildDetailRow('Tipo Spesa', '${record.tipoSpesaDescrizione} (${record.tipoSpesaCodice})'),
+                          _buildDetailRow('Importo', '${record.importo.toStringAsFixed(2)} ${record.valuta}', isHighlight: true, highlightColor: Colors.green.shade700),
+                          _buildDetailRow('Stato SAP', record.codiceStato ?? '-'),
+                          _buildDetailRow('Richiesta CD', record.cdRichiesta ?? '-'),
+                          _buildDetailRow('Codice FI', record.fi ?? '-'),
+                        ]),
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () => Navigator.pop(context),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.green.shade800,
                             foregroundColor: Colors.white,
                             padding: const EdgeInsets.symmetric(vertical: 16),
                             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
