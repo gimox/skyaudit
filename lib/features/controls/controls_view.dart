@@ -255,7 +255,32 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
     }
 
     final allAnagrafica = ref.watch(anagraficaProvider);
-    final anagraficaMap = {for (var a in allAnagrafica) (a.cid ?? '').trim(): (a.nominativo ?? '').trim()};
+    final Map<String, String> anagraficaMap = {};
+    void registerName(String? rawCid, String? rawName) {
+      final cid = (rawCid ?? '').trim();
+      final name = (rawName ?? '').trim();
+      if (cid.isNotEmpty && name.isNotEmpty) {
+        anagraficaMap.putIfAbsent(cid, () => name);
+        anagraficaMap.putIfAbsent(cid.padLeft(8, '0'), () => name);
+        anagraficaMap.putIfAbsent(cid.replaceFirst(RegExp(r'^0+'), ''), () => name);
+      }
+    }
+
+    for (final a in allAnagrafica) {
+      registerName(a.cid, a.nominativo);
+    }
+    // Arricchimento nominativi da AMEX (nomeViaggiatore)
+    for (final ame in rawAmexRecords) {
+      registerName(ame.cid, ame.nomeViaggiatore);
+    }
+    // Arricchimento nominativi da SAP (nomeDipendente)
+    for (final sap in allSapRecords) {
+      registerName(sap.cid, sap.nomeDipendente);
+    }
+    // Arricchimento nominativi da Estratto Conto (nomePasseggero)
+    for (final ec in rawEstrattiConto) {
+      registerName(ec.cid, ec.nomePasseggero);
+    }
 
     final dictionaries = ref.watch(dictionaryProvider);
     final dictionaryMap = {
@@ -3271,16 +3296,105 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       }
       sheet.setRowHeight(0, 30);
 
+      // Pre-indexing per performance O(1)
+      final Map<String, List<TracciatoSap>> sapByTrasferta = {};
+      for (final sap in allSapRecords) {
+        final key = _cleanT(sap.numeroTrasferta);
+        if (key.isNotEmpty) {
+          sapByTrasferta.putIfAbsent(key, () => []).add(sap);
+        }
+      }
+
+      final Map<String, List<EstrattoConto>> ecByTrasferta = {};
+      for (final ec in allEstrattiConto) {
+        if (ec.numeroTrasferta.isNotEmpty) {
+          ecByTrasferta.putIfAbsent(ec.numeroTrasferta, () => []).add(ec);
+        }
+      }
+
+      final Map<String, List<EstrattoAmex>> amexByTrasferta = {};
+      for (final ame in allAmexRecords) {
+        final key = ame.numeroTrasferta;
+        if (key != null && key.isNotEmpty) {
+          amexByTrasferta.putIfAbsent(key, () => []).add(ame);
+        }
+      }
+
+      // Mappa trasferta -> nominativo per fallback
+      final Map<String, String> trasfertaToNameMap = {};
+      for (final ame in allAmexRecords) {
+        final t = ame.numeroTrasferta;
+        final nom = ame.nomeViaggiatore?.trim();
+        if (t != null && t.isNotEmpty && nom != null && nom.isNotEmpty) {
+          trasfertaToNameMap.putIfAbsent(t, () => nom);
+          trasfertaToNameMap.putIfAbsent(_cleanT(t), () => nom);
+        }
+      }
+      for (final sap in allSapRecords) {
+        final t = sap.numeroTrasferta;
+        final nom = sap.nomeDipendente.trim();
+        if (t.isNotEmpty && nom.isNotEmpty) {
+          trasfertaToNameMap.putIfAbsent(t, () => nom);
+          trasfertaToNameMap.putIfAbsent(_cleanT(t), () => nom);
+        }
+      }
+      for (final ec in allEstrattiConto) {
+        final t = ec.numeroTrasferta;
+        final nom = ec.nomePasseggero.trim();
+        if (t.isNotEmpty && nom.isNotEmpty) {
+          trasfertaToNameMap.putIfAbsent(t, () => nom);
+          trasfertaToNameMap.putIfAbsent(_cleanT(t), () => nom);
+        }
+      }
+
+      String resolveNominativo(String? cid, {String? fallback, String? trasferta}) {
+        if (fallback != null && fallback.trim().isNotEmpty) {
+          return fallback.trim();
+        }
+        final c = (cid ?? '').trim();
+        if (c.isNotEmpty) {
+          final found = anagraficaMap[c] ??
+              anagraficaMap[c.padLeft(8, '0')] ??
+              anagraficaMap[c.replaceFirst(RegExp(r'^0+'), '')];
+          if (found != null && found.trim().isNotEmpty) {
+            return found.trim();
+          }
+        }
+        if (trasferta != null && trasferta.trim().isNotEmpty) {
+          final tNom = trasfertaToNameMap[trasferta] ?? trasfertaToNameMap[_cleanT(trasferta)];
+          if (tNom != null && tNom.trim().isNotEmpty) {
+            return tNom.trim();
+          }
+        }
+        return '';
+      }
+
+      String formatCidAndName(String? cid, {String? fallback, String? trasferta}) {
+        final c = (cid ?? '').trim();
+        final n = resolveNominativo(c, fallback: fallback, trasferta: trasferta);
+        if (c.isNotEmpty && n.isNotEmpty) {
+          return '$c - $n';
+        }
+        return c.isNotEmpty ? c : n;
+      }
+
       int currentRow = 1;
       for (final t in trasferte) {
         final records = groupedRecords[t] ?? [];
-        final sapForT = allSapRecords.where((sap) => _cleanT(sap.numeroTrasferta) == _cleanT(t)).toList();
-        final cid = records.isNotEmpty ? records.first.cid : (sapForT.isNotEmpty ? sapForT.first.cid : '');
+        final sapForT = sapByTrasferta[_cleanT(t)] ?? const [];
+        final ecForT = ecByTrasferta[t] ?? const [];
+        final amexForT = amexByTrasferta[t] ?? const [];
+
+        final cid = records.isNotEmpty
+            ? records.first.cid
+            : (sapForT.isNotEmpty
+                ? sapForT.first.cid
+                : (ecForT.isNotEmpty
+                    ? ecForT.first.cid
+                    : (amexForT.isNotEmpty ? (amexForT.first.cid ?? '') : '')));
         final dataInizio = records.isNotEmpty ? records.first.dataInizio : (sapForT.isNotEmpty ? sapForT.first.data : '');
         final dataFine = records.isNotEmpty ? records.first.dataFine : (sapForT.isNotEmpty ? sapForT.first.data : '');
         final societa = records.isNotEmpty ? records.first.societa : (sapForT.isNotEmpty ? sapForT.first.societaCodice : '');
-        final ecForT = allEstrattiConto.where((ec) => ec.numeroTrasferta == t).toList();
-        final amexForT = allAmexRecords.where((ame) => ame.numeroTrasferta == t).toList();
         
         double totTracciato = 0;
         for (var r in records) {
@@ -3302,7 +3416,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
         // RIGA TRASFERTA (RIEPILOGO)
         final tripHeaderRow = [
-          'TRASFERTA', t, 'CID: ${_formatCidWithName(cid, anagraficaMap)}', '', 
+          'TRASFERTA', t, 'CID: ${formatCidAndName(cid, trasferta: t)}', '', 
           _normalizeDate(dataInizio), _normalizeDate(dataFine),
           'E.C.: ${isMatchingEC ? "OK" : "KO"} | SAP: ${isMatchingSap ? "OK" : "KO"} | AMEX: ${isMatchingAmex ? "OK" : "KO"}',
           '', societa, '', totTracciato, diffEC, diffSap, diffAmex,
@@ -3326,7 +3440,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         // RIGHE TRACCIATO
         for (final r in records) {
           final rowData = [
-            '  > TRACCIATO', '', r.cid, r.numeroBolla, '', '', r.localita, 
+            '  > TRACCIATO', '', formatCidAndName(r.cid, trasferta: t), r.numeroBolla, '', '', r.localita, 
             '${r.giustificativoSpesa}${dictionaryMap[r.giustificativoSpesa] != null ? " (${dictionaryMap[r.giustificativoSpesa]})" : ""}', 
             '', _normalizeDate(r.dataSpesa), r.isNegative ? -r.importo : r.importo, '', '', '', ''
           ];
@@ -3346,7 +3460,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         // RIGHE ESTRATTO CONTO
         for (final ec in ecForT) {
           final rowData = [
-            '  > E. CONTO', '', ec.nomePasseggero, ec.bolla, '', '', ec.itinerario, 
+            '  > E. CONTO', '', formatCidAndName(ec.cid, fallback: ec.nomePasseggero, trasferta: t), ec.bolla, '', '', ec.itinerario, 
             ec.descrizioneServizio, '', _normalizeDate(ec.dataBolla), ec.totaleServizio, '', '', '', ''
           ];
           for (var i = 0; i < rowData.length; i++) {
@@ -3365,7 +3479,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         // RIGHE SAP
         for (final sap in sapForT) {
           final rowData = [
-            '  > SAP', '', sap.cid, sap.cdRichiesta ?? '', '', '', sap.tipoSpesaDescrizione, 
+            '  > SAP', '', formatCidAndName(sap.cid, fallback: sap.nomeDipendente, trasferta: t), sap.cdRichiesta ?? '', '', '', sap.tipoSpesaDescrizione, 
             sap.tipoSpesaCodice, sap.societaDescrizione, _normalizeDate(sap.data), sap.importo, '', '', '', '', '', ''
           ];
           for (var i = 0; i < rowData.length; i++) {
@@ -3384,7 +3498,7 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         // RIGHE AMEX
         for (final ame in amexForT) {
           final rowData = [
-            '  > AMEX', '', ame.cid, ame.bolla, '', '', ame.nomeEsercizio ?? ame.nomeFornitore ?? 'Esercizio AMEX', 
+            '  > AMEX', '', formatCidAndName(ame.cid, fallback: ame.nomeViaggiatore, trasferta: t), ame.bolla, '', '', ame.nomeEsercizio ?? ame.nomeFornitore ?? 'Esercizio AMEX', 
             'AMEX Transaction', '', _normalizeDate(ame.dataTransazione ?? ''), ame.importoLordo ?? 0, '', '', '', '', '', ''
           ];
           for (var i = 0; i < rowData.length; i++) {
@@ -3439,8 +3553,9 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
       for (final t in trasferte) {
         // Records Tracciato
         for (final r in groupedRecords[t] ?? []) {
-           final rowData = [
-            t, 'TRACCIATO', r.cid, '', r.numeroBolla, 
+          final rName = resolveNominativo(r.cid, trasferta: t);
+          final rowData = [
+            t, 'TRACCIATO', r.cid, rName, r.numeroBolla, 
             _normalizeDate(r.dataSpesa), r.localita, 
             '${r.giustificativoSpesa}${dictionaryMap[r.giustificativoSpesa] != null ? " (${dictionaryMap[r.giustificativoSpesa]})" : ""}', 
             r.isNegative ? -r.importo : r.importo, r.societa, r.isScarto ? 'SI' : 'NO'
@@ -3458,10 +3573,11 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         }
 
         // Records EC
-        final ecForT = allEstrattiConto.where((ec) => ec.numeroTrasferta == t).toList();
+        final ecForT = ecByTrasferta[t] ?? const [];
         for (final ec in ecForT) {
+          final ecName = resolveNominativo(ec.cid, fallback: ec.nomePasseggero, trasferta: t);
           final rowData = [
-            t, 'E. CONTO', ec.cid, ec.nomePasseggero, ec.bolla, 
+            t, 'E. CONTO', ec.cid, ecName, ec.bolla, 
             _normalizeDate(ec.dataBolla), ec.itinerario, ec.descrizioneServizio, 
             ec.totaleServizio, ec.ragioneSociale, 'NO'
           ];
@@ -3478,10 +3594,11 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         }
 
         // Records SAP
-        final sapForT = allSapRecords.where((sap) => _cleanT(sap.numeroTrasferta) == _cleanT(t)).toList();
+        final sapForT = sapByTrasferta[_cleanT(t)] ?? const [];
         for (final sap in sapForT) {
+          final sapName = resolveNominativo(sap.cid, fallback: sap.nomeDipendente, trasferta: t);
           final rowData = [
-            t, 'SAP', sap.cid, '', sap.cdRichiesta ?? '', 
+            t, 'SAP', sap.cid, sapName, sap.cdRichiesta ?? '', 
             _normalizeDate(sap.data), sap.tipoSpesaDescrizione, sap.tipoSpesaCodice, 
             sap.importo, sap.societaDescrizione, 'NO'
           ];
@@ -3498,10 +3615,11 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
         }
 
         // Records AMEX
-        final amexForTDetail = allAmexRecords.where((ame) => ame.numeroTrasferta == t).toList();
+        final amexForTDetail = amexByTrasferta[t] ?? const [];
         for (final ame in amexForTDetail) {
+          final ameName = resolveNominativo(ame.cid, fallback: ame.nomeViaggiatore, trasferta: t);
           final rowData = [
-            t, 'AMEX', ame.cid, ame.nomeViaggiatore, ame.bolla, 
+            t, 'AMEX', ame.cid ?? '', ameName, ame.bolla ?? '', 
             _normalizeDate(ame.dataTransazione ?? ''), ame.nomeEsercizio ?? ame.nomeFornitore ?? '', 'AMEX', 
             ame.importoLordo ?? 0, '', 'NO'
           ];
@@ -5036,9 +5154,12 @@ class _ControlsViewState extends ConsumerState<ControlsView> {
 
   String _formatCidWithName(String cid, Map<String, String> anagraficaMap) {
     final cleanCid = cid.trim();
-    final name = anagraficaMap[cleanCid];
-    if (name != null && name.isNotEmpty) {
-      return '$cleanCid - $name';
+    if (cleanCid.isEmpty) return '';
+    final name = anagraficaMap[cleanCid] ??
+        anagraficaMap[cleanCid.padLeft(8, '0')] ??
+        anagraficaMap[cleanCid.replaceFirst(RegExp(r'^0+'), '')];
+    if (name != null && name.trim().isNotEmpty) {
+      return '$cleanCid - ${name.trim()}';
     }
     return cleanCid;
   }

@@ -84,11 +84,14 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
 
   static String _formatCidWithName(String cid, Map<String, String> anagraficaMap) {
     final cleanCid = cid.trim();
-    final name = anagraficaMap[cleanCid];
-    if (name != null && name.isNotEmpty) {
-      return '$cleanCid - $name';
+    if (cleanCid.isEmpty) return '-';
+    final name = anagraficaMap[cleanCid] ??
+        anagraficaMap[cleanCid.padLeft(8, '0')] ??
+        anagraficaMap[cleanCid.replaceFirst(RegExp(r'^0+'), '')];
+    if (name != null && name.trim().isNotEmpty) {
+      return '$cleanCid - ${name.trim()}';
     }
-    return cleanCid.isEmpty ? '-' : cleanCid;
+    return cleanCid;
   }
 
   @override
@@ -137,10 +140,29 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     };
 
     final anagrafiche = ref.watch(anagraficaProvider);
-    final anagraficheMap = {
-      for (var a in anagrafiche)
-        if (a.cid != null) a.cid!.trim(): a.nominativo ?? ''
-    };
+    final Map<String, String> anagraficheMap = {};
+    void registerName(String? rawCid, String? rawName) {
+      final cid = (rawCid ?? '').trim();
+      final name = (rawName ?? '').trim();
+      if (cid.isNotEmpty && name.isNotEmpty) {
+        anagraficheMap.putIfAbsent(cid, () => name);
+        anagraficheMap.putIfAbsent(cid.padLeft(8, '0'), () => name);
+        anagraficheMap.putIfAbsent(cid.replaceFirst(RegExp(r'^0+'), ''), () => name);
+      }
+    }
+
+    for (final a in anagrafiche) {
+      registerName(a.cid, a.nominativo);
+    }
+    for (final ame in allAmexRecords) {
+      registerName(ame.cid, ame.nomeViaggiatore);
+    }
+    for (final sap in allSapRecords) {
+      registerName(sap.cid, sap.nomeDipendente);
+    }
+    for (final ec in allRecords) {
+      registerName(ec.cid, ec.nomePasseggero);
+    }
 
     final Map<String, String> cidToTipoDipMap = {};
     for (var a in anagrafiche) {
@@ -3297,8 +3319,12 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         // RIGHE SAP
         if (!isOspitiFilter) {
           for (final sap in sapForT) {
+            final sapName = anagraficaMap[sap.cid.trim()] ??
+                anagraficaMap[sap.cid.trim().padLeft(8, '0')] ??
+                anagraficaMap[sap.cid.trim().replaceFirst(RegExp(r'^0+'), '')] ??
+                sap.nomeDipendente.trim();
             final rowData = [
-              '  > SAP', '', sap.cid, sap.cdRichiesta ?? '', 
+              '  > SAP', '', sapName.isNotEmpty ? '${sap.cid} - $sapName' : sap.cid, sap.cdRichiesta ?? '', 
               _normalizeDate(sap.data), '', sap.tipoSpesaDescrizione, 
               sap.tipoSpesaCodice, sap.societaDescrizione, _normalizeDate(sap.data), sap.importo, '', '', '', '', '', ''
             ];
@@ -3401,8 +3427,14 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       for (final t in trasferte) {
         // Records EC
         for (final ec in groupedRecords[t] ?? []) {
+          final ecName = ec.nomePasseggero.trim().isNotEmpty
+              ? ec.nomePasseggero.trim()
+              : (anagraficaMap[ec.cid.trim()] ??
+                  anagraficaMap[ec.cid.trim().padLeft(8, '0')] ??
+                  anagraficaMap[ec.cid.trim().replaceFirst(RegExp(r'^0+'), '')] ??
+                  '');
           final rowData = [
-            t, 'E. CONTO', ec.cid, ec.nomePasseggero, ec.bolla, 
+            t, 'E. CONTO', ec.cid, ecName, ec.bolla, 
             _normalizeDate(ec.dataBolla), ec.itinerario, ec.descrizioneServizio, 
             ec.totaleServizio, ec.ragioneSociale, logHistoryMap[ec.logHistoryId]?.fileName ?? ec.logHistoryId ?? '-'
           ];
@@ -3421,8 +3453,12 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         // Records SAP
         if (!isOspitiFilter) {
           for (final sap in sapMap[_cleanT(t)] ?? const []) {
+            final sapName = anagraficaMap[sap.cid.trim()] ??
+                anagraficaMap[sap.cid.trim().padLeft(8, '0')] ??
+                anagraficaMap[sap.cid.trim().replaceFirst(RegExp(r'^0+'), '')] ??
+                sap.nomeDipendente.trim();
             final rowData = [
-              t, 'SAP', sap.cid, '', sap.cdRichiesta ?? '', 
+              t, 'SAP', sap.cid, sapName, sap.cdRichiesta ?? '', 
               _normalizeDate(sap.data), sap.tipoSpesaDescrizione, sap.tipoSpesaCodice, 
               sap.importo, sap.societaDescrizione, '-'
             ];
