@@ -11,6 +11,7 @@ import 'package:travel_check/features/upload/models/trasferte_sap.dart';
 import 'package:travel_check/features/upload/providers/log_history_provider.dart';
 import 'package:travel_check/features/upload/models/log_history.dart';
 import 'package:travel_check/features/upload/providers/tracciato_contabile_provider.dart';
+import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 import 'package:travel_check/features/upload/providers/anagrafica_provider.dart';
 import 'package:travel_check/shared/widgets/file_selection_dialog.dart';
@@ -25,7 +26,81 @@ final tsPageProvider = StateProvider<int>((ref) => 0);
 final tsSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final tsSelectedContabileLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final tsSelectedSocietaProvider = StateProvider<Set<String>>((ref) => {});
+final tsSelectedTipoDipendenteProvider = StateProvider<Set<String>>((ref) => {});
 final tsSelectedTrasferteCodesProvider = StateProvider<Set<String>?>((ref) => null);
+
+(Map<String, String>, Map<String, String>) _buildTipoDipMaps({
+  required List<dynamic> allAnagrafica,
+  required List<dynamic> contabileRecords,
+  required List<dynamic> sapRecords,
+}) {
+  final Map<String, String> cidToTipoDipMap = {};
+  for (final dynamic a in allAnagrafica) {
+    final cid = (a.cid as String? ?? '').trim();
+    final tipo = (a.tipoDip as String? ?? '').trim().toUpperCase();
+    if (cid.isNotEmpty && tipo.isNotEmpty) {
+      cidToTipoDipMap[cid] = tipo;
+      cidToTipoDipMap[cid.padLeft(8, '0')] = tipo;
+      cidToTipoDipMap[cid.replaceAll(RegExp(r'^0+'), '')] = tipo;
+    }
+  }
+  for (final dynamic tc in contabileRecords) {
+    final cid = (tc.cid as String? ?? '').trim();
+    final tipo = (tc.tipoDipendente as String? ?? '').trim().toUpperCase();
+    if (cid.isNotEmpty && tipo.isNotEmpty) {
+      cidToTipoDipMap.putIfAbsent(cid, () => tipo);
+      cidToTipoDipMap.putIfAbsent(cid.padLeft(8, '0'), () => tipo);
+      cidToTipoDipMap.putIfAbsent(cid.replaceAll(RegExp(r'^0+'), ''), () => tipo);
+    }
+  }
+  for (final dynamic s in sapRecords) {
+    final cid = (s.cid as String? ?? '').trim();
+    final tipo = (s.tipoDipendente as String? ?? '').trim().toUpperCase();
+    if (cid.isNotEmpty && tipo.isNotEmpty) {
+      cidToTipoDipMap.putIfAbsent(cid, () => tipo);
+      cidToTipoDipMap.putIfAbsent(cid.padLeft(8, '0'), () => tipo);
+      cidToTipoDipMap.putIfAbsent(cid.replaceAll(RegExp(r'^0+'), ''), () => tipo);
+    }
+  }
+
+  final Map<String, String> trasfertaToTipoDipMap = {};
+  for (final dynamic tc in contabileRecords) {
+    final tr = (tc.numeroTrasferta as String? ?? '').trim();
+    final tipo = (tc.tipoDipendente as String? ?? '').trim().toUpperCase();
+    if (tr.isNotEmpty && tipo.isNotEmpty) {
+      trasfertaToTipoDipMap.putIfAbsent(tr, () => tipo);
+    }
+  }
+  for (final dynamic s in sapRecords) {
+    final tr = (s.numeroTrasferta as String? ?? '').trim();
+    final tipo = (s.tipoDipendente as String? ?? '').trim().toUpperCase();
+    if (tr.isNotEmpty && tipo.isNotEmpty) {
+      trasfertaToTipoDipMap.putIfAbsent(tr, () => tipo);
+    }
+  }
+
+  return (cidToTipoDipMap, trasfertaToTipoDipMap);
+}
+
+String _getTipoDip(
+  TrasferteSap r,
+  Map<String, String> cidToTipoDipMap,
+  Map<String, String> trasfertaToTipoDipMap,
+) {
+  final cleanTr = r.numeroTrasferta.trim();
+  if (cleanTr.isNotEmpty) {
+    final trTipo = trasfertaToTipoDipMap[cleanTr];
+    if (trTipo != null && trTipo.isNotEmpty) return trTipo;
+  }
+  final cleanCid = r.cid.trim();
+  if (cleanCid.isNotEmpty) {
+    final cidTipo = cidToTipoDipMap[cleanCid] ??
+        cidToTipoDipMap[cleanCid.padLeft(8, '0')] ??
+        cidToTipoDipMap[cleanCid.replaceAll(RegExp(r'^0+'), '')];
+    if (cidTipo != null && cidTipo.isNotEmpty) return cidTipo;
+  }
+  return '';
+}
 
 class TrasferteSapView extends ConsumerStatefulWidget {
   const TrasferteSapView({super.key});
@@ -60,12 +135,20 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     final selectedLogHistoryIds = ref.watch(tsSelectedLogHistoryIdsProvider);
     final selectedContabileLogHistoryIds = ref.watch(tsSelectedContabileLogHistoryIdsProvider);
     final selectedSocieta = ref.watch(tsSelectedSocietaProvider);
+    final selectedTipoDipendente = ref.watch(tsSelectedTipoDipendenteProvider);
     final selectedTrasferteCodes = ref.watch(tsSelectedTrasferteCodesProvider);
     final allLogs = ref.watch(logHistoryProvider);
     final contabileRecords = ref.watch(tracciatoContabilesProvider);
+    final sapRecords = ref.watch(tracciatoSapProvider);
     final allAnagrafica = ref.watch(anagraficaProvider);
     final dictionaries = ref.watch(dictionaryProvider);
     final dictionaryMap = {for (var d in dictionaries) d.code.trim().toUpperCase(): d.value.trim()};
+
+    final (cidToTipoDipMap, trasfertaToTipoDipMap) = _buildTipoDipMaps(
+      allAnagrafica: allAnagrafica,
+      contabileRecords: contabileRecords,
+      sapRecords: sapRecords,
+    );
 
     final anagraficaSocietaMap = {
       for (var a in allAnagrafica)
@@ -141,6 +224,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
       selectedLogHistoryIds.isNotEmpty,
       selectedContabileLogHistoryIds.isNotEmpty,
       selectedSocieta.isNotEmpty,
+      selectedTipoDipendente.isNotEmpty,
     ].where((e) => e).length;
 
     // Calcolo statistiche generali
@@ -155,6 +239,10 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
       if (selectedSocieta.isNotEmpty) {
         final rSocieta = contabileSocietaMap[r.numeroTrasferta.trim()] ?? anagraficaSocietaMap[r.cid.trim().padLeft(8, '0')] ?? '';
         if (!selectedSocieta.contains(rSocieta)) return false;
+      }
+      if (selectedTipoDipendente.isNotEmpty) {
+        final rTipo = _getTipoDip(r, cidToTipoDipMap, trasfertaToTipoDipMap);
+        if (!selectedTipoDipendente.contains(rTipo)) return false;
       }
       if (selectedQuery != null) {
         final query = selectedQuery.toLowerCase();
@@ -361,6 +449,11 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                             'Società: ${selectedSocieta.map((s) => dictionaryMap[s.toUpperCase()] != null ? "$s (${dictionaryMap[s.toUpperCase()]})" : s).join(", ")}',
                             () => ref.read(tsSelectedSocietaProvider.notifier).state = {},
                           ),
+                        if (selectedTipoDipendente.isNotEmpty)
+                          _buildFilterChip(
+                            'Tipo Dip: ${selectedTipoDipendente.map((t) => dictionaryMap[t.toUpperCase()] != null ? "$t (${dictionaryMap[t.toUpperCase()]})" : t).join(", ")}',
+                            () => ref.read(tsSelectedTipoDipendenteProvider.notifier).state = {},
+                          ),
                         TextButton(
                           onPressed: () => _resetAllFilters(ref), 
                           child: const Text('Reset tutto', style: TextStyle(fontSize: 12, color: Colors.red))
@@ -498,7 +591,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SizedBox(
-                          width: 1400,
+                          width: 1540,
                           child: Column(
                             children: [
                               Container(
@@ -512,6 +605,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                                     _buildCell('AZIONI', 120, isHeader: true, alignment: Alignment.center),
                                     _buildCell('CID DIPENDENTE', 150, isHeader: true),
                                     _buildCell('NOMINATIVO', 220, isHeader: true),
+                                    _buildCell('TIPO DIP.', 140, isHeader: true),
                                     _buildCell('SOCIETÀ', 160, isHeader: true),
                                     _buildCell('NUMERO TRASFERTA', 180, isHeader: true),
                                     _buildCell('DATA INIZIO', 160, isHeader: true),
@@ -534,6 +628,10 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                                       final displaySocieta = rSocieta != '-' && dictionaryMap[rSocieta.toUpperCase()] != null 
                                           ? '$rSocieta (${dictionaryMap[rSocieta.toUpperCase()]})' 
                                           : rSocieta;
+                                      final rTipo = _getTipoDip(record, cidToTipoDipMap, trasfertaToTipoDipMap);
+                                      final displayTipo = rTipo.isNotEmpty && dictionaryMap[rTipo.toUpperCase()] != null 
+                                          ? '$rTipo (${dictionaryMap[rTipo.toUpperCase()]})' 
+                                          : (rTipo.isNotEmpty ? rTipo : '-');
 
                                       return Container(
                                         decoration: BoxDecoration(
@@ -603,6 +701,12 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                                               anagraficaMap[record.cid.trim().padLeft(8, '0')] ?? '',
                                               220,
                                               fontWeight: FontWeight.w500,
+                                            ),
+                                            _buildCell(
+                                              displayTipo,
+                                              140,
+                                              color: rTipo.isNotEmpty ? SkyTheme.timBlue : Colors.grey,
+                                              fontWeight: rTipo.isNotEmpty ? FontWeight.w500 : FontWeight.normal,
                                             ),
                                             _buildCell(
                                               displaySocieta,
@@ -745,6 +849,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     ref.read(tsSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(tsSelectedContabileLogHistoryIdsProvider.notifier).state = {};
     ref.read(tsSelectedSocietaProvider.notifier).state = {};
+    ref.read(tsSelectedTipoDipendenteProvider.notifier).state = {};
     ref.read(tsPageProvider.notifier).state = 0;
     _searchController.clear();
   }
@@ -779,8 +884,31 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     final allRecords = ref.watch(trasferteSapProvider);
     final allAnagrafica = ref.watch(anagraficaProvider);
     final contabileRecords = ref.watch(tracciatoContabilesProvider);
+    final sapRecords = ref.watch(tracciatoSapProvider);
     final dictionaries = ref.watch(dictionaryProvider);
     final dictionaryMap = {for (var d in dictionaries) d.code.trim().toUpperCase(): d.value.trim()};
+
+    final (cidToTipoDipMap, trasfertaToTipoDipMap) = _buildTipoDipMaps(
+      allAnagrafica: allAnagrafica,
+      contabileRecords: contabileRecords,
+      sapRecords: sapRecords,
+    );
+
+    final availableTipoDipSet = <String>{};
+    for (final r in allRecords) {
+      final t = _getTipoDip(r, cidToTipoDipMap, trasfertaToTipoDipMap);
+      if (t.isNotEmpty) availableTipoDipSet.add(t);
+    }
+    final dictTipoDip = dictionaries
+        .where((d) => d.category.trim().toLowerCase() == 'tipodipendente' || d.category.trim().toLowerCase() == 'tipo_dipendente')
+        .map((d) => d.code.trim().toUpperCase())
+        .toSet();
+    if (availableTipoDipSet.isEmpty) {
+      availableTipoDipSet.addAll(dictTipoDip.isNotEmpty ? dictTipoDip : const {'DR', 'IM', 'QD', 'RS'});
+    } else {
+      availableTipoDipSet.addAll(dictTipoDip);
+    }
+    final availableTipoDipendente = availableTipoDipSet.toList()..sort();
 
     final anagraficaSocietaMap = {
       for (var a in allAnagrafica)
@@ -884,6 +1012,20 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                       ref.read(tsPageProvider.notifier).state = 0;
                     },
                     icon: Icons.business,
+                    dictionary: dictionaryMap,
+                  ),
+                  const SizedBox(height: 24),
+                  _buildDrawerSectionTitle('TIPO DIPENDENTE'),
+                  const SizedBox(height: 12),
+                  _buildMultiSelectFilter(
+                    'Tipo Dipendente',
+                    ref.watch(tsSelectedTipoDipendenteProvider),
+                    availableTipoDipendente,
+                    (next) {
+                      ref.read(tsSelectedTipoDipendenteProvider.notifier).state = next;
+                      ref.read(tsPageProvider.notifier).state = 0;
+                    },
+                    icon: Icons.badge_outlined,
                     dictionary: dictionaryMap,
                   ),
                   const SizedBox(height: 24),
@@ -1071,6 +1213,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     final fileName = logHistoryMap[record.logHistoryId] ?? 'Caricamento Manuale';
 
     final contabileRecords = ref.read(tracciatoContabilesProvider);
+    final sapRecords = ref.read(tracciatoSapProvider);
     final contabileSocietaMap = {
       for (var tc in contabileRecords)
         if (tc.numeroTrasferta.trim().isNotEmpty && tc.societa.trim().isNotEmpty)
@@ -1084,6 +1227,16 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     };
     final dictionaries = ref.read(dictionaryProvider);
     final dictionaryMap = {for (var d in dictionaries) d.code.trim().toUpperCase(): d.value.trim()};
+
+    final (cidToTipoDipMap, trasfertaToTipoDipMap) = _buildTipoDipMaps(
+      allAnagrafica: allAnagrafica,
+      contabileRecords: contabileRecords,
+      sapRecords: sapRecords,
+    );
+    final rTipo = _getTipoDip(record, cidToTipoDipMap, trasfertaToTipoDipMap);
+    final displayTipoDip = rTipo.isNotEmpty && dictionaryMap[rTipo.toUpperCase()] != null
+        ? '$rTipo (${dictionaryMap[rTipo.toUpperCase()]})'
+        : (rTipo.isNotEmpty ? rTipo : '-');
 
     final rSocieta = contabileSocietaMap[record.numeroTrasferta.trim()] ?? anagraficaSocietaMap[record.cid.trim().padLeft(8, '0')] ?? '-';
     final displaySocieta = rSocieta != '-' && dictionaryMap[rSocieta.toUpperCase()] != null 
@@ -1150,6 +1303,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                           _buildDetailSection('Informazioni Dipendente', Icons.person_outline, SkyTheme.timBlue, [
                             _buildDetailRow('CID Dipendente', record.cid),
                             _buildDetailRow('Nominativo', nominativo),
+                            _buildDetailRow('Tipo Dipendente', displayTipoDip),
                             _buildDetailRow('Società', displaySocieta),
                           ]),
                           const SizedBox(height: 20),
@@ -1327,6 +1481,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
       excel.delete('Sheet1'); // Rimuovi default sheet
 
       final contabileRecords = ref.read(tracciatoContabilesProvider);
+      final sapRecords = ref.read(tracciatoSapProvider);
       final contabileSocietaMap = {
         for (var tc in contabileRecords)
           if (tc.numeroTrasferta.trim().isNotEmpty && tc.societa.trim().isNotEmpty)
@@ -1346,10 +1501,17 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
       final dictionaries = ref.read(dictionaryProvider);
       final dictionaryMap = {for (var d in dictionaries) d.code.trim().toUpperCase(): d.value.trim()};
 
+      final (cidToTipoDipMap, trasfertaToTipoDipMap) = _buildTipoDipMaps(
+        allAnagrafica: allAnagrafica,
+        contabileRecords: contabileRecords,
+        sapRecords: sapRecords,
+      );
+
       // Header
       sheet.appendRow([
         TextCellValue('CID'),
         TextCellValue('Nominativo'),
+        TextCellValue('Tipo Dipendente'),
         TextCellValue('Società'),
         TextCellValue('Numero Trasferta'),
         TextCellValue('Data Inizio'),
@@ -1365,9 +1527,15 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
             ? '$rSocieta (${dictionaryMap[rSocieta.toUpperCase()]})' 
             : rSocieta;
 
+        final rTipo = _getTipoDip(r, cidToTipoDipMap, trasfertaToTipoDipMap);
+        final displayTipo = rTipo.isNotEmpty && dictionaryMap[rTipo.toUpperCase()] != null 
+            ? '$rTipo (${dictionaryMap[rTipo.toUpperCase()]})' 
+            : (rTipo.isNotEmpty ? rTipo : '-');
+
         sheet.appendRow([
           TextCellValue(r.cid),
           TextCellValue(anagraficaMap[r.cid.trim().padLeft(8, '0')] ?? ''),
+          TextCellValue(displayTipo),
           TextCellValue(displaySocieta),
           TextCellValue(r.numeroTrasferta),
           TextCellValue(r.dataInizioTrasferta),
@@ -1501,14 +1669,14 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
     Map<String, String>? dictionary,
   }) {
     final selectedCount = selectedValues.length;
-    String displayText = 'Tutte le società';
+    String displayText = 'Tutti ($label)';
     if (selectedCount == 1) {
       final val = selectedValues.first;
       displayText = dictionary != null && dictionary[val] != null
           ? '$val - ${dictionary[val]}'
           : val;
     } else if (selectedCount > 1) {
-      displayText = '$selectedCount società selezionate';
+      displayText = '$selectedCount selezionati';
     }
 
     return Column(
@@ -1553,7 +1721,7 @@ class _TrasferteSapViewState extends ConsumerState<TrasferteSapView> {
                             ),
                             Expanded(
                               child: options.isEmpty
-                                  ? const Center(child: Text('Nessuna società disponibile'))
+                                  ? const Center(child: Text('Nessun elemento disponibile'))
                                   : ListView.builder(
                                       itemCount: options.length,
                                       itemBuilder: (context, index) {
@@ -1637,6 +1805,7 @@ class _VerificationItem {
   final bool isPresent;
   final TrasferteSap? record;
   final String? nominativo;
+  final String? tipoDipendente;
   final String? societa;
 
   _VerificationItem({
@@ -1644,6 +1813,7 @@ class _VerificationItem {
     required this.isPresent,
     this.record,
     this.nominativo,
+    this.tipoDipendente,
     this.societa,
   });
 }
@@ -1732,6 +1902,14 @@ class _BatchVerificationDialogState extends ConsumerState<_BatchVerificationDial
         if (tc.numeroTrasferta.trim().isNotEmpty && tc.societa.trim().isNotEmpty)
           tc.numeroTrasferta.trim(): tc.societa.trim()
     };
+    final sapRecords = ref.read(tracciatoSapProvider);
+    final (cidToTipoDipMap, trasfertaToTipoDipMap) = _buildTipoDipMaps(
+      allAnagrafica: allAnagrafica,
+      contabileRecords: contabileRecords,
+      sapRecords: sapRecords,
+    );
+    final dictionaries = ref.read(dictionaryProvider);
+    final dictionaryMap = {for (var d in dictionaries) d.code.trim().toUpperCase(): d.value.trim()};
 
     final results = <_VerificationItem>[];
     for (final code in codes) {
@@ -1740,11 +1918,16 @@ class _BatchVerificationDialogState extends ConsumerState<_BatchVerificationDial
         final cidPadded = rec.cid.trim().padLeft(8, '0');
         final nom = anagraficaMap[cidPadded];
         final soc = contabileSocietaMap[code] ?? anagraficaSocietaMap[cidPadded];
+        final rTipo = _getTipoDip(rec, cidToTipoDipMap, trasfertaToTipoDipMap);
+        final displayTipo = rTipo.isNotEmpty && dictionaryMap[rTipo.toUpperCase()] != null
+            ? '$rTipo (${dictionaryMap[rTipo.toUpperCase()]})'
+            : (rTipo.isNotEmpty ? rTipo : null);
         results.add(_VerificationItem(
           code: code,
           isPresent: true,
           record: rec,
           nominativo: (nom != null && nom.isNotEmpty) ? nom : null,
+          tipoDipendente: displayTipo,
           societa: (soc != null && soc.isNotEmpty) ? soc : null,
         ));
       } else {
@@ -1826,14 +2009,14 @@ class _BatchVerificationDialogState extends ConsumerState<_BatchVerificationDial
   void _copyAllToClipboard() {
     if (_items.isEmpty) return;
     final buffer = StringBuffer();
-    buffer.writeln('Codice Trasferta\tEsito\tCID\tDipendente\tSocietà\tData Inizio\tData Fine');
+    buffer.writeln('Codice Trasferta\tEsito\tCID\tDipendente\tTipo Dipendente\tSocietà\tData Inizio\tData Fine');
     for (final item in _items) {
       if (item.isPresent && item.record != null) {
         buffer.writeln(
-          '${item.code}\tPRESENTE\t${item.record!.cid}\t${item.nominativo ?? ''}\t${item.societa ?? ''}\t${item.record!.dataInizioTrasferta}\t${item.record!.dataFineTrasferta}',
+          '${item.code}\tPRESENTE\t${item.record!.cid}\t${item.nominativo ?? ''}\t${item.tipoDipendente ?? ''}\t${item.societa ?? ''}\t${item.record!.dataInizioTrasferta}\t${item.record!.dataFineTrasferta}',
         );
       } else {
-        buffer.writeln('${item.code}\tNON PRESENTE\t-\t-\t-\t-\t-');
+        buffer.writeln('${item.code}\tNON PRESENTE\t-\t-\t-\t-\t-\t-');
       }
     }
     Clipboard.setData(ClipboardData(text: buffer.toString()));
@@ -1904,6 +2087,7 @@ class _BatchVerificationDialogState extends ConsumerState<_BatchVerificationDial
         TextCellValue('Esito Verifica'),
         TextCellValue('CID'),
         TextCellValue('Dipendente'),
+        TextCellValue('Tipo Dipendente'),
         TextCellValue('Società'),
         TextCellValue('Data Inizio'),
         TextCellValue('Ora Inizio'),
@@ -1918,6 +2102,7 @@ class _BatchVerificationDialogState extends ConsumerState<_BatchVerificationDial
             TextCellValue('PRESENTE'),
             TextCellValue(item.record!.cid),
             TextCellValue(item.nominativo ?? ''),
+            TextCellValue(item.tipoDipendente ?? '-'),
             TextCellValue(item.societa ?? ''),
             TextCellValue(item.record!.dataInizioTrasferta),
             TextCellValue(item.record!.oraInizioTrasferta),
@@ -1935,11 +2120,12 @@ class _BatchVerificationDialogState extends ConsumerState<_BatchVerificationDial
             TextCellValue('-'),
             TextCellValue('-'),
             TextCellValue('-'),
+            TextCellValue('-'),
           ]);
         }
       }
 
-      const colCount = 9;
+      const colCount = 10;
 
       // Applica stile intestazione
       for (var col = 0; col < colCount; col++) {
@@ -1973,8 +2159,12 @@ class _BatchVerificationDialogState extends ConsumerState<_BatchVerificationDial
       sheet.setColumnWidth(1, 18); // Esito Verifica
       sheet.setColumnWidth(2, 14); // CID
       sheet.setColumnWidth(3, 30); // Dipendente
-      sheet.setColumnWidth(4, 18); // Società
-      sheet.setColumnWidth(5, 16); // Data Inizio
+      sheet.setColumnWidth(4, 18); // Tipo Dipendente
+      sheet.setColumnWidth(5, 18); // Società
+      sheet.setColumnWidth(6, 16); // Data Inizio
+      sheet.setColumnWidth(7, 14); // Ora Inizio
+      sheet.setColumnWidth(8, 16); // Data Fine
+      sheet.setColumnWidth(9, 14); // Ora Fine
       sheet.setColumnWidth(6, 14); // Ora Inizio
       sheet.setColumnWidth(7, 16); // Data Fine
       sheet.setColumnWidth(8, 14); // Ora Fine
@@ -2253,7 +2443,8 @@ class _BatchVerificationDialogState extends ConsumerState<_BatchVerificationDial
         final matchesCode = item.code.toLowerCase().contains(searchQ);
         final matchesCid = item.record?.cid.toLowerCase().contains(searchQ) ?? false;
         final matchesNom = item.nominativo?.toLowerCase().contains(searchQ) ?? false;
-        if (!matchesCode && !matchesCid && !matchesNom) return false;
+        final matchesTipo = item.tipoDipendente?.toLowerCase().contains(searchQ) ?? false;
+        if (!matchesCode && !matchesCid && !matchesNom && !matchesTipo) return false;
       }
       return true;
     }).toList();
@@ -2447,7 +2638,7 @@ class _BatchVerificationDialogState extends ConsumerState<_BatchVerificationDial
                               Expanded(
                                 child: isPresent && item.record != null
                                     ? Text(
-                                        'CID: ${item.record!.cid}  •  ${item.nominativo ?? 'Dipendente N/D'}  •  Dal ${item.record!.dataInizioTrasferta} al ${item.record!.dataFineTrasferta}${item.societa != null ? '  •  ${item.societa}' : ''}',
+                                        'CID: ${item.record!.cid}  •  ${item.nominativo ?? 'Dipendente N/D'}${item.tipoDipendente != null ? '  •  ${item.tipoDipendente}' : ''}  •  Dal ${item.record!.dataInizioTrasferta} al ${item.record!.dataFineTrasferta}${item.societa != null ? '  •  ${item.societa}' : ''}',
                                         style: TextStyle(fontSize: 12, color: Colors.grey.shade800),
                                         overflow: TextOverflow.ellipsis,
                                       )

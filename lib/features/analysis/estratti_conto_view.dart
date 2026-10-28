@@ -314,6 +314,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     }
 
     bool hasSapIncrocioForT(String t) {
+      if (filterOspiti || !_isValidTrasferta(t)) return false;
       final clean = _cleanT(t);
       if (clean.isEmpty) return false;
       final sapList = sapMapByCleanedT[clean];
@@ -341,7 +342,26 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     // Filtro Ricerca testuale
     if (selectedTrasferta != null && selectedTrasferta.trim().isNotEmpty) {
       final query = selectedTrasferta.toLowerCase().trim();
+      if (groupedRecords.containsKey('SENZA TRASFERTA')) {
+        final matchingOrphans = groupedRecords['SENZA TRASFERTA']!.where((r) {
+          final name = anagraficheMap[r.cid.trim()] ?? '';
+          final sourceFile = logHistoryMap[r.logHistoryId]?.fileName ?? '';
+          return r.cid.toLowerCase().contains(query) ||
+              name.toLowerCase().contains(query) ||
+              r.bolla.toLowerCase().contains(query) ||
+              r.descrizioneServizio.toLowerCase().contains(query) ||
+              r.fornitore.toLowerCase().contains(query) ||
+              sourceFile.toLowerCase().contains(query);
+        }).toList();
+        if (matchingOrphans.isEmpty) {
+          groupedRecords.remove('SENZA TRASFERTA');
+        } else {
+          groupedRecords['SENZA TRASFERTA'] = matchingOrphans;
+        }
+      }
+
       trasferte = trasferte.where((t) {
+        if (!groupedRecords.containsKey(t)) return false;
         if (t.toLowerCase().contains(query)) return true;
         final list = groupedRecords[t] ?? [];
         return list.any((r) {
@@ -372,7 +392,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       trasferte = trasferte.where((t) {
         final list = groupedRecords[t] ?? [];
         final tEC = list.fold<double>(0, (sum, r) => sum + r.totaleServizio);
-        final sapList = sapMapByCleanedT[_cleanT(t)] ?? const [];
+        final sapList = (!filterOspiti && _isValidTrasferta(t)) ? (sapMapByCleanedT[_cleanT(t)] ?? const []) : const <TracciatoSap>[];
 
         if (sapMatchFilter == EcSapMatchFilter.missing) {
           return sapList.isEmpty;
@@ -400,6 +420,9 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     int totalRecordsCount = 0;
     int totalPositiveRecordsCount = 0;
 
+    final processedSapKeys = <String>{};
+    final processedAmexKeys = <String>{};
+
     for (final t in trasferte) {
       final list = groupedRecords[t] ?? [];
       totalRecordsCount += list.length;
@@ -414,14 +437,21 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         }
       }
 
-      final sapList = sapMapByCleanedT[_cleanT(t)] ?? const [];
-      for (final s in sapList) {
-        globalSap += s.importo;
-      }
+      if (_isValidTrasferta(t) && !filterOspiti) {
+        final clean = _cleanT(t);
+        if (processedSapKeys.add(clean)) {
+          final sapList = sapMapByCleanedT[clean] ?? const [];
+          for (final s in sapList) {
+            globalSap += s.importo;
+          }
+        }
 
-      final amexList = amexMapByT[t] ?? const [];
-      for (final a in amexList) {
-        globalAmex += a.importoLordo ?? 0;
+        if (processedAmexKeys.add(t)) {
+          final amexList = amexMapByT[t] ?? const [];
+          for (final a in amexList) {
+            globalAmex += a.importoLordo ?? 0;
+          }
+        }
       }
     }
 
@@ -551,9 +581,9 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                         _buildGlobalTotal('E.C. (> 0 €)', globalPositiveEC, Colors.indigo.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
                         _buildGlobalTotal('E.C.', globalEC, Colors.purple.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
                         _buildGlobalTotal('AMEX', globalAmex, Colors.orange.shade800, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
-                        _buildGlobalTotal('DISCREPANZA AMEX', globalEC - globalAmex, (globalEC - globalAmex).abs() < 0.01 ? Colors.green.shade700 : Colors.red.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                        _buildGlobalTotal('DISCREPANZA AMEX', filterOspiti ? 0.0 : globalEC - globalAmex, (filterOspiti || (globalEC - globalAmex).abs() < 0.01) ? Colors.green.shade700 : Colors.red.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
                         _buildGlobalTotal('SAP', globalSap, Colors.green.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
-                        _buildGlobalTotal('DISCREPANZA SAP', globalEC - globalSap, (globalEC - globalSap).abs() < 0.01 ? Colors.green.shade700 : Colors.red.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
+                        _buildGlobalTotal('DISCREPANZA SAP', filterOspiti ? 0.0 : globalEC - globalSap, (filterOspiti || (globalEC - globalSap).abs() < 0.01) ? Colors.green.shade700 : Colors.red.shade700, isCompact: isCompact, isVeryCompact: isVeryCompact, isUltraCompact: isUltraCompact),
                       ],
                     ),
                     SizedBox(height: isUltraCompact ? 6 : (isVeryCompact ? 6 : (isCompact ? 12 : 24))),

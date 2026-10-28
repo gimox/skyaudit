@@ -23,6 +23,7 @@ final amexStartDateProvider = StateProvider<DateTime?>((ref) => null);
 final amexEndDateProvider = StateProvider<DateTime?>((ref) => null);
 final amexSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final amexFilterOspitiProvider = StateProvider<bool>((ref) => false);
+final amexFilterTopProvider = StateProvider<bool>((ref) => false);
 final amexSortAscendingProvider = StateProvider<bool>((ref) => false);
 final amexPageProvider = StateProvider<int>((ref) => 0);
 
@@ -42,6 +43,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
   final _horizontalScrollController = ScrollController();
   final _statsScrollController = ScrollController();
   bool _isOspitiInfoExpanded = false;
+  bool _isTopInfoExpanded = false;
 
   @override
   void dispose() {
@@ -62,12 +64,15 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     final endDate = ref.watch(amexEndDateProvider);
     final selectedLogHistoryIds = ref.watch(amexSelectedLogHistoryIdsProvider);
     final filterOspiti = ref.watch(amexFilterOspitiProvider);
+    final filterTop = ref.watch(amexFilterTopProvider);
     final allLogs = ref.watch(logHistoryProvider);
     final logsMap = {for (var log in allLogs) log.uniqueCode: log.fileName};
     final amexLogIds = allRecords.map((r) => r.logHistoryId).whereType<String>().toSet();
     final amexLogs = allLogs.where((log) => log.sourceType == 'Estratto AMEX' || amexLogIds.contains(log.uniqueCode)).toList();
     final ospitiLogs = amexLogs.where((log) => log.fileName.toUpperCase().contains('OSPITI')).toList();
     final ospitiLogCodes = ospitiLogs.expand((l) => [l.uniqueCode, l.fileName]).toSet();
+    final topLogs = amexLogs.where((log) => log.fileName.toUpperCase().contains('TOP')).toList();
+    final topLogCodes = topLogs.expand((l) => [l.uniqueCode, l.fileName]).toSet();
     String? selectedLogFileName;
     if (selectedLogHistoryIds.length == 1) {
       for (final log in allLogs) {
@@ -96,21 +101,6 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         if (d.category == 'conto') d.code: d.value
     };
     const pageSize = 50;
-
-    final totalRecords = allRecords.length;
-    final reconciledRecords = allRecords.where((r) => r.numeroTrasferta != null && contabileTrasferte.contains(r.numeroTrasferta!.trim())).length;
-    final waitingRecords = totalRecords - reconciledRecords;
-
-    final totalAmountAbsolute = allRecords.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0).abs());
-    final totalAmountSigned = allRecords.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0));
-
-    final reconciledRecordsList = allRecords.where((r) => r.numeroTrasferta != null && contabileTrasferte.contains(r.numeroTrasferta!.trim()));
-    final reconciledAmountAbsolute = reconciledRecordsList.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0).abs());
-    final reconciledAmountSigned = reconciledRecordsList.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0));
-
-    final waitingRecordsList = allRecords.where((r) => !(r.numeroTrasferta != null && contabileTrasferte.contains(r.numeroTrasferta!.trim())));
-    final waitingAmountAbsolute = waitingRecordsList.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0).abs());
-    final waitingAmountSigned = waitingRecordsList.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0));
 
     if (allRecords.isEmpty) {
       return Center(
@@ -148,6 +138,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
       trasfertaFilter != AmexTrasfertaPresenzaFilter.all,
       selectedLogHistoryIds.isNotEmpty,
       filterOspiti,
+      filterTop,
     ].where((e) => e).length;
 
     // Estrai fornitori disponibili per il filtro
@@ -169,6 +160,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     // Filtra i record
     final filteredRecords = allRecords.where((r) {
       if (filterOspiti && (r.logHistoryId == null || !ospitiLogCodes.contains(r.logHistoryId))) return false;
+      if (filterTop && (r.logHistoryId == null || !topLogCodes.contains(r.logHistoryId))) return false;
       if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) return false;
       if (searchFilter != null) {
         final query = searchFilter.toLowerCase();
@@ -215,6 +207,21 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         return sortAscending ? cidA.compareTo(cidB) : cidB.compareTo(cidA);
       });
 
+    final totalRecords = filteredRecords.length;
+    final reconciledRecordsList = filteredRecords.where((r) => r.numeroTrasferta != null && contabileTrasferte.contains(r.numeroTrasferta!.trim())).toList();
+    final reconciledRecords = reconciledRecordsList.length;
+    final waitingRecords = totalRecords - reconciledRecords;
+
+    final totalAmountAbsolute = filteredRecords.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0).abs());
+    final totalAmountSigned = filteredRecords.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0));
+
+    final reconciledAmountAbsolute = reconciledRecordsList.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0).abs());
+    final reconciledAmountSigned = reconciledRecordsList.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0));
+
+    final waitingRecordsList = filteredRecords.where((r) => !(r.numeroTrasferta != null && contabileTrasferte.contains(r.numeroTrasferta!.trim())));
+    final waitingAmountAbsolute = waitingRecordsList.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0).abs());
+    final waitingAmountSigned = waitingRecordsList.fold<double>(0.0, (sum, r) => sum + (r.importoLordo ?? 0.0));
+
     final totalPages = (filteredRecords.length / pageSize).ceil();
     final safePage = (currentPage >= totalPages && totalPages > 0) ? 0 : currentPage;
     final startIndex = (safePage * pageSize).clamp(0, filteredRecords.length);
@@ -222,10 +229,11 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     final paginatedRecords = filteredRecords.sublist(startIndex, endIndex);
 
     final ospitiRecordsCount = filteredRecords.where((r) => r.logHistoryId != null && ospitiLogCodes.contains(r.logHistoryId)).length;
+    final topRecordsCount = filteredRecords.where((r) => r.logHistoryId != null && topLogCodes.contains(r.logHistoryId)).length;
 
     return Scaffold(
       backgroundColor: Colors.grey.shade50,
-      endDrawer: _buildFilterDrawer(context, ref, availableFornitori, availableNumeroConto, contoDictionaryMap, amexLogs, ospitiLogs),
+      endDrawer: _buildFilterDrawer(context, ref, availableFornitori, availableNumeroConto, contoDictionaryMap, amexLogs, ospitiLogs, topLogs),
       floatingActionButton: filteredRecords.isNotEmpty 
           ? FloatingActionButton(
               onPressed: () => _exportToExcel(filteredRecords),
@@ -310,6 +318,34 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                       ),
                     ),
                     const SizedBox(width: 12),
+                    // Pulsante rapido File TOP
+                    Tooltip(
+                      message: topLogs.isNotEmpty
+                          ? 'Filtra i record dai ${topLogs.length} file contenenti la parola "TOP"'
+                          : 'Nessun file Estratto AMEX contiene "TOP" nel nome',
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          ref.read(amexFilterTopProvider.notifier).state = !filterTop;
+                          ref.read(amexPageProvider.notifier).state = 0;
+                        },
+                        icon: Icon(
+                          filterTop ? Icons.check_circle_rounded : Icons.star_rounded,
+                          size: 18,
+                        ),
+                        label: Text('File TOP (${topLogs.length})'),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          backgroundColor: filterTop ? Colors.teal.shade700 : Colors.white,
+                          foregroundColor: filterTop ? Colors.white : (topLogs.isNotEmpty ? Colors.teal.shade900 : Colors.grey),
+                          side: BorderSide(
+                            color: filterTop ? Colors.teal.shade700 : (topLogs.isNotEmpty ? Colors.teal.shade300 : Colors.grey.shade300),
+                            width: filterTop ? 1.5 : 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
                     Builder(
                       builder: (context) => Stack(
                         clipBehavior: Clip.none,
@@ -375,6 +411,14 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                             'File OSPITI (${ospitiLogs.length} file)',
                             () {
                               ref.read(amexFilterOspitiProvider.notifier).state = false;
+                              ref.read(amexPageProvider.notifier).state = 0;
+                            },
+                          ),
+                        if (filterTop)
+                          _buildFilterChip(
+                            'File TOP (${topLogs.length} file)',
+                            () {
+                              ref.read(amexFilterTopProvider.notifier).state = false;
                               ref.read(amexPageProvider.notifier).state = 0;
                             },
                           ),
@@ -634,6 +678,156 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                 ),
               ),
             ),
+          // BANNER INFORMATIVO FILE TOP SE ATTIVO
+          if (filterTop)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+              child: Material(
+                color: Colors.teal.shade50,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: Colors.teal.shade300),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.teal.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(Icons.star_rounded, color: Colors.teal.shade900, size: 20),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'FILTRO TOP ATTIVO • $topRecordsCount RECORD DA ${topLogs.length} FILE',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: Colors.teal.shade900,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                if (_isTopInfoExpanded) ...[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    topLogs.isNotEmpty
+                                        ? 'Record estratti esclusivamente dai file contenenti la parola "TOP":'
+                                        : 'Nessun file Estratto AMEX caricato contiene la parola "TOP" nel nome.',
+                                    style: TextStyle(fontSize: 11, color: Colors.teal.shade900.withAlpha(220)),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          if (topLogs.isNotEmpty)
+                            TextButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  _isTopInfoExpanded = !_isTopInfoExpanded;
+                                });
+                              },
+                              icon: Icon(
+                                _isTopInfoExpanded ? Icons.expand_less : Icons.expand_more,
+                                size: 18,
+                                color: Colors.teal.shade900,
+                              ),
+                              label: Text(
+                                _isTopInfoExpanded ? 'Nascondi file' : 'Mostra file (${topLogs.length})',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal.shade900,
+                                ),
+                              ),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                backgroundColor: Colors.teal.shade100.withAlpha(160),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
+                            ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.close, size: 18),
+                            color: Colors.teal.shade900,
+                            onPressed: () {
+                              ref.read(amexFilterTopProvider.notifier).state = false;
+                              ref.read(amexPageProvider.notifier).state = 0;
+                            },
+                            tooltip: 'Disattiva filtro TOP',
+                          ),
+                        ],
+                      ),
+                      if (_isTopInfoExpanded && topLogs.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: topLogs.map((log) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.teal.shade200),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.teal.withAlpha(20),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.description_outlined, size: 14, color: Colors.teal.shade800),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    log.fileName,
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.teal.shade100,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      '${log.totalRecords} record',
+                                      style: TextStyle(
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.teal.shade900,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
           // MAIN TABLE
           Expanded(
             child: Padding(
@@ -697,7 +891,9 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Icon(
-                                          filterOspiti ? Icons.people_outline : Icons.search_off,
+                                          filterOspiti
+                                              ? Icons.people_outline
+                                              : (filterTop ? Icons.star_outline_rounded : Icons.search_off),
                                           size: 48,
                                           color: Colors.grey.shade400,
                                         ),
@@ -705,7 +901,9 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                         Text(
                                           filterOspiti
                                               ? 'Nessun record trovato per i file OSPITI selezionati'
-                                              : 'Nessun record corrisponde ai filtri selezionati',
+                                              : (filterTop
+                                                  ? 'Nessun record trovato per i file TOP selezionati'
+                                                  : 'Nessun record corrisponde ai filtri selezionati'),
                                           style: TextStyle(
                                             fontSize: 15,
                                             fontWeight: FontWeight.w500,
@@ -725,14 +923,17 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                         final record = paginatedRecords[index];
                                         final sourceFile = record.logHistoryId != null ? (logsMap[record.logHistoryId] ?? record.logHistoryId ?? '-') : '-';
                                         final isOspiti = sourceFile.toUpperCase().contains('OSPITI');
+                                        final isTop = sourceFile.toUpperCase().contains('TOP');
                                         return Container(
                                           decoration: BoxDecoration(
                                             color: isOspiti
                                                 ? Colors.orange.shade50.withAlpha(160)
-                                                : (index % 2 == 0 ? Colors.white : Colors.grey.shade50.withAlpha(120)), 
+                                                : (isTop
+                                                    ? Colors.teal.shade50.withAlpha(160)
+                                                    : (index % 2 == 0 ? Colors.white : Colors.grey.shade50.withAlpha(120))), 
                                             border: Border(
                                               bottom: BorderSide(
-                                                color: isOspiti ? Colors.orange.shade200 : Colors.grey.shade100,
+                                                color: isOspiti ? Colors.orange.shade200 : (isTop ? Colors.teal.shade200 : Colors.grey.shade100),
                                               ),
                                             ),
                                           ),
@@ -766,7 +967,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                               Icon(
                                                 Icons.description_outlined,
                                                 size: 14,
-                                                color: isOspiti ? Colors.orange.shade800 : Colors.grey.shade600,
+                                                color: isOspiti ? Colors.orange.shade800 : (isTop ? Colors.teal.shade800 : Colors.grey.shade600),
                                               ),
                                               const SizedBox(width: 6),
                                               Flexible(
@@ -774,8 +975,8 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                                   sourceFile,
                                                   style: TextStyle(
                                                     fontSize: 13,
-                                                    fontWeight: isOspiti ? FontWeight.bold : FontWeight.normal,
-                                                    color: isOspiti ? Colors.orange.shade900 : Colors.black87,
+                                                    fontWeight: (isOspiti || isTop) ? FontWeight.bold : FontWeight.normal,
+                                                    color: isOspiti ? Colors.orange.shade900 : (isTop ? Colors.teal.shade900 : Colors.black87),
                                                   ),
                                                   overflow: TextOverflow.ellipsis,
                                                 ),
@@ -794,6 +995,24 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                                                       fontSize: 8,
                                                       fontWeight: FontWeight.bold,
                                                       color: Colors.orange.shade900,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                              if (isTop) ...[
+                                                const SizedBox(width: 6),
+                                                Container(
+                                                  padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.teal.shade100,
+                                                    borderRadius: BorderRadius.circular(4),
+                                                  ),
+                                                  child: Text(
+                                                    'TOP',
+                                                    style: TextStyle(
+                                                      fontSize: 8,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: Colors.teal.shade900,
                                                     ),
                                                   ),
                                                 ),
@@ -894,6 +1113,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     ref.read(amexEndDateProvider.notifier).state = null;
     ref.read(amexSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(amexFilterOspitiProvider.notifier).state = false;
+    ref.read(amexFilterTopProvider.notifier).state = false;
     ref.read(amexTrasfertaPresenzaFilterProvider.notifier).state = AmexTrasfertaPresenzaFilter.all;
     ref.read(amexPageProvider.notifier).state = 0;
     _searchController.clear();
@@ -921,8 +1141,10 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
     Map<String, String> contoDictionaryMap,
     List<LogHistory> amexLogs,
     List<LogHistory> ospitiLogs,
+    List<LogHistory> topLogs,
   ) {
     final filterOspiti = ref.watch(amexFilterOspitiProvider);
+    final filterTop = ref.watch(amexFilterTopProvider);
     return Drawer(
       width: 350,
       child: Column(
@@ -1107,6 +1329,84 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
                           padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
                           child: Text(
                             'Nessun file Estratto AMEX contiene la parola "OSPITI" nel nome.',
+                            style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildDrawerSectionTitle('FILTRO TOP'),
+                const SizedBox(height: 12),
+                Material(
+                  color: filterTop ? Colors.teal.shade50 : Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(color: filterTop ? Colors.teal.shade300 : Colors.grey.shade200),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: [
+                      SwitchListTile(
+                        activeTrackColor: Colors.teal.shade600,
+                        title: const Text('Solo File TOP', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                        subtitle: Text(
+                          'Mostra solo record dai file con "TOP" (${topLogs.length} file)',
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                        value: filterTop,
+                        onChanged: (val) {
+                          ref.read(amexFilterTopProvider.notifier).state = val;
+                          ref.read(amexPageProvider.notifier).state = 0;
+                        },
+                      ),
+                      if (topLogs.isNotEmpty) ...[
+                        const Divider(height: 1),
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'File TOP rilevati:',
+                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87),
+                              ),
+                              const SizedBox(height: 8),
+                              ...topLogs.map((log) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 6),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.description_outlined, size: 14, color: Colors.teal.shade800),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                log.fileName,
+                                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              Text(
+                                                '${log.totalRecords} record • ${log.date.day}/${log.date.month}/${log.date.year}',
+                                                style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        ),
+                      ] else ...[
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+                          child: Text(
+                            'Nessun file Estratto AMEX contiene la parola "TOP" nel nome.',
                             style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey),
                           ),
                         ),
