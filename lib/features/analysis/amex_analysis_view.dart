@@ -2569,12 +2569,15 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         TextCellValue('NOME CONTO'),
         TextCellValue('VIAGGIATORE'),
         TextCellValue('BOLLA'),
-        TextCellValue('RIF. VIAGGIO 1'),
         TextCellValue('FILE IMPORTAZIONE'),
-        TextCellValue('FORNITORE'),
+        TextCellValue('NOME FORNITORE'),
+        TextCellValue('NOME ESERCIZIO CONVENZIONATO'),
+        TextCellValue('RIF. VIAGGIO 1'),
+        TextCellValue('CODICE VETTORE'),
         TextCellValue('DATA TRANS.'),
         TextCellValue('DATA ESTRATTO CONTO'),
         TextCellValue('VALUTA'),
+        TextCellValue('VALUTA TRANSAZIONE'),
         TextCellValue('RISCONTRO (TRACCIATO CONTABILE)'),
       ]);
 
@@ -2601,12 +2604,15 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
           TextCellValue(nomeConto),
           TextCellValue(r.nomeViaggiatore ?? ''),
           TextCellValue(r.bolla ?? ''),
-          TextCellValue(r.rifViaggio1 ?? ''),
           TextCellValue(r.logHistoryId != null ? (logsMap[r.logHistoryId] ?? '') : ''),
           TextCellValue(r.nomeFornitore ?? ''),
+          TextCellValue(r.nomeEsercizio ?? ''),
+          TextCellValue(r.rifViaggio1 ?? ''),
+          TextCellValue(r.codiceVettore ?? ''),
           TextCellValue(r.dataTransazione ?? ''),
           TextCellValue(r.dataEstrattoConto ?? ''),
           TextCellValue(r.valuta ?? ''),
+          TextCellValue(r.valutaTransazione ?? ''),
           TextCellValue(isMatched ? 'PRESENTI' : 'IN ATTESA'),
         ]);
       }
@@ -2660,12 +2666,35 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
         verticalAlign: VerticalAlign.Center,
       );
 
-      const colCount = 18;
+      const colCount = 21;
       for (var col = 0; col < colCount; col++) {
         final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: 0));
         cell.cellStyle = headerStyle;
       }
       sheet.setRowHeight(0, 30);
+
+      // Larghezze colonne
+      sheet.setColumnWidth(0, 14); // CID
+      sheet.setColumnWidth(1, 26); // NOMINATIVO
+      sheet.setColumnWidth(2, 16); // TRASFERTA
+      sheet.setColumnWidth(3, 16); // IMPORTO AMEX
+      sheet.setColumnWidth(4, 18); // RISCONTRO SAP
+      sheet.setColumnWidth(5, 16); // IMPORTO SAP
+      sheet.setColumnWidth(6, 18); // DISCREPANZA SAP
+      sheet.setColumnWidth(7, 18); // NUMERO CONTO
+      sheet.setColumnWidth(8, 24); // NOME CONTO
+      sheet.setColumnWidth(9, 26); // VIAGGIATORE
+      sheet.setColumnWidth(10, 18); // BOLLA
+      sheet.setColumnWidth(11, 28); // FILE IMPORTAZIONE
+      sheet.setColumnWidth(12, 26); // NOME FORNITORE
+      sheet.setColumnWidth(13, 28); // NOME ESERCIZIO CONVENZIONATO
+      sheet.setColumnWidth(14, 18); // RIF. VIAGGIO 1
+      sheet.setColumnWidth(15, 18); // CODICE VETTORE
+      sheet.setColumnWidth(16, 16); // DATA TRANS.
+      sheet.setColumnWidth(17, 20); // DATA ESTRATTO CONTO
+      sheet.setColumnWidth(18, 12); // VALUTA
+      sheet.setColumnWidth(19, 20); // VALUTA TRANSAZIONE
+      sheet.setColumnWidth(20, 30); // RISCONTRO (TRACCIATO CONTABILE)
 
       int rowIndex = 1;
       for (final r in records) {
@@ -2679,7 +2708,7 @@ class _AmexAnalysisViewState extends ConsumerState<AmexAnalysisView> {
           final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: rowIndex));
           if (col == 3 || col == 5 || col == 6) { // Importo AMEX, Importo SAP, Discrepanza SAP
             cell.cellStyle = amountStyle;
-          } else if (col == 0 || col == 2 || col == 4 || col == 7 || col == 11 || col == 12 || col == 14 || col == 15 || col == 16 || col == 17) {
+          } else if (col == 0 || col == 2 || col == 4 || col == 7 || col == 10 || col == 11 || col == 14 || col == 15 || col == 16 || col == 17 || col == 18 || col == 19 || col == 20) {
             cell.cellStyle = centerStyle;
           } else {
             cell.cellStyle = rowStyle;
