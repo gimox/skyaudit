@@ -6,6 +6,8 @@ import 'package:excel/excel.dart' hide Border;
 import 'package:file_picker/file_picker.dart';
 import 'package:travel_check/features/upload/providers/tracciato_sap_provider.dart';
 import 'package:travel_check/features/upload/models/tracciato_sap.dart';
+import 'package:travel_check/features/upload/providers/estratto_amex_provider.dart';
+import 'package:travel_check/features/upload/models/estratto_amex.dart';
 import 'package:travel_check/features/settings/providers/dictionary_provider.dart';
 import 'package:travel_check/core/theme/app_theme.dart';
 
@@ -28,6 +30,16 @@ final sapSortAscendingProvider = StateProvider<bool>((ref) => false);
 
 enum SapTrasfertaPresenzaFilter { all, present, notPresent }
 final sapTrasfertaPresenzaFilterProvider = StateProvider<SapTrasfertaPresenzaFilter>((ref) => SapTrasfertaPresenzaFilter.all);
+
+enum SapAmexPresenzaFilter { all, present, notPresent, matching, discrepancy }
+final sapAmexPresenzaFilterProvider = StateProvider<SapAmexPresenzaFilter>((ref) => SapAmexPresenzaFilter.all);
+
+final _leadingZerosRegex = RegExp(r'^0+');
+
+String _cleanT(String? s) {
+  if (s == null) return '';
+  return s.trim().split('.')[0].replaceAll(_leadingZerosRegex, '');
+}
 
 final _sapDateRegex = RegExp(r'[./-]');
 
@@ -94,17 +106,86 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     final dictionaries = ref.watch(dictionaryProvider);
     final dictionaryMap = {for (var d in dictionaries) d.code: d.value};
     final trasfertaFilter = ref.watch(sapTrasfertaPresenzaFilterProvider);
+    final amexFilter = ref.watch(sapAmexPresenzaFilterProvider);
     final contabileRecords = ref.watch(tracciatoContabilesProvider);
     final contabileTrasferte = contabileRecords
         .map((tc) => tc.numeroTrasferta.trim())
         .where((t) => t.isNotEmpty)
         .toSet();
+    final allAmexRecords = ref.watch(estrattoAmexProvider);
     final anagrafiche = ref.watch(anagraficaProvider);
     final anagraficaMap = {
       for (var a in anagrafiche)
         if (a.cid != null) a.cid!.trim().padLeft(8, '0'): (a.nominativo ?? '').trim()
     };
     const pageSize = 50;
+
+    // Mappatura e totali AMEX per Trasferta normalizzata
+    final amexMapByCleanedT = <String, List<EstrattoAmex>>{};
+    final amexTotalByCleanedT = <String, double>{};
+    for (final ame in allAmexRecords) {
+      final ct = _cleanT(ame.numeroTrasferta);
+      if (ct.isNotEmpty) {
+        amexMapByCleanedT.putIfAbsent(ct, () => []).add(ame);
+        amexTotalByCleanedT[ct] = (amexTotalByCleanedT[ct] ?? 0.0) + (ame.importoLordo ?? 0.0);
+      }
+    }
+
+    // Matching 1:1 TracciatoSap <-> EstrattoAmex
+    final sapToAmexMatch = <int, EstrattoAmex>{};
+    final sapGroupedByCleanT = <String, List<TracciatoSap>>{};
+    for (final sap in allRecords) {
+      final ct = _cleanT(sap.numeroTrasferta);
+      if (ct.isNotEmpty) {
+        sapGroupedByCleanT.putIfAbsent(ct, () => []).add(sap);
+      }
+    }
+
+    for (final entry in sapGroupedByCleanT.entries) {
+      final ct = entry.key;
+      final saps = entry.value;
+      final amexes = amexMapByCleanedT[ct];
+      if (amexes == null || amexes.isEmpty) continue;
+
+      final matchedAmexIds = <int>{};
+      // Pass 1: match esatto importo
+      for (final sap in saps) {
+        for (final ame in amexes) {
+          if (matchedAmexIds.contains(ame.id) || ame.importoLordo == null) continue;
+          if ((sap.importo - ame.importoLordo!).abs() < 0.015) {
+            sapToAmexMatch[sap.id] = ame;
+            matchedAmexIds.add(ame.id);
+            break;
+          }
+        }
+      }
+
+      // Pass 2: se 1 solo rimasto
+      final remainingSaps = saps.where((s) => !sapToAmexMatch.containsKey(s.id)).toList();
+      final remainingAmexes = amexes.where((a) => !matchedAmexIds.contains(a.id)).toList();
+      if (remainingSaps.length == 1 && remainingAmexes.length == 1) {
+        sapToAmexMatch[remainingSaps.first.id] = remainingAmexes.first;
+        matchedAmexIds.add(remainingAmexes.first.id);
+      } else if (remainingSaps.isNotEmpty && remainingAmexes.isNotEmpty) {
+        // Pass 3: match piu vicino
+        for (final sap in remainingSaps) {
+          EstrattoAmex? closestAmex;
+          double minDiff = double.infinity;
+          for (final ame in remainingAmexes) {
+            if (matchedAmexIds.contains(ame.id) || ame.importoLordo == null) continue;
+            final diff = (sap.importo - ame.importoLordo!).abs();
+            if (diff < minDiff) {
+              minDiff = diff;
+              closestAmex = ame;
+            }
+          }
+          if (closestAmex != null) {
+            sapToAmexMatch[sap.id] = closestAmex;
+            matchedAmexIds.add(closestAmex.id);
+          }
+        }
+      }
+    }
 
     if (allRecords.isEmpty) {
       return Center(
@@ -141,6 +222,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       selectedTrasferta != null,
       selectedRichiesta != null,
       trasfertaFilter != SapTrasfertaPresenzaFilter.all,
+      amexFilter != SapAmexPresenzaFilter.all,
       selectedLogHistoryIds.isNotEmpty,
     ].where((e) => e).length;
 
@@ -203,6 +285,29 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
         if (trasfertaFilter == SapTrasfertaPresenzaFilter.notPresent && isPresent) continue;
       }
 
+      // Filtro Riscontro AMEX
+      if (amexFilter != SapAmexPresenzaFilter.all) {
+        final ct = _cleanT(r.numeroTrasferta);
+        final amexes = amexMapByCleanedT[ct];
+        final hasAmex = amexes != null && amexes.isNotEmpty;
+        if (amexFilter == SapAmexPresenzaFilter.present && !hasAmex) continue;
+        if (amexFilter == SapAmexPresenzaFilter.notPresent && hasAmex) continue;
+        if (amexFilter == SapAmexPresenzaFilter.matching) {
+          if (!hasAmex) continue;
+          final matched = sapToAmexMatch[r.id];
+          if (matched == null || matched.importoLordo == null || (matched.importoLordo! - r.importo).abs() >= 0.015) {
+            continue;
+          }
+        }
+        if (amexFilter == SapAmexPresenzaFilter.discrepancy) {
+          if (!hasAmex) continue;
+          final matched = sapToAmexMatch[r.id];
+          if (matched != null && matched.importoLordo != null && (matched.importoLordo! - r.importo).abs() < 0.015) {
+            continue;
+          }
+        }
+      }
+
       filteredRecords.add(r);
     }
 
@@ -242,6 +347,24 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       }
     }
 
+    // Statistiche AMEX e Discrepanze
+    final Set<String> uniqueFilteredCleanTravels = {};
+    final Set<String> uniqueCleanTravelsWithAmex = {};
+    double totalAmexAmount = 0.0;
+    for (final r in filteredRecords) {
+      final ct = _cleanT(r.numeroTrasferta);
+      if (ct.isNotEmpty) {
+        uniqueFilteredCleanTravels.add(ct);
+        if (amexMapByCleanedT.containsKey(ct) && !uniqueCleanTravelsWithAmex.contains(ct)) {
+          uniqueCleanTravelsWithAmex.add(ct);
+          totalAmexAmount += amexTotalByCleanedT[ct] ?? 0.0;
+        }
+      }
+    }
+    final matchedAmexTravelsCount = uniqueCleanTravelsWithAmex.length;
+    final totalUniqueTravelsCount = uniqueFilteredCleanTravels.length;
+    final amexDiscrepancy = totalAmount - totalAmexAmount;
+
     final okTravelsCount = okTravels.length;
     final koTravelsCount = koTravels.length;
     final totalFilteredTravels = uniqueTravelNumbers.length;
@@ -251,7 +374,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
       endDrawer: _buildFilterDrawer(context, ref, availableYears, availableSocieta, availableTipoDipendente),
       floatingActionButton: filteredRecords.isNotEmpty 
           ? FloatingActionButton(
-              onPressed: () => _exportToExcel(filteredRecords, anagraficaMap),
+              onPressed: () => _exportToExcel(filteredRecords, anagraficaMap, sapToAmexMatch),
               backgroundColor: Colors.green.shade700,
               foregroundColor: Colors.white,
               tooltip: 'Esporta in Excel',
@@ -385,6 +508,17 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                                 : 'Riscontro: Non Presenti',
                             () => ref.read(sapTrasfertaPresenzaFilterProvider.notifier).state = SapTrasfertaPresenzaFilter.all,
                           ),
+                        if (amexFilter != SapAmexPresenzaFilter.all)
+                          _buildFilterChip(
+                            switch (amexFilter) {
+                              SapAmexPresenzaFilter.present => 'AMEX: Presenti',
+                              SapAmexPresenzaFilter.notPresent => 'AMEX: Non Presenti',
+                              SapAmexPresenzaFilter.matching => 'AMEX: Quadratura (OK)',
+                              SapAmexPresenzaFilter.discrepancy => 'AMEX: Squadratura (KO)',
+                              SapAmexPresenzaFilter.all => '',
+                            },
+                            () => ref.read(sapAmexPresenzaFilterProvider.notifier).state = SapAmexPresenzaFilter.all,
+                          ),
                         if (selectedLogHistoryIds.isNotEmpty)
                           _buildFilterChip(
                             selectedLogFileName != null
@@ -436,15 +570,25 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                     color: Colors.red.shade700,
                     bgLightColor: Colors.red.shade50,
                   );
+                  final card4 = _buildSummaryCard(
+                    title: 'TOTALE AMEX',
+                    value: _formatAmount(totalAmexAmount),
+                    subtitle: 'Riscontro: $matchedAmexTravelsCount/$totalUniqueTravelsCount | Disc: ${_formatAmount(amexDiscrepancy)}',
+                    icon: Icons.credit_card_outlined,
+                    color: Colors.orange.shade800,
+                    bgLightColor: Colors.orange.shade50,
+                  );
 
-                  if (constraints.maxWidth >= 950) {
+                  if (constraints.maxWidth >= 1200) {
                     return Row(
                       children: [
                         Expanded(child: card1),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 12),
                         Expanded(child: card2),
-                        const SizedBox(width: 16),
+                        const SizedBox(width: 12),
                         Expanded(child: card3),
+                        const SizedBox(width: 12),
+                        Expanded(child: card4),
                       ],
                     );
                   } else {
@@ -469,11 +613,13 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: [
-                                SizedBox(width: 290, child: card1),
-                                const SizedBox(width: 16),
-                                SizedBox(width: 290, child: card2),
-                                const SizedBox(width: 16),
-                                SizedBox(width: 290, child: card3),
+                                SizedBox(width: 280, child: card1),
+                                const SizedBox(width: 12),
+                                SizedBox(width: 280, child: card2),
+                                const SizedBox(width: 12),
+                                SizedBox(width: 280, child: card3),
+                                const SizedBox(width: 12),
+                                SizedBox(width: 280, child: card4),
                               ],
                             ),
                           ),
@@ -525,7 +671,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                       child: Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: SizedBox(
-                          width: 1420,
+                          width: 1850,
                           child: Column(
                             children: [
                               // HEADER FISSO
@@ -541,8 +687,11 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                                     _buildCell('CID', 140, isHeader: true),
                                     _buildCell('NOMINATIVO', 220, isHeader: true),
                                     _buildCell('TRASFERTA', 160, isHeader: true),
+                                    _buildCell('RISCONTRO AMEX', 160, isHeader: true),
+                                    _buildCell('IMPORTO AMEX', 140, isHeader: true),
+                                    _buildCell('DISCREPANZA', 130, isHeader: true),
                                     _buildCell('DATA', 120, isHeader: true),
-                                    _buildCell('IMPORTO', 140, isHeader: true),
+                                    _buildCell('IMPORTO SAP', 140, isHeader: true),
                                     _buildCell('CD RICHIESTA', 150, isHeader: true),
                                     _buildCell('CODICE STATO', 120, isHeader: true),
                                     _buildCell('SOC. CODICE', 120, isHeader: true),
@@ -560,6 +709,12 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                                     itemCount: paginatedRecords.length,
                                     itemBuilder: (context, index) {
                                       final record = paginatedRecords[index];
+                                      final matchedAmex = sapToAmexMatch[record.id];
+                                      final ct = _cleanT(record.numeroTrasferta);
+                                      final hasAnyAmexForT = ct.isNotEmpty && amexMapByCleanedT.containsKey(ct);
+                                      final amexAmount = matchedAmex?.importoLordo;
+                                      final hasExactMatch = amexAmount != null && (record.importo - amexAmount).abs() < 0.015;
+                                      final rowDiscrepancy = amexAmount != null ? (record.importo - amexAmount) : null;
                                       return Container(
                                         decoration: BoxDecoration(
                                           color: index % 2 == 0 ? Colors.white : Colors.grey.shade50.withAlpha(120), 
@@ -570,7 +725,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                                             _buildCell('', 100, alignment: Alignment.center, child: Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
-                                                IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record, anagraficaMap), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
+                                                IconButton(icon: const Icon(Icons.visibility_outlined, color: Colors.blue, size: 20), onPressed: () => _showRecordDetails(context, record, anagraficaMap, matchedAmex, amexMapByCleanedT[ct]), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
                                                 const SizedBox(width: 8),
                                                 IconButton(icon: const Icon(Icons.delete_outline, color: Colors.red, size: 20), onPressed: () => _deleteRecord(context, ref, record), padding: EdgeInsets.zero, constraints: const BoxConstraints()),
                                               ],
@@ -593,8 +748,105 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                                                   ? Colors.green.shade800
                                                   : Colors.red.shade700,
                                             ),
+                                            // BADGE RISCONTRO AMEX
+                                            _buildCell('', 160, child: Builder(
+                                              builder: (context) {
+                                                if (matchedAmex != null) {
+                                                  final color = hasExactMatch ? Colors.green.shade700 : Colors.orange.shade800;
+                                                  final bg = hasExactMatch ? Colors.green.shade50 : Colors.orange.shade50;
+                                                  final border = hasExactMatch ? Colors.green.shade200 : Colors.orange.shade200;
+                                                  final label = hasExactMatch ? 'AMEX QUADRATO' : 'AMEX RISCONTRATO';
+                                                  return InkWell(
+                                                    onTap: () => _showAmexRecordDetails(context, matchedAmex),
+                                                    borderRadius: BorderRadius.circular(12),
+                                                    child: Container(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                      decoration: BoxDecoration(
+                                                        color: bg,
+                                                        borderRadius: BorderRadius.circular(12),
+                                                        border: Border.all(color: border),
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Icon(hasExactMatch ? Icons.check_circle_outline : Icons.credit_card_outlined, size: 14, color: color),
+                                                          const SizedBox(width: 4),
+                                                          Text(label, style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.bold, color: color)),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                } else if (hasAnyAmexForT) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      final list = amexMapByCleanedT[ct];
+                                                      if (list != null && list.isNotEmpty) {
+                                                        _showAmexRecordDetails(context, list.first);
+                                                      }
+                                                    },
+                                                    borderRadius: BorderRadius.circular(12),
+                                                    child: Container(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.amber.shade50,
+                                                        borderRadius: BorderRadius.circular(12),
+                                                        border: Border.all(color: Colors.amber.shade300),
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Icon(Icons.info_outline, size: 14, color: Colors.amber.shade900),
+                                                          const SizedBox(width: 4),
+                                                          Text('SU TRASFERTA', style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.bold, color: Colors.amber.shade900)),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  );
+                                                } else {
+                                                  return Container(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.grey.shade100,
+                                                      borderRadius: BorderRadius.circular(12),
+                                                      border: Border.all(color: Colors.grey.shade300),
+                                                    ),
+                                                    child: Row(
+                                                      mainAxisSize: MainAxisSize.min,
+                                                      children: [
+                                                        Icon(Icons.remove_circle_outline, size: 14, color: Colors.grey.shade600),
+                                                        const SizedBox(width: 4),
+                                                        Text('NON PRESENTE', style: TextStyle(fontSize: 10.5, fontWeight: FontWeight.bold, color: Colors.grey.shade600)),
+                                                      ],
+                                                    ),
+                                                  );
+                                                }
+                                              },
+                                            )),
+                                            // IMPORTO AMEX
+                                            _buildCell(
+                                              amexAmount != null ? '${amexAmount.toStringAsFixed(2)} €' : '-',
+                                              140,
+                                              color: amexAmount != null ? Colors.orange.shade800 : Colors.grey,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                            // DISCREPANZA AMEX
+                                            _buildCell(
+                                              rowDiscrepancy != null
+                                                  ? '${rowDiscrepancy >= 0 ? "+" : ""}${rowDiscrepancy.toStringAsFixed(2)} €'
+                                                  : '-',
+                                              130,
+                                              color: rowDiscrepancy == null
+                                                  ? Colors.grey
+                                                  : (hasExactMatch ? Colors.green.shade700 : Colors.red.shade700),
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                             _buildCell(record.data, 120),
-                                            _buildCell('${record.importo.toStringAsFixed(2)} ${record.valuta}', 140, color: Colors.green.shade800, fontWeight: FontWeight.bold),
+                                            _buildCell(
+                                              '${record.importo.toStringAsFixed(2)} ${record.valuta}',
+                                              140,
+                                              color: record.importo < 0 ? Colors.red.shade700 : Colors.green.shade800,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                             _buildCell(record.cdRichiesta ?? '-', 150),
                                             _buildCell(record.codiceStato ?? '-', 120),
                                             _buildCell(record.societaCodice, 120),
@@ -690,6 +942,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     ref.read(sapRichiestaProvider.notifier).state = null;
     ref.read(sapSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(sapTrasfertaPresenzaFilterProvider.notifier).state = SapTrasfertaPresenzaFilter.all;
+    ref.read(sapAmexPresenzaFilterProvider.notifier).state = SapAmexPresenzaFilter.all;
     ref.read(sapPageProvider.notifier).state = 0;
     _trasfertaController.clear();
   }
@@ -883,6 +1136,25 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                     SapTrasfertaPresenzaFilter.notPresent: 'Non Presenti',
                   },
                   (val) => ref.read(sapTrasfertaPresenzaFilterProvider.notifier).state = val,
+                ),
+                const SizedBox(height: 24),
+                const Row(
+                  children: [
+                    Icon(Icons.credit_card_outlined, size: 18, color: Colors.grey),
+                    SizedBox(width: 8),
+                    Text('Riscontro AMEX', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                _buildChoiceFilter<SapAmexPresenzaFilter>(
+                  ref.watch(sapAmexPresenzaFilterProvider),
+                  {
+                    SapAmexPresenzaFilter.all: 'Tutte',
+                    SapAmexPresenzaFilter.matching: 'Quadratura',
+                    SapAmexPresenzaFilter.discrepancy: 'Squadratura',
+                    SapAmexPresenzaFilter.notPresent: 'Assenti',
+                  },
+                  (val) => ref.read(sapAmexPresenzaFilterProvider.notifier).state = val,
                 ),
                 const SizedBox(height: 24),
                 const Row(
@@ -1208,7 +1480,13 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     );
   }
 
-  void _showRecordDetails(BuildContext context, TracciatoSap record, [Map<String, String>? anagraficaMap]) {
+  void _showRecordDetails(
+    BuildContext context,
+    TracciatoSap record, [
+    Map<String, String>? anagraficaMap,
+    EstrattoAmex? matchedAmex,
+    List<EstrattoAmex>? amexListForTrip,
+  ]) {
     showDialog(
       context: context,
       builder: (context) {
@@ -1220,7 +1498,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
           clipBehavior: Clip.antiAlias,
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 500),
+            constraints: const BoxConstraints(maxWidth: 550, maxHeight: 850),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -1285,6 +1563,7 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.all(24),
                     child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _buildDetailSection('Dipendente', Icons.person_outline, Colors.green.shade700, [
                           _buildDetailRow('CID', record.cid),
@@ -1301,10 +1580,28 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
                         const SizedBox(height: 24),
                         _buildDetailSection('Spesa e Contabilità', Icons.payments_outlined, Colors.green.shade700, [
                           _buildDetailRow('Tipo Spesa', '${record.tipoSpesaDescrizione} (${record.tipoSpesaCodice})'),
-                          _buildDetailRow('Importo', '${record.importo.toStringAsFixed(2)} ${record.valuta}', isHighlight: true, highlightColor: Colors.green.shade700),
+                          _buildDetailRow('Importo SAP', '${record.importo.toStringAsFixed(2)} ${record.valuta}', isHighlight: true, highlightColor: Colors.green.shade700),
                           _buildDetailRow('Stato SAP', record.codiceStato ?? '-'),
                           _buildDetailRow('Richiesta CD', record.cdRichiesta ?? '-'),
                           _buildDetailRow('Codice FI', record.fi ?? '-'),
+                        ]),
+                        const SizedBox(height: 24),
+                        // CONFRONTO AMEX
+                        _buildDetailSection('CONFRONTO CON ESTRATTO AMEX', Icons.credit_card_outlined, Colors.orange.shade800, [
+                          if (matchedAmex != null) ...[
+                            _buildDetailRow('Stato Riscontro', (record.importo - (matchedAmex.importoLordo ?? 0)).abs() < 0.015 ? 'QUADRATURA (OK)' : 'SQUADRATURA / DISCREPANZA', isHighlight: true, highlightColor: (record.importo - (matchedAmex.importoLordo ?? 0)).abs() < 0.015 ? Colors.green.shade700 : Colors.red.shade700),
+                            _buildDetailRow('Importo AMEX', matchedAmex.importoLordo != null ? '${matchedAmex.importoLordo!.toStringAsFixed(2)} €' : '-'),
+                            _buildDetailRow('Discrepanza (SAP - AMEX)', '${(record.importo - (matchedAmex.importoLordo ?? 0)) >= 0 ? "+" : ""}${(record.importo - (matchedAmex.importoLordo ?? 0)).toStringAsFixed(2)} €', isHighlight: true, highlightColor: (record.importo - (matchedAmex.importoLordo ?? 0)).abs() < 0.015 ? Colors.green.shade700 : Colors.red.shade700),
+                            _buildDetailRow('Data Transazione AMEX', matchedAmex.dataTransazione ?? '-'),
+                            _buildDetailRow('Numero Conto AMEX', matchedAmex.numeroConto ?? '-'),
+                            _buildDetailRow('Fornitore AMEX', matchedAmex.nomeFornitore ?? matchedAmex.nomeEsercizio ?? '-'),
+                            _buildDetailRow('Bolla AMEX', matchedAmex.bolla ?? '-'),
+                          ] else if (amexListForTrip != null && amexListForTrip.isNotEmpty) ...[
+                            _buildDetailRow('Stato Riscontro', 'Presente su Trasferta (${amexListForTrip.length} record AMEX)', isHighlight: true, highlightColor: Colors.amber.shade900),
+                            _buildDetailRow('Totale AMEX Trasferta', '${amexListForTrip.fold<double>(0, (s, a) => s + (a.importoLordo ?? 0)).toStringAsFixed(2)} €'),
+                          ] else ...[
+                            _buildDetailRow('Stato Riscontro', 'Nessun riscontro in Estratto AMEX', isHighlight: true, highlightColor: Colors.grey.shade600),
+                          ],
                         ]),
                         const SizedBox(height: 24),
                         _buildDetailSection('Altri Dati SAP', Icons.data_usage_outlined, Colors.green.shade700, [
@@ -1345,9 +1642,151 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
     );
   }
 
+  void _showAmexRecordDetails(BuildContext context, EstrattoAmex record) {
+    final anagrafiche = ref.read(anagraficaProvider);
+    final anagraficheMap = {
+      for (var a in anagrafiche)
+        if (a.cid != null) a.cid!.trim().padLeft(8, '0'): a.nominativo ?? ''
+    };
+    final dictionaries = ref.read(dictionaryProvider);
+    final contoDictionaryMap = {
+      for (var d in dictionaries)
+        if (d.category == 'conto') d.code: d.value
+    };
+    final allLogs = ref.read(logHistoryProvider);
+    final logsMap = {for (var log in allLogs) log.uniqueCode: log.fileName};
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          backgroundColor: Colors.grey.shade50,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+          clipBehavior: Clip.antiAlias,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 550, maxHeight: 850),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // HEADER
+                Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [Colors.orange, Color(0xFFE65100)],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withAlpha(40),
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                        child: const Icon(Icons.credit_card_outlined, color: Colors.white, size: 28),
+                      ),
+                      const SizedBox(width: 20),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'DETTAGLIO TRANSAZIONE AMEX',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                                letterSpacing: 0.5,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              'ID: ${record.idTransazione ?? "-"}',
+                              style: TextStyle(
+                                color: Colors.white.withAlpha(200),
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () => Navigator.pop(context),
+                        icon: const Icon(Icons.close, color: Colors.white, size: 20),
+                        style: IconButton.styleFrom(
+                          backgroundColor: Colors.white.withAlpha(20),
+                          padding: const EdgeInsets.all(6),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                // CONTENT
+                Flexible(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.all(24),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildDetailSection('INFORMAZIONI PRINCIPALI', Icons.info_outline, Colors.blue, [
+                          _buildDetailRow('CID', record.cid ?? '-'),
+                          _buildDetailRow('Nominativo', anagraficheMap[record.cid?.trim().padLeft(8, '0')] ?? '-'),
+                          _buildDetailRow('Numero Trasferta', record.numeroTrasferta ?? '-'),
+                          _buildDetailRow('Bolla (Trasformata)', record.bolla ?? '-'),
+                          _buildDetailRow('Bolla Originale', record.bollaOriginale ?? '-'),
+                          _buildDetailRow('File Importazione', record.logHistoryId != null ? (logsMap[record.logHistoryId] ?? '-') : '-'),
+                          _buildDetailRow('Nome Viaggiatore', record.nomeViaggiatore ?? '-'),
+                          _buildDetailRow('Conto', record.conto ?? '-'),
+                          _buildDetailRow('Numero di conto', record.numeroConto ?? '-'),
+                          _buildDetailRow('Nome del conto', record.numeroConto != null ? (contoDictionaryMap[record.numeroConto?.trim()] ?? contoDictionaryMap[record.numeroConto] ?? '-') : '-'),
+                        ]),
+                        const SizedBox(height: 24),
+                        _buildDetailSection('IMPORTI E DATE', Icons.payments_outlined, Colors.green, [
+                          _buildDetailRow('Importo Lordo', record.importoLordo != null ? '${record.importoLordo!.toStringAsFixed(2)} €' : '-', isHighlight: true, highlightColor: (record.importoLordo ?? 0) < 0 ? Colors.red : Colors.green),
+                          _buildDetailRow('Importo Netto', record.importoNetto != null ? '${record.importoNetto!.toStringAsFixed(2)} €' : '-'),
+                          _buildDetailRow('Data Transazione', record.dataTransazione ?? '-'),
+                          _buildDetailRow('Data Processazione', record.dataProcessazione ?? '-'),
+                        ]),
+                      ],
+                    ),
+                  ),
+                ),
+                // ACTIONS
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 8, 24, 24),
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () => Navigator.pop(context),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.orange.shade800,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        elevation: 0,
+                      ),
+                      child: const Text('CHIUDI', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
 
-  Future<void> _exportToExcel(List<TracciatoSap> records, [Map<String, String>? anagraficaMap]) async {
+
+  Future<void> _exportToExcel(
+    List<TracciatoSap> records, [
+    Map<String, String>? anagraficaMap,
+    Map<int, EstrattoAmex>? sapToAmexMatch,
+  ]) async {
     try {
       final excel = Excel.createExcel();
       final sheet = excel['SAP'];
@@ -1359,7 +1798,10 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
         TextCellValue('Soc.'),
         TextCellValue('Società'),
         TextCellValue('Trasferta'),
-        TextCellValue('Importo'),
+        TextCellValue('Importo SAP'),
+        TextCellValue('Riscontro AMEX'),
+        TextCellValue('Importo AMEX'),
+        TextCellValue('Discrepanza (SAP - AMEX)'),
         TextCellValue('Valuta'),
         TextCellValue('Data'),
         TextCellValue('CD Richiesta'),
@@ -1370,6 +1812,14 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
         final nome = r.nomeDipendente.trim().isNotEmpty
             ? r.nomeDipendente
             : ((anagraficaMap != null ? anagraficaMap[r.cid.trim().padLeft(8, '0')] : null) ?? '');
+        final matchedAmex = sapToAmexMatch?[r.id];
+        final amexAmount = matchedAmex?.importoLordo;
+        final hasExactMatch = amexAmount != null && (r.importo - amexAmount).abs() < 0.015;
+        final amexStatus = matchedAmex != null
+            ? (hasExactMatch ? 'QUADRATURA (OK)' : 'SQUADRATURA (KO)')
+            : 'NON PRESENTE';
+        final amexDiscrepancy = amexAmount != null ? (r.importo - amexAmount) : null;
+
         sheet.appendRow([
           TextCellValue(r.cid),
           TextCellValue(nome),
@@ -1377,6 +1827,9 @@ class _SapAnalysisViewState extends ConsumerState<SapAnalysisView> {
           TextCellValue(r.societaDescrizione),
           TextCellValue(r.numeroTrasferta),
           DoubleCellValue(r.importo),
+          TextCellValue(amexStatus),
+          amexAmount != null ? DoubleCellValue(amexAmount) : TextCellValue('-'),
+          amexDiscrepancy != null ? DoubleCellValue(amexDiscrepancy) : TextCellValue('-'),
           TextCellValue(r.valuta),
           TextCellValue(r.data),
           TextCellValue(r.cdRichiesta ?? ''),
