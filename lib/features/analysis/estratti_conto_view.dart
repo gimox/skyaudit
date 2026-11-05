@@ -31,6 +31,7 @@ final ecSelectedTipiServizioProvider = StateProvider<Set<String>>((ref) => {});
 final ecSelectedTipiDipendenteProvider = StateProvider<Set<String>>((ref) => {});
 final ecSelectedLogHistoryIdsProvider = StateProvider<Set<String>>((ref) => {});
 final ecFilterOspitiProvider = StateProvider<bool>((ref) => false);
+final ecFilterTopProvider = StateProvider<bool>((ref) => false);
 final ecSortAscendingProvider = StateProvider<bool>((ref) => false);
 final ecPageProvider = StateProvider<int>((ref) => 0);
 final ecExpandAllProvider = StateProvider<bool>((ref) => true);
@@ -52,6 +53,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
   final _trasfertaController = TextEditingController();
   final _scrollController = ScrollController();
   bool _isOspitiInfoExpanded = false;
+  bool _isTopInfoExpanded = false;
 
   @override
   void dispose() {
@@ -104,11 +106,14 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     final allContabileRecords = ref.watch(tracciatoContabilesProvider);
     final allLogs = ref.watch(logHistoryProvider);
     final filterOspiti = ref.watch(ecFilterOspitiProvider);
+    final filterTop = ref.watch(ecFilterTopProvider);
     final logHistoryMap = {for (var log in allLogs) log.uniqueCode: log};
     final ecLogIds = allRecords.map((r) => r.logHistoryId).whereType<String>().toSet();
     final ecLogs = allLogs.where((log) => log.sourceType == 'Estratto Conto' || ecLogIds.contains(log.uniqueCode)).toList();
     final ospitiLogs = ecLogs.where((log) => log.fileName.toUpperCase().contains('OSPITI')).toList();
     final ospitiLogCodes = ospitiLogs.expand((l) => [l.uniqueCode, l.fileName]).toSet();
+    final topLogs = ecLogs.where((log) => log.fileName.toUpperCase().contains('TOP')).toList();
+    final topLogCodes = topLogs.expand((l) => [l.uniqueCode, l.fileName]).toSet();
 
     final selectedTrasferta = ref.watch(ecSelectedTrasfertaProvider);
     final selectedSocieta = ref.watch(ecSelectedSocietaProvider);
@@ -268,11 +273,13 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       sapMatchFilter != EcSapMatchFilter.all,
       selectedLogHistoryIds.isNotEmpty,
       filterOspiti,
+      filterTop,
     ].where((e) => e).length;
 
     // Filtra record Estratto Conto di base
     final filteredRecords = allRecords.where((r) {
       if (filterOspiti && (r.logHistoryId == null || !ospitiLogCodes.contains(r.logHistoryId))) return false;
+      if (filterTop && (r.logHistoryId == null || !topLogCodes.contains(r.logHistoryId))) return false;
       if (selectedLogHistoryIds.isNotEmpty && !selectedLogHistoryIds.contains(r.logHistoryId)) return false;
       if (selectedSocieta != null && r.ragioneSociale != selectedSocieta) return false;
       if (selectedTipi.isNotEmpty && !selectedTipi.contains(r.tipoServizio)) return false;
@@ -417,6 +424,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     double globalSap = 0.0;
     double globalAmex = 0.0;
     int ospitiRecordsCount = 0;
+    int topRecordsCount = 0;
     int totalRecordsCount = 0;
     int totalPositiveRecordsCount = 0;
 
@@ -434,6 +442,9 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         }
         if (r.logHistoryId != null && ospitiLogCodes.contains(r.logHistoryId)) {
           ospitiRecordsCount++;
+        }
+        if (r.logHistoryId != null && topLogCodes.contains(r.logHistoryId)) {
+          topRecordsCount++;
         }
       }
 
@@ -503,6 +514,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
         dictionaryMap,
         ecLogs,
         ospitiLogs,
+        topLogs,
       ),
       floatingActionButton: filteredRecords.isNotEmpty
           ? FloatingActionButton(
@@ -516,6 +528,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                 logHistoryMap,
                 trasferte.expand((t) => groupedRecords[t] ?? <EstrattoConto>[]).toList(),
                 isOspitiFilter: filterOspiti,
+                isTopFilter: filterTop,
               ),
               backgroundColor: Colors.green.shade700,
               foregroundColor: Colors.white,
@@ -672,6 +685,34 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                       ),
                     ),
                     const SizedBox(width: 12),
+                    // Pulsante rapido File TOP
+                    Tooltip(
+                      message: topLogs.isNotEmpty
+                          ? 'Filtra i record dai ${topLogs.length} file contenenti la parola "TOP"'
+                          : 'Nessun file Estratto Conto contiene "TOP" nel nome',
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          ref.read(ecFilterTopProvider.notifier).state = !filterTop;
+                          ref.read(ecPageProvider.notifier).state = 0;
+                        },
+                        icon: Icon(
+                          filterTop ? Icons.check_circle_rounded : Icons.star_rounded,
+                          size: 18,
+                        ),
+                        label: Text('File TOP (${topLogs.length})'),
+                        style: OutlinedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          backgroundColor: filterTop ? Colors.teal.shade700 : Colors.white,
+                          foregroundColor: filterTop ? Colors.white : (topLogs.isNotEmpty ? Colors.teal.shade900 : Colors.grey),
+                          side: BorderSide(
+                            color: filterTop ? Colors.teal.shade700 : (topLogs.isNotEmpty ? Colors.teal.shade300 : Colors.grey.shade300),
+                            width: filterTop ? 1.5 : 1,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
                     // Tasto Filtri avanzati
                     Builder(
                       builder: (context) => Stack(
@@ -758,6 +799,14 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                             'File OSPITI (${ospitiLogs.length} file)',
                             () {
                               ref.read(ecFilterOspitiProvider.notifier).state = false;
+                              ref.read(ecPageProvider.notifier).state = 0;
+                            },
+                          ),
+                        if (filterTop)
+                          _buildFilterChip(
+                            'File TOP (${topLogs.length} file)',
+                            () {
+                              ref.read(ecFilterTopProvider.notifier).state = false;
                               ref.read(ecPageProvider.notifier).state = 0;
                             },
                           ),
@@ -911,6 +960,157 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                                         fontSize: 9,
                                         fontWeight: FontWeight.bold,
                                         color: Colors.orange.shade900,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
+          // BANNER INFORMATIVO FILE TOP SE ATTIVO
+          if (filterTop)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+              child: Material(
+                color: Colors.teal.shade50,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(color: Colors.teal.shade300),
+                ),
+                clipBehavior: Clip.antiAlias,
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.teal.shade100,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(Icons.star_rounded, color: Colors.teal.shade900, size: 20),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'FILTRO TOP ATTIVO • $topRecordsCount RECORD DA ${topLogs.length} FILE',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: Colors.teal.shade900,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                if (_isTopInfoExpanded) ...[
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    topLogs.isNotEmpty
+                                        ? 'Record estratti esclusivamente dai file contenenti la parola "TOP":'
+                                        : 'Nessun file Estratto Conto caricato contiene la parola "TOP" nel nome.',
+                                    style: TextStyle(fontSize: 11, color: Colors.teal.shade900.withAlpha(220)),
+                                  ),
+                                ],
+                              ],
+                            ),
+                          ),
+                          if (topLogs.isNotEmpty)
+                            TextButton.icon(
+                              onPressed: () {
+                                setState(() {
+                                  _isTopInfoExpanded = !_isTopInfoExpanded;
+                                });
+                              },
+                              icon: Icon(
+                                _isTopInfoExpanded ? Icons.expand_less : Icons.expand_more,
+                                size: 18,
+                                color: Colors.teal.shade900,
+                              ),
+                              label: Text(
+                                _isTopInfoExpanded ? 'Nascondi file' : 'Mostra file (${topLogs.length})',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.teal.shade900,
+                                ),
+                              ),
+                              style: TextButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                backgroundColor: Colors.teal.shade100.withAlpha(160),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                              ),
+                            ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            icon: const Icon(Icons.close, size: 18),
+                            color: Colors.teal.shade900,
+                            onPressed: () {
+                              ref.read(ecFilterTopProvider.notifier).state = false;
+                              ref.read(ecPageProvider.notifier).state = 0;
+                            },
+                            tooltip: 'Disattiva filtro TOP',
+                          ),
+                        ],
+                      ),
+                      if (_isTopInfoExpanded && topLogs.isNotEmpty) ...[
+                        const SizedBox(height: 12),
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: topLogs.map((log) {
+                            return Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: Colors.teal.shade200),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.teal.withAlpha(20),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.description_outlined, size: 14, color: Colors.teal.shade800),
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    log.fileName,
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                    decoration: BoxDecoration(
+                                      color: Colors.teal.shade100,
+                                      borderRadius: BorderRadius.circular(6),
+                                    ),
+                                    child: Text(
+                                      '${log.totalRecords} record',
+                                      style: TextStyle(
+                                        fontSize: 9,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.teal.shade900,
                                       ),
                                     ),
                                   ),
@@ -1861,6 +2061,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     ref.read(ecSapMatchFilterProvider.notifier).state = EcSapMatchFilter.all;
     ref.read(ecSelectedLogHistoryIdsProvider.notifier).state = {};
     ref.read(ecFilterOspitiProvider.notifier).state = false;
+    ref.read(ecFilterTopProvider.notifier).state = false;
     ref.read(ecPageProvider.notifier).state = 0;
     _trasfertaController.clear();
   }
@@ -1888,8 +2089,10 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     Map<String, String> dictionaryMap,
     List<LogHistory> ecLogs,
     List<LogHistory> ospitiLogs,
+    List<LogHistory> topLogs,
   ) {
     final filterOspiti = ref.watch(ecFilterOspitiProvider);
+    final filterTop = ref.watch(ecFilterTopProvider);
     return Drawer(
       width: 350,
       child: Column(
@@ -2131,6 +2334,84 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
                           padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
                           child: Text(
                             'Nessun file Estratto Conto contiene la parola "OSPITI" nel nome.',
+                            style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey),
+                          ),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 16),
+                _buildDrawerSectionTitle('FILTRO TOP'),
+                const SizedBox(height: 12),
+                Material(
+                  color: filterTop ? Colors.teal.shade50 : Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    side: BorderSide(color: filterTop ? Colors.teal.shade300 : Colors.grey.shade200),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Column(
+                    children: [
+                      SwitchListTile(
+                        activeTrackColor: Colors.teal.shade600,
+                        title: const Text('Solo File TOP', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                        subtitle: Text(
+                          'Mostra solo record dai file con "TOP" (${topLogs.length} file)',
+                          style: const TextStyle(fontSize: 11),
+                        ),
+                        value: filterTop,
+                        onChanged: (val) {
+                          ref.read(ecFilterTopProvider.notifier).state = val;
+                          ref.read(ecPageProvider.notifier).state = 0;
+                        },
+                      ),
+                      if (topLogs.isNotEmpty) ...[
+                        const Divider(height: 1),
+                        Padding(
+                          padding: const EdgeInsets.all(12),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text(
+                                'File TOP rilevati:',
+                                style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87),
+                              ),
+                              const SizedBox(height: 8),
+                              ...topLogs.map((log) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 6),
+                                    child: Row(
+                                      children: [
+                                        Icon(Icons.description_outlined, size: 14, color: Colors.teal.shade800),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                log.fileName,
+                                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              Text(
+                                                '${log.totalRecords} record • ${log.date.day}/${log.date.month}/${log.date.year}',
+                                                style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  )),
+                            ],
+                          ),
+                        ),
+                      ] else ...[
+                        const Padding(
+                          padding: EdgeInsets.fromLTRB(16, 0, 16, 12),
+                          child: Text(
+                            'Nessun file Estratto Conto contiene la parola "TOP" nel nome.',
                             style: TextStyle(fontSize: 11, fontStyle: FontStyle.italic, color: Colors.grey),
                           ),
                         ),
@@ -3199,6 +3480,7 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
     Map<String, LogHistory> logHistoryMap,
     List<EstrattoConto> rawRecords, {
     bool isOspitiFilter = false,
+    bool isTopFilter = false,
   }) async {
     try {
       final excel = Excel.createExcel();
@@ -3657,11 +3939,27 @@ class _EstrattiContoViewState extends ConsumerState<EstrattiContoView> {
       final fileBytes = excel.encode();
       if (fileBytes == null) return;
 
+      String exportSuffix = '';
+      if (isOspitiFilter && isTopFilter) {
+        exportSuffix = '_OSPITI_TOP';
+      } else if (isOspitiFilter) {
+        exportSuffix = '_OSPITI';
+      } else if (isTopFilter) {
+        exportSuffix = '_TOP';
+      }
+
+      String dialogTitle = 'Salva Export Estratti Conto';
+      if (isOspitiFilter && isTopFilter) {
+        dialogTitle = 'Salva Export Estratti Conto (File OSPITI + TOP)';
+      } else if (isOspitiFilter) {
+        dialogTitle = 'Salva Export Estratti Conto (File OSPITI)';
+      } else if (isTopFilter) {
+        dialogTitle = 'Salva Export Estratti Conto (File TOP)';
+      }
+
       final outputFile = await FilePicker.saveFile(
-        dialogTitle: isOspitiFilter ? 'Salva Export Estratti Conto (File OSPITI)' : 'Salva Export Estratti Conto',
-        fileName: isOspitiFilter
-            ? 'SkyAudit_EstrattiConto_OSPITI_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.xlsx'
-            : 'SkyAudit_EstrattiConto_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.xlsx',
+        dialogTitle: dialogTitle,
+        fileName: 'SkyAudit_EstrattiConto${exportSuffix}_${DateFormat('yyyyMMdd_HHmm').format(DateTime.now())}.xlsx',
         type: FileType.custom,
         allowedExtensions: ['xlsx'],
       );
